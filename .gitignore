@@ -1,0 +1,5 @@
+__pycache__/
+src/Conformer/
+src/Conformer/.git/
+Dataset/GCF_000001405.40_GRCh38.p14_genomic.primary.gff
+Dataset/hg38c_protein_and_lncRNA.gtf
