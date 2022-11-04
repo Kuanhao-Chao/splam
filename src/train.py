@@ -13,11 +13,14 @@ from tqdm import tqdm
 from pathlib import Path
 import sys
 sys.path.append('./Conformer')
+# from longformer.longformer import Longformer
+# from transformers import LongformerModel, LongformerConfig
+from memory_transformer_xl import MemoryTransformerXL
 from CF import Conformer
 import csv
 
 class myDataset(Dataset):
-    def __init__(self, data_dir, segment_len=10):
+    def __init__(self, data_dir, segment_len=500):
         self.data_dir = data_dir
         self.segment_len = segment_len
  
@@ -69,8 +72,8 @@ class myDataset(Dataset):
             feature = torch.FloatTensor(feature)
         # Turn the speaker id into long for computing loss later.
         feature = torch.flatten(feature, start_dim=1)
-        # print("feature.size(): ", feature.size())
-        # print("label.size(): ", label.size())
+        print("feature.size(): ", feature.size())
+        print("label.size(): ", label.size())
         return feature, label
 
 
@@ -128,6 +131,11 @@ class Classifier(nn.Module):
         #   https://arxiv.org/abs/2005.08100
         #   https://github.com/Masao-Someki/Conformer
         self.encoder_layer = Conformer(**config)
+        # print(config)
+        # configuration = LongformerConfig()
+        # print(configuration)
+        # self.encoder_layer = MemoryTransformerXL(**config)
+
         #self.encoder_layer = nn.TransformerEncoderLayer(
         #  d_model=d_model, dim_feedforward=256, nhead=1
         #)
@@ -155,6 +163,7 @@ class Classifier(nn.Module):
         # For transformer: The encoder layer expect features in the shape of (length, batch size, d_model).
         # For conformer: The encoder layer expect features in the shape of (batch size, length, d_model).
         out = self.encoder_layer(out)
+        # out = self.encoder_layer(out)
         # out: (length, batch size, d_model)
         # conformer out: (batch size, length, d_model)
         #out = out.transpose(0, 1)
@@ -291,6 +300,19 @@ def train_parse_args():
         "save_steps": 10000,
         "total_steps": 200000,
         "model_config":{
+            # "config1":{
+            #     "num_tokens": 20000,
+            #     "dim": 1024,
+            #     "heads": 8,
+            #     "depth": 8,
+            #     "seq_len": 512,
+            #     "mem_len": 256,            # short term memory (the memory from transformer-xl)
+            #     "lmem_len": 256,           # long term memory (memory attention network attending to short term memory and hidden activations)
+            #     "mem_write_iters": 2,      # number of iterations of attention for writing to memory
+            #     "memory_layers": [6,7,8],  # which layers to use memory, only the later layers are actually needed
+            #     # "num_mem_k":128         # number of memory key/values, from All-attention paper
+            # }
+
             "config1":{
                 "d_model":80,
                 "ff1_hsize": 2048,
@@ -350,7 +372,7 @@ def train_main(data_dir,batch_size,n_workers,valid_steps,warmup_steps,total_step
     for i in model_config:
     
         same_seeds(0)
-        device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+        device = torch.device("cuda" if torch.cuda.is_available() else "mps")
         print(f"[Info]: Use {device} now!")
 
         train_loader, valid_loader = get_dataloader(data_dir, batch_size, n_workers)
@@ -358,7 +380,7 @@ def train_main(data_dir,batch_size,n_workers,valid_steps,warmup_steps,total_step
         print(f"[Info]: Finish loading data!",flush = True)
         print("train_iterator: ", train_iterator)
 
-        model = Classifier(model_config[i],seq_len=10).to(device)
+        model = Classifier(model_config[i],seq_len=500).to(device)
         criterion = nn.MSELoss()
         optimizer = AdamW(model.parameters(), lr=1e-3)
         scheduler = get_cosine_schedule_with_warmup(optimizer, warmup_steps, total_steps)
@@ -506,6 +528,18 @@ def test_parse_args():
             "model3":"./model96642.ckpt"},
         "output_path": "./fusion.csv",
         "model_config":{
+            # "config1":{
+            #     "num_tokens": 20000,
+            #     "dim": 1024,
+            #     "heads": 8,
+            #     "depth": 8,
+            #     "seq_len": 512,
+            #     "mem_len": 256,            # short term memory (the memory from transformer-xl)
+            #     "lmem_len": 256,           # long term memory (memory attention network attending to short term memory and hidden activations)
+            #     "mem_write_iters": 2,      # number of iterations of attention for writing to memory
+            #     "memory_layers": [6,7,8],  # which layers to use memory, only the later layers are actually needed
+            #     # "num_mem_k":128         # number of memory key/values, from All-attention paper
+            # }
             "config1":{
                 "d_model":80,
                 "ff1_hsize": 2048,
