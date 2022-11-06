@@ -159,76 +159,76 @@ def test_epoch():
         Y = h5f['Y' + str(idx)][:]
         print("X: ", X.shape)
         print("Y: ", Y.shape)
-        Xc, Yc = clip_datapoints_spliceAI(X, Y, CL, N_GPUS)
-        print("Xc: ", Xc.shape)
-        print("Yc: ", Yc[0].shape)
-        pbar = tqdm(total=len(Xc), ncols=0, desc="Train", unit=" step")
+        # Xc, Yc = clip_datapoints_spliceAI(X, Y, CL, N_GPUS)
+        # print("Xc: ", Xc.shape)
+        # print("Yc: ", Yc[0].shape)
+        # pbar = tqdm(total=len(Xc), ncols=0, desc="Train", unit=" step")
 
-        test_dataset = myDataset(Xc, Yc)
-        test_loader = DataLoader(
-            test_dataset,
-            batch_size=BATCH_SIZE,
-            shuffle=True,
-            drop_last=True,
-        )
-        # print(">> In epoch: ", epoch_num, "  (current idx_train: ", i, ",  size: ", len(train_loader), ")")
+        # test_dataset = myDataset(Xc, Yc)
+        # test_loader = DataLoader(
+        #     test_dataset,
+        #     batch_size=BATCH_SIZE,
+        #     shuffle=True,
+        #     drop_last=True,
+        # )
+        # # print(">> In epoch: ", epoch_num, "  (current idx_train: ", i, ",  size: ", len(train_loader), ")")
 
-        # Yl = []
-        # Yp = []
-        for batch_idx, data in enumerate(test_loader):
-            # training_step += 1
-            DNA, label = data 
-            TOTAL_TRANS += label.shape[0]
-            DNA = DNA.to(torch.float32).to(device)
-            label = label.to(torch.float32).to(device)
-            DNA = torch.permute(DNA, (0, 2, 1))
-            label = torch.permute(label, (0, 2, 1))
-            # print("\nDNA: ", DNA.size())
-            # print("label: ", label.size())
-            loss, yp = model_fn(DNA, label, model, criterion, device)
-            is_expr = (label.sum(axis=(1,2)) >= 1)
-            Acceptor_YL = label[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-            Acceptor_YP = yp[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-            Donor_YL = label[is_expr, 2, :].flatten().to('cpu').detach().numpy()
-            Donor_YP = yp[is_expr, 2, :].flatten().to('cpu').detach().numpy()
+        # # Yl = []
+        # # Yp = []
+        # for batch_idx, data in enumerate(test_loader):
+        #     # training_step += 1
+        #     DNA, label = data 
+        #     TOTAL_TRANS += label.shape[0]
+        #     DNA = DNA.to(torch.float32).to(device)
+        #     label = label.to(torch.float32).to(device)
+        #     DNA = torch.permute(DNA, (0, 2, 1))
+        #     label = torch.permute(label, (0, 2, 1))
+        #     # print("\nDNA: ", DNA.size())
+        #     # print("label: ", label.size())
+        #     loss, yp = model_fn(DNA, label, model, criterion, device)
+        #     is_expr = (label.sum(axis=(1,2)) >= 1)
+        #     Acceptor_YL = label[is_expr, 1, :].flatten().to('cpu').detach().numpy()
+        #     Acceptor_YP = yp[is_expr, 1, :].flatten().to('cpu').detach().numpy()
+        #     Donor_YL = label[is_expr, 2, :].flatten().to('cpu').detach().numpy()
+        #     Donor_YP = yp[is_expr, 2, :].flatten().to('cpu').detach().numpy()
 
-            # Yl.append(label)
-            # Yp.append(yp)
-            for idx, threshold in enumerate(thresholds):
-                print("threshold: ", threshold)
-                A_TOTAL_TP[idx], A_TOTAL_FN[idx], A_TOTAL_FP[idx] = print_threshold_statistics(Acceptor_YL, Acceptor_YP, threshold, A_TOTAL_TP[idx], A_TOTAL_FN[idx], A_TOTAL_FP[idx])
-                D_TOTAL_TP[idx], D_TOTAL_FN[idx], D_TOTAL_FP[idx] = print_threshold_statistics(Donor_YL, Donor_YP, threshold, D_TOTAL_TP[idx], D_TOTAL_FN[idx], D_TOTAL_FP[idx])
+        #     # Yl.append(label)
+        #     # Yp.append(yp)
+        #     for idx, threshold in enumerate(thresholds):
+        #         print("threshold: ", threshold)
+        #         A_TOTAL_TP[idx], A_TOTAL_FN[idx], A_TOTAL_FP[idx] = print_threshold_statistics(Acceptor_YL, Acceptor_YP, threshold, A_TOTAL_TP[idx], A_TOTAL_FN[idx], A_TOTAL_FP[idx])
+        #         D_TOTAL_TP[idx], D_TOTAL_FN[idx], D_TOTAL_FP[idx] = print_threshold_statistics(Donor_YL, Donor_YP, threshold, D_TOTAL_TP[idx], D_TOTAL_FN[idx], D_TOTAL_FP[idx])
 
-            A_accuracy, A_auc = print_top_1_statistics(Acceptor_YL, Acceptor_YP)
-            D_accuracy, D_auc = print_top_1_statistics(Donor_YL, Donor_YP)
-            print(">> Acceptor: ")
-            print_topl_statistics(Acceptor_YL, Acceptor_YP)
-            print(">> Donor: ")
-            print_topl_statistics(Donor_YL, Donor_YP)
+        #     A_accuracy, A_auc = print_top_1_statistics(Acceptor_YL, Acceptor_YP)
+        #     D_accuracy, D_auc = print_top_1_statistics(Donor_YL, Donor_YP)
+        #     print(">> Acceptor: ")
+        #     print_topl_statistics(Acceptor_YL, Acceptor_YP)
+        #     print(">> Donor: ")
+        #     print_topl_statistics(Donor_YL, Donor_YP)
 
-            batch_loss = loss.item()
+        #     batch_loss = loss.item()
 
-            pbar.update(BATCH_SIZE)
-            pbar.set_postfix(
-                idx_train=len(test_loader),
-                loss=f"{batch_loss:.6f}",
-                A_auc = f"{A_auc:.6f}",
-                D_auc = f"{D_auc:.6f}",
-                A_accuracy=f"{A_accuracy:.6f}",
-                D_accuracy=f"{D_accuracy:.6f}",
-            )
-            for idx, threshold in enumerate(thresholds):
-                print(">> Threshold (", threshold, ")")
-                print("\tAcceptor Precision: ", A_TOTAL_TP[idx]/(A_TOTAL_TP[idx]+A_TOTAL_FP[idx]))
-                print("\tAcceptor Recall   : ", A_TOTAL_TP[idx]/(A_TOTAL_TP[idx]+A_TOTAL_FN[idx]))
-                print("\tDonor Precision   : ", D_TOTAL_TP[idx]/(D_TOTAL_TP[idx]+D_TOTAL_FP[idx]))
-                print("\tDonor Recall      : ", D_TOTAL_TP[idx]/(D_TOTAL_TP[idx]+D_TOTAL_FN[idx]))
-                print("\tTotal testing transcripts   : ", TOTAL_TRANS)
-                print("\tTotal labelled Acceptor splice sites : ", A_TOTAL_TP[idx] + A_TOTAL_FN[idx])
-                print("\tTotal predicted Acceptor splice sites: ", A_TOTAL_TP[idx] + A_TOTAL_FP[idx])
-                print("\tTotal labelled Donor splice sites    : ", D_TOTAL_TP[idx] + D_TOTAL_FN[idx])
-                print("\tTotal predicted Donor splice sites   : ", D_TOTAL_TP[idx] + D_TOTAL_FP[idx])
-                print("")
+        #     pbar.update(BATCH_SIZE)
+        #     pbar.set_postfix(
+        #         idx_train=len(test_loader),
+        #         loss=f"{batch_loss:.6f}",
+        #         A_auc = f"{A_auc:.6f}",
+        #         D_auc = f"{D_auc:.6f}",
+        #         A_accuracy=f"{A_accuracy:.6f}",
+        #         D_accuracy=f"{D_accuracy:.6f}",
+        #     )
+        #     for idx, threshold in enumerate(thresholds):
+        #         print(">> Threshold (", threshold, ")")
+        #         print("\tAcceptor Precision: ", A_TOTAL_TP[idx]/(A_TOTAL_TP[idx]+A_TOTAL_FP[idx]))
+        #         print("\tAcceptor Recall   : ", A_TOTAL_TP[idx]/(A_TOTAL_TP[idx]+A_TOTAL_FN[idx]))
+        #         print("\tDonor Precision   : ", D_TOTAL_TP[idx]/(D_TOTAL_TP[idx]+D_TOTAL_FP[idx]))
+        #         print("\tDonor Recall      : ", D_TOTAL_TP[idx]/(D_TOTAL_TP[idx]+D_TOTAL_FN[idx]))
+        #         print("\tTotal testing transcripts   : ", TOTAL_TRANS)
+        #         print("\tTotal labelled Acceptor splice sites : ", A_TOTAL_TP[idx] + A_TOTAL_FN[idx])
+        #         print("\tTotal predicted Acceptor splice sites: ", A_TOTAL_TP[idx] + A_TOTAL_FP[idx])
+        #         print("\tTotal labelled Donor splice sites    : ", D_TOTAL_TP[idx] + D_TOTAL_FN[idx])
+        #         print("\tTotal predicted Donor splice sites   : ", D_TOTAL_TP[idx] + D_TOTAL_FP[idx])
+        #         print("")
             # batch_accuracy = accuracy.item()
             # Updata model
     #     Yl = torch.stack(Yl, dim=1)

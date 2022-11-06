@@ -52,7 +52,8 @@ def create_datapoints(seq, strand, tx_start, tx_end, jn_start, jn_end):
     tx_end = int(tx_end) 
 
     # jn_start = [x for x in str(jn_start)]
-    print("jn_start: ", jn_start)
+    # print("jn_start: ", jn_start)
+    # print("jn_end  : ", jn_end)
     # print(jn_start[0].split(','))
     jn_start = [x.split(',')[:-1] for x in jn_start]
     jn_end = [x.split(',')[:-1] for x in jn_end]
@@ -95,8 +96,15 @@ def create_datapoints(seq, strand, tx_start, tx_end, jn_start, jn_end):
                     if tx_start <= c <= tx_end:
                         Y0[t][tx_end-c] = 1
 
-    Xd, Yd = reformat_data(X0, Y0)
+    Xd, Yd = reformat_data_no_chunk(X0, Y0)
     X, Y = one_hot_encode(Xd, Yd)
+
+    # X0 = np.array([X0])
+    # Y0 = np.array([Y0])
+    # X, Y = one_hot_encode(X0, Y0)
+
+    # print(X.shape)
+    # print(Y[0].shape)
 
     return X, Y
 
@@ -109,15 +117,25 @@ def reformat_data(X0, Y0):
     # length SL corresponding to the splicing information of the nucleotides
     # of interest. The CL_max context nucleotides are such that they are
     # CL_max/2 on either side of the SL nucleotides of interest.
-
+    
     num_points = ceil_div(len(Y0[0]), SL)
+    # print("num_points: ", num_points)
 
     Xd = np.zeros((num_points, SL+CL_max))
     Yd = [-np.ones((num_points, SL)) for t in range(1)]
 
+    # print("X0.shape: ", X0.shape)
+    # print("Y0.shape: ", Y0[0].shape)
+
+    # print("Xd.shape: ", Xd.shape)
+    # print("Yd.shape: ", Yd[0].shape)
+
     X0 = np.pad(X0, [0, SL], 'constant', constant_values=0)
     Y0 = [np.pad(Y0[t], [0, SL], 'constant', constant_values=-1)
          for t in range(1)]
+
+    # print("X0.shape: ", X0.shape)
+    # print("Y0.shape: ", Y0[0].shape)
 
     for i in range(num_points):
         Xd[i] = X0[SL*i:CL_max+SL*(i+1)]
@@ -128,6 +146,42 @@ def reformat_data(X0, Y0):
 
     return Xd, Yd
 
+def reformat_data_no_chunk(X0, Y0):
+    # This function converts X0, Y0 of the create_datapoints function into
+    # blocks such that the data is broken down into data points where the
+    # input is a sequence of length SL+CL_max corresponding to SL nucleotides
+    # of interest and CL_max context nucleotides, the output is a sequence of
+    # length SL corresponding to the splicing information of the nucleotides
+    # of interest. The CL_max context nucleotides are such that they are
+    # CL_max/2 on either side of the SL nucleotides of interest.
+    
+    num_points = 1
+    # # print("num_points: ", num_points)
+
+    Xd = np.zeros((num_points, X0.shape[0]))
+    Yd = [-np.ones((num_points, Y0[0].shape[0])) for t in range(1)]
+
+    # print("X0.shape: ", X0.shape)
+    # print("Y0.shape: ", Y0[0].shape)
+
+    # # print("Xd.shape: ", Xd.shape)
+    # # print("Yd.shape: ", Yd[0].shape)
+
+    # X0 = np.pad(X0, [0, SL], 'constant', constant_values=0)
+    # Y0 = [np.pad(Y0[t], [0, SL], 'constant', constant_values=-1)
+    #      for t in range(1)]
+
+    # # print("X0.shape: ", X0.shape)
+    # # print("Y0.shape: ", Y0[0].shape)
+
+    for i in range(num_points):
+        Xd[i] = X0[0:X0.shape[0]]
+
+    for t in range(1):
+        for i in range(num_points):
+            Yd[t][i] = Y0[t][:Y0[0].shape[0]]
+
+    return Xd, Yd
 
 def clip_datapoints_spliceAI(X, Y, CL, N_GPUS):
     # This function is necessary to make sure of the following:

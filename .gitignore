@@ -17,3 +17,5 @@ src_seq/canonical_sequence.txt
 src_seq/constants.py
 src_seq/data
 src_seq/keras-transformer
+src_all_isoforms/*.h5
+src_all_isoforms/*.txt

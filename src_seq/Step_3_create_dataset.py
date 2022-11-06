@@ -8,7 +8,7 @@ import h5py
 import numpy as np
 import sys
 import time
-from utils import *
+from utils_SpliceNN import *
 from constants import *
 
 start_time = time.time()
@@ -59,14 +59,21 @@ for i in range(SEQ.shape[0]//CHUNK_SIZE):
         X, Y = create_datapoints(SEQ[idx], STRAND[idx],
                                  TX_START[idx], TX_END[idx],
                                  JN_START[idx], JN_END[idx])
-
+        print("X.shape: ", X.shape)
+        print("Y.shape: ", Y[0].shape)
         X_batch.extend(X)
+        print(len(X_batch))
+        # print("X_batch.shape: ", np.array(X_batch).shape)
         for t in range(1):
             Y_batch[t].extend(Y[t])
 
+        # print("X_batch.shape: ", X_batch[0].shape)
     X_batch = np.asarray(X_batch).astype('int8')
     for t in range(1):
         Y_batch[t] = np.asarray(Y_batch[t]).astype('int8')
+
+    print("X_batch: ", X_batch.shape)
+    print("Y_batch: ", Y_batch[0].shape)
 
     h5f2.create_dataset('X' + str(i), data=X_batch)
     h5f2.create_dataset('Y' + str(i), data=Y_batch)
