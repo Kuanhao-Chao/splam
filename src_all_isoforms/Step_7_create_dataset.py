@@ -66,7 +66,6 @@ for i in range(SEQ.shape[0]//CHUNK_SIZE):
         for t in range(1):
             Y_batch[t].extend(Y[t])
 
-        # print("X_batch.shape: ", X_batch[0].shape)
     X_batch = np.asarray(X_batch).astype('int8')
     for t in range(1):
         Y_batch[t] = np.asarray(Y_batch[t]).astype('int8')

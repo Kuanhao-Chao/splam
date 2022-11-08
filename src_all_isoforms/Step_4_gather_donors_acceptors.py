@@ -74,7 +74,12 @@ def main():
             if gene in genes_s_e.keys():
                 if int(genes_s_e[gene]["start"]) > 5000:
                     if info["chr"] in chrs_list:
-                        print_line = gene + "\t0\t" + info["chr"] + "\t" + info["strand"] + "\t" + str(genes_s_e[gene]["start"]) + "\t" + str(genes_s_e[gene]["end"]) + "\t" + ','.join(map(str, info["start"])) + "\t" + ','.join(map(str, info["end"])) + "\n"
+                        info["start"] = info["start"][1:]
+                        info["end"] = info["end"][:-1]
+
+                        # There are splice sites!!
+                        if len(info["start"]) > 0 and len(info["end"]) > 0:
+                            print_line = gene + "\t0\t" + info["chr"] + "\t" + info["strand"] + "\t" + str(genes_s_e[gene]["start"]) + "\t" + str(genes_s_e[gene]["end"]) + "\t" + ','.join(map(str, info["start"])) + "\t" + ','.join(map(str, info["end"])) + "\n"
                 f_out.write(print_line)
         
 
