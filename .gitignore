@@ -21,3 +21,5 @@ src_all_isoforms/*.h5
 src_all_isoforms/*.txt
 src_all_isoforms/MODEL
 src_all_isoforms/data
+*.fa
+*.bed
