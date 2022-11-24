@@ -72,8 +72,9 @@ def model_fn(DNAs, labels, model, criterion, device):
     """Forward a batch through the model."""
     outs = model(DNAs)
 
-    # print("labels: ", labels.size())
-    # print("DNAs: ", DNAs.size())
+    print("labels: ", labels.size())
+    print("outs: ", outs.size())
+    print("DNAs: ", DNAs.size())
 
     # labels = labels.sum(axis=1)
     # print("labels: ", labels.size())
@@ -84,7 +85,9 @@ def model_fn(DNAs, labels, model, criterion, device):
 def categorical_crossentropy_2d(y_true, y_pred):
     # prod = output[:,0]*target
     # return -prod[prod<0].sum()
-    # print("y_true: ", y_true)
+    print("y_true: ", y_true)
+    print("y_pred: ", y_pred)
+
     # print("Loss: ", - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
     #                     + y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
     #                     + y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10)))
@@ -188,6 +191,8 @@ def train_one_epoch(epoch_idx):
     Y = h5f['Y' + str(idx)][:]
 
     Xc, Yc = clip_datapoints_spliceAI(X, Y, CL, N_GPUS)
+    print("\nXc: ", Xc.shape)
+    print("Yc: ", Yc[0].shape)
     pbar = tqdm(total=len(Xc), ncols=0, desc="Train", unit=" step")
 
     train_dataset = myDataset(Xc, Yc)
@@ -203,8 +208,8 @@ def train_one_epoch(epoch_idx):
     for batch_idx, data in enumerate(train_loader):
         # training_step += 1
         DNA, label = data 
-        # print("\nDNAs: ", DNAs.size())
-        # print("labels: ", labels.size())
+        print("\nDNAs: ", DNA.size())
+        print("labels: ", label.size())
         DNA = DNA.to(torch.float32).to(device)
         label = label.to(torch.float32).to(device)
         DNA = torch.permute(DNA, (0, 2, 1))

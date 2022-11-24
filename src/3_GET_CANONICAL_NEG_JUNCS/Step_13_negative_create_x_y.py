@@ -1,7 +1,7 @@
 def main():
-    fw = open("input.fa", "w")
-    fr_donor = open("donor_seq.fa", "r")
-    fr_acceptor = open("acceptor_seq.fa", "r")
+    fw = open("INPUTS/input_neg.fa", "w")
+    fr_donor = open("./NEG_junctions/donor_seq.fa", "r")
+    fr_acceptor = open("./NEG_junctions/acceptor_seq.fa", "r")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()
@@ -38,11 +38,6 @@ def main():
             
             fw.write(x + "\n")
             x = x.upper()
-            if (x[200:202] == "NN"):
-                print("chr_name: ", chr_name)
-                print(x)
-                print("seq_d: ", seq_d)
-                print("seq_a: ", seq_a)
 
             if x[200:202] not in donors.keys():
                 donors[x[200:202]] = 1

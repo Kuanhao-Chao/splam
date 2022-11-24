@@ -1,1 +1,0 @@
-sort ref_d_a.bed | uniq -u | sort -k1,1 -k2,2n > ref_d_a.sort.bed

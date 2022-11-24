@@ -11,7 +11,7 @@ def main():
     gene_id_2_name = {}
     gene_id_2_features = {}
     JUNC_COUNTER = 0
-    fw = open("./ref_d_a.bed", 'w')
+    fw = open("./REF_junctions/ref_d_a.bed", 'w')
     with open("../Dataset/hg38c_protein_and_lncRNA.gtf", 'r') as f:
         lists = f.read().splitlines() 
 
