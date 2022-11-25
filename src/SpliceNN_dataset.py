@@ -11,7 +11,7 @@ class myDataset(Dataset):
         self.segment_len = segment_len
         self.data = []
 
-        CONSTANT_SIZE = 100000
+        CONSTANT_SIZE = 150000
         #################################
         ## Processing 'POSITIVE' samples
         #################################
@@ -30,6 +30,8 @@ class myDataset(Dataset):
                     X, Y = create_datapoints(seq, '+')
                     X = torch.Tensor(np.array(X))
                     Y = torch.Tensor(np.array(Y)[0])
+                    # print(X)
+                    # print(Y)
                     # print(X.size())
                     # print(Y.size())
                     self.data.append([X, Y])
@@ -39,32 +41,32 @@ class myDataset(Dataset):
                 if pidx > CONSTANT_SIZE:
                     break
 
-        #####################x############
-        ## Processing 'NEGATIVE' samples
-        #################################
-        nidx = 0
-        with open("./INPUTS/input_neg.shuffle.fa", "r") as f:
-            lines = f.read().splitlines()
-            seq_name = ""
-            seq = ""
-            for line in lines:
-                # print(line)
-                if nidx % 2 == 0:
-                    seq_name = line
-                elif nidx % 2 == 1:
-                    seq = line
-                    # print(seq)
-                    X, Y = create_datapoints(seq, '-')
-                    X = torch.Tensor(np.array(X))
-                    Y = torch.Tensor(np.array(Y)[0])
-                    # print(X.size())
-                    # print(Y.size())
-                    self.data.append([X, Y])
-                nidx += 1
-                if nidx %10000 == 0:
-                    print("nidx: ", nidx)
-                if nidx > CONSTANT_SIZE:
-                    break
+        # #####################x############
+        # ## Processing 'NEGATIVE' samples
+        # #################################
+        # nidx = 0
+        # with open("./INPUTS/input_neg.shuffle.fa", "r") as f:
+        #     lines = f.read().splitlines()
+        #     seq_name = ""
+        #     seq = ""
+        #     for line in lines:
+        #         # print(line)
+        #         if nidx % 2 == 0:
+        #             seq_name = line
+        #         elif nidx % 2 == 1:
+        #             seq = line
+        #             # print(seq)
+        #             X, Y = create_datapoints(seq, '-')
+        #             X = torch.Tensor(np.array(X))
+        #             Y = torch.Tensor(np.array(Y)[0])
+        #             # print(X.size())
+        #             # print(Y.size())
+        #             self.data.append([X, Y])
+        #         nidx += 1
+        #         if nidx %10000 == 0:
+        #             print("nidx: ", nidx)
+        #         if nidx > CONSTANT_SIZE:
+        #             break
 
         #####################x############
         ## Processing 'Non-canonical NEGATIVE' samples
@@ -84,6 +86,8 @@ class myDataset(Dataset):
                     X, Y = create_datapoints(seq, '-')
                     X = torch.Tensor(np.array(X))
                     Y = torch.Tensor(np.array(Y)[0])
+                    # print(X)
+                    # print(Y)
                     # print(X.size())
                     # print(Y.size())
                     self.data.append([X, Y])
@@ -111,10 +115,9 @@ def get_dataloader(batch_size, n_workers):
     dataset = myDataset(800)
     # Split dataset into training dataset and validation dataset
     trainlen = int(0.9 * len(dataset))
-    print("trainlen: ", trainlen)
+    # print("trainlen: ", trainlen)
     lengths = [trainlen, len(dataset) - trainlen]
-    trainset, validset = random_split(dataset, lengths)
-    # print("trainset: ", trainset)
+    trainset, testset = random_split(dataset, lengths)
 
     train_loader = DataLoader(
         trainset,
@@ -126,7 +129,7 @@ def get_dataloader(batch_size, n_workers):
         # collate_fn=collate_batch,
     )
     test_loader = DataLoader(
-        validset,
+        testset,
         batch_size = batch_size,
         # batch_size=len(validset),
         # num_workers=n_workers,

@@ -1,8 +1,9 @@
 def main():
     SEQ_LEN = 400
-    fw = open("../INPUTS/input_pos.fa", "w")
-    fr_donor = open("../BAM_junctions/pos_juncs/donor_seq.fa", "r")
-    fr_acceptor = open("../BAM_junctions/pos_juncs/acceptor_seq.fa", "r")
+    threshold = "100"
+    fw = open("../INPUTS/Intersection/input_pos_"+threshold+".fa", "w")
+    fr_donor = open("../BAM_REF_Intersection/"+threshold+"_juncs/donor_seq.fa", "r")
+    fr_acceptor = open("../BAM_REF_Intersection/"+threshold+"_juncs/acceptor_seq.fa", "r")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()

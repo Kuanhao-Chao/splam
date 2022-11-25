@@ -4,15 +4,15 @@ import json
 import torch
 
 def main():
-    mapping_f = open("../Dataset/mapping.json")
+    mapping_f = open("../../Dataset/mapping.json")
     mapping = json.load(mapping_f)
     mapping_f.close()
     print(mapping)
     gene_id_2_name = {}
     gene_id_2_features = {}
     JUNC_COUNTER = 0
-    fw = open("./REF_junctions/ref_d_a.bed", 'w')
-    with open("../Dataset/hg38c_protein_and_lncRNA.gtf", 'r') as f:
+    fw = open("../REF_junctions/ref_d_a.bed", 'w')
+    with open("../../Dataset/hg38c_protein_and_lncRNA.gtf", 'r') as f:
         lists = f.read().splitlines() 
 
         transcript_id = ""
@@ -77,5 +77,6 @@ def main():
                 prev_gene_name = gene_name
                 prev_chr = chr
     fw.close()
+
 if __name__ == "__main__":
     main()

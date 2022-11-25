@@ -1,20 +1,22 @@
 import pandas as pd
 
 def main():
-    bam_juncs = pd.read_csv('./BAM_junctions/d_a_all_5.bed', sep="\t", header=None)
-    neg_juncs = pd.read_csv('./NEG_junctions/pre_filter/d_a.bed', sep="\t", header=None)
+    bam_juncs = pd.read_csv('../BAM_junctions/d_a_all_5.bed', sep="\t", header=None)
+    neg_juncs = pd.read_csv('../NEG_junctions/pre_filter/d_a.bed', sep="\t", header=None)
     print(bam_juncs)
     print(neg_juncs)
     # Calling merge() function
 
-    d_a_out = './NEG_junctions/d_a.bed'
-    d_out = './NEG_junctions/donor.bed'
-    a_out = './NEG_junctions/acceptor.bed'
+    d_a_out = '../NEG_junctions/d_a.bed'
+    d_out = '../NEG_junctions/donor.bed'
+    a_out = '../NEG_junctions/acceptor.bed'
+
+    print("neg_juncs: ", neg_juncs)
 
     int_df = pd.merge(neg_juncs, bam_juncs, how ='left', on =[0, 1, 2, 5])
     out_df = int_df[~pd.notna(int_df["3_y"])][[0, 1, 2, "3_x", "4_x", 5]]
     out_df = out_df.rename(columns={0:"chr",1:"start", 2:"end", "3_x":"junc", "4_x":"score", 5:"strand"})
-    print(out_df)
+    print("out_df: ", out_df)
     donor_df = out_df.copy()
     acceptor_df = out_df.copy()
 
