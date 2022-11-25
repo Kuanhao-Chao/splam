@@ -46,7 +46,7 @@ def one_hot_encode(Xd, Yd):
 #######################################
 def create_datapoints(seq, strand):
     
-    # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
+    seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
     seq = seq.upper().replace('A', '1').replace('C', '2')
     seq = seq.replace('G', '3').replace('T', '4').replace('N', '0')
     jn_start = JUNC_START
@@ -178,15 +178,15 @@ def categorical_crossentropy_2d(y_true, y_pred):
     # print("Loss: ", - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
     #                     + y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
     #                     + y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10)))
-    # print("y_true[:, 0, :]: ", y_true[:, :, 0])
-    # print("y_pred[:, 0, :]: ", y_pred[:, :, 0])
-    # print("y_true[:, 1, :]: ", y_true[:, :, 1])
-    # print("y_pred[:, 1, :]: ", y_pred[:, :, 1])
-    # print("y_true[:, 2, :]: ", y_true[:, :, 2])
-    # print("y_pred[:, 2, :]: ", y_pred[:, :, 2])
-    return - torch.mean(y_true[:, :, 0]*torch.log(y_pred[:, :, 0]+1e-10)
-                        + WEIGHT*y_true[:, :, 1]*torch.log(y_pred[:, :, 1]+1e-10)
-                        + WEIGHT*y_true[:, :, 2]*torch.log(y_pred[:, :, 2]+1e-10))
+    # print("y_true[:, 0, :]: ", y_true[:, 0, :])
+    # print("y_pred[:, 0, :]: ", y_pred[:, 0, :])
+    # print("y_true[:, 1, :]: ", y_true[:, 1, :])
+    # print("y_pred[:, 1, :]: ", y_pred[:, 1, :])
+    # print("y_true[:, 2, :]: ", y_true[:, 2, :])
+    # print("y_pred[:, 2, :]: ", y_pred[:, 2, :])
+    return - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
+                        + WEIGHT*y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
+                        + WEIGHT*y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10))
 
 
 # def create_datapoints(seq, strand):

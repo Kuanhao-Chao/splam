@@ -1,7 +1,7 @@
 import pandas as pd
 
 def main():
-    bam_juncs = pd.read_csv('../BAM_junctions/d_a_all_5.bed', sep="\t", header=None)
+    bam_juncs = pd.read_csv('../BAM_junctions/junctions_all.bed', sep="\t", header=None)
     neg_juncs = pd.read_csv('../NEG_noncan_junctions/pre_filter/d_a.bed', sep="\t", header=None)
     print(bam_juncs)
     print(neg_juncs)
@@ -28,9 +28,9 @@ def main():
     acceptor_df["end"] = acceptor_df[["start"]] + 400
     acceptor_df["junc"] = "JUNC_acceptor"
     print(acceptor_df)
-    out_df.to_csv(d_a_out, sep="\t", index=False, header=None)
-    donor_df.to_csv(d_out, sep="\t", index=False, header=None)
-    acceptor_df.to_csv(a_out, sep="\t", index=False, header=None)
+    # out_df.to_csv(d_a_out, sep="\t", index=False, header=None)
+    # donor_df.to_csv(d_out, sep="\t", index=False, header=None)
+    # acceptor_df.to_csv(a_out, sep="\t", index=False, header=None)
 
     # print(int_df[[0, 1, 2, "3_x", "4_x", 5]])
 

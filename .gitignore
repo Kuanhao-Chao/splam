@@ -24,3 +24,4 @@ src_all_isoforms/data
 *.fa
 *.bed
 src/MODEL/
+src/INPUTS/Intersection/

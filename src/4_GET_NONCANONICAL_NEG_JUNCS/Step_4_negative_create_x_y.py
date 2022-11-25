@@ -1,5 +1,7 @@
+SEQ_LEN = 400
+
 def main():
-    fw = open("../INPUTS/input_noncan_neg.fa", "w")
+    fw = open("../INPUTS/Intersection/input_noncan_neg.fa", "w")
     fr_donor = open("../NEG_noncan_junctions/donor_seq.fa", "r")
     fr_acceptor = open("../NEG_noncan_junctions/acceptor_seq.fa", "r")
 
@@ -18,45 +20,51 @@ def main():
     chr_name = ""
     for idx in range(line_num):
         if idx % 2 == 0:
-            chr_name = lines_d[idx]
+            chr_name = lines_d[idx]+"_"+lines_a[idx][1:] + "\n"
         else:
             seq_d = lines_d[idx]
             seq_a = lines_a[idx]
             len_d = len(seq_d)
             len_a = len(seq_a)
+
             if len_d != len_a:
                 print("seq_d: ", len_d)
                 print("seq_a: ", len_a)
-            if len_d == 400 and len_a == 400:
+            if len_d == SEQ_LEN and len_a == SEQ_LEN:
                 x = seq_d + seq_a
-                y = (200, 600)
+                # y = (200, 602)
             else:
-                x = seq_d + (400 - len_d) * 'N' + (400 - len_a) * 'N' + seq_a
-                # print("x: ", len(x))
-                y = (200, 600)
-
+                x = seq_d + (SEQ_LEN - len_d) * 'N' + (SEQ_LEN - len_a) * 'N' + seq_a
+                # y = (200, 602)
+            
+            # print("x: ", len(x))
+            # print("x: ", len(x))
             x = x.upper()
-            if  x[200] != 'N' and x[201] != 'N' and x[598] != 'N' and x[599] != 'N':
-                fw.write(lines_d[idx-1] + "\n")
-                fw.write(x + "\n")
-            else:
+            if x[200] == "N" or x[201] == "N" or x[599] == "N" or x[600] == "N":
                 continue
 
-            if x[200:202] not in donors.keys():
-                donors[x[200:202]] = 1
-            else:
-                donors[x[200:202]] += 1
+            fw.write(chr_name)
+            fw.write(x + "\n")
 
-            if x[598:600] not in acceptors.keys():
-                acceptors[x[598:600]] = 1
-            else:
-                acceptors[x[598:600]] += 1
+            donor_dimer = x[200:202]
+            acceptor_dimer = x[598:600]
 
-            if (x[200:202] == "GT"):
+
+            if donor_dimer not in donors.keys():
+                donors[donor_dimer] = 1
+            else:
+                donors[donor_dimer] += 1
+
+            if acceptor_dimer not in acceptors.keys():
+                acceptors[acceptor_dimer] = 1
+            else:
+                acceptors[acceptor_dimer] += 1
+
+            if (donor_dimer == "GT"):
                 canonical_d_count += 1
             else:
                 noncanonical_d_count += 1
-            if (x[598:600] == "AG"):
+            if (acceptor_dimer == "AG"):
                 canonical_a_count += 1
             else:
                 noncanonical_a_count += 1

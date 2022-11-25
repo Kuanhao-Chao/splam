@@ -11,12 +11,12 @@ class myDataset(Dataset):
         self.segment_len = segment_len
         self.data = []
 
-        CONSTANT_SIZE = 150000
+        CONSTANT_SIZE = 100000
         #################################
         ## Processing 'POSITIVE' samples
         #################################
         pidx = 0
-        with open("./INPUTS/input_pos.shuffle.fa", "r") as f:
+        with open("./INPUTS/Intersection/input_pos_all.shuffle.fa", "r") as f:
             lines = f.read().splitlines()
             seq_name = ""
             seq = ""
@@ -72,7 +72,7 @@ class myDataset(Dataset):
         ## Processing 'Non-canonical NEGATIVE' samples
         #################################
         nnidx = 0
-        with open("./INPUTS/input_noncan_neg.shuffle.fa", "r") as f:
+        with open("./INPUTS/Intersection/input_noncan_neg.shuffle.fa", "r") as f:
             lines = f.read().splitlines()
             seq_name = ""
             seq = ""
