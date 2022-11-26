@@ -47,6 +47,13 @@ class SpliceNN(Module):
 
     def forward(self, x):
         x, skip = self.skip1(self.conv1(x), 0)
+        # print("x.size(): ", x.size())
+        # print("skip.size(): ", skip.size())
         for m in self.residual_blocks:
             x, skip = m(x, skip)
-        return self.softmax(self.last(skip)[..., CL_max//2:-CL_max//2])
+        #     print("x.size(): ", x.size())
+        #     print("skip.size(): ", skip.size())
+        # print("self.softmax(self.last(skip)[..., CL_max//2:-CL_max//2]): ", self.softmax(self.last(skip)).size())
+        return self.softmax(self.last(skip))
+
+        # return self.softmax(self.last(skip)[..., CL_max//2:-CL_max//2])

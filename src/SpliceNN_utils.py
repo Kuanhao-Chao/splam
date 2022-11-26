@@ -46,7 +46,7 @@ def one_hot_encode(Xd, Yd):
 #######################################
 def create_datapoints(seq, strand):
     
-    seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
+    # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
     seq = seq.upper().replace('A', '1').replace('C', '2')
     seq = seq.replace('G', '3').replace('T', '4').replace('N', '0')
     jn_start = JUNC_START
@@ -263,3 +263,30 @@ def print_topl_statistics(y_true, y_pred):
         threshold += [sorted_y_pred[-int(top_length*len(idx_true))]] 
 
     auprc = average_precision_score(y_true, y_pred)
+
+def print_threshold_statistics(y_true, y_pred, threshold, TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN):
+    idx_true = np.nonzero(y_true == 1)[0]
+    idx_pred = np.nonzero(y_pred > threshold)[0]
+
+    LCL_TOTAL_TP = np.size(np.intersect1d(idx_true, idx_pred))
+    LCL_TOTAL_FN = len(idx_true) - LCL_TOTAL_TP
+    LCL_TOTAL_FP = len(idx_pred) - LCL_TOTAL_TP
+    LCL_TOTAL_TN = len(y_true) - LCL_TOTAL_TP - LCL_TOTAL_FN - LCL_TOTAL_FP
+
+    # print("LCL_TOTAL_TP: ", LCL_TOTAL_TP)
+    # print("LCL_TOTAL_FN: ", LCL_TOTAL_FN)
+    # print("LCL_TOTAL_FP: ", LCL_TOTAL_FP)
+
+    TOTAL_TP += LCL_TOTAL_TP
+    TOTAL_FN += LCL_TOTAL_FN
+    TOTAL_FP += LCL_TOTAL_FP
+    TOTAL_TN += LCL_TOTAL_TN
+
+    # precision = np.size(np.intersect1d(idx_true, idx_pred)) \
+    #             / float(len(idx_pred))        
+    # recall = np.size(np.intersect1d(idx_true, idx_pred)) \
+    #             / float(len(idx_true)) 
+
+    # print("precision: ", precision)
+    # print("recall:    ", recall)
+    return TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN, LCL_TOTAL_TP, LCL_TOTAL_FN, LCL_TOTAL_FP, LCL_TOTAL_TN

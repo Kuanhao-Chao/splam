@@ -97,6 +97,9 @@ def task(chromosome):
         if donor_e > chrs[chromosome] or acceptor_e > chrs[chromosome] or donor_s <= 0 or acceptor_s <= 0:
             continue
 
+        D_A_POSITIONS.add((chromosome, select_donor))
+        D_A_POSITIONS.add((chromosome, select_acceptor))
+
         fw_da.write(chromosome + "\t" + str(select_donor) + "\t" + str(select_acceptor+1) + "\t" + "JUNC\t1\t+\n")
         fw_donor.write(chromosome + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + "JUNC_donor\t1\t+\n")
         fw_acceptor.write(chromosome + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + "JUNC_acceptor\t1\t+\n")
