@@ -11,12 +11,12 @@ class myDataset(Dataset):
         self.segment_len = segment_len
         self.data = []
 
-        CONSTANT_SIZE = 200000
+        CONSTANT_SIZE = 165660
         #################################
         ## Processing 'POSITIVE' samples
         #################################
         pidx = 0
-        with open("./INPUTS/Intersection/input_pos_all.shuffle.fa", "r") as f:
+        with open("./INPUTS/Intersection/input_pos_100.shuffle.fa", "r") as f:
             lines = f.read().splitlines()
             seq_name = ""
             seq = ""

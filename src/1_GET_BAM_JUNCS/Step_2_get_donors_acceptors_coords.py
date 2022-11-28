@@ -1,4 +1,5 @@
 import pandas as pd
+import os 
 
 def get_hg38_chrom_size():
     f_chrs = open("../hg38_chrom_size.tsv", "r")
@@ -13,16 +14,17 @@ def get_hg38_chrom_size():
 def main():
     chrs = get_hg38_chrom_size()
 
-    threshold = 100
+    threshold = "100"
 
     #################################
     # For 'd_a.bed': 0-based, 1-based
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     #################################
-    fw_donor = open("../BAM_junctions/100_juncs/donor.bed", "w")
-    fw_acceptor = open("../BAM_junctions/100_juncs/acceptor.bed", "w")
-
+    os.makedirs("../BAM_junctions/"+threshold+"_juncs/", exist_ok=True)
+    fw_donor = open("../BAM_junctions/"+threshold+"_juncs/donor.bed", "w")
+    fw_acceptor = open("../BAM_junctions/"+threshold+"_juncs/acceptor.bed", "w")
+    
     d_a_bed = "../BAM_junctions/100_juncs/d_a.bed"
     fw_da = open(d_a_bed, "w")
     # fw_d = open("BAM_junctions/d.bed", "w")

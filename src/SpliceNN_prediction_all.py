@@ -4,10 +4,12 @@ from SpliceNN_utils import *
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as pl
+import os
 
 def main():
+    os.makedirs("IMAGES/", exist_ok=True)
     device = torch.device("cuda" if torch.cuda.is_available() else "mps")
-    model = torch.load("./MODEL/SpliceAI_model_p1_n1_nn1_v3/SpliceNN_9.pt")
+    model = torch.load("./MODEL/SpliceAI_6_RB_p1_n1_nn1_TB_all_samples_thr_100_v8/SpliceNN_19.pt")
 
     fr = open("INPUTS/Intersection/input_neg.shuffle.fa", 'r')
 

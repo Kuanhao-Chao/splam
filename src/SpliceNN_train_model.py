@@ -58,7 +58,7 @@ train_loader, test_loader = get_dataloader(BATCH_SIZE, N_WORKERS)
 # print(f"[Info]: Finish loading data!",flush = True)
 print("train_iterator: ", len(train_loader))
 print("valid_iterator: ", len(test_loader))
-MODEL_OUTPUT_BASE = "./MODEL/SpliceAI_6_RB_p1_n1_nn1_v5/"
+MODEL_OUTPUT_BASE = "./MODEL/SpliceAI_6_RB_p1_n1_nn1_TB_all_samples_thr_100_v8/"
 LOG_OUTPUT_BASE = MODEL_OUTPUT_BASE + "LOG/"
 LOG_OUTPUT_TRAIN_BASE = MODEL_OUTPUT_BASE + "LOG/TRAIN/"
 LOG_OUTPUT_TEST_BASE = MODEL_OUTPUT_BASE + "LOG/TEST/"

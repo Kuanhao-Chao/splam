@@ -1,4 +1,5 @@
 import pandas as pd
+import os
 
 def get_hg38_chrom_size():
     f_chrs = open("../hg38_chrom_size.tsv", "r")
@@ -10,12 +11,12 @@ def get_hg38_chrom_size():
     return chrs
 
 def main():
-    threshold = "all"
+    threshold = "100"
 
     bam_juncs = pd.read_csv('../BAM_junctions/'+threshold+'_juncs/d_a.bed', sep="\t", header=None)
     ref_juncs = pd.read_csv('../REF_junctions/ref_d_a.sort.bed', sep="\t", header=None)
     # Calling merge() function
-
+    os.makedirs('../BAM_REF_Intersection/'+threshold+'_juncs/', exist_ok=True)
     d_a_out = '../BAM_REF_Intersection/'+threshold+'_juncs/d_a.bed'
     d_out = '../BAM_REF_Intersection/'+threshold+'_juncs/donor.bed'
     a_out = '../BAM_REF_Intersection/'+threshold+'_juncs/acceptor.bed'

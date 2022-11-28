@@ -10,8 +10,8 @@ def get_hg38_chrom_size():
 
 def main():
     chrs = get_hg38_chrom_size()
-    threshold = "all"
-    fw_da = open("../BAM_junctions/all_juncs/d_a_all.bed", "w")
+    threshold = "100"
+    fw_da = open("../BAM_junctions/"+threshold+"_juncs/d_a.bed", "w")
 
     with open("../BAM_junctions/junctions_"+str(threshold)+".bed", "r") as f:
         lines = f.read().splitlines()
