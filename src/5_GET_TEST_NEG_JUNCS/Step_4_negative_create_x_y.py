@@ -1,9 +1,18 @@
+import os 
+
 SEQ_LEN = 400
+# TARGET="NEG_junctions"
+TARGET="NEG_noncan_junctions"
 
 def main():
-    fw = open("../INPUTS/Intersection/input_neg.fa", "w")
-    fr_donor = open("../NEG_junctions/donor_seq.fa", "r")
-    fr_acceptor = open("../NEG_junctions/acceptor_seq.fa", "r")
+    os.makedirs("../TEST/INPUTS", exist_ok=True)
+    fr_donor = open("../TEST/"+TARGET+"/donor_seq.fa", "r")
+    fr_acceptor = open("../TEST/"+TARGET+"/acceptor_seq.fa", "r")
+
+    if TARGET == "NEG_junctions":
+        fw = open("../TEST/INPUTS/input_neg.fa", "w")
+    elif TARGET == "NEG_noncan_junctions":
+        fw = open("../TEST/INPUTS/input_noncan_neg.fa", "w")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()

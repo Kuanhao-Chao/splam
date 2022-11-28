@@ -271,7 +271,7 @@ def test_one_epoch(epoch_idx, test_loader):
         pbar.update(1)
         pbar.set_postfix(
             epoch=batch_idx,
-            idx_train=len(train_loader)*BATCH_SIZE,
+            idx_train=len(test_loader)*BATCH_SIZE,
             loss=f"{batch_loss:.6f}",
             # accuracy=f"{batch_acc:.6f}",
             A_accuracy=f"{A_accuracy:.6f}",

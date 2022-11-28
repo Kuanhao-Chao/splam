@@ -13,7 +13,6 @@ from math import ceil
 from sklearn.metrics import average_precision_score
 from SpliceNN_constant import *
 
-
 # fix random seed
 def same_seeds(seed):
     torch.manual_seed(seed)

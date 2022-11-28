@@ -42,19 +42,26 @@ def get_hg38_chrom_size():
 
 chrs = get_hg38_chrom_size()
 
-# SAMPLE_NUM = 1261186
+# TARGET = "NEG_junctions"
+TARGET = "NEG_noncan_junctions"
+
 EACH_JUNC_PER_CHROM = 5000
 MIN_JUNC = 400
-threshold = "all"
+MAX_JUNC = 2000
+ROOT_DIR = "../TEST/"+TARGET+"/"
+os.makedirs(ROOT_DIR, exist_ok=True)
+os.makedirs(ROOT_DIR+"donor/", exist_ok=True)
+os.makedirs(ROOT_DIR+"acceptor/", exist_ok=True)
+os.makedirs(ROOT_DIR+"d_a/", exist_ok=True)
+
+threshold = "100"
 hg38_ref = "../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa"
-output_bed = "../NEG_junctions/neg_junctions.bed"
-output_file = "../INPUTS/Intersection/input_neg.fa"
 D_A_POSITIONS = set()
 
 def task(description, sequence):
-    fw_donor = open("../NEG_junctions/donor/"+description+"_donor.bed", "w")
-    fw_acceptor = open("../NEG_junctions/acceptor/"+description+"_acceptor.bed", "w")
-    fw_da = open("../NEG_junctions/d_a/"+description+"_d_a.bed", "w")
+    fw_donor = open(ROOT_DIR+"donor/"+description+"_donor.bed", "w")
+    fw_acceptor = open(ROOT_DIR+"acceptor/"+description+"_acceptor.bed", "w")
+    fw_da = open(ROOT_DIR+"d_a/"+description+"_d_a.bed", "w")
     print("description: ", description)
     # for i in range(EACH_JUNC_PER_CHROM):
     idx = 0
@@ -71,33 +78,40 @@ def task(description, sequence):
         donor_idx = 0
         acceptor_idx = 0
         
-        no_donor = False
-        no_acceptor = False
-        while not((select_num+donor_idx+1) < len(sequence) and sequence[select_num+donor_idx] == "G" and sequence[select_num+donor_idx+1] == "T"):
-            # if description == "chr13":
-            #     print("donor_idx: ", donor_idx)
-            donor_idx += 1
-            if select_num+donor_idx+1 >= chrs[description]:
-                no_donor = True
-                break
-            if donor_idx > 10000:
-                no_donor = True
-                break
-        if no_donor:
-            continue
 
-        while not((select_num+donor_idx+acceptor_idx) < len(sequence) and sequence[select_num+donor_idx+acceptor_idx-2] == "A" and sequence[select_num+donor_idx+acceptor_idx-1] == "G" and acceptor_idx > MIN_JUNC):
-            # if description == "chr13":
-            #     print("acceptor_idx: ", acceptor_idx)
-            acceptor_idx += 1
-            if select_num+donor_idx+acceptor_idx >= chrs[description]:
-                no_acceptor = True
-                break
-            if acceptor_idx > 10000:
-                no_donor = True
-                break
-        if no_acceptor:
-            continue
+        if TARGET == "NEG_junctions":
+            no_donor = False
+            no_acceptor = False
+            while not((select_num+donor_idx+1) < len(sequence) and sequence[select_num+donor_idx] == "G" and sequence[select_num+donor_idx+1] == "T"):
+                # if description == "chr13":
+                #     print("donor_idx: ", donor_idx)
+                donor_idx += 1
+                if select_num+donor_idx+1 >= chrs[description]:
+                    no_donor = True
+                    break
+                if donor_idx > 10000:
+                    no_donor = True
+                    break
+            if no_donor:
+                continue
+
+            while not((select_num+donor_idx+acceptor_idx) < len(sequence) and sequence[select_num+donor_idx+acceptor_idx-2] == "A" and sequence[select_num+donor_idx+acceptor_idx-1] == "G" and acceptor_idx > MIN_JUNC):
+                # if description == "chr13":
+                #     print("acceptor_idx: ", acceptor_idx)
+                acceptor_idx += 1
+                if select_num+donor_idx+acceptor_idx >= chrs[description]:
+                    no_acceptor = True
+                    break
+                if acceptor_idx > 10000:
+                    no_donor = True
+                    break
+            if no_acceptor:
+                continue
+
+        elif TARGET == "NEG_noncan_junctions":
+
+            donor_idx = 0
+            acceptor_idx = random.randint(MIN_JUNC, MAX_JUNC)
 
         donor_s = select_num+donor_idx-200
         donor_e = select_num+donor_idx+200
@@ -136,6 +150,9 @@ def task(description, sequence):
     fw_da.close()
 
 def main():
+    ############################################################
+    # Excluding Positive JUNCS`../BAM_junctions/100_juncs/d_a.bed`
+    ############################################################
     with open("../BAM_junctions/"+str(threshold)+"_juncs/d_a.bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
@@ -144,7 +161,11 @@ def main():
             # print("eles[0], eles[1]: ", eles[0], eles[1], eles[2])
             D_A_POSITIONS.add((eles[0], eles[1]))
             D_A_POSITIONS.add((eles[0], eles[2]))
+    print("D_A_POSITIONS: ", len(D_A_POSITIONS))
 
+    ############################################################
+    # Excluding REF JUNCS `../REF_junctions/ref_d_a.sort.bed`
+    ############################################################
     with open("../REF_junctions/ref_d_a.sort.bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
@@ -153,14 +174,40 @@ def main():
             # print("eles[0], eles[1]: ", eles[0], eles[1], eles[2])
             D_A_POSITIONS.add((eles[0], eles[1]))
             D_A_POSITIONS.add((eles[0], eles[2]))
+    print("D_A_POSITIONS: ", len(D_A_POSITIONS))
 
-    print("D_A_POSITIONS size: ", len(D_A_POSITIONS))
+    ############################################################
+    # Excluding NEG noncan JUNCS `../NEG_noncan_junctions/d_a.bed`
+    ############################################################
+    with open("../NEG_noncan_junctions/d_a.bed", "r") as f:
+        lines = f.read().splitlines()
+        for line in lines:
+            # print(line)
+            eles = line.split("\t")
+            # print("eles[0], eles[1]: ", eles[0], eles[1], eles[2])
+            D_A_POSITIONS.add((eles[0], eles[1]))
+            D_A_POSITIONS.add((eles[0], eles[2]))
+    print("D_A_POSITIONS: ", len(D_A_POSITIONS))
+
+    ############################################################
+    # Excluding NEG JUNCS `../NEG_junctions/d_a.bed`
+    ############################################################
+    with open("../NEG_junctions/d_a.bed", "r") as f:
+        lines = f.read().splitlines()
+        for line in lines:
+            # print(line)
+            eles = line.split("\t")
+            # print("eles[0], eles[1]: ", eles[0], eles[1], eles[2])
+            D_A_POSITIONS.add((eles[0], eles[1]))
+            D_A_POSITIONS.add((eles[0], eles[2]))
+    print("D_A_POSITIONS: ", len(D_A_POSITIONS))
+
 
     with open(hg38_ref, 'r') as handle:
         # print("Len: ", len(SeqIO.parse(handle, 'fasta')))
-        Path("../NEG_junctions/donor/").mkdir(parents=True, exist_ok=True)
-        Path("../NEG_junctions/acceptor/").mkdir(parents=True, exist_ok=True)
-        Path("../NEG_junctions/d_a/").mkdir(parents=True, exist_ok=True)
+        Path(ROOT_DIR+"donor/").mkdir(parents=True, exist_ok=True)
+        Path(ROOT_DIR+"acceptor/").mkdir(parents=True, exist_ok=True)
+        Path(ROOT_DIR+"d_a/").mkdir(parents=True, exist_ok=True)
 
         workers = 20
         # with ThreadPoolExecutor(workers) as pool:
