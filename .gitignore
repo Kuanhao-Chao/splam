@@ -25,3 +25,4 @@ src_all_isoforms/data
 *.bed
 src/MODEL/
 src/INPUTS/Intersection/
+slides/

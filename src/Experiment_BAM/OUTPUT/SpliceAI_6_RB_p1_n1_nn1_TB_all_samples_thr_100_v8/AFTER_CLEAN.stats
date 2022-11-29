@@ -1,0 +1,30 @@
+# gffcompare v0.12.6 | Command line was:
+#gffcompare -r ../../../../../PR_MultiStringTie/hg38c_protein_and_lncRNA.gtf SRR1352129_chr22.keep.gtf -o AFTER_CLEAN
+#
+
+#= Summary for dataset: SRR1352129_chr22.keep.gtf 
+#     Query mRNAs :    1183 in     600 loci  (1133 multi-exon transcripts)
+#            (231 multi-transcript loci, ~2.0 transcripts per locus)
+# Reference mRNAs :  147673 in   33922 loci  (145911 multi-exon)
+# Super-loci w/ reference transcripts:      388
+#-----------------| Sensitivity | Precision  |
+        Base level:     1.0     |    59.9    |
+        Exon level:     1.0     |    70.3    |
+      Intron level:     1.1     |    85.7    |
+Intron chain level:     0.2     |    31.5    |
+  Transcript level:     0.2     |    30.5    |
+       Locus level:     0.8     |    44.7    |
+
+     Matching intron chains:     357
+       Matching transcripts:     361
+              Matching loci:     269
+
+          Missed exons:  366975/371942	( 98.7%)
+           Novel exons:     547/4710	( 11.6%)
+        Missed introns:  315245/319864	( 98.6%)
+         Novel introns:     311/3930	(  7.9%)
+           Missed loci:   33523/33922	( 98.8%)
+            Novel loci:     133/600	( 22.2%)
+
+ Total union super-loci across all input datasets: 521 
+1183 out of 1183 consensus transcripts written in AFTER_CLEAN.annotated.gtf (0 discarded as redundant)

@@ -41,7 +41,7 @@ test_loader = get_dataloader(BATCH_SIZE, TARGET, "./INPUTS/input_pos.fa", N_WORK
 # print(f"[Info]: Finish loading data!",flush = True)
 print("valid_iterator: ", len(test_loader))
 MODEL_OUTPUT_BASE = "./OUTPUT/SpliceAI_6_RB_p1_n1_nn1_TB_all_samples_thr_100_v8/"
-TARGET_OUTPUT_BASE = MODEL_OUTPUT_BASE + TARGET + "/"
+TARGET_OUTPUT_BASE = MODEL_OUTPUT_BASE + "/"
 LOG_OUTPUT_TEST_BASE = TARGET_OUTPUT_BASE + "LOG/"
 os.makedirs(LOG_OUTPUT_TEST_BASE, exist_ok=True)
 
@@ -99,7 +99,10 @@ def test_one_epoch(epoch_idx, test_loader):
             else:
                 num_bad_juncs += 1
                 chr, start, end, strand = seq_names[idx].split("_")
-                fw_removed_juncs.write(chr[1:]+ "\t"+ start+ "\t"+ end+ "\tJUNC\t0\t"+ strand+ "\n")
+                if strand == "+":
+                    fw_removed_juncs.write(chr[1:]+ "\t"+ start+ "\t"+ end+ "\tJUNC\t0\t"+ strand+ "\n")
+                elif strand == "-":
+                    fw_removed_juncs.write(chr[1:]+ "\t"+ end + "\t" + start + "\tJUNC\t0\t"+ strand+ "\n")
                 print("seq_names: ", chr[1:], start, end, strand)
 
         Acceptor_Sum += yp[is_expr, 1, :].sum(axis=0).to('cpu').detach().numpy()
