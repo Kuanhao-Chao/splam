@@ -12,7 +12,7 @@ class myDataset(Dataset):
         self.data = []
 
         # CONSTANT_SIZE = "all"
-        CONSTANT_SIZE = 10000
+        CONSTANT_SIZE = "all"
         #################################
         ## Processing 'POSITIVE' samples
         #################################
@@ -28,6 +28,9 @@ class myDataset(Dataset):
                     print("seq_name: ", seq_name)
                 elif idx % 2 == 1:
                     seq = line
+                    if seq[0] == ">":
+                        seq_name = line
+                        continue
                     # print(seq)
                     X, Y = create_datapoints(seq, '+')
                     X = torch.Tensor(np.array(X))

@@ -1,11 +1,12 @@
 import os
+import sys
 
-def main():
+def main(argv):
     SEQ_LEN = 400
-    os.makedirs("./INPUTS/", exist_ok=True)
-    fw = open("./INPUTS/input_pos.fa", "w")
-    fr_donor = open("./juncs/donor_seq.fa", "r")
-    fr_acceptor = open("./juncs/acceptor_seq.fa", "r")
+    os.makedirs("../../results/"+argv[0]+"/INPUTS/", exist_ok=True)
+    fw = open("../../results/"+argv[0]+"/INPUTS/input.fa", "w")
+    fr_donor = open("../../results/"+argv[0]+"/juncs/donor_seq.fa", "r")
+    fr_acceptor = open("../../results/"+argv[0]+"/juncs/acceptor_seq.fa", "r")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()
@@ -43,7 +44,7 @@ def main():
             donor_pos = (int(d_start) + int(d_end))//2
             acceptor_pos = (int(a_start) + int(a_end))//2
 
-            fw.write(chromosome + "_" + str(donor_pos) +"_"+ str(acceptor_pos) + "_" + d_strand + "\n")
+            fw.write(chromosome + ";" + str(donor_pos) +";"+ str(acceptor_pos) + ";" + d_strand + "\n")
         else:
             seq_d = lines_d[idx]
             seq_a = lines_a[idx]
@@ -105,4 +106,4 @@ def main():
         print("Acceptor: ", key, " (", value, ")")
     fw.close()
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

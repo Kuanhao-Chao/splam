@@ -1,22 +1,28 @@
-from torch.nn import Module, BatchNorm1d, ReLU, Conv1d, ModuleList, Softmax
+from torch.nn import Module, BatchNorm1d, LazyBatchNorm1d, ReLU, LeakyReLU, Conv1d, LazyConv1d, ModuleList, Softmax
 import numpy as np
 
 
 CL_max = 10000
 
+CARDINALITY_ITEM = 4
 
 class ResidualUnit(Module):
-    def __init__(self, l, w, ar):
+    def __init__(self, l, w, ar, bot_mul=1):
         super().__init__()
+        bot_channels = int(round(l * bot_mul))
         self.batchnorm1 = BatchNorm1d(l)
-        self.relu = ReLU()
+        self.relu = LeakyReLU(0.1)
         self.batchnorm2 = BatchNorm1d(l)
-        self.conv1 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2)
-        self.conv2 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2)
+        self.C = bot_channels//CARDINALITY_ITEM
+        self.conv1 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
+        self.conv2 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
 
     def forward(self, x, y):
         x1 = self.conv1(self.relu(self.batchnorm1(x)))
         x2 = self.conv2(self.relu(self.batchnorm2(x1)))
+        # print("x : ", x.size())
+        # print("x1: ", x1.size())
+        # print("x2: ", x2.size())
         return x + x2, y
 
 
@@ -30,7 +36,7 @@ class Skip(Module):
 
 
 class SpliceNN(Module):
-    def __init__(self, L=32, W=np.array([11]*8+[21]*4+[41]*4), AR=np.array([1]*4+[4]*4+[10]*4+[25]*4)):
+    def __init__(self, L=64, W=np.array([11]*8+[21]*4+[41]*4), AR=np.array([1]*4+[4]*4+[10]*4+[25]*4)):
         super().__init__()
         self.CL = 2 * (AR * (W - 1)).sum()  # context length
         self.conv1 = Conv1d(4, L, 1)
@@ -47,8 +53,6 @@ class SpliceNN(Module):
 
     def forward(self, x):
         x, skip = self.skip1(self.conv1(x), 0)
-        # print("x.size(): ", x.size())
-        # print("skip.size(): ", skip.size())
         for m in self.residual_blocks:
             x, skip = m(x, skip)
         #     print("x.size(): ", x.size())

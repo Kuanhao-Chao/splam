@@ -26,3 +26,5 @@ src_all_isoforms/data
 src/MODEL/
 src/INPUTS/Intersection/
 slides/
+results/
+*.pt

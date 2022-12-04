@@ -1,24 +1,29 @@
 import pysam
+import sys
+import os
 
-def main():
+def main(argv):
     ##############################
     # Read-in invalid junctions
     ##############################
-    MODEL_OUTPUT_BASE = "./OUTPUT/SpliceAI_6_RB_p1_n1_nn1_TB_all_samples_thr_100_v8/"
+    MODEL_OUTPUT_BASE = "../../results/"+argv[0]+"/OUTPUT/"+argv[1]+"/"
+    os.makedirs(MODEL_OUTPUT_BASE, exist_ok=True)
+    os.makedirs(MODEL_OUTPUT_BASE+"/BAM/", exist_ok=True)
+
     invalid_juncs = set()
-    fr = open("./OUTPUT/SpliceAI_6_RB_p1_n1_nn1_TB_all_samples_thr_100_v8/removed_junc.bed", 'r')
+    fr = open("../../results/"+argv[0]+"/OUTPUT/"+argv[1]+"/removed_junc.bed", 'r')
     lines = fr.read().splitlines()
     for line in lines:
         chr, start, end, name, score, strand = line.split("\t")
         invalid_juncs.add((chr, start, end, strand))
 
-    print("invalid_juncs: ", invalid_juncs)
+    # print("invalid_juncs: ", invalid_juncs)
     ##############################
     # Process BAM file
     ##############################
-    samfile = pysam.AlignmentFile("../../Dataset/SRR1352129_chr22.bam", "rb")
-    keep_file = pysam.AlignmentFile(MODEL_OUTPUT_BASE + "SRR1352129_chr22.keep.bam", "wb", template=samfile)
-    discard_file = pysam.AlignmentFile(MODEL_OUTPUT_BASE + "SRR1352129_chr22.discard.bam", "wb", template=samfile)
+    samfile = pysam.AlignmentFile("../../Dataset/"+argv[0]+"/"+argv[0]+".bam", "rb")
+    keep_file = pysam.AlignmentFile(MODEL_OUTPUT_BASE + "/BAM/" + argv[0] + ".cleaned.bam", "wb", template=samfile)
+    discard_file = pysam.AlignmentFile(MODEL_OUTPUT_BASE + "/BAM/" + argv[0] + ".discard.bam", "wb", template=samfile)
 
     for read in samfile.fetch():
         # print(read)
@@ -50,4 +55,4 @@ def main():
 
             
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

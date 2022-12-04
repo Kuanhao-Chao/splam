@@ -1,5 +1,6 @@
 import pandas as pd
 import os 
+import sys
 
 def get_hg38_chrom_size():
     f_chrs = open("../hg38_chrom_size.tsv", "r")
@@ -11,7 +12,7 @@ def get_hg38_chrom_size():
     return chrs
 
 
-def main():
+def main(argv):
     chrs = get_hg38_chrom_size()
 
     threshold = "100"
@@ -21,17 +22,17 @@ def main():
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     #################################
-    os.makedirs("./juncs/", exist_ok=True)
-    fw_donor = open("./juncs/donor.bed", "w")
-    fw_acceptor = open("./juncs/acceptor.bed", "w")
+    os.makedirs("../../results/"+argv[0]+"/juncs/", exist_ok=True)
+    fw_donor = open("../../results/"+argv[0]+"/juncs/donor.bed", "w")
+    fw_acceptor = open("../../results/"+argv[0]+"/juncs/acceptor.bed", "w")
     
-    d_a_bed = "./juncs/d_a.bed"
+    d_a_bed = "../../results/"+argv[0]+"/juncs/d_a.bed"
     fw_da = open(d_a_bed, "w")
     # fw_d = open("BAM_junctions/d.bed", "w")
     # fw_a = open("BAM_junctions/a.bed", "w")
     JUNCS = set()
 
-    with open("./SRR1352129_chr22.spliced.bed", "r") as f:
+    with open("../../Dataset/"+argv[0]+"/"+argv[0]+".bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             eles = line.split("\t")
@@ -94,4 +95,4 @@ def main():
     fw_da.close()
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

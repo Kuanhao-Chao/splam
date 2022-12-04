@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 
 def main():
-    LOG_DIR = "./MODEL/SpliceAI_6_RB_p1_n1_nn1_TB_all_samples_thr_100_v8/LOG/"
+    LOG_DIR = "./MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_v15/LOG/"
     OUT_DIR = LOG_DIR + "IMG/"
     os.makedirs(OUT_DIR, exist_ok=True)
 

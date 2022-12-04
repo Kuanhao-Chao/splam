@@ -44,10 +44,9 @@ def one_hot_encode(Xd, Yd):
 # This is for Conformer model 
 #######################################
 def create_datapoints(seq, strand):
-    
     # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
     seq = seq.upper().replace('A', '1').replace('C', '2')
-    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0')
+    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0').replace('K', '0').replace('R', '0')
     jn_start = JUNC_START
     jn_end = JUNC_END
     # print("Donor: ", seq[CL_MAX//2+jn_start: CL_MAX//2+jn_start+2])
