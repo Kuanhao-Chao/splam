@@ -32,6 +32,8 @@ def main():
     dot = make_dot(yp.mean(), params=dict(model.named_parameters()), show_attrs=True, show_saved=True)
     print(dot)
 
+    
+
     # is_expr = (labels.sum(axis=(1,2)) >= 1)
     # print("is_expr: ",is_expr)
 

@@ -3,15 +3,16 @@ import sys
 import os
 
 def main(argv):
+    SEQ_LEN="1000"
     ##############################
     # Read-in invalid junctions
     ##############################
-    MODEL_OUTPUT_BASE = "../../results/"+argv[0]+"/OUTPUT/"+argv[1]+"/"
+    MODEL_OUTPUT_BASE = "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/OUTPUT/"+argv[1]+"/"
     os.makedirs(MODEL_OUTPUT_BASE, exist_ok=True)
     os.makedirs(MODEL_OUTPUT_BASE+"/BAM/", exist_ok=True)
 
     invalid_juncs = set()
-    fr = open("../../results/"+argv[0]+"/OUTPUT/"+argv[1]+"/removed_junc.bed", 'r')
+    fr = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/OUTPUT/"+argv[1]+"/removed_junc.bed", 'r')
     lines = fr.read().splitlines()
     for line in lines:
         chr, start, end, name, score, strand = line.split("\t")

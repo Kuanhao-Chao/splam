@@ -63,7 +63,7 @@ class myDataset(Dataset):
 
 def get_dataloader(batch_size, target, fa_file, n_workers):
     """Generate dataloader"""
-    dataset = myDataset(target, fa_file, 800)
+    dataset = myDataset(target, fa_file, 1000)
 
     test_loader = DataLoader(
         dataset,

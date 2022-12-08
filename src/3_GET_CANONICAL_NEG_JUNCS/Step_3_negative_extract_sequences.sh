@@ -1,6 +1,7 @@
-# TARGET="NEG_junctions"
-TARGET="NEG_noncan_junctions"
+TARGET="NEG_junctions"
+SEQ_LENGTH=1000
+# TARGET="NEG_noncan_junctions"
 
-bedtools getfasta -s -fi ../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa -bed ../$TARGET/donor.bed -fo ../$TARGET/donor_seq.fa
+bedtools getfasta -s -fi ../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa -bed ../$TARGET/${SEQ_LENGTH}bp/donor.bed -fo ../$TARGET/${SEQ_LENGTH}bp/donor_seq.fa
 
-bedtools getfasta -s -fi ../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa -bed ../$TARGET/acceptor.bed -fo ../$TARGET/acceptor_seq.fa
+bedtools getfasta -s -fi ../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa -bed ../$TARGET/${SEQ_LENGTH}bp/acceptor.bed -fo ../$TARGET/${SEQ_LENGTH}bp/acceptor_seq.fa

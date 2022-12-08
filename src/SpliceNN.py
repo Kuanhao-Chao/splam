@@ -4,7 +4,7 @@ import numpy as np
 
 CL_max = 10000
 
-CARDINALITY_ITEM = 4
+CARDINALITY_ITEM = 16
 
 class ResidualUnit(Module):
     def __init__(self, l, w, ar, bot_mul=1):
@@ -18,8 +18,10 @@ class ResidualUnit(Module):
         self.conv2 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
 
     def forward(self, x, y):
-        x1 = self.conv1(self.relu(self.batchnorm1(x)))
-        x2 = self.conv2(self.relu(self.batchnorm2(x1)))
+        # x1 = self.conv1(self.relu(self.batchnorm1(x)))
+        # x2 = self.conv2(self.relu(self.batchnorm2(x1)))
+        x1 = self.relu(self.batchnorm1(self.conv1(x)))
+        x2 = self.relu(self.batchnorm1(self.conv1(x1)))
         # print("x : ", x.size())
         # print("x1: ", x1.size())
         # print("x2: ", x2.size())

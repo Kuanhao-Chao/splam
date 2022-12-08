@@ -11,22 +11,34 @@ def get_hg38_chrom_size():
         chrs[eles[0]] = int(eles[1])
     return chrs
 
+def get_hg38_chrom_size_STAR():
+    f_chrs = open("../hg38_chrom_size_refseq.tsv", "r")
+    lines = f_chrs.read().splitlines()
+    chrs = {}
+    for line in lines:
+        eles = line.split(" ")
+        chrs[eles[0]] = int(eles[1])
+    return chrs
 
 def main(argv):
-    chrs = get_hg38_chrom_size()
+    if (argv[1] == "STAR"):
+        chrs = get_hg38_chrom_size_STAR()        
+    else:
+        chrs = get_hg38_chrom_size()
 
     threshold = "100"
+    SEQ_LEN="1000"
 
     #################################
     # For 'd_a.bed': 0-based, 1-based
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     #################################
-    os.makedirs("../../results/"+argv[0]+"/juncs/", exist_ok=True)
-    fw_donor = open("../../results/"+argv[0]+"/juncs/donor.bed", "w")
-    fw_acceptor = open("../../results/"+argv[0]+"/juncs/acceptor.bed", "w")
+    os.makedirs("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/", exist_ok=True)
+    fw_donor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor.bed", "w")
+    fw_acceptor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor.bed", "w")
     
-    d_a_bed = "../../results/"+argv[0]+"/juncs/d_a.bed"
+    d_a_bed = "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/d_a.bed"
     fw_da = open(d_a_bed, "w")
     # fw_d = open("BAM_junctions/d.bed", "w")
     # fw_a = open("BAM_junctions/a.bed", "w")
@@ -54,24 +66,21 @@ def main(argv):
                 donor = int(eles[2]) - len_2
                 splice_junc_len = donor - acceptor
 
-            flanking_size = 200
-            if splice_junc_len < 400:
+            flanking_size = 250
+            if splice_junc_len < 500:
                 flanking_size = splice_junc_len // 2
 
             if (strand == "+"):
-                donor_s = donor - 200
+                donor_s = donor - 250
                 donor_e = donor + flanking_size
                 acceptor_s = acceptor - flanking_size
-                acceptor_e = acceptor + 200
+                acceptor_e = acceptor + 250
 
             elif (strand == "-"):
                 donor_s = donor - flanking_size
-                donor_e = donor + 200
-                acceptor_s = acceptor - 200
+                donor_e = donor + 250
+                acceptor_s = acceptor - 250
                 acceptor_e = acceptor + flanking_size
-                
-            # if chr == "chr22_KI270733v1_random" or chr == "chr22_KI270734v1_random":
-            #     continue
 
             if donor_e >= chrs[chr] or acceptor_e >= chrs[chr]:
                 continue

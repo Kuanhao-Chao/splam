@@ -18,8 +18,10 @@ argv = sys.argv[1:]
 EPOCH_NUM = 20
 BATCH_SIZE = 100
 N_WORKERS = 1
+SEQ_LEN="1000"
+
 device = torch.device("cuda" if torch.cuda.is_available() else "mps")
-model = torch.load("../MODEL/"+argv[1]+"/SpliceNN_12.pt")
+model = torch.load("../MODEL/"+argv[1]+"/SpliceNN_19.pt")
 
 #############################
 # Model Initialization
@@ -33,14 +35,14 @@ print("model: ", model)
 TARGET = 'positive'
 
 # test_loader = get_dataloader(BATCH_SIZE, 'negative_canonical', N_WORKERS)
-test_loader = get_dataloader(BATCH_SIZE, TARGET, "../../results/"+argv[0]+"/INPUTS/input.fa", N_WORKERS)
+test_loader = get_dataloader(BATCH_SIZE, TARGET, "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/input.fa", N_WORKERS)
 # test_loader = get_dataloader(BATCH_SIZE, 'negative_noncanonical', N_WORKERS)
 
 # train_iterator = iter(train_loader)
 # valid_iterator = iter(valid_loader)
 # print(f"[Info]: Finish loading data!",flush = True)
 print("valid_iterator: ", len(test_loader))
-MODEL_OUTPUT_BASE = "../../results/"+argv[0]+"/OUTPUT/"+argv[1]+"/"
+MODEL_OUTPUT_BASE = "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/OUTPUT/"+argv[1]+"/"
 TARGET_OUTPUT_BASE = MODEL_OUTPUT_BASE + "/"
 LOG_OUTPUT_TEST_BASE = TARGET_OUTPUT_BASE + "LOG/"
 os.makedirs(LOG_OUTPUT_TEST_BASE, exist_ok=True)
@@ -63,16 +65,16 @@ def test_one_epoch(epoch_idx, test_loader):
     epoch_acceptor_acc = 0
     pbar = tqdm(total=len(test_loader), ncols=0, desc="Test", unit=" step")
 
-    Acceptor_Sum = np.zeros(800)
-    Donor_Sum = np.zeros(800)
+    Acceptor_Sum = np.zeros(1000)
+    Donor_Sum = np.zeros(1000)
 
-    threshold = 0.5
+    threshold = 0.3
     num_good_juncs = 0
     num_bad_juncs = 0
     for batch_idx, data in enumerate(test_loader):
         # print("batch_idx: ", batch_idx)
-        # DNAs:  torch.Size([40, 800, 4])
-        # labels:  torch.Size([40, 1, 800, 3])
+        # DNAs:  torch.Size([40, 1000, 4])
+        # labels:  torch.Size([40, 1, 1000, 3])
         DNAs, labels, seq_names = data 
         DNAs = DNAs.to(torch.float32).to(device)
         labels = labels.to(torch.float32).to(device)
@@ -92,7 +94,7 @@ def test_one_epoch(epoch_idx, test_loader):
             d_idx = [i for i in range(len(Donor_YP[idx])) if Donor_YP[idx][i] > threshold]
             a_idx = [i for i in range(len(Acceptor_YP[idx])) if Acceptor_YP[idx][i] > threshold]
 
-            if 200 in d_idx and 600 in a_idx:
+            if 250 in d_idx and 750 in a_idx:
                 # print("d_idx: ", d_idx)
                 # print("a_idx: ", a_idx)
                 num_good_juncs += 1

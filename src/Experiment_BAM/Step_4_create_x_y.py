@@ -2,11 +2,12 @@ import os
 import sys
 
 def main(argv):
-    SEQ_LEN = 400
-    os.makedirs("../../results/"+argv[0]+"/INPUTS/", exist_ok=True)
-    fw = open("../../results/"+argv[0]+"/INPUTS/input.fa", "w")
-    fr_donor = open("../../results/"+argv[0]+"/juncs/donor_seq.fa", "r")
-    fr_acceptor = open("../../results/"+argv[0]+"/juncs/acceptor_seq.fa", "r")
+    HALF_SEQ_LEN = 500
+    SEQ_LEN="1000"
+    os.makedirs("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/", exist_ok=True)
+    fw = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/input.fa", "w")
+    fr_donor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor_seq.fa", "r")
+    fr_acceptor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor_seq.fa", "r")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()
@@ -54,24 +55,24 @@ def main(argv):
             if len_d != len_a:
                 print("seq_d: ", len_d)
                 print("seq_a: ", len_a)
-            if len_d == SEQ_LEN and len_a == SEQ_LEN:
+            if len_d == HALF_SEQ_LEN and len_a == HALF_SEQ_LEN:
                 x = seq_d + seq_a
-                # y = (200, 602)
+                # y = (250, 602)
             else:
-                x = seq_d + (SEQ_LEN - len_d) * 'N' + (SEQ_LEN - len_a) * 'N' + seq_a
-                # y = (200, 602)
+                x = seq_d + (HALF_SEQ_LEN - len_d) * 'N' + (HALF_SEQ_LEN - len_a) * 'N' + seq_a
+                # y = (250, 602)
             
             print("x: ", len(x))
             print("x: ", len(x))
 
             x = x.upper()
-            if x[200] == "N" or x[201] == "N" or x[599] == "N" or x[600] == "N":
+            if x[250] == "N" or x[201] == "N" or x[749] == "N" or x[750] == "N":
                 continue
 
             fw.write(x + "\n")
 
-            donor_dimer = x[200:202]
-            acceptor_dimer = x[598:600]
+            donor_dimer = x[250:252]
+            acceptor_dimer = x[748:750]
 
 
             if donor_dimer not in donors.keys():

@@ -13,6 +13,7 @@ from math import ceil
 from sklearn.metrics import average_precision_score
 from SpliceNN_constant import *
 
+SEQ_LEN = 1000
 # fix random seed
 def same_seeds(seed):
     torch.manual_seed(seed)
@@ -53,7 +54,7 @@ def create_datapoints(seq, strand):
     # print("Donor: ", seq[CL_MAX//2+jn_end-2: CL_MAX//2+jn_end])
 
     X0 = np.asarray(list(map(int, list(seq))))
-    Y0 = [np.zeros(800) for t in range(1)]
+    Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
 
     if strand == '+':
         for t in range(1):        
@@ -168,7 +169,7 @@ def model_fn(DNAs, labels, model):
 
 
 def categorical_crossentropy_2d(y_true, y_pred):
-    WEIGHT = 100
+    WEIGHT = 1000
     # prod = output[:,0]*target
     # return -prod[prod<0].sum()
     # print("y_true: ", y_true)
@@ -198,7 +199,7 @@ def categorical_crossentropy_2d(y_true, y_pred):
 #     # print("Donor: ", seq[CL_MAX//2+jn_end-2: CL_MAX//2+jn_end])
 
 #     X0 = np.asarray(list(map(int, list(seq))))
-#     Y0 = [np.zeros(800) for t in range(1)]
+#     Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
 
 
 #     if strand == '+':
@@ -274,6 +275,45 @@ def print_threshold_statistics(y_true, y_pred, threshold, TOTAL_TP, TOTAL_FN, TO
     # print("LCL_TOTAL_TP: ", LCL_TOTAL_TP)
     # print("LCL_TOTAL_FN: ", LCL_TOTAL_FN)
     # print("LCL_TOTAL_FP: ", LCL_TOTAL_FP)
+
+    TOTAL_TP += LCL_TOTAL_TP
+    TOTAL_FN += LCL_TOTAL_FN
+    TOTAL_FP += LCL_TOTAL_FP
+    TOTAL_TN += LCL_TOTAL_TN
+
+    # precision = np.size(np.intersect1d(idx_true, idx_pred)) \
+    #             / float(len(idx_pred))        
+    # recall = np.size(np.intersect1d(idx_true, idx_pred)) \
+    #             / float(len(idx_true)) 
+
+    # print("precision: ", precision)
+    # print("recall:    ", recall)
+    return TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN, LCL_TOTAL_TP, LCL_TOTAL_FN, LCL_TOTAL_FP, LCL_TOTAL_TN
+
+def print_junc_statistics(D_YL, A_YL, D_YP, A_YP, threshold, TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN):
+
+    label_junc_idx = (D_YL[:, 250]==1) & (A_YL[:, 750]==1)
+    label_nonjunc_idx = (D_YL[:, 250]==0) & (A_YL[:, 750]==0)
+    predict_junc_idx = (D_YP[:, 250]>=threshold) & (A_YP[:, 750]>=threshold)
+    predict_nonjunc_idx = (D_YP[:, 250]<threshold) | (A_YP[:, 750]<threshold)
+
+    idx_true = np.nonzero(label_junc_idx == True)[0]
+    idx_pred = np.nonzero(predict_junc_idx == True)[0]
+
+    # print("idx_true: ", idx_true)
+    # print("idx_pred: ", idx_pred)
+
+    LCL_TOTAL_TP = np.size(np.intersect1d(idx_true, idx_pred))
+    LCL_TOTAL_FN = len(idx_true) - LCL_TOTAL_TP
+    LCL_TOTAL_FP = len(idx_pred) - LCL_TOTAL_TP
+
+    # LCL_TOTAL_TN = np.size(np.intersect1d(label_nonjunc_idx, predict_nonjunc_idx))
+    LCL_TOTAL_TN = len(D_YL) - LCL_TOTAL_TP - LCL_TOTAL_FN - LCL_TOTAL_FP
+
+    # print("LCL_TOTAL_TP: ", LCL_TOTAL_TP)
+    # print("LCL_TOTAL_FN: ", LCL_TOTAL_FN)
+    # print("LCL_TOTAL_FP: ", LCL_TOTAL_FP)
+    # print("LCL_TOTAL_TN: ", LCL_TOTAL_TN)
 
     TOTAL_TP += LCL_TOTAL_TP
     TOTAL_FN += LCL_TOTAL_FN

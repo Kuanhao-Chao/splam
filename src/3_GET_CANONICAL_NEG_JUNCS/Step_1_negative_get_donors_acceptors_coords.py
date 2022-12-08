@@ -43,18 +43,20 @@ def get_hg38_chrom_size():
 chrs = get_hg38_chrom_size()
 
 # SAMPLE_NUM = 1261186
+SEQ_LENGTH = "1000"
 EACH_JUNC_PER_CHROM = 5000
 MIN_JUNC = 400
-threshold = "all"
+THRESHOLD = "100"
 hg38_ref = "../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa"
-output_bed = "../NEG_junctions/neg_junctions.bed"
-output_file = "../INPUTS/Intersection/input_neg.fa"
+output_bed = "../NEG_junctions/"+SEQ_LENGTH+"bp/neg_junctions.bed"
+output_file = "../INPUTS/"+SEQ_LENGTH+"bp/input_neg.fa"
 D_A_POSITIONS = set()
+os.makedirs("../NEG_junctions/"+SEQ_LENGTH+"bp/", exist_ok=True)
 
 def task(description, sequence):
-    fw_donor = open("../NEG_junctions/donor/"+description+"_donor.bed", "w")
-    fw_acceptor = open("../NEG_junctions/acceptor/"+description+"_acceptor.bed", "w")
-    fw_da = open("../NEG_junctions/d_a/"+description+"_d_a.bed", "w")
+    fw_donor = open("../NEG_junctions/"+SEQ_LENGTH+"bp/donor/"+description+"_donor.bed", "w")
+    fw_acceptor = open("../NEG_junctions/"+SEQ_LENGTH+"bp/acceptor/"+description+"_acceptor.bed", "w")
+    fw_da = open("../NEG_junctions/"+SEQ_LENGTH+"bp/d_a/"+description+"_d_a.bed", "w")
     print("description: ", description)
     # for i in range(EACH_JUNC_PER_CHROM):
     idx = 0
@@ -99,10 +101,10 @@ def task(description, sequence):
         if no_acceptor:
             continue
 
-        donor_s = select_num+donor_idx-200
-        donor_e = select_num+donor_idx+200
-        acceptor_s = select_num+donor_idx+acceptor_idx-200
-        acceptor_e = select_num+donor_idx+acceptor_idx+200
+        donor_s = select_num+donor_idx-250
+        donor_e = select_num+donor_idx+250
+        acceptor_s = select_num+donor_idx+acceptor_idx-250
+        acceptor_e = select_num+donor_idx+acceptor_idx+250
 
         ######################################################
         # Check if the donors and acceptors are in range.
@@ -136,7 +138,7 @@ def task(description, sequence):
     fw_da.close()
 
 def main():
-    with open("../BAM_junctions/"+str(threshold)+"_juncs/d_a.bed", "r") as f:
+    with open("../BAM_junctions/"+SEQ_LENGTH+"bp/"+str(THRESHOLD)+"_juncs/d_a.bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             # print(line)
@@ -158,9 +160,9 @@ def main():
 
     with open(hg38_ref, 'r') as handle:
         # print("Len: ", len(SeqIO.parse(handle, 'fasta')))
-        Path("../NEG_junctions/donor/").mkdir(parents=True, exist_ok=True)
-        Path("../NEG_junctions/acceptor/").mkdir(parents=True, exist_ok=True)
-        Path("../NEG_junctions/d_a/").mkdir(parents=True, exist_ok=True)
+        Path("../NEG_junctions/"+SEQ_LENGTH+"bp/donor/").mkdir(parents=True, exist_ok=True)
+        Path("../NEG_junctions/"+SEQ_LENGTH+"bp/acceptor/").mkdir(parents=True, exist_ok=True)
+        Path("../NEG_junctions/"+SEQ_LENGTH+"bp/d_a/").mkdir(parents=True, exist_ok=True)
 
         workers = 20
         # with ThreadPoolExecutor(workers) as pool:

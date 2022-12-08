@@ -28,3 +28,7 @@ src/INPUTS/Intersection/
 slides/
 results/
 *.pt
+src/BAM_REF_Intersection/
+src/INPUTS/
+src_spliceNN/SpliceNN/build/
+src_spliceNN/SpliceNN/libtorch/

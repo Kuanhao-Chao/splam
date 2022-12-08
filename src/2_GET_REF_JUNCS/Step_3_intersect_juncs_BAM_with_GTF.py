@@ -11,22 +11,22 @@ def get_hg38_chrom_size():
     return chrs
 
 def main():
-    threshold = "100"
+    THRESHOLD = "100"
+    SEQ_LEN = "1000"
 
-    bam_juncs = pd.read_csv('../BAM_junctions/'+threshold+'_juncs/d_a.bed', sep="\t", header=None)
+    bam_juncs = pd.read_csv('../BAM_junctions/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/d_a.bed', sep="\t", header=None)
     ref_juncs = pd.read_csv('../REF_junctions/ref_d_a.sort.bed', sep="\t", header=None)
     # Calling merge() function
-    os.makedirs('../BAM_REF_Intersection/'+threshold+'_juncs/', exist_ok=True)
-    d_a_out = '../BAM_REF_Intersection/'+threshold+'_juncs/d_a.bed'
-    d_out = '../BAM_REF_Intersection/'+threshold+'_juncs/donor.bed'
-    a_out = '../BAM_REF_Intersection/'+threshold+'_juncs/acceptor.bed'
+    os.makedirs('../BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/', exist_ok=True)
+    d_a_out = '../BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/d_a.bed'
+    d_out = '../BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/donor.bed'
+    a_out = '../BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/acceptor.bed'
 
     intersect_df = pd.merge(ref_juncs, bam_juncs, how ='inner', on =[0, 1, 2, 5])
     out_df = intersect_df[[0, 1, 2, "3_x", "4_x", 5]]
     out_df = out_df.rename(columns={0:"chr",1:"start", 2:"end", "3_x":"junc", "4_x":"score", 5:"strand"})
     print("out_df: ", out_df)
     out_df.to_csv(d_a_out, sep="\t", index=False, header=None)
-
 
     chrs = get_hg38_chrom_size()
 
@@ -57,20 +57,20 @@ def main():
                 splice_junc_len = donor - acceptor
 
     
-            flanking_size = 200
-            if splice_junc_len < 400:
-                flanking_size = splice_junc_len // 2
+            flanking_size = 250
+            if splice_junc_len < 250:
+                flanking_size = splice_junc_len
 
             if (strand == "+"):
-                donor_s = donor - 200
+                donor_s = donor - 250
                 donor_e = donor + flanking_size
                 acceptor_s = acceptor - flanking_size
-                acceptor_e = acceptor + 200
+                acceptor_e = acceptor + 250
 
             elif (strand == "-"):
                 donor_s = donor - flanking_size
-                donor_e = donor + 200
-                acceptor_s = acceptor - 200
+                donor_e = donor + 250
+                acceptor_s = acceptor - 250
                 acceptor_e = acceptor + flanking_size
 
             if donor_e >= chrs[chr] or acceptor_e >= chrs[chr]:

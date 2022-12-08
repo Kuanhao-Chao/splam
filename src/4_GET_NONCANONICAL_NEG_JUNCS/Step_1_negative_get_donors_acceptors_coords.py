@@ -43,11 +43,12 @@ def get_hg38_chrom_size():
     return chrs
 
 
-threshold = "all"
+THRESHOLD = "100"
 EACH_CHR = 10000
 D_A_POSITIONS = set()
 MIN_GAP = 400
 MAX_GAP = 2000
+SEQ_LEN = "1000"
 chrs = get_hg38_chrom_size()
 
 #################################
@@ -61,9 +62,9 @@ chrs = get_hg38_chrom_size()
 # For 'acceptor.bed': 0-based, 0-based
 #################################
 def task(chromosome):
-    fw_donor = open("../NEG_noncan_junctions/donor/"+chromosome+"_donor.bed", "w")
-    fw_acceptor = open("../NEG_noncan_junctions/acceptor/"+chromosome+"_acceptor.bed", "w")
-    fw_da = open("../NEG_noncan_junctions/d_a/"+chromosome+"_d_a.bed", "w")
+    fw_donor = open("../NEG_noncan_junctions/"+SEQ_LEN+"bp/donor/"+chromosome+"_donor.bed", "w")
+    fw_acceptor = open("../NEG_noncan_junctions/"+SEQ_LEN+"bp/acceptor/"+chromosome+"_acceptor.bed", "w")
+    fw_da = open("../NEG_noncan_junctions/"+SEQ_LEN+"bp/d_a/"+chromosome+"_d_a.bed", "w")
     print("chromosome: ", chromosome)
     # for idx in range(EACH_CHR):
     idx = 0    
@@ -82,18 +83,18 @@ def task(chromosome):
             select_donor = random.randint(0, chrs[chromosome]-10000)
             select_acceptor = select_donor+random.randint(MIN_GAP, MAX_GAP)
 
-            for d in range(select_donor-200, select_donor+200):
+            for d in range(select_donor-250, select_donor+250):
                 if (chromosome, d) in D_A_POSITIONS:
                     in_da_set = True
-            for a in range(select_acceptor-200, select_acceptor+200):
+            for a in range(select_acceptor-250, select_acceptor+250):
                 if (chromosome, a) in D_A_POSITIONS:
                     in_da_set = True
             if not in_da_set:
                 break
-        donor_s = select_donor-200
-        donor_e = select_donor+200
-        acceptor_s = select_acceptor-200
-        acceptor_e = select_acceptor+200
+        donor_s = select_donor-250
+        donor_e = select_donor+250
+        acceptor_s = select_acceptor-250
+        acceptor_e = select_acceptor+250
         if donor_e > chrs[chromosome] or acceptor_e > chrs[chromosome] or donor_s <= 0 or acceptor_s <= 0:
             continue
 
@@ -106,11 +107,11 @@ def task(chromosome):
         idx += 1
 
 def main():
-    Path("../NEG_noncan_junctions/donor/").mkdir(parents=True, exist_ok=True)
-    Path("../NEG_noncan_junctions/acceptor/").mkdir(parents=True, exist_ok=True)
-    Path("../NEG_noncan_junctions/d_a/").mkdir(parents=True, exist_ok=True)
+    Path("../NEG_noncan_junctions/"+SEQ_LEN+"bp/donor/").mkdir(parents=True, exist_ok=True)
+    Path("../NEG_noncan_junctions/"+SEQ_LEN+"bp/acceptor/").mkdir(parents=True, exist_ok=True)
+    Path("../NEG_noncan_junctions/"+SEQ_LEN+"bp/d_a/").mkdir(parents=True, exist_ok=True)
 
-    with open("../BAM_junctions/"+str(threshold)+"_juncs/d_a.bed", "r") as f:
+    with open("../BAM_junctions/"+SEQ_LEN+"bp/"+str(THRESHOLD)+"_juncs/d_a.bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             # print(line)
