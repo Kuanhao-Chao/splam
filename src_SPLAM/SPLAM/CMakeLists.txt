@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(SpliceNN)
+project(SPLAM)
 set(CMAKE_CXX_STANDARD 17)
 
 find_package(Torch REQUIRED)
@@ -17,9 +17,11 @@ ExternalProject_Add(htslib
         INSTALL_COMMAND ""
         )
 
-add_executable(SpliceNN src/SpliceNN.cpp 
+add_executable(SPLAM src/splam.cpp 
         src/junc.cpp 
         src/GSam.cpp
+        src/util.h
+        src/tmerge.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GArgs.h
@@ -27,11 +29,11 @@ add_executable(SpliceNN src/SpliceNN.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.cpp)
 
-add_dependencies(SpliceNN htslib)
-target_link_libraries(SpliceNN ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+add_dependencies(SPLAM htslib)
+target_link_libraries(SPLAM ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
         
-target_link_libraries(SpliceNN "${TORCH_LIBRARIES}")
-set_property(TARGET SpliceNN PROPERTY CXX_STANDARD 17)
+target_link_libraries(SPLAM "${TORCH_LIBRARIES}")
+set_property(TARGET SPLAM PROPERTY CXX_STANDARD 17)
 
 
 # The following code block is suggested to be used on Windows.
@@ -39,11 +41,11 @@ set_property(TARGET SpliceNN PROPERTY CXX_STANDARD 17)
 # the DLLs need to be copied to avoid memory errors.
 if (MSVC)
   file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
-  add_custom_command(TARGET SpliceNN
+  add_custom_command(TARGET example-app
                      POST_BUILD
                      COMMAND ${CMAKE_COMMAND} -E copy_if_different
                      ${TORCH_DLLS}
-                     $<TARGET_FILE_DIR:SpliceNN>)
+                     $<TARGET_FILE_DIR:example-app>)
 endif (MSVC)
 
-install(TARGETS SpliceNN DESTINATION ${CMAKE_INSTALL_PREFIX})
+# install(TARGETS SPLAM DESTINATION ${CMAKE_INSTALL_PREFIX})

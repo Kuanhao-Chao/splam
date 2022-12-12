@@ -52,9 +52,11 @@ os.makedirs(LOG_OUTPUT_TEST_BASE, exist_ok=True)
 ############################
 test_log_loss = LOG_OUTPUT_TEST_BASE + "test_loss.txt"
 removed_juncs = TARGET_OUTPUT_BASE + "removed_junc.bed"
+junc_scores = TARGET_OUTPUT_BASE + "junc_scores.bed"
 
 fw_test_log_loss = open(test_log_loss, 'w')
 fw_removed_juncs = open(removed_juncs, 'w')
+fw_junc_scores = open(junc_scores, 'w')
 
 def test_one_epoch(epoch_idx, test_loader):
     print("*********************")
@@ -71,6 +73,8 @@ def test_one_epoch(epoch_idx, test_loader):
     threshold = 0.3
     num_good_juncs = 0
     num_bad_juncs = 0
+
+    junc_counter = 0
     for batch_idx, data in enumerate(test_loader):
         # print("batch_idx: ", batch_idx)
         # DNAs:  torch.Size([40, 1000, 4])
@@ -94,18 +98,28 @@ def test_one_epoch(epoch_idx, test_loader):
             d_idx = [i for i in range(len(Donor_YP[idx])) if Donor_YP[idx][i] > threshold]
             a_idx = [i for i in range(len(Acceptor_YP[idx])) if Acceptor_YP[idx][i] > threshold]
 
+            donor_score = Donor_YP[idx][250]
+            acceptor_score = Acceptor_YP[idx][750]
+
+            chr, start, end, strand = seq_names[idx].split(";")
             if 250 in d_idx and 750 in a_idx:
                 # print("d_idx: ", d_idx)
                 # print("a_idx: ", a_idx)
                 num_good_juncs += 1
             else:
                 num_bad_juncs += 1
-                chr, start, end, strand = seq_names[idx].split(";")
                 if strand == "+":
                     fw_removed_juncs.write(chr[1:]+ "\t"+ start+ "\t"+ end+ "\tJUNC\t0\t"+ strand+ "\n")
                 elif strand == "-":
                     fw_removed_juncs.write(chr[1:]+ "\t"+ end + "\t" + start + "\tJUNC\t0\t"+ strand+ "\n")
                 # print("seq_names: ", chr[1:], start, end, strand)
+            
+
+            if strand == "+":
+                fw_junc_scores.write(chr[1:]+ "\t"+ start + "\t" + end + "\tJUNC_" + str(junc_counter) + "\t0\t"+ strand+ "\t" + str(donor_score) + "\t" + str(acceptor_score) + "\n")
+            elif strand == "-":
+                fw_junc_scores.write(chr[1:]+ "\t"+ end + "\t" + start + "\tJUNC_" + str(junc_counter) + "\t0\t"+ strand+ "\t" + str(donor_score) + "\t" + str(acceptor_score) + "\n")
+            junc_counter += 1
 
         Acceptor_Sum += yp[is_expr, 1, :].sum(axis=0).to('cpu').detach().numpy()
         Donor_Sum += yp[is_expr, 2, :].sum(axis=0).to('cpu').detach().numpy()

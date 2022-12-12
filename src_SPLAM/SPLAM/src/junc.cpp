@@ -3,7 +3,7 @@
 
 #include "GSam.h"
 
-bool verbose=false;
+// bool verbose=false;
 bool bigwig=false;
 int juncCount=0;
 
