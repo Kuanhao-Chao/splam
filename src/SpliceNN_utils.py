@@ -13,7 +13,11 @@ from math import ceil
 from sklearn.metrics import average_precision_score
 from SpliceNN_constant import *
 
+<<<<<<< HEAD
 SEQ_LEN = 600
+=======
+SEQ_LEN = 1000
+>>>>>>> 1189cf671af213485edd35714556970d3b41c338
 # fix random seed
 def same_seeds(seed):
     torch.manual_seed(seed)

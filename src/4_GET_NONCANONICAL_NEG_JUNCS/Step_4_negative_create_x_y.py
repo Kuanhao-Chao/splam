@@ -42,14 +42,14 @@ def main():
             # print("x: ", len(x))
             # print("x: ", len(x))
             x = x.upper()
-            if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
+            if x[250] == "N" or x[251] == "N" or x[749] == "N" or x[750] == "N":
                 continue
 
             fw.write(chr_name)
             fw.write(x + "\n")
 
-            donor_dimer = x[QUATER_SEQ_LEN:QUATER_SEQ_LEN+2]
-            acceptor_dimer = x[QUATER_SEQ_LEN*3-2:QUATER_SEQ_LEN*3]
+            donor_dimer = x[250:252]
+            acceptor_dimer = x[748:750]
 
 
             if donor_dimer not in donors.keys():

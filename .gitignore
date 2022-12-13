@@ -32,7 +32,10 @@ src/BAM_REF_Intersection/
 src/INPUTS/
 src_spliceNN/SpliceNN/build/
 src_spliceNN/SpliceNN/libtorch/
+<<<<<<< HEAD
 src_SPLAM/SPLAM/build/
 src_intron_matcher/build/
 src_SPLAM/SPLAM/include/htslib/
 src_intron_matcher/build/include/htslib
+=======
+>>>>>>> 1189cf671af213485edd35714556970d3b41c338

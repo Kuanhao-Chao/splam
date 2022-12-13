@@ -102,10 +102,10 @@ def task(description, sequence):
         if no_acceptor:
             continue
 
-        donor_s = select_num+donor_idx-QUATER_SEQ_LEN
-        donor_e = select_num+donor_idx+QUATER_SEQ_LEN
-        acceptor_s = select_num+donor_idx+acceptor_idx-QUATER_SEQ_LEN
-        acceptor_e = select_num+donor_idx+acceptor_idx+QUATER_SEQ_LEN
+        donor_s = select_num+donor_idx-250
+        donor_e = select_num+donor_idx+250
+        acceptor_s = select_num+donor_idx+acceptor_idx-250
+        acceptor_e = select_num+donor_idx+acceptor_idx+250
 
         ######################################################
         # Check if the donors and acceptors are in range.
