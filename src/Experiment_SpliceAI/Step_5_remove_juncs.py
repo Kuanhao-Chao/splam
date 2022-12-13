@@ -7,13 +7,13 @@ def main(argv):
     ##############################
     # Read-in invalid junctions
     ##############################
-    MODEL_OUTPUT_BASE = "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/OUTPUT/"+argv[1]+"/"
+    MODEL_OUTPUT_BASE = "../../results/spliceAI/"+SEQ_LEN+"bp/"+argv[0]+"/OUTPUT/"+argv[1]+"/"
     os.makedirs(MODEL_OUTPUT_BASE, exist_ok=True)
     os.makedirs(MODEL_OUTPUT_BASE+"/BAM/", exist_ok=True)
 
     threshold = 0.3
     invalid_juncs = set()
-    fr = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/OUTPUT/"+argv[1]+"/junc_scores.bed", 'r')
+    fr = open("../../results/spliceAI/"+SEQ_LEN+"bp/"+argv[0]+"/OUTPUT/"+argv[1]+"/junc_scores.bed", 'r')
     lines = fr.read().splitlines()
     for line in lines:
         chr, start, end, name, score, strand, d_score, a_score = line.split("\t")

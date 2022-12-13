@@ -15,7 +15,8 @@ def main():
     chrs = get_hg38_chrom_size()
 
     THRESHOLD = "100"
-    SEQ_LEN="1000"
+    SEQ_LEN="600"
+    QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 
     #################################
     # For 'd_a.bed': 0-based, 1-based
@@ -54,21 +55,21 @@ def main():
                 donor = int(eles[2]) - len_2
                 splice_junc_len = donor - acceptor
 
-            flanking_size = 250
-            if splice_junc_len < 250:
+            flanking_size = QUATER_SEQ_LEN
+            if splice_junc_len < QUATER_SEQ_LEN:
                 flanking_size = splice_junc_len
                 # flanking_size = splice_junc_len // 2
 
             if (strand == "+"):
-                donor_s = donor - 250
+                donor_s = donor - QUATER_SEQ_LEN
                 donor_e = donor + flanking_size
                 acceptor_s = acceptor - flanking_size
-                acceptor_e = acceptor + 250
+                acceptor_e = acceptor + QUATER_SEQ_LEN
 
             elif (strand == "-"):
                 donor_s = donor - flanking_size
-                donor_e = donor + 250
-                acceptor_s = acceptor - 250
+                donor_e = donor + QUATER_SEQ_LEN
+                acceptor_s = acceptor - QUATER_SEQ_LEN
                 acceptor_e = acceptor + flanking_size
                 
             # if chr == "chr22_KI270733v1_random" or chr == "chr22_KI270734v1_random":

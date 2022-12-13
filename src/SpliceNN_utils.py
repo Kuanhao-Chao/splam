@@ -13,7 +13,7 @@ from math import ceil
 from sklearn.metrics import average_precision_score
 from SpliceNN_constant import *
 
-SEQ_LEN = 1000
+SEQ_LEN = 600
 # fix random seed
 def same_seeds(seed):
     torch.manual_seed(seed)
@@ -169,7 +169,7 @@ def model_fn(DNAs, labels, model):
 
 
 def categorical_crossentropy_2d(y_true, y_pred):
-    WEIGHT = 1000
+    WEIGHT = 600
     # prod = output[:,0]*target
     # return -prod[prod<0].sum()
     # print("y_true: ", y_true)
@@ -292,10 +292,10 @@ def print_threshold_statistics(y_true, y_pred, threshold, TOTAL_TP, TOTAL_FN, TO
 
 def print_junc_statistics(D_YL, A_YL, D_YP, A_YP, threshold, TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN):
 
-    label_junc_idx = (D_YL[:, 250]==1) & (A_YL[:, 750]==1)
-    label_nonjunc_idx = (D_YL[:, 250]==0) & (A_YL[:, 750]==0)
-    predict_junc_idx = (D_YP[:, 250]>=threshold) & (A_YP[:, 750]>=threshold)
-    predict_nonjunc_idx = (D_YP[:, 250]<threshold) | (A_YP[:, 750]<threshold)
+    label_junc_idx = (D_YL[:, 150]==1) & (A_YL[:, 450]==1)
+    label_nonjunc_idx = (D_YL[:, 150]==0) & (A_YL[:, 450]==0)
+    predict_junc_idx = (D_YP[:, 150]>=threshold) & (A_YP[:, 450]>=threshold)
+    predict_nonjunc_idx = (D_YP[:, 150]<threshold) | (A_YP[:, 450]<threshold)
 
     idx_true = np.nonzero(label_junc_idx == True)[0]
     idx_pred = np.nonzero(predict_junc_idx == True)[0]

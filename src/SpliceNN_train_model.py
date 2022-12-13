@@ -76,7 +76,7 @@ valid_iterator = iter(test_loader)
 print(f"[Info]: Finish loading data!",flush = True)
 print("train_iterator: ", len(train_loader))
 print("valid_iterator: ", len(test_loader))
-MODEL_OUTPUT_BASE = "./MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_v19/"
+MODEL_OUTPUT_BASE = "./MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L600_v20/"
 LOG_OUTPUT_BASE = MODEL_OUTPUT_BASE + "LOG/"
 LOG_OUTPUT_TRAIN_BASE = MODEL_OUTPUT_BASE + "LOG/TRAIN/"
 LOG_OUTPUT_TEST_BASE = MODEL_OUTPUT_BASE + "LOG/TEST/"

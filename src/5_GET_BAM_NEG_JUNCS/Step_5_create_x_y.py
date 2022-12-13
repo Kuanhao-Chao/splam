@@ -1,6 +1,7 @@
 THRESHOLD=1
-SEQ_LEN="1000"
-HALF_SEQ_LEN = 500
+SEQ_LEN = "600"
+HALF_SEQ_LEN = int(SEQ_LEN) // 2
+QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 def main():
     fw = open("../INPUTS/"+SEQ_LEN+"bp/input_neg_"+str(THRESHOLD)+".fa", "w")
     fr_donor = open("../BAM_junctions/"+SEQ_LEN+"bp/"+str(THRESHOLD)+"_juncs/donor_seq.fa", "r")
@@ -41,14 +42,14 @@ def main():
             # print("x: ", len(x))
             # print("x: ", len(x))
             x = x.upper()
-            if x[250] == "N" or x[251] == "N" or x[749] == "N" or x[750] == "N":
+            if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
                 continue
 
             fw.write(chr_name)
             fw.write(x + "\n")
 
-            donor_dimer = x[250:252]
-            acceptor_dimer = x[748:750]
+            donor_dimer = x[QUATER_SEQ_LEN:QUATER_SEQ_LEN+2]
+            acceptor_dimer = x[QUATER_SEQ_LEN*3-2:QUATER_SEQ_LEN*3]
 
 
             if donor_dimer not in donors.keys():

@@ -12,7 +12,8 @@ def get_hg38_chrom_size():
 
 def main():
     THRESHOLD = "100"
-    SEQ_LEN = "1000"
+    SEQ_LEN="600"
+    QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 
     bam_juncs = pd.read_csv('../BAM_junctions/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/d_a.bed', sep="\t", header=None)
     ref_juncs = pd.read_csv('../REF_junctions/ref_d_a.sort.bed', sep="\t", header=None)
@@ -57,20 +58,20 @@ def main():
                 splice_junc_len = donor - acceptor
 
     
-            flanking_size = 250
-            if splice_junc_len < 250:
+            flanking_size = QUATER_SEQ_LEN
+            if splice_junc_len < QUATER_SEQ_LEN:
                 flanking_size = splice_junc_len
 
             if (strand == "+"):
-                donor_s = donor - 250
+                donor_s = donor - QUATER_SEQ_LEN
                 donor_e = donor + flanking_size
                 acceptor_s = acceptor - flanking_size
-                acceptor_e = acceptor + 250
+                acceptor_e = acceptor + QUATER_SEQ_LEN
 
             elif (strand == "-"):
                 donor_s = donor - flanking_size
-                donor_e = donor + 250
-                acceptor_s = acceptor - 250
+                donor_e = donor + QUATER_SEQ_LEN
+                acceptor_s = acceptor - QUATER_SEQ_LEN
                 acceptor_e = acceptor + flanking_size
 
             if donor_e >= chrs[chr] or acceptor_e >= chrs[chr]:

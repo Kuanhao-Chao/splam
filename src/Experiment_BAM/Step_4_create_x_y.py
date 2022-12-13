@@ -2,8 +2,9 @@ import os
 import sys
 
 def main(argv):
-    HALF_SEQ_LEN = 500
-    SEQ_LEN="1000"
+    SEQ_LEN="600"
+    HALF_SEQ_LEN = int(SEQ_LEN)//2
+    QUATER_SEQ_LEN = int(SEQ_LEN)//4
     os.makedirs("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/", exist_ok=True)
     fw = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/input.fa", "w")
     fr_donor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor_seq.fa", "r")
@@ -66,13 +67,13 @@ def main(argv):
             print("x: ", len(x))
 
             x = x.upper()
-            if x[250] == "N" or x[201] == "N" or x[749] == "N" or x[750] == "N":
+            if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
                 continue
 
             fw.write(x + "\n")
 
-            donor_dimer = x[250:252]
-            acceptor_dimer = x[748:750]
+            donor_dimer = x[QUATER_SEQ_LEN:QUATER_SEQ_LEN+2]
+            acceptor_dimer = x[QUATER_SEQ_LEN*3-2:QUATER_SEQ_LEN*3]
 
 
             if donor_dimer not in donors.keys():

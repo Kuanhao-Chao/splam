@@ -48,7 +48,8 @@ EACH_CHR = 10000
 D_A_POSITIONS = set()
 MIN_GAP = 400
 MAX_GAP = 2000
-SEQ_LEN = "1000"
+SEQ_LEN="600"
+QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 chrs = get_hg38_chrom_size()
 
 #################################
@@ -83,18 +84,18 @@ def task(chromosome):
             select_donor = random.randint(0, chrs[chromosome]-10000)
             select_acceptor = select_donor+random.randint(MIN_GAP, MAX_GAP)
 
-            for d in range(select_donor-250, select_donor+250):
+            for d in range(select_donor-QUATER_SEQ_LEN, select_donor+QUATER_SEQ_LEN):
                 if (chromosome, d) in D_A_POSITIONS:
                     in_da_set = True
-            for a in range(select_acceptor-250, select_acceptor+250):
+            for a in range(select_acceptor-QUATER_SEQ_LEN, select_acceptor+QUATER_SEQ_LEN):
                 if (chromosome, a) in D_A_POSITIONS:
                     in_da_set = True
             if not in_da_set:
                 break
-        donor_s = select_donor-250
-        donor_e = select_donor+250
-        acceptor_s = select_acceptor-250
-        acceptor_e = select_acceptor+250
+        donor_s = select_donor-QUATER_SEQ_LEN
+        donor_e = select_donor+QUATER_SEQ_LEN
+        acceptor_s = select_acceptor-QUATER_SEQ_LEN
+        acceptor_e = select_acceptor+QUATER_SEQ_LEN
         if donor_e > chrs[chromosome] or acceptor_e > chrs[chromosome] or donor_s <= 0 or acceptor_s <= 0:
             continue
 

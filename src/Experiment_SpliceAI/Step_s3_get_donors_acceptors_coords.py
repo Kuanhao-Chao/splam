@@ -1,6 +1,5 @@
+import os
 import pandas as pd
-import os 
-import sys
 
 def get_hg38_chrom_size():
     f_chrs = open("../hg38_chrom_size.tsv", "r")
@@ -11,76 +10,59 @@ def get_hg38_chrom_size():
         chrs[eles[0]] = int(eles[1])
     return chrs
 
-def get_hg38_chrom_size_STAR():
-    f_chrs = open("../hg38_chrom_size_refseq.tsv", "r")
-    lines = f_chrs.read().splitlines()
-    chrs = {}
-    for line in lines:
-        eles = line.split(" ")
-        chrs[eles[0]] = int(eles[1])
-    return chrs
 
-def main(argv):
-    if (argv[1] == "STAR"):
-        chrs = get_hg38_chrom_size_STAR()        
-    else:
-        chrs = get_hg38_chrom_size()
-
-    threshold = "100"
-    SEQ_LEN="600"
-    QUOTER_SEQ_LEN = int(SEQ_LEN) // 4
+def main():
+    chrs = get_hg38_chrom_size()
 
     #################################
     # For 'd_a.bed': 0-based, 1-based
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     #################################
-    os.makedirs("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/", exist_ok=True)
-    fw_donor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor.bed", "w")
-    fw_acceptor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor.bed", "w")
-    
-    d_a_bed = "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/d_a.bed"
-    fw_da = open(d_a_bed, "w")
-    # fw_d = open("BAM_junctions/d.bed", "w")
-    # fw_a = open("BAM_junctions/a.bed", "w")
-    JUNCS = set()
+    os.makedirs("./juncs/", exist_ok=True)
+    fw_donor = open("./juncs/donor.bed", "w")
+    fw_acceptor = open("./juncs/acceptor.bed", "w")
 
-    with open("../../Dataset/"+argv[0]+"/"+argv[0]+".bed", "r") as f:
+    d_a_bed = "./juncs/d_a.bed"
+    fw_da = open(d_a_bed, "w")
+    JUNCS = set()
+    with open("introns.sort.bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
-            eles = line.split("\t")
+            eles = line.split(" ")
 
             chr = eles[0]
             junc_name = eles[3]
             score = eles[4]
             strand = eles[5]
 
-            lengths = eles[10].split(',')
-            len_1 = int(lengths[0])
-            len_2 = int(lengths[1])
             if (strand == "+"):
-                donor = int(eles[1]) + len_1
-                acceptor = int(eles[2]) - len_2
+                donor = int(eles[1])
+                acceptor = int(eles[2])
                 splice_junc_len = acceptor - donor
             elif (strand == "-"):
-                acceptor = int(eles[1]) + len_1
-                donor = int(eles[2]) - len_2
+                acceptor = int(eles[1])
+                donor = int(eles[2])
                 splice_junc_len = donor - acceptor
+            # print("donor   : ", donor)
+            # print("acceptor: ", acceptor)
+            # print("strand  : ", strand)
+            # print("\n\n")
 
-            flanking_size = QUOTER_SEQ_LEN
-            if splice_junc_len < QUOTER_SEQ_LEN:
-                flanking_size = splice_junc_len
+            flanking_size = 200
+            if splice_junc_len < 400:
+                flanking_size = splice_junc_len // 2
 
             if (strand == "+"):
-                donor_s = donor - QUOTER_SEQ_LEN
+                donor_s = donor - 200
                 donor_e = donor + flanking_size
                 acceptor_s = acceptor - flanking_size
-                acceptor_e = acceptor + QUOTER_SEQ_LEN
+                acceptor_e = acceptor + 200
 
             elif (strand == "-"):
                 donor_s = donor - flanking_size
-                donor_e = donor + QUOTER_SEQ_LEN
-                acceptor_s = acceptor - QUOTER_SEQ_LEN
+                donor_e = donor + 200
+                acceptor_s = acceptor - 200
                 acceptor_e = acceptor + flanking_size
 
             if donor_e >= chrs[chr] or acceptor_e >= chrs[chr]:
@@ -105,4 +87,4 @@ def main(argv):
     fw_da.close()
 
 if __name__ == "__main__":
-    main(sys.argv[1:])
+    main()

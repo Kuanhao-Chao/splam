@@ -1,4 +1,5 @@
-SEQ_LEN=1000
+SEQ_LEN=600
+mkdir ../BAM_REF_Intersection/${SEQ_LEN}bp
 
 bedtools getfasta -s -fi ../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa -bed ../BAM_REF_Intersection/${SEQ_LEN}bp/100_juncs/donor.bed -fo ../BAM_REF_Intersection/${SEQ_LEN}bp/100_juncs/donor_seq.fa
 

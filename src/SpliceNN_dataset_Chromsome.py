@@ -10,7 +10,7 @@ from SpliceNN_utils import *
 
 # Random_90_10 / Chromosome_90_10
 TARGET = "Chromosome_split_p_n_nn_n1"
-SEQ_LEN = "1000"
+SEQ_LEN = "600"
 os.makedirs("./INPUTS/"+SEQ_LEN+"bp/"+TARGET, exist_ok=True)
 
 def split_seq_name(seq):
@@ -48,7 +48,7 @@ class myDataset(Dataset):
                     Y = torch.Tensor(np.array(Y)[0])
                     # print(X)
                     # print(Y)
-                    if X.size()[0] != 1000:
+                    if X.size()[0] != 600:
                         print("seq_name: ", seq_name)
                         print(X.size())
                         print(Y.size())
@@ -80,7 +80,7 @@ class myDataset(Dataset):
                     Y = torch.Tensor(np.array(Y)[0])
                     # print(X)
                     # print(Y)
-                    if X.size()[0] != 1000:
+                    if X.size()[0] != 600:
                         print("seq_name: ", seq_name)
                         print(X.size())
                         print(Y.size())
@@ -110,7 +110,7 @@ class myDataset(Dataset):
                     X, Y = create_datapoints(seq, '-')
                     X = torch.Tensor(np.array(X))
                     Y = torch.Tensor(np.array(Y)[0])
-                    if X.size()[0] != 1000:
+                    if X.size()[0] != 600:
                         print("seq_name: ", seq_name)
                         print(X.size())
                         print(Y.size())
@@ -142,7 +142,7 @@ class myDataset(Dataset):
                     Y = torch.Tensor(np.array(Y)[0])
                     # print(X)
                     # print(Y)
-                    if X.size()[0] != 1000:
+                    if X.size()[0] != 600:
                         print("seq_name: ", seq_name)
                         print(X.size())
                         print(Y.size())
@@ -168,8 +168,8 @@ class myDataset(Dataset):
 
 def save_dataloader(batch_size, n_workers):
     """Generate dataloader"""
-    trainset = myDataset("train", 1000)
-    testset = myDataset("test", 1000)
+    trainset = myDataset("train", int(SEQ_LEN))
+    testset = myDataset("test", int(SEQ_LEN))
 
     train_loader = DataLoader(
         trainset,

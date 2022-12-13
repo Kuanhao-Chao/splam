@@ -43,7 +43,8 @@ def get_hg38_chrom_size():
 chrs = get_hg38_chrom_size()
 
 # SAMPLE_NUM = 1261186
-SEQ_LENGTH = "1000"
+SEQ_LENGTH="600"
+QUATER_SEQ_LEN = int(SEQ_LENGTH) // 4
 EACH_JUNC_PER_CHROM = 5000
 MIN_JUNC = 400
 THRESHOLD = "100"
@@ -101,10 +102,10 @@ def task(description, sequence):
         if no_acceptor:
             continue
 
-        donor_s = select_num+donor_idx-250
-        donor_e = select_num+donor_idx+250
-        acceptor_s = select_num+donor_idx+acceptor_idx-250
-        acceptor_e = select_num+donor_idx+acceptor_idx+250
+        donor_s = select_num+donor_idx-QUATER_SEQ_LEN
+        donor_e = select_num+donor_idx+QUATER_SEQ_LEN
+        acceptor_s = select_num+donor_idx+acceptor_idx-QUATER_SEQ_LEN
+        acceptor_e = select_num+donor_idx+acceptor_idx+QUATER_SEQ_LEN
 
         ######################################################
         # Check if the donors and acceptors are in range.

@@ -16,7 +16,9 @@ def main():
     D_A_POSITIONS=set()
 
     THRESHOLD = "1"
-    SEQ_LEN="1000"
+    SEQ_LEN = "600"
+    HALF_SEQ_LEN = int(SEQ_LEN) // 2
+    QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 
     #################################
     # Adding all splice sites into the 
@@ -122,7 +124,9 @@ def main():
 
 
         lines = f.read().splitlines()
+        counter = 0
         for line in lines:
+            if counter >= 100000: break
             eles = line.split("\t")
 
             chr = eles[0]
@@ -142,21 +146,21 @@ def main():
                 donor = int(eles[2]) - len_2
                 splice_junc_len = donor - acceptor
 
-            flanking_size = 250
-            if splice_junc_len < 250:
+            flanking_size = QUATER_SEQ_LEN
+            if splice_junc_len < QUATER_SEQ_LEN:
                 flanking_size = splice_junc_len
                 # flanking_size = splice_junc_len // 2
 
             if (strand == "+"):
-                donor_s = donor - 250
+                donor_s = donor - QUATER_SEQ_LEN
                 donor_e = donor + flanking_size
                 acceptor_s = acceptor - flanking_size
-                acceptor_e = acceptor + 250
+                acceptor_e = acceptor + QUATER_SEQ_LEN
 
             elif (strand == "-"):
                 donor_s = donor - flanking_size
-                donor_e = donor + 250
-                acceptor_s = acceptor - 250
+                donor_e = donor + QUATER_SEQ_LEN
+                acceptor_s = acceptor - QUATER_SEQ_LEN
                 acceptor_e = acceptor + flanking_size
                 
 
@@ -188,6 +192,7 @@ def main():
                 D_A_POSITIONS.add((chr, acceptor_s))
                 D_A_POSITIONS.add((chr, acceptor_e))
                 if not in_da_set:
+                    counter += 1
                     fw_donor.write(chr + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + junc_name+"_donor" + "\t" + score + "\t" + strand + "\n")
                     fw_acceptor.write(chr + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + score + "\t" + strand + "\n")
 
@@ -196,7 +201,7 @@ def main():
                     elif (strand == "-"):
                         fw_da.write(chr + "\t" + str(acceptor) + "\t" + str(donor+1) + "\tJUNC\t" + score + "\t" + strand + "\n")
 
-    print("D_A_POSITIONS: ", len(D_A_POSITIONS))
+    print("D_A_POSITIONS After: ", len(D_A_POSITIONS))
 
     fw_donor.close()
     fw_acceptor.close()

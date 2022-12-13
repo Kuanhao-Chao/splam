@@ -1,4 +1,4 @@
-SEQ_LEN=1000
+SEQ_LEN=600
 
 if [ $4 = "STAR" ]
 then

@@ -35,11 +35,11 @@ def main(argv):
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     #################################
-    os.makedirs("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/", exist_ok=True)
-    fw_donor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor.bed", "w")
-    fw_acceptor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor.bed", "w")
+    os.makedirs("../../results/spliceAI/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/", exist_ok=True)
+    fw_donor = open("../../results/spliceAI/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor.bed", "w")
+    fw_acceptor = open("../../results/spliceAI/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor.bed", "w")
     
-    d_a_bed = "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/d_a.bed"
+    d_a_bed = "../../results/spliceAI/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/d_a.bed"
     fw_da = open(d_a_bed, "w")
     # fw_d = open("BAM_junctions/d.bed", "w")
     # fw_a = open("BAM_junctions/a.bed", "w")
