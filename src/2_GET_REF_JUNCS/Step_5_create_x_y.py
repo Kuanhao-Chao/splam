@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import os
 
 def main():
@@ -7,12 +6,6 @@ def main():
     QUATER_SEQ_LEN = int(SEQ_LEN) // 4
     THRESHOLD = "100"
     os.makedirs("../INPUTS/"+SEQ_LEN+"bp/")
-=======
-def main():
-    HALF_SEQ_LEN = 500
-    SEQ_LEN = "1000"
-    THRESHOLD = "100"
->>>>>>> 1189cf671af213485edd35714556970d3b41c338
     fw = open("../INPUTS/"+SEQ_LEN+"bp/input_pos.fa", "w")
     fr_donor = open("../BAM_REF_Intersection/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/donor_seq.fa", "r")
     fr_acceptor = open("../BAM_REF_Intersection/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/acceptor_seq.fa", "r")
@@ -56,22 +49,13 @@ def main():
             # print("x: ", len(x))
 
             x = x.upper()
-<<<<<<< HEAD
             if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
-=======
-            if x[250] == "N" or x[251] == "N" or x[749] == "N" or x[750] == "N":
->>>>>>> 1189cf671af213485edd35714556970d3b41c338
                 continue
 
             fw.write(x + "\n")
 
-<<<<<<< HEAD
             donor_dimer = x[QUATER_SEQ_LEN:QUATER_SEQ_LEN+2]
             acceptor_dimer = x[QUATER_SEQ_LEN*3-2:QUATER_SEQ_LEN*3]
-=======
-            donor_dimer = x[250:252]
-            acceptor_dimer = x[748:750]
->>>>>>> 1189cf671af213485edd35714556970d3b41c338
 
             if donor_dimer not in donors.keys():
                 donors[donor_dimer] = 1

@@ -76,3 +76,4 @@ def get_dataloader(batch_size, target, fa_file, n_workers):
     )
 
     return test_loader
+    

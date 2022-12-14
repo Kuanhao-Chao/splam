@@ -18,12 +18,8 @@ argv = sys.argv[1:]
 EPOCH_NUM = 20
 BATCH_SIZE = 100
 N_WORKERS = 1
-<<<<<<< HEAD
 SEQ_LEN="600"
 QUATER_SEQ_LEN = int(SEQ_LEN)//4
-=======
-SEQ_LEN="1000"
->>>>>>> 1189cf671af213485edd35714556970d3b41c338
 
 device = torch.device("cuda" if torch.cuda.is_available() else "mps")
 model = torch.load("../MODEL/"+argv[1]+"/SpliceNN_19.pt")

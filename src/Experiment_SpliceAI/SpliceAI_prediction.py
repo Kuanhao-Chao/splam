@@ -1,183 +1,152 @@
 import os, sys
+import h5py
+import matplotlib.pyplot as plt
+
+
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-import torch
 from TEST_dataset import *
-from SpliceNN import *
-from SpliceNN_utils import *
+# from SpliceNN import *
+# from SpliceNN_utils import *
 import matplotlib.pyplot as plt; plt.rcdefaults()
-import numpy as np
 from tqdm import tqdm
 import warnings
 
-warnings.filterwarnings("ignore")
-argv = sys.argv[1:]
-#############################
-# Global variable definition
-#############################
-EPOCH_NUM = 20
-BATCH_SIZE = 100
-N_WORKERS = 1
-SEQ_LEN="600"
-QUATER_SEQ_LEN = int(SEQ_LEN)//4
+from keras.models import load_model
+from pkg_resources import resource_filename
+from spliceai.utils import one_hot_encode
+import numpy as np
+from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve
 
-device = torch.device("cuda" if torch.cuda.is_available() else "mps")
-model = torch.load("../MODEL/"+argv[1]+"/SpliceNN_19.pt")
+def plot_roc_curve(true_y, y_prob, label):
+    """
+    plots the roc curve based of the probabilities
+    """
+    fpr, tpr, thresholds = precision_recall_curve(true_y, y_prob)
+    plt.plot(fpr, tpr, label=label)
+    plt.legend()
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
 
-#############################
-# Model Initialization
-#############################
-print(f"[Info]: Finish loading model!",flush = True)
-print("model: ", model)
+def main(argv):
+    A_G_TP = 1e-6
+    A_G_FN = 1e-6
+    A_G_FP = 1e-6
+    A_G_TN = 1e-6
+    D_G_TP = 1e-6
+    D_G_FN = 1e-6
+    D_G_FP = 1e-6
+    D_G_TN = 1e-6
 
-#############################
-# Training Data initialization
-#############################
-TARGET = 'positive'
+    J_G_TP = 1e-6
+    J_G_FN = 1e-6
+    J_G_FP = 1e-6
+    J_G_TN = 1e-6
+    input_sequence = 'CGATCTGACGTGGGTGTCATCGCATTATCGATATTGCAT'
+    # Replace this with your custom sequence
 
-# test_loader = get_dataloader(BATCH_SIZE, 'negative_canonical', N_WORKERS)
-test_loader = get_dataloader(BATCH_SIZE, TARGET, "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/input.fa", N_WORKERS)
-# test_loader = get_dataloader(BATCH_SIZE, 'negative_noncanonical', N_WORKERS)
+    BATCH_SIZE = 100
+    context = 10000
+    SEQ_LEN = "600"
+    paths = ('./models/spliceai{}.h5'.format(x) for x in range(1, 6))
+    print("paths: ", paths)
+    models = [load_model(resource_filename('spliceai', x)) for x in paths]
 
-# train_iterator = iter(train_loader)
-# valid_iterator = iter(valid_loader)
-# print(f"[Info]: Finish loading data!",flush = True)
-print("valid_iterator: ", len(test_loader))
-MODEL_OUTPUT_BASE = "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/OUTPUT/"+argv[1]+"/"
-TARGET_OUTPUT_BASE = MODEL_OUTPUT_BASE + "/"
-LOG_OUTPUT_TEST_BASE = TARGET_OUTPUT_BASE + "LOG/"
-os.makedirs(LOG_OUTPUT_TEST_BASE, exist_ok=True)
+    data_dir='./'
 
-############################
-# Log for testing
-############################
-test_log_loss = LOG_OUTPUT_TEST_BASE + "test_loss.txt"
-removed_juncs = TARGET_OUTPUT_BASE + "removed_junc.bed"
-junc_scores = TARGET_OUTPUT_BASE + "junc_scores.bed"
+    h5f = h5py.File("./INPUTS/dataset.h5", 'r')
+    print(h5f.keys())
 
-fw_test_log_loss = open(test_log_loss, 'w')
-fw_removed_juncs = open(removed_juncs, 'w')
-fw_junc_scores = open(junc_scores, 'w')
+    X = h5f["X"]
+    # [0:200]
+    Y = h5f["Y"][0]
+    # [0:200]
 
-def test_one_epoch(epoch_idx, test_loader):
-    print("*********************")
-    print("** Testing Dataset **")
-    print("*********************")
-    epoch_loss = 0
-    epoch_donor_acc = 0
-    epoch_acceptor_acc = 0
-    pbar = tqdm(total=len(test_loader), ncols=0, desc="Test", unit=" step")
+    # print("Y.shape: ", Y.shape)
 
-    Acceptor_Sum = np.zeros(int(SEQ_LEN))
-    Donor_Sum = np.zeros(int(SEQ_LEN))
+    Y_pred = models[0].predict(X, batch_size=BATCH_SIZE)
+    print(Y_pred.shape)
+    # print(Y[:][150])
+    # print(Y[:][450])
+    # print(Y_pred[:][150])
+    # print(Y_pred[:][450])
 
-    threshold = 0.3
-    num_good_juncs = 0
-    num_bad_juncs = 0
 
-    junc_counter = 0
-    for batch_idx, data in enumerate(test_loader):
-        # print("batch_idx: ", batch_idx)
-        # DNAs:  torch.Size([40, 1000, 4])
-        # labels:  torch.Size([40, 1, 1000, 3])
-        DNAs, labels, seq_names = data 
-        DNAs = DNAs.to(torch.float32).to(device)
-        labels = labels.to(torch.float32).to(device)
+    is_expr = (Y.sum(axis=(1,2)) >= 1)
+    # print("is_expr: ", is_expr)
+    # print("is_expr: ", Y.sum(axis=(0,1)))
+    # print("is_expr: ", Y.sum(axis=(0)))
 
-        DNAs = torch.permute(DNAs, (0, 2, 1))
-        labels = torch.permute(labels, (0, 2, 1))
-        loss, yp = model_fn(DNAs, labels, model)
-        
-        is_expr = (labels.sum(axis=(1,2)) >= 1)
+    # Acceptor_YL = labels[is_expr, 1, :].flatten().numpy()
+    Acceptor_YL = Y[:, :, 1].flatten()
+    Acceptor_YP = Y_pred[:, :, 1].flatten()
+    Donor_YL = Y[:, :, 2].flatten()
+    Donor_YP = Y_pred[:, :, 2].flatten()
 
-        # Acceptor_YL = labels[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-        Acceptor_YP = yp[is_expr, 1, :].to('cpu').detach().numpy()
-        # Donor_YL = labels[is_expr, 2, :].flatten().to('cpu').detach().numpy()
-        Donor_YP = yp[is_expr, 2, :].to('cpu').detach().numpy()
+    # print("Acceptor_YL: ", Acceptor_YL.shape)
+    # print("Acceptor_YP: ", Acceptor_YP.shape)
 
-        for idx in range(BATCH_SIZE):
-            d_idx = [i for i in range(len(Donor_YP[idx])) if Donor_YP[idx][i] > threshold]
-            a_idx = [i for i in range(len(Acceptor_YP[idx])) if Acceptor_YP[idx][i] > threshold]
+    # print("Donor_YL: ", Donor_YL.shape)
+    # print("Donor_YP: ", Donor_YP.shape)
 
-            donor_score = Donor_YP[idx][QUATER_SEQ_LEN]
-            acceptor_score = Acceptor_YP[idx][QUATER_SEQ_LEN*3]
+    A_YL = np.array(Y[:, :, 1])
+    A_YP = np.array(Y_pred[:, :, 1])
+    D_YL = np.array(Y[:, :, 2])
+    D_YP = np.array(Y_pred[: , :, 2])
 
-            chr, start, end, strand = seq_names[idx].split(";")
-            if QUATER_SEQ_LEN in d_idx and QUATER_SEQ_LEN*3 in a_idx:
-                # print("d_idx: ", d_idx)
-                # print("a_idx: ", a_idx)
-                num_good_juncs += 1
-            else:
-                num_bad_juncs += 1
-                if strand == "+":
-                    fw_removed_juncs.write(chr[1:]+ "\t"+ start+ "\t"+ end+ "\tJUNC\t0\t"+ strand+ "\n")
-                elif strand == "-":
-                    fw_removed_juncs.write(chr[1:]+ "\t"+ end + "\t" + start + "\tJUNC\t0\t"+ strand+ "\n")
-                # print("seq_names: ", chr[1:], start, end, strand)
-            
+    # print("A_YL: ", A_YL.shape)
+    # print("A_YP: ", A_YP.shape)
 
-            if strand == "+":
-                fw_junc_scores.write(chr[1:]+ "\t"+ start + "\t" + end + "\tJUNC_" + str(junc_counter) + "\t0\t"+ strand+ "\t" + str(donor_score) + "\t" + str(acceptor_score) + "\n")
-            elif strand == "-":
-                fw_junc_scores.write(chr[1:]+ "\t"+ end + "\t" + start + "\tJUNC_" + str(junc_counter) + "\t0\t"+ strand+ "\t" + str(donor_score) + "\t" + str(acceptor_score) + "\n")
-            junc_counter += 1
+    # print("D_YL: ", D_YL.shape)
+    # print("D_YP: ", D_YP.shape)
 
-        Acceptor_Sum += yp[is_expr, 1, :].sum(axis=0).to('cpu').detach().numpy()
-        Donor_Sum += yp[is_expr, 2, :].sum(axis=0).to('cpu').detach().numpy()
+    plot_roc_curve(Acceptor_YL, Acceptor_YP, "Acceptor")
+    plot_roc_curve(Donor_YL, Donor_YP, "Donor")
+    plt.savefig("output_SRR1352129.png", dpi=300)
 
-        # print("Acceptor_Sum: ", Acceptor_Sum.shape)
-        # print("Acceptor_Sum: ", Acceptor_Sum)
-        # print("Donor_Sum: ", Donor_Sum.shape)
-        # print("Donor_Sum: ", Donor_Sum)
+    for i in range(1, 10, 1):
+        threshold = i * 0.1
+        J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = print_junc_statistics(D_YL, A_YL, D_YP, A_YP, threshold, J_G_TP, J_G_FN, J_G_FP, J_G_TN)        
+        A_accuracy, A_auc = print_top_1_statistics(Acceptor_YL, Acceptor_YP)
+        D_accuracy, D_auc = print_top_1_statistics(Donor_YL, Donor_YP)
+        A_G_TP, A_G_FN, A_G_FP, A_G_TN, A_TP, A_FN, A_FP, A_TN = print_threshold_statistics(Acceptor_YL, Acceptor_YP, threshold, A_G_TP, A_G_FN, A_G_FP, A_G_TN)
+        D_G_TP, D_G_FN, D_G_FP, D_G_TN, D_TP, D_FN, D_FP, D_TN = print_threshold_statistics(Donor_YL, Donor_YP, threshold, D_G_TP, D_G_FN, D_G_FP, D_G_TN)
 
-        batch_loss = loss.item()
-        epoch_loss += loss.item()
 
-        pbar.update(1)
-        pbar.set_postfix(
-            epoch=batch_idx,
-            idx_train=len(test_loader)*BATCH_SIZE,
-            loss=f"{batch_loss:.6f}",
-        )
-        fw_test_log_loss.write(str(batch_loss)+ "\n")
-    pbar.close()
+        A_G_TP = int(A_G_TP)
+        A_G_FN = int(A_G_FN)
+        A_G_FP = int(A_G_FP)
+        A_G_TN = int(A_G_TN)
 
-    fw_test_log_loss.close()
-    fw_removed_juncs.close()
-
-    acceptor_scores = Acceptor_Sum / (len(test_loader)*BATCH_SIZE)
-    donor_scores = Donor_Sum / (len(test_loader)*BATCH_SIZE)
-    # print("acceptor_scores: ", acceptor_scores)
-    # print("donor_scores: ", donor_scores)
-    print(f'Epoch {epoch_idx+0:03}: | Loss: {epoch_loss/len(test_loader):.5f} | Donor Acc: {epoch_donor_acc/len(test_loader):.3f} | Acceptor Acc: {epoch_acceptor_acc/len(test_loader):.3f}')
-    print(f'Expected #prediction: {len(test_loader)*BATCH_SIZE+0:03}')
-    print("Number of good junctions : ", num_good_juncs)
-    print("Number of bad junctions  : ", num_bad_juncs)
-
-    print("")
-    print("\n\n")
-
-    y_pos = np.arange(len(Acceptor_Sum))
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax2 = ax.twinx()  
-
-    ax.bar(y_pos, acceptor_scores, align='center', alpha=0.5, width=5, color="blue")
-    ax2.bar(y_pos, donor_scores, align='center', alpha=0.5, width=5, color="red")
-
-    plt.ylabel('SpliceNN prediction score')
-    plt.title('SpliceNN')
-
-    plt.savefig(TARGET_OUTPUT_BASE+"spliceNN_"+TARGET+".png", dpi=300)
+        D_G_TP = int(D_G_TP)
+        D_G_FN = int(D_G_FN)
+        D_G_FP = int(D_G_FP)
+        D_G_TN = int(D_G_TN)
+        # print(f'Epoch {epoch_idx+0:03}: | Loss: {epoch_loss/len(train_loader):.5f} | Donor Acc: {epoch_donor_acc/len(train_loader):.3f} | Acceptor Acc: {epoch_acceptor_acc/len(train_loader):.3f}')
+        print(">>>>> Threshold: ", threshold)
+        print(f'Junction Precision: {J_G_TP/(J_G_TP+J_G_FP):.5f} | Junction Recall: {J_G_TP/(J_G_TP+J_G_FN):.5f} | TP: {J_G_TP} | FN: {J_G_FN} | FP: {J_G_FP} | TN: {J_G_TN}')
+        print(f'Donor Accuracy   : {A_accuracy:.5f} | Donor AUC   : {A_auc:.5f} | Donor Precision   : {D_G_TP/(D_G_TP+D_G_FP):.5f} | Donor Recall   : {D_G_TP/(D_G_TP+D_G_FN):.5f} | TP: {D_G_TP} | FN: {D_G_FN} | FP: {D_G_FP} | TN: {D_G_TN}')
+        print(f'Acceptor Accuracy: {D_accuracy:.5f} | Acceptor AUC: {D_auc:.5f} | Acceptor Precision: {A_G_TP/(A_G_TP+A_G_FP):.5f} | Acceptor Recall: {A_G_TP/(A_G_TP+A_G_FN):.5f} | TP: {A_G_TP} | FN: {A_G_FN} | FP: {A_G_FP} | TN: {A_G_TN}')
+        # print ("Learning rate: %.5f" % (get_lr(optimizer)))
+        print(">>>>>>>>>>>>>>>\n\n")
 
 
 
-def main():
-    #############################
-    # Model Training
-    #############################
-    # for epoch_num in range(EPOCH_NUM):
-    test_one_epoch(0, test_loader)
+    # for key in h5f.keys():
+    #     X = h5f[key]
+    #     print(Y)
+
+
+
+    # x = one_hot_encode('N'*(context//2) + input_sequence + 'N'*(context//2))[None, :]
+    # y = np.mean([models[m].predict(x) for m in range(5)], axis=0)
+
+    # acceptor_prob = y[0, :, 1]
+    # donor_prob = y[0, :, 2]
+
+    # print("acceptor_prob: ", acceptor_prob)
+    # print("donor_prob   : ", donor_prob)
 
 
 if __name__ == "__main__":
-    main()
+    main(sys.argv[1:])

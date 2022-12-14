@@ -1,9 +1,5 @@
 # mkdir ../NEG_junctions/pre_filter/
-<<<<<<< HEAD
-SEQ_LENGTH=600
-=======
-SEQ_LENGTH=1000
->>>>>>> 1189cf671af213485edd35714556970d3b41c338
+SEQ_LENGTH=800
 for DONOR_F in "../NEG_junctions/${SEQ_LENGTH}bp/donor"/*
 do
     echo "$DONOR_F"

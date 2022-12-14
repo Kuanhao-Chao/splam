@@ -1,0 +1,214 @@
+[Info]: Finish loading model!
+model:  SpliceNN(
+  (conv1): Conv1d(4, 64, kernel_size=(1,), stride=(1,))
+  (skip1): Skip(
+    (conv): Conv1d(64, 64, kernel_size=(1,), stride=(1,))
+  )
+  (residual_blocks): ModuleList(
+    (0): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(5,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(5,), groups=4)
+    )
+    (1): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(5,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(5,), groups=4)
+    )
+    (2): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(5,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(5,), groups=4)
+    )
+    (3): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(5,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(5,), groups=4)
+    )
+    (4): Skip(
+      (conv): Conv1d(64, 64, kernel_size=(1,), stride=(1,))
+    )
+    (5): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(25,), dilation=(5,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(25,), dilation=(5,), groups=4)
+    )
+    (6): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(25,), dilation=(5,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(25,), dilation=(5,), groups=4)
+    )
+    (7): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(25,), dilation=(5,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(25,), dilation=(5,), groups=4)
+    )
+    (8): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(25,), dilation=(5,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(25,), dilation=(5,), groups=4)
+    )
+    (9): Skip(
+      (conv): Conv1d(64, 64, kernel_size=(1,), stride=(1,))
+    )
+    (10): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(50,), dilation=(10,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(50,), dilation=(10,), groups=4)
+    )
+    (11): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(50,), dilation=(10,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(50,), dilation=(10,), groups=4)
+    )
+    (12): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(50,), dilation=(10,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(50,), dilation=(10,), groups=4)
+    )
+    (13): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(50,), dilation=(10,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(11,), stride=(1,), padding=(50,), dilation=(10,), groups=4)
+    )
+    (14): Skip(
+      (conv): Conv1d(64, 64, kernel_size=(1,), stride=(1,))
+    )
+    (15): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(150,), dilation=(15,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(150,), dilation=(15,), groups=4)
+    )
+    (16): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(150,), dilation=(15,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(150,), dilation=(15,), groups=4)
+    )
+    (17): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(150,), dilation=(15,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(150,), dilation=(15,), groups=4)
+    )
+    (18): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(150,), dilation=(15,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(150,), dilation=(15,), groups=4)
+    )
+    (19): Skip(
+      (conv): Conv1d(64, 64, kernel_size=(1,), stride=(1,))
+    )
+    (20): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(200,), dilation=(20,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(200,), dilation=(20,), groups=4)
+    )
+    (21): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(200,), dilation=(20,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(200,), dilation=(20,), groups=4)
+    )
+    (22): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(200,), dilation=(20,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(200,), dilation=(20,), groups=4)
+    )
+    (23): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(200,), dilation=(20,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(200,), dilation=(20,), groups=4)
+    )
+    (24): Skip(
+      (conv): Conv1d(64, 64, kernel_size=(1,), stride=(1,))
+    )
+    (25): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(250,), dilation=(25,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(250,), dilation=(25,), groups=4)
+    )
+    (26): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(250,), dilation=(25,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(250,), dilation=(25,), groups=4)
+    )
+    (27): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(250,), dilation=(25,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(250,), dilation=(25,), groups=4)
+    )
+    (28): ResidualUnit(
+      (batchnorm1): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (relu): LeakyReLU(negative_slope=0.1)
+      (batchnorm2): BatchNorm1d(64, eps=1e-05, momentum=0.1, affine=True, track_running_stats=True)
+      (conv1): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(250,), dilation=(25,), groups=4)
+      (conv2): Conv1d(64, 64, kernel_size=(21,), stride=(1,), padding=(250,), dilation=(25,), groups=4)
+    )
+    (29): Skip(
+      (conv): Conv1d(64, 64, kernel_size=(1,), stride=(1,))
+    )
+    (30): Skip(
+      (conv): Conv1d(64, 64, kernel_size=(1,), stride=(1,))
+    )
+  )
+  (last): Conv1d(64, 3, kernel_size=(1,), stride=(1,))
+  (softmax): Softmax(dim=1)
+)
+Loading dataset:  ./INPUTS/600bp/Chromosome_split_p_n_nn_n1/test.pt
+valid_iterator:  349
+*********************
+** Testing Dataset **
+*********************
+Epoch 000: | Loss: 0.03067 | Donor Acc: 0.923 | Acceptor Acc: 0.922
+Expected #prediction: 34900
+Junction Precision  : 0.88726 | Junction Recall: 0.99269 | TP: 11545.000001 | FN: 85.000001 | FP: 1467.0000009999999 | TN: 21803.000001
+Donor Precision     : 0.88567 | Donor Recall   : 0.99312 | TP: 11550 | FN: 80 | FP: 1491 | TN: 20926879
+Acceptor Precision  : 0.88494 | Acceptor Recall: 0.99329 | TP: 11552 | FN: 78 | FP: 1502 | TN: 20926868
+
+
+
+

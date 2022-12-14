@@ -48,7 +48,7 @@ EACH_CHR = 10000
 D_A_POSITIONS = set()
 MIN_GAP = 400
 MAX_GAP = 2000
-SEQ_LEN="600"
+SEQ_LEN="800"
 QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 chrs = get_hg38_chrom_size()
 

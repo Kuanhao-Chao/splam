@@ -1,5 +1,5 @@
 # mkdir ../NEG_noncan_junctions/pre_filter/
-SEQ_LENGTH=600
+SEQ_LENGTH=800
 for DONOR_F in "../NEG_noncan_junctions/${SEQ_LENGTH}bp/donor"/*
 do
     echo "$DONOR_F"

@@ -1,4 +1,4 @@
-SEQ_LEN = "600"
+SEQ_LEN = "800"
 HALF_SEQ_LEN = int(SEQ_LEN) // 2
 QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 
