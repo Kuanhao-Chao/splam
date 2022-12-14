@@ -35,3 +35,4 @@ src_SPLAM/SPLAM/include/htslib/
 src_intron_matcher/build/include/htslib
 src/Experiment_SpliceAI/INPUTS/
 src/Experiment_SpliceAI/models/
+__pycache__/
