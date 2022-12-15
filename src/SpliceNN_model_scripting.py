@@ -16,7 +16,7 @@ print(model)
 # model_scripted.save('model_scripted.pt') # Save
 
 # Trace the model with random data.
-example_input = torch.rand(1, 4, 600, device="cpu")
+example_input = torch.rand(1, 4, 800, device="cpu")
 model_traced = torch.jit.trace(model, example_input)
 # model_scripted = torch.jit.script(model_traced)
 

@@ -27,10 +27,8 @@ def main():
     fw_donor = open("../BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/donor.bed", "w")
     fw_acceptor = open("../BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/acceptor.bed", "w")
     
-    d_a_bed = "../BAM_junctions/"+SEQ_LEN+"bp/100_juncs/d_a.bed"
+    d_a_bed = "../BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/d_a.bed"
     fw_da = open(d_a_bed, "w")
-    # fw_d = open("BAM_junctions/d.bed", "w")
-    # fw_a = open("BAM_junctions/a.bed", "w")
     JUNCS = set()
 
     with open("../BAM_junctions/junctions_"+str(THRESHOLD)+".bed", "r") as f:
@@ -58,7 +56,6 @@ def main():
             flanking_size = QUATER_SEQ_LEN
             if splice_junc_len < QUATER_SEQ_LEN:
                 flanking_size = splice_junc_len
-                # flanking_size = splice_junc_len // 2
 
             if (strand == "+"):
                 donor_s = donor - QUATER_SEQ_LEN
@@ -71,9 +68,6 @@ def main():
                 donor_e = donor + QUATER_SEQ_LEN
                 acceptor_s = acceptor - QUATER_SEQ_LEN
                 acceptor_e = acceptor + flanking_size
-                
-            # if chr == "chr22_KI270733v1_random" or chr == "chr22_KI270734v1_random":
-            #     continue
 
             if donor_e >= chrs[chr] or acceptor_e >= chrs[chr]:
                 continue
@@ -86,6 +80,7 @@ def main():
                 JUNCS.add(new_junc)
                 fw_donor.write(chr + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + junc_name+"_donor" + "\t" + score + "\t" + strand + "\n")
                 fw_acceptor.write(chr + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + score + "\t" + strand + "\n")
+
 
                 if (strand == "+"):
                     fw_da.write(chr + "\t" + str(donor) + "\t" + str(acceptor+1) + "\tJUNC\t" + score + "\t" + strand + "\n")

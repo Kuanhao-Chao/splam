@@ -1,5 +1,5 @@
 THRESHOLD=1
-SEQ_LEN = "600"
+SEQ_LEN = "800"
 HALF_SEQ_LEN = int(SEQ_LEN) // 2
 QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 def main():
@@ -39,8 +39,6 @@ def main():
                 x = seq_d + (HALF_SEQ_LEN - len_d) * 'N' + (HALF_SEQ_LEN - len_a) * 'N' + seq_a
                 # y = (200, 602)
             
-            # print("x: ", len(x))
-            # print("x: ", len(x))
             x = x.upper()
             if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
                 continue

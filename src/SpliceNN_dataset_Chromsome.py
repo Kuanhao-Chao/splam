@@ -10,7 +10,7 @@ from SpliceNN_utils import *
 
 # Random_90_10 / Chromosome_90_10
 TARGET = "Chromosome_split_p_n_nn_n1"
-SEQ_LEN = "600"
+SEQ_LEN = "800"
 os.makedirs("./INPUTS/"+SEQ_LEN+"bp/"+TARGET, exist_ok=True)
 
 def split_seq_name(seq):
@@ -22,9 +22,9 @@ class myDataset(Dataset):
         self.data = []
 
         if type == "train":
-            CONSTANT_SIZE = 142366
+            CONSTANT_SIZE = 176086
         else:
-            CONSTANT_SIZE = 23294
+            CONSTANT_SIZE = 23914
 
         CONSTANT_SIZE_NEG = math.ceil(CONSTANT_SIZE*2/3)
         #################################
@@ -48,7 +48,7 @@ class myDataset(Dataset):
                     Y = torch.Tensor(np.array(Y)[0])
                     # print(X)
                     # print(Y)
-                    if X.size()[0] != 600:
+                    if X.size()[0] != 800:
                         print("seq_name: ", seq_name)
                         print(X.size())
                         print(Y.size())
@@ -80,7 +80,7 @@ class myDataset(Dataset):
                     Y = torch.Tensor(np.array(Y)[0])
                     # print(X)
                     # print(Y)
-                    if X.size()[0] != 600:
+                    if X.size()[0] != 800:
                         print("seq_name: ", seq_name)
                         print(X.size())
                         print(Y.size())
@@ -110,7 +110,7 @@ class myDataset(Dataset):
                     X, Y = create_datapoints(seq, '-')
                     X = torch.Tensor(np.array(X))
                     Y = torch.Tensor(np.array(Y)[0])
-                    if X.size()[0] != 600:
+                    if X.size()[0] != 800:
                         print("seq_name: ", seq_name)
                         print(X.size())
                         print(Y.size())
@@ -142,7 +142,7 @@ class myDataset(Dataset):
                     Y = torch.Tensor(np.array(Y)[0])
                     # print(X)
                     # print(Y)
-                    if X.size()[0] != 600:
+                    if X.size()[0] != 800:
                         print("seq_name: ", seq_name)
                         print(X.size())
                         print(Y.size())
@@ -194,9 +194,9 @@ def save_dataloader(batch_size, n_workers):
 
 def get_dataloader(batch_size, n_workers):
     # print("Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
-    # train_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
+    train_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
 
     print("Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
     test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
-    return test_loader
-    # return train_loader, test_loader
+    # return test_loader
+    return train_loader, test_loader

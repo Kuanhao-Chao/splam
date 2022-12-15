@@ -2,7 +2,7 @@ import os
 import sys
 
 def main(argv):
-    SEQ_LEN="600"
+    SEQ_LEN="800"
     HALF_SEQ_LEN = int(SEQ_LEN)//2
     QUATER_SEQ_LEN = int(SEQ_LEN)//4
     os.makedirs("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/", exist_ok=True)

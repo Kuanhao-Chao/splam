@@ -1,7 +1,7 @@
 mkdir ../../results/$1/OUTPUT/$3/BEFORE
 mkdir ../../results/$1/OUTPUT/$3/AFTER
 
-SEQ_LEN=600
+SEQ_LEN=800
 if [ $2 = "BEFORE" ]
 then
     stringtie -o ../../results/${SEQ_LEN}bp/$1/OUTPUT/$3/BEFORE/$1.gtf ../../Dataset/$1/$1.bam

@@ -1,4 +1,4 @@
-SEQ_LEN=600
+SEQ_LEN=800
 
 if [ $2 = "STAR" ]
 then

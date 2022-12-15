@@ -13,7 +13,7 @@ from math import ceil
 from sklearn.metrics import average_precision_score
 from SpliceNN_constant import *
 
-SEQ_LEN = 600
+SEQ_LEN = 800
 # fix random seed
 def same_seeds(seed):
     torch.manual_seed(seed)
@@ -169,7 +169,7 @@ def model_fn(DNAs, labels, model):
 
 
 def categorical_crossentropy_2d(y_true, y_pred):
-    WEIGHT = 600
+    WEIGHT = 800
     # prod = output[:,0]*target
     # return -prod[prod<0].sum()
     # print("y_true: ", y_true)
