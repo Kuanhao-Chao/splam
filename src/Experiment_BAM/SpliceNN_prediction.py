@@ -18,7 +18,7 @@ argv = sys.argv[1:]
 EPOCH_NUM = 20
 BATCH_SIZE = 100
 N_WORKERS = 1
-SEQ_LEN="600"
+SEQ_LEN="800"
 QUATER_SEQ_LEN = int(SEQ_LEN)//4
 
 device = torch.device("cuda" if torch.cuda.is_available() else "mps")

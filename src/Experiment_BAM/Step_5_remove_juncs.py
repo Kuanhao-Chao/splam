@@ -3,7 +3,7 @@ import sys
 import os
 
 def main(argv):
-    SEQ_LEN="600"
+    SEQ_LEN="800"
     ##############################
     # Read-in invalid junctions
     ##############################

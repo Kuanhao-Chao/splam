@@ -27,7 +27,7 @@ def main(argv):
         chrs = get_hg38_chrom_size()
 
     threshold = "100"
-    SEQ_LEN="600"
+    SEQ_LEN="800"
     QUOTER_SEQ_LEN = int(SEQ_LEN) // 4
 
     #################################

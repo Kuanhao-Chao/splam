@@ -1,11 +1,11 @@
 import os
 
 def main():
-    SEQ_LEN = "600"
+    SEQ_LEN = "800"
     HALF_SEQ_LEN = int(SEQ_LEN) // 2
     QUATER_SEQ_LEN = int(SEQ_LEN) // 4
     THRESHOLD = "100"
-    os.makedirs("../INPUTS/"+SEQ_LEN+"bp/")
+    os.makedirs("../INPUTS/"+SEQ_LEN+"bp/", exist_ok=True)
     fw = open("../INPUTS/"+SEQ_LEN+"bp/input_pos.fa", "w")
     fr_donor = open("../BAM_REF_Intersection/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/donor_seq.fa", "r")
     fr_acceptor = open("../BAM_REF_Intersection/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/acceptor_seq.fa", "r")
