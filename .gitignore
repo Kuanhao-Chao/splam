@@ -35,4 +35,9 @@ src_SPLAM/SPLAM/include/htslib/
 src_intron_matcher/build/include/htslib
 src/Experiment_SpliceAI/INPUTS/
 src/Experiment_SpliceAI/models/
+src_spliceAI_benchmark/IMG/
+src_spliceAI_benchmark/INPUT/
+src_spliceAI_benchmark/INPUTS/
+src_spliceAI_benchmark/OUTPUT/
+src_spliceAI_benchmark/INPUT_N/
 __pycache__/
