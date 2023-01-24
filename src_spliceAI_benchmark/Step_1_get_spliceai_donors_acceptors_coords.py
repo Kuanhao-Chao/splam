@@ -35,7 +35,10 @@ def main():
     junc_fs = [pos_junc_f, neg_can_junc_f, neg_noncan_junc_f, neg_1_junc_f]
 
     output_file = "./OUTPUT/"
-    os.makedirs(output_file, exist_ok=True)
+
+    output_files = ["./OUTPUT/pos/", "./OUTPUT/neg_can/", "./OUTPUT/neg_noncan/", "./OUTPUT/neg_1/"]
+    for output_file in output_files:
+        os.makedirs(output_file, exist_ok=True)
 
     nums = [3000, 1000, 1000, 1000]
 
@@ -50,7 +53,6 @@ def main():
 
         junc_df = pd.read_csv(junc_f, delimiter="\t", header=None)
 
-
         # junc_df = junc_df.drop(columns=[6, 7])
 
         junc_df = junc_df.loc[((junc_df[0] == "chr1") | (junc_df[0] == "chr9"))]
@@ -63,72 +65,23 @@ def main():
             junc_df[6] = 1
         else:
             junc_df[6] = 0
-        # print("junc_df: ", junc_df)
+        print("junc_df: ", junc_df)
 
-        global_df = pd.concat([global_df, junc_df], axis=0)
-        # print(global_df)
-    ################################
-    # SPLAM test data curation
-    ################################
-    # global_df_splam_donor = global_df.copy()
-    # global_df_splam_acceptor = global_df.copy()
+        global_df = junc_df
+        # pd.concat([global_df, junc_df], axis=0)
+        global_df[2] -= 1
+        global_df.to_csv(output_files[junc_fidx]+"splam.juncs.bed", sep="\t", header=None, index=0)
 
+        ################################
+        # SpliceAI test data curation
+        ################################
+        global_df_spliceai = global_df.copy()
 
-    # global_df_splam_donor[2] = global_df_splam_donor[1]
+        global_df_spliceai[1] -= 5200
+        global_df_spliceai[2] += 5200
 
-    # global_df_splam_donor[1] -= 200
-    # global_df_splam_donor[2] += 200
-
-
-    # global_df_splam_acceptor[2] -= 1
-    # global_df_splam_acceptor[1] = global_df_splam_acceptor[2]
-
-    # global_df_splam_acceptor[1] -= 200
-    # global_df_splam_acceptor[2] += 200
-
-    # print(global_df_splam_donor)
-    # global_df_splam_donor.to_csv(output_file+"splam.juncs.donor.bed", sep="\t", header=None, index=0)
-
-    # print(global_df_splam_acceptor)
-    # global_df_splam_acceptor.to_csv(output_file+"splam.juncs.acceptor.bed", sep="\t", header=None, index=0)
-
-    global_df[2] -= 1
-    global_df.to_csv(output_file+"splam.juncs.bed", sep="\t", header=None, index=0)
-
-    ################################
-    # SpliceAI test data curation
-    ################################
-    global_df_spliceai = global_df.copy()
-
-    global_df_spliceai[1] -= 5100
-    global_df_spliceai[2] += 5100
-
-    print(global_df_spliceai)
-    global_df_spliceai.to_csv(output_file+"spliceai.juncs.bed", sep="\t", header=None, index=0)
-        # with open(junc_f, "r") as f:
-        #     lines = f.read().splitlines()
-        #     for line in lines:
-        #         print(line)
-        # # if 
-
-
-    # Path("../NEG_junctions/"+SEQ_LENGTH+"bp/donor/").mkdir(parents=True, exist_ok=True)
-    # Path("../NEG_junctions/"+SEQ_LENGTH+"bp/acceptor/").mkdir(parents=True, exist_ok=True)
-    # Path("../NEG_junctions/"+SEQ_LENGTH+"bp/d_a/").mkdir(parents=True, exist_ok=True)
-
-    # workers = 20
-    # # with ThreadPoolExecutor(workers) as pool:
-    # for record in SeqIO.parse(handle, 'fasta'):            
-    #     # Extract individual parts of the FASTA record
-    #     identifier = record.id
-    #     description = record.description
-    #     sequence = record.seq
-    #     sequence = str(sequence).upper()
-
-    #     # print("description: ", description)
-    #     if (description in targets.keys()):
-    #         task(description, sequence)
-    #         # processed = pool.submit(task, description, sequence[0:100000])
+        print(global_df_spliceai)
+        global_df_spliceai.to_csv(output_files[junc_fidx]+"spliceai.juncs.bed", sep="\t", header=None, index=0)
 
 if __name__ == "__main__":
     main()

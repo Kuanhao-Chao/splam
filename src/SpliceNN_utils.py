@@ -6,6 +6,7 @@ datafile_{}_{}.h5 and convert them into a format usable by Keras.'''
 import torch
 from torch.optim.lr_scheduler import LambdaLR
 from torch.optim import Optimizer, AdamW
+from torch.nn import CrossEntropyLoss, BCELoss
 import numpy as np
 import re
 import math
@@ -41,6 +42,9 @@ def one_hot_encode(Xd, Yd):
     return IN_MAP[Xd.astype('int8')], \
            [OUT_MAP[Yd[t].astype('int8')] for t in range(1)]
            
+def one_hot_encode_classifier(Xd):
+    return IN_MAP[Xd.astype('int8')]
+           
 #######################################
 # This is for Conformer model 
 #######################################
@@ -53,27 +57,27 @@ def create_datapoints(seq, strand):
     # print("Donor: ", seq[CL_MAX//2+jn_start: CL_MAX//2+jn_start+2])
     # print("Donor: ", seq[CL_MAX//2+jn_end-2: CL_MAX//2+jn_end])
 
-    X0 = np.asarray(list(map(int, list(seq))))
-    Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
-
-    if strand == '+':
-        for t in range(1):        
-            Y0[t][jn_start] = 2
-            Y0[t][jn_end] = 1
-    X, Y = one_hot_encode(X0, Y0)
-    return X, Y
-    # Y0 = np.asarray([0])
-
+    #######################################
+    # predicting pb for every bp
+    #######################################
+    # X0 = np.asarray(list(map(int, list(seq))))
+    # Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
     # if strand == '+':
-    #     Y0[0]=1
-    # elif strand == '-':
-    #     Y0[0] = 0
+    #     for t in range(1):        
+    #         Y0[t][jn_start] = 2
+    #         Y0[t][jn_end] = 1
+    # X, Y = one_hot_encode(X0, Y0)
+    # return X, Y
 
-    # X = one_hot_encode(X0)
-    # # print("X: ", X)
-    # # print("Y0: ", Y0)
-
-    # return X, Y0
+    #######################################
+    # predicting splice / non-splice
+    #######################################
+    X0 = np.asarray(list(map(int, list(seq))))
+    Y0 = 0
+    if strand == '+':
+        Y0 = 1
+    X = one_hot_encode_classifier(X0)
+    return X, Y0
 
 def get_cosine_schedule_with_warmup(
       optimizer: Optimizer,
@@ -147,29 +151,67 @@ def binary_acc(y_pred, y_test):
     acc = torch.round(acc * 100)
     
     return acc
-#######################################
-# This is for spliceAI model 
-#######################################
-# def one_hot_encode(Xd, Yd):
-#     return IN_MAP[Xd.astype('int8')], \
-#            [OUT_MAP[Yd[t].astype('int8')] for t in range(1)]
 
-def model_fn(DNAs, labels, model):
+
+def get_accuracy(y_prob, y_true):
+    assert y_true.ndim == 1 and y_true.size() == y_prob.size()
+    y_prob = y_prob > 0.5
+    return (y_true == y_prob).sum().item() / y_true.size(0)
+
+def model_fn_eval(DNAs, labels, model, criterion):
+    """Forward a batch through the model."""
+    model.eval()
+    with torch.no_grad():
+        outs = model(DNAs)
+        outs = torch.flatten(outs)
+        # print("outs: ", outs.size())
+        # print("outs: ", outs)
+        # print("labels: ", labels.size())
+        # print("DNAs: ", DNAs.size())
+
+        # labels = labels.sum(axis=1)
+        # print("labels: ", labels.size())
+
+        loss, accuracy = categorical_crossentropy_2d(labels, outs, criterion)
+        # print("loss    : ", loss)
+        # print("accuracy: ", accuracy)
+    return loss, accuracy, outs
+
+def model_fn(DNAs, labels, model, criterion):
     """Forward a batch through the model."""
     outs = model(DNAs)
+    outs = torch.flatten(outs)
     # print("outs: ", outs.size())
+    # print("outs: ", outs)
     # print("labels: ", labels.size())
     # print("DNAs: ", DNAs.size())
 
     # labels = labels.sum(axis=1)
     # print("labels: ", labels.size())
 
-    loss = categorical_crossentropy_2d(labels, outs)
-    return loss, outs
+    loss, accuracy = categorical_crossentropy_2d(labels, outs, criterion)
+    # print("loss    : ", loss)
+    # print("accuracy: ", accuracy)
+    return loss, accuracy, outs
 
 
-def categorical_crossentropy_2d(y_true, y_pred):
-    WEIGHT = 800
+def weighted_binary_cross_entropy(output, target, weights=None):
+        
+    if weights is not None:
+        assert len(weights) == 2
+        loss = weights[1] * (target * torch.log(output+1e-10)) + \
+               weights[0] * ((1 - target) * torch.log(1 - output+1e-10))
+    else:
+        loss = target * torch.log(output+1e-10) + (1 - target) * torch.log(1 - output+1e-10)
+
+    return torch.neg(torch.mean(loss))
+
+def categorical_crossentropy_2d(y_true, y_pred, criterion):
+    # WEIGHT = 800
+    # print("y_true: ", y_true)
+    # print("y_pred: ", y_pred)
+    weights = torch.FloatTensor([1.0, 5.0]) 
+    return weighted_binary_cross_entropy(y_pred, y_true, weights), get_accuracy(y_pred, y_true)
     # prod = output[:,0]*target
     # return -prod[prod<0].sum()
     # print("y_true: ", y_true)
@@ -183,9 +225,10 @@ def categorical_crossentropy_2d(y_true, y_pred):
     # print("y_pred[:, 1, :]: ", y_pred[:, 1, :])
     # print("y_true[:, 2, :]: ", y_true[:, 2, :])
     # print("y_pred[:, 2, :]: ", y_pred[:, 2, :])
-    return - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
-                        + WEIGHT*y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
-                        + WEIGHT*y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10))
+
+    # return - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
+    #                     + WEIGHT*y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
+    #                     + WEIGHT*y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10))
 
 
 # def create_datapoints(seq, strand):
@@ -327,4 +370,53 @@ def print_junc_statistics(D_YL, A_YL, D_YP, A_YP, threshold, TOTAL_TP, TOTAL_FN,
 
     # print("precision: ", precision)
     # print("recall:    ", recall)
+    return TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN, LCL_TOTAL_TP, LCL_TOTAL_FN, LCL_TOTAL_FP, LCL_TOTAL_TN
+
+
+
+def junc_statistics(YL, YP, threshold, TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN):
+
+    labels_1 = np.where(YL == 1)
+
+    ####################
+    # Donor 
+    ####################
+    thre_d = np.where(YP >= threshold)
+    # print("thre_d: ", thre_d)
+    # print("thre_a: ", thre_a)
+
+    LCL_TOTAL_TP = len(np.intersect1d(labels_1, thre_d))
+    LCL_TOTAL_FN = len(np.setdiff1d(labels_1, thre_d))
+    LCL_TOTAL_FP = len(np.setdiff1d(thre_d, labels_1))
+    LCL_TOTAL_TN = len(YL) - LCL_TOTAL_TP - LCL_TOTAL_FN - LCL_TOTAL_FP
+
+    # print("Donor TPs: ", TPs)
+    # print("Donor FNs: ", FNs)
+    # print("Donor FPs: ", FPs)
+    # print("Donor TNs: ", TNs)
+
+    # LCL_TOTAL_TP = np.size(np.intersect1d(idx_true, idx_pred))
+    # LCL_TOTAL_FN = len(idx_true) - LCL_TOTAL_TP
+    # LCL_TOTAL_FP = len(idx_pred) - LCL_TOTAL_TP
+
+    # # LCL_TOTAL_TN = np.size(np.intersect1d(label_nonjunc_idx, predict_nonjunc_idx))
+    # LCL_TOTAL_TN = len(YL) - LCL_TOTAL_TP - LCL_TOTAL_FN - LCL_TOTAL_FP
+
+    # print("LCL_TOTAL_TP: ", LCL_TOTAL_TP)
+    # print("LCL_TOTAL_FN: ", LCL_TOTAL_FN)
+    # print("LCL_TOTAL_FP: ", LCL_TOTAL_FP)
+    # print("LCL_TOTAL_TN: ", LCL_TOTAL_TN)
+
+    TOTAL_TP += LCL_TOTAL_TP
+    TOTAL_FN += LCL_TOTAL_FN
+    TOTAL_FP += LCL_TOTAL_FP
+    TOTAL_TN += LCL_TOTAL_TN
+
+    # # precision = np.size(np.intersect1d(idx_true, idx_pred)) \
+    # #             / float(len(idx_pred))        
+    # # recall = np.size(np.intersect1d(idx_true, idx_pred)) \
+    # #             / float(len(idx_true)) 
+
+    # # print("precision: ", precision)
+    # # print("recall:    ", recall)
     return TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN, LCL_TOTAL_TP, LCL_TOTAL_FN, LCL_TOTAL_FP, LCL_TOTAL_TN
