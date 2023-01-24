@@ -23,8 +23,10 @@ class myDataset(Dataset):
 
         if type == "train":
             CONSTANT_SIZE = 176086
+            # CONSTANT_SIZE = 1000
         else:
-            CONSTANT_SIZE = 23914
+            CONSTANT_SIZE = 28576
+            # CONSTANT_SIZE = 1000
 
         CONSTANT_SIZE_NEG = math.ceil(CONSTANT_SIZE*2/3)
         #################################
@@ -45,7 +47,7 @@ class myDataset(Dataset):
                     # print(seq)
                     X, Y = create_datapoints(seq, '+')
                     X = torch.Tensor(np.array(X))
-                    Y = torch.Tensor(np.array(Y)[0])
+                    # Y = torch.Tensor(np.array(Y)[0])
                     # print(X)
                     # print(Y)
                     if X.size()[0] != 800:
@@ -56,6 +58,7 @@ class myDataset(Dataset):
                 pidx += 1
                 if pidx %10000 == 0:
                     print("pidx: ", pidx)
+                    print(seq_name)
                 if pidx > CONSTANT_SIZE:
                     break
 
@@ -77,7 +80,7 @@ class myDataset(Dataset):
                     # print(seq)
                     X, Y = create_datapoints(seq, '-')
                     X = torch.Tensor(np.array(X))
-                    Y = torch.Tensor(np.array(Y)[0])
+                    # Y = torch.Tensor(np.array(Y)[0])
                     # print(X)
                     # print(Y)
                     if X.size()[0] != 800:
@@ -88,6 +91,7 @@ class myDataset(Dataset):
                 n1idx += 1
                 if n1idx %10000 == 0:
                     print("n1idx: ", n1idx)
+                    print(seq_name)
                 if n1idx > CONSTANT_SIZE_NEG:
                     break
 
@@ -109,7 +113,9 @@ class myDataset(Dataset):
                     # print(seq)
                     X, Y = create_datapoints(seq, '-')
                     X = torch.Tensor(np.array(X))
-                    Y = torch.Tensor(np.array(Y)[0])
+                    # Y = torch.Tensor(np.array(Y)[0])
+                    # print(X)
+                    # print(Y)
                     if X.size()[0] != 800:
                         print("seq_name: ", seq_name)
                         print(X.size())
@@ -118,6 +124,7 @@ class myDataset(Dataset):
                 nidx += 1
                 if nidx %10000 == 0:
                     print("nidx: ", nidx)
+                    print(seq_name)
                 if nidx > CONSTANT_SIZE_NEG:
                     break
 
@@ -139,7 +146,7 @@ class myDataset(Dataset):
                     # print(seq)
                     X, Y = create_datapoints(seq, '-')
                     X = torch.Tensor(np.array(X))
-                    Y = torch.Tensor(np.array(Y)[0])
+                    # Y = torch.Tensor(np.array(Y)[0])
                     # print(X)
                     # print(Y)
                     if X.size()[0] != 800:
@@ -150,6 +157,7 @@ class myDataset(Dataset):
                 nnidx += 1
                 if nnidx %10000 == 0:
                     print("nnidx: ", nnidx)
+                    print(seq_name)
                 if nnidx > CONSTANT_SIZE_NEG:
                     break
         random.shuffle(self.data)
@@ -171,32 +179,70 @@ def save_dataloader(batch_size, n_workers):
     trainset = myDataset("train", int(SEQ_LEN))
     testset = myDataset("test", int(SEQ_LEN))
 
+    print("trainset: ", len(trainset))
+    print("testset : ", len(testset))
+
     train_loader = DataLoader(
         trainset,
         batch_size=batch_size,
         shuffle=True,
         drop_last=True,
-        # num_workers=n_workers,
         pin_memory=True,
-        # collate_fn=collate_batch,
     )
     test_loader = DataLoader(
         testset,
         batch_size = batch_size,
-        # batch_size=len(validset),
-        # num_workers=n_workers,
         drop_last=True,
         pin_memory=True,
-        # collate_fn=collate_batch,
     )
-    torch.save(train_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
-    torch.save(test_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+
+    #######################################
+    # predicting pb for every bp
+    #######################################
+    # torch.save(train_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
+    # torch.save(test_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+    
+    #######################################
+    # predicting splice / non-splice
+    #######################################
+    torch.save(train_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train_classification.pt")
+    torch.save(test_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test_classification.pt")
 
 def get_dataloader(batch_size, n_workers):
+    #######################################
+    # predicting pb for every bp
+    #######################################
     # print("Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
-    train_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
-
-    print("Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
-    test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+    # train_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
+    # print("Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+    # test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+    
+    #######################################
+    # predicting splice / non-splice
+    #######################################
+    print("Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train_classification.pt")
+    train_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train_classification.pt")
+    print("Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test_classification.pt")
+    test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test_classification.pt")
     # return test_loader
     return train_loader, test_loader
+
+
+# def get_dataloader(batch_size, n_workers):
+#     #######################################
+#     # predicting pb for every bp
+#     #######################################
+#     # print("Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
+#     # train_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
+#     # print("Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+#     # test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+    
+#     #######################################
+#     # predicting splice / non-splice
+#     #######################################
+#     print("Loading dataset: ", "../src_spliceAI_benchmark/"+SEQ_LEN+"bp/"+TARGET+"/train_classification.pt")
+#     train_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train_classification.pt")
+#     print("Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test_classification.pt")
+#     test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test_classification.pt")
+#     # return test_loader
+#     return train_loader, test_loader
