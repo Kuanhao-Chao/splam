@@ -26,11 +26,41 @@ def main():
     N_WORKERS = 1
     device = torch.device("cuda" if torch.cuda.is_available() else "mps")
 
-    MODEL_BASE = "SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v27/"
-    MODEL = "../src/MODEL/"+MODEL_BASE+"SpliceNN_24.pt"
+    MODEL_BASE = "SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v28/"
+    MODEL = "../src/MODEL/"+MODEL_BASE+"SpliceNN_20.pt"
     MODEL_OUTPUT_BASE = "./TEST/"+MODEL_BASE+""
     model = torch.load(MODEL)
     # model = torch.load("../src/MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v23/SpliceNN_19.pt")
+
+
+    for child in model.children():
+        # print("child: ", child)
+        if type(child)==ModuleList:
+            for ii in range(len(child)):
+                if type(child[ii])==ResidualUnit:
+                    # child[ii].track_running_stats = False
+                    # print("child[ii]: ", child[ii])
+                    for jj in (child[ii].children()):
+                        if type(jj)==BatchNorm1d:
+                            # child[ii].track_running_stats = False
+                            print("jj: ", jj)
+                            jj.trainning = False
+                            jj.track_running_stats = True
+                            # jj.track_running_stats = False
+                            jj.momentum = 0.1
+
+    print("After updating 'BatchNorm1d'")
+    for child in model.children():
+        # print("child: ", child)
+        if type(child)==ModuleList:
+            for ii in range(len(child)):
+                if type(child[ii])==ResidualUnit:
+                    # child[ii].track_running_stats = False
+                    # print("child[ii]: ", child[ii])
+                    for jj in (child[ii].children()):
+                        if type(jj)==BatchNorm1d:
+                            # child[ii].track_running_stats = False
+                            print("jj: ", jj)
 
     #############################
     # Model Initialization
@@ -54,14 +84,19 @@ def main():
 
 
     # Experiment => batch size => see if it matters
-    for b_idx in range(10, 110, 10):
-        print("b_idx: ", b_idx)
-        shuffle = False
-        BATCH_SIZE = b_idx
-    # for shuffle in [True, False, None]:
+    # for b_idx in range(10, 110, 10):
+    #     print("b_idx: ", b_idx)
+    #     shuffle = False
+    #     BATCH_SIZE = b_idx
+    BATCH_SIZE = 100
+    for shuffle in [True, False, None]:
+        print("########################################")
+        print(" Model: ", model)
+        print("########################################")
         # r_idx = ""
     # shuffle = False
-        for r_idx in range(0, 5):
+        # for r_idx in range(0, 5):
+        for r_idx in range(0, 1):
             if shuffle == None:
                 test_loader = get_dataloader(1, N_WORKERS, "", False, str(r_idx))
             else:
@@ -104,53 +139,57 @@ def main():
             All_Junction_YL = []
             All_Junction_YP = []
 
-            for batch_idx, data in enumerate(test_loader):
-                # print("batch_idx: ", batch_idx)
-                # DNAs:  torch.Size([40, 800, 4])
-                # labels:  torch.Size([40, 1, 800, 3])
-                # print("len: ", len(data))
-                DNAs, labels, chr = data 
-                DNAs = DNAs.to(torch.float32).to(device)
-                labels = labels.to(torch.float32).to(device)
+            model.eval()
+            # model.train()
+            with torch.no_grad():
+                for batch_idx, data in enumerate(test_loader):
+                    # print("batch_idx: ", batch_idx)
+                    # DNAs:  torch.Size([40, 800, 4])
+                    # labels:  torch.Size([40, 1, 800, 3])
+                    # print("len: ", len(data))
+                    DNAs, labels, chr = data 
+                    DNAs = DNAs.to(torch.float32).to(device)
+                    labels = labels.to(torch.float32).to(device)
 
-                DNAs = torch.permute(DNAs, (0, 2, 1))
-                # labels = torch.permute(labels, (0, 2, 1))
-                loss, accuracy, yps = model_fn_eval(DNAs, labels, model, criterion)
-            
+                    DNAs = torch.permute(DNAs, (0, 2, 1))
+                    # labels = torch.permute(labels, (0, 2, 1))
+                    loss, accuracy, yps = model_fn(DNAs, labels, model, criterion)
+                    # loss, accuracy, yps = model_fn(DNAs, labels, model, criterion)
+                
 
-                #######################################
-                # predicting splice / non-splice
-                #######################################    
-                batch_loss = loss.item()
-                batch_acc = accuracy
-                epoch_loss += loss.item()
-                epoch_acc += accuracy
+                    #######################################
+                    # predicting splice / non-splice
+                    #######################################    
+                    batch_loss = loss.item()
+                    batch_acc = accuracy
+                    epoch_loss += loss.item()
+                    epoch_acc += accuracy
 
-                labels = labels.to("cpu").detach().numpy()
-                yps = yps.to("cpu").detach().numpy()
+                    labels = labels.to("cpu").detach().numpy()
+                    yps = yps.to("cpu").detach().numpy()
 
-                J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = junc_statistics(labels, yps, 0.5, J_G_TP, J_G_FN, J_G_FP, J_G_TN)      
+                    J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = junc_statistics(labels, yps, 0.5, J_G_TP, J_G_FN, J_G_FP, J_G_TN)      
 
-                # labels = [label.to("cpu").detach() for label in labels]
-                # yps = [yp.to("cpu").detach() for yp in yps]
+                    # labels = [label.to("cpu").detach() for label in labels]
+                    # yps = [yp.to("cpu").detach() for yp in yps]
 
-                All_Junction_YL.extend(labels)
-                All_Junction_YP.extend(yps)
+                    All_Junction_YL.extend(labels)
+                    All_Junction_YP.extend(yps)
 
 
-                pbar.update(1)
-                pbar.set_postfix(
-                    epoch=batch_idx,
-                    idx_train=len(test_loader)*BATCH_SIZE,
-                    loss=f"{batch_loss:.6f}",
-                    accuracy=f"{batch_acc:.6f}",
-                    J_Precision=f"{J_TP/(J_TP+J_FP+1.e-10):.6f}",
-                    J_Recall=f"{J_TP/(J_TP+J_FN+1.e-10):.6f}"
-                )
-                fw_test_log_loss.write(str(batch_loss)+ "\n")
-                fw_test_log_D_threshold_accuracy.write(str(batch_acc)+ "\n")
-                fw_test_log_D_threshold_precision.write(f"{J_TP/(J_TP+J_FP+1.e-10):.6f}\n")
-                fw_test_log_D_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1.e-10):.6f}\n")
+                    pbar.update(1)
+                    pbar.set_postfix(
+                        epoch=batch_idx,
+                        idx_train=len(test_loader)*BATCH_SIZE,
+                        loss=f"{batch_loss:.6f}",
+                        accuracy=f"{batch_acc:.6f}",
+                        J_Precision=f"{J_TP/(J_TP+J_FP+1.e-10):.6f}",
+                        J_Recall=f"{J_TP/(J_TP+J_FN+1.e-10):.6f}"
+                    )
+                    fw_test_log_loss.write(str(batch_loss)+ "\n")
+                    fw_test_log_D_threshold_accuracy.write(str(batch_acc)+ "\n")
+                    fw_test_log_D_threshold_precision.write(f"{J_TP/(J_TP+J_FP+1.e-10):.6f}\n")
+                    fw_test_log_D_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1.e-10):.6f}\n")
             pbar.close()
 
 
@@ -166,7 +205,6 @@ def main():
 
 
             with open("../src_spliceAI_benchmark/INPUT/splam."+TYPE+"."+str(r_idx)+"."+str(BATCH_SIZE)+".pkl", 'wb') as f: 
-
                 pickle.dump(All_Junction_YP, f)
                 pickle.dump(All_Junction_YL, f)
 
