@@ -6,13 +6,16 @@ datafile_{}_{}.h5 and convert them into a format usable by Keras.'''
 import torch
 from torch.optim.lr_scheduler import LambdaLR
 from torch.optim import Optimizer, AdamW
-from torch.nn import CrossEntropyLoss, BCELoss
+from torch.nn import CrossEntropyLoss, BCELoss, BatchNorm1d, ModuleList
+# from torch.nn import Module, BatchNorm1d, LazyBatchNorm1d, ReLU, LeakyReLU, Conv1d, LazyConv1d, ModuleList, Softmax, Sigmoid, Flatten, Dropout2d, Linear
+
 import numpy as np
 import re
 import math
 from math import ceil
 from sklearn.metrics import average_precision_score
 from SpliceNN_constant import *
+from SpliceNN import *
 
 SEQ_LEN = 800
 # fix random seed
@@ -158,24 +161,22 @@ def get_accuracy(y_prob, y_true):
     y_prob = y_prob > 0.5
     return (y_true == y_prob).sum().item() / y_true.size(0)
 
-def model_fn_eval(DNAs, labels, model, criterion):
-    """Forward a batch through the model."""
-    model.eval()
-    with torch.no_grad():
-        outs = model(DNAs)
-        outs = torch.flatten(outs)
-        # print("outs: ", outs.size())
-        # print("outs: ", outs)
-        # print("labels: ", labels.size())
-        # print("DNAs: ", DNAs.size())
+# def model_fn_eval(DNAs, labels, model, criterion):
+#     """Forward a batch through the model."""
+#     outs = model(DNAs)
+#     outs = torch.flatten(outs)
+#     # print("outs: ", outs.size())
+#     # print("outs: ", outs)
+#     # print("labels: ", labels.size())
+#     # print("DNAs: ", DNAs.size())
 
-        # labels = labels.sum(axis=1)
-        # print("labels: ", labels.size())
+#     # labels = labels.sum(axis=1)
+#     # print("labels: ", labels.size())
 
-        loss, accuracy = categorical_crossentropy_2d(labels, outs, criterion)
-        # print("loss    : ", loss)
-        # print("accuracy: ", accuracy)
-    return loss, accuracy, outs
+#     loss, accuracy = categorical_crossentropy_2d(labels, outs, criterion)
+#     # print("loss    : ", loss)
+#     # print("accuracy: ", accuracy)
+#     return loss, accuracy, outs
 
 def model_fn(DNAs, labels, model, criterion):
     """Forward a batch through the model."""
@@ -210,7 +211,7 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     # WEIGHT = 800
     # print("y_true: ", y_true)
     # print("y_pred: ", y_pred)
-    weights = torch.FloatTensor([1.0, 5.0]) 
+    weights = torch.FloatTensor([1.0, 1.0]) 
     return weighted_binary_cross_entropy(y_pred, y_true, weights), get_accuracy(y_pred, y_true)
     # prod = output[:,0]*target
     # return -prod[prod<0].sum()

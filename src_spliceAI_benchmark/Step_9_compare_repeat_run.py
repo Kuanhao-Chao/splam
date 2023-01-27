@@ -17,8 +17,8 @@ def main():
     splam_v2_j_nobatch_pred_prob = []
     splam_v2_j_nobatch_label_prob = []
 
-    TARGET = "batch"
-    # TARGET = "repeat"
+    # TARGET = "batch"
+    TARGET = "repeat"
     # for TYPE in ["shuffle", "noshuffle", "nobatch"]:
     stacked_array = ""
     prev_prbs = ""

@@ -117,7 +117,7 @@ def main(argv):
             X = tf.convert_to_tensor(X, dtype=tf.float32)
             Y = tf.convert_to_tensor(Y, dtype=tf.float32)
 
-            Y_pred = model(X)
+            Y_pred = model.predict(X)
             K.clear_session()
             # del model
             gc.collect()

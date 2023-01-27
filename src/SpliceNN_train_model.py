@@ -76,7 +76,7 @@ valid_iterator = iter(test_loader)
 print(f"[Info]: Finish loading data!",flush = True)
 print("train_iterator: ", len(train_loader))
 print("valid_iterator: ", len(test_loader))
-MODEL_OUTPUT_BASE = "./MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v27/"
+MODEL_OUTPUT_BASE = "./MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v30/"
 LOG_OUTPUT_BASE = MODEL_OUTPUT_BASE + "LOG/"
 LOG_OUTPUT_TRAIN_BASE = MODEL_OUTPUT_BASE + "LOG/TRAIN/"
 LOG_OUTPUT_TEST_BASE = MODEL_OUTPUT_BASE + "LOG/TEST/"
@@ -182,6 +182,7 @@ def train_one_epoch(epoch_idx, train_loader):
     J_G_FP = 1e-6
     J_G_TN = 1e-6
     # for data in train_loader:
+    model.train()
     for batch_idx, data in enumerate(train_loader):
         # print("batch_idx: ", batch_idx)
         # DNAs:  torch.Size([40, 800, 4])
@@ -216,10 +217,10 @@ def train_one_epoch(epoch_idx, train_loader):
             J_Precision=f"{J_TP/(J_TP+J_FP+1e-6):.6f}",
             J_Recall=f"{J_TP/(J_TP+J_FN+1e-6):.6f}"
         )
+        optimizer.zero_grad()
         loss.backward()
         optimizer.step()
         scheduler.step()
-        optimizer.zero_grad()
 
         fw_train_log_loss.write(str(batch_loss)+ "\n")
         fw_train_log_acc.write(str(batch_acc)+ "\n")
@@ -234,78 +235,6 @@ def train_one_epoch(epoch_idx, train_loader):
         # fw_train_log_D_threshold_recall.write(f"{D_TP/(D_TP+D_FN+1e-6):.6f}\n")
         fw_train_log_J_threshold_precision.write(f"{J_TP/(J_TP+J_FP+1e-6):.6f}\n")
         fw_train_log_J_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1e-6):.6f}\n")
-
-
-        #######################################
-        # predicting pb for every bp
-        #######################################    
-        # is_expr = (labels.sum(axis=(1,2)) >= 1)
-        # # print("is_expr: ", is_expr)
-
-        # # Acceptor_YL = labels[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-        # Acceptor_YL = labels[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-        # Acceptor_YP = yp[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-        # Donor_YL = labels[is_expr, 2, :].flatten().to('cpu').detach().numpy()
-        # Donor_YP = yp[is_expr, 2, :].flatten().to('cpu').detach().numpy()
-
-        # A_YL = labels[is_expr, 1, :].to('cpu').detach().numpy()
-        # A_YP = yp[is_expr, 1, :].to('cpu').detach().numpy()
-        # D_YL = labels[is_expr, 2, :].to('cpu').detach().numpy()
-        # D_YP = yp[is_expr, 2, :].to('cpu').detach().numpy()
-
-        # J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = print_junc_statistics(D_YL, A_YL, D_YP, A_YP, 0.5, J_G_TP, J_G_FN, J_G_FP, J_G_TN)        
-        # A_accuracy, A_auc = print_top_1_statistics(Acceptor_YL, Acceptor_YP)
-        # D_accuracy, D_auc = print_top_1_statistics(Donor_YL, Donor_YP)
-        # A_G_TP, A_G_FN, A_G_FP, A_G_TN, A_TP, A_FN, A_FP, A_TN = print_threshold_statistics(Acceptor_YL, Acceptor_YP, 0.5, A_G_TP, A_G_FN, A_G_FP, A_G_TN)
-        # D_G_TP, D_G_FN, D_G_FP, D_G_TN, D_TP, D_FN, D_FP, D_TN = print_threshold_statistics(Donor_YL, Donor_YP, 0.5, D_G_TP, D_G_FN, D_G_FP, D_G_TN)
-
-        # batch_loss = loss.item()
-        # epoch_loss += loss.item()
-        # epoch_donor_acc += D_accuracy
-        # epoch_acceptor_acc += A_accuracy
-
-        # pbar.update(1)
-        # pbar.set_postfix(
-        #     batch_id=batch_idx,
-        #     idx_train=len(train_loader)*BATCH_SIZE,
-        #     loss=f"{batch_loss:.6f}",
-        #     # accuracy=f"{batch_acc:.6f}",
-        #     A_accuracy=f"{A_accuracy:.6f}",
-        #     D_accuracy=f"{D_accuracy:.6f}",
-        #     A_auc = f"{A_auc:.6f}",
-        #     D_auc = f"{D_auc:.6f}",
-        #     # A_TP=A_TP,
-        #     # A_FN=A_FN, 
-        #     # A_FP=A_FP, 
-        #     # A_TN=A_TN,
-        #     # D_TP=D_TP,
-        #     # D_FN=D_FN, 
-        #     # D_FP=D_FP, 
-        #     # D_TN=D_TN,
-        #     A_Precision=f"{A_TP/(A_TP+A_FP+1e-6):.6f}",
-        #     A_Recall=f"{A_TP/(A_TP+A_FN+1e-6):.6f}",
-        #     D_Precision=f"{D_TP/(D_TP+D_FP+1e-6):.6f}",
-        #     D_Recall=f"{D_TP/(D_TP+D_FN+1e-6):.6f}",
-        #     J_Precision=f"{J_TP/(J_TP+J_FP+1e-6):.6f}",
-        #     J_Recall=f"{J_TP/(J_TP+J_FN+1e-6):.6f}"
-        # )
-        # loss.backward()
-        # optimizer.step()
-        # scheduler.step()
-        # optimizer.zero_grad()
-
-        # fw_train_log_loss.write(str(batch_loss)+ "\n")
-        # fw_train_log_lr.write(str(get_lr(optimizer))+ "\n")
-        # fw_train_log_A_topk_accuracy.write(str(A_accuracy)+ "\n")
-        # fw_train_log_A_auc.write(str(A_auc)+ "\n")
-        # fw_train_log_A_threshold_precision.write(f"{A_TP/(A_TP+A_FP+1e-6):.6f}\n")
-        # fw_train_log_A_threshold_recall.write(f"{A_TP/(A_TP+A_FN+1e-6):.6f}\n")
-        # fw_train_log_D_topk_accuracy.write(str(D_accuracy)+ "\n")
-        # fw_train_log_D_auc.write(str(D_auc)+ "\n")
-        # fw_train_log_D_threshold_precision.write(f"{D_TP/(D_TP+D_FP+1e-6):.6f}\n")
-        # fw_train_log_D_threshold_recall.write(f"{D_TP/(D_TP+D_FN+1e-6):.6f}\n")
-        # fw_train_log_J_threshold_precision.write(f"{J_TP/(J_TP+J_FP+1e-6):.6f}\n")
-        # fw_train_log_J_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1e-6):.6f}\n")
     pbar.close()
 
     # print(f'Epoch {epoch_idx+0:03}: | Loss: {epoch_loss/len(train_loader):.5f} | Donor Acc: {epoch_donor_acc/len(train_loader):.3f} | Acceptor Acc: {epoch_acceptor_acc/len(train_loader):.3f}')
@@ -345,125 +274,74 @@ def test_one_epoch(epoch_idx, test_loader):
     J_G_FN = 1e-6
     J_G_FP = 1e-6
     J_G_TN = 1e-6
-    for batch_idx, data in enumerate(test_loader):
-        # print("batch_idx: ", batch_idx)
-        # DNAs:  torch.Size([40, 800, 4])
-        # labels:  torch.Size([40, 1, 800, 3])
-        DNAs, labels, chr = data 
-        # print("\nDNAs: ", DNAs.size())
-        # print("labels: ", labels.size())
-        DNAs = DNAs.to(torch.float32).to(device)
-        labels = labels.to(torch.float32).to(device)
-        # print("DNAs  : ", DNAs)
-        # print("labels: ", labels)
+    model.eval()
+    with torch.no_grad():
+        for batch_idx, data in enumerate(test_loader):
+            # print("batch_idx: ", batch_idx)
+            # DNAs:  torch.Size([40, 800, 4])
+            # labels:  torch.Size([40, 1, 800, 3])
+            DNAs, labels, chr = data 
+            # print("\nDNAs: ", DNAs.size())
+            # print("labels: ", labels.size())
+            DNAs = DNAs.to(torch.float32).to(device)
+            labels = labels.to(torch.float32).to(device)
+            # print("DNAs  : ", DNAs)
+            # print("labels: ", labels)
 
-        DNAs = torch.permute(DNAs, (0, 2, 1))
-        # labels = torch.permute(labels, (0, 2, 1))
-        loss, accuracy, yp = model_fn(DNAs, labels, model, criterion)
-        # loss, yp = model_fn(DNAs, labels, model)
-        
-        #######################################
-        # predicting splice / non-splice
-        #######################################    
-        batch_loss = loss.item()
-        batch_acc = accuracy
-        epoch_loss += loss.item()
-        epoch_acc += accuracy
+            DNAs = torch.permute(DNAs, (0, 2, 1))
+            # labels = torch.permute(labels, (0, 2, 1))
+            loss, accuracy, yp = model_fn(DNAs, labels, model, criterion)
+            # loss, yp = model_fn(DNAs, labels, model)
+            
+            #######################################
+            # predicting splice / non-splice
+            #######################################    
+            batch_loss = loss.item()
+            batch_acc = accuracy
+            epoch_loss += loss.item()
+            epoch_acc += accuracy
 
-        labels = labels.to("cpu")
-        yp = yp.to("cpu")
-        J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = junc_statistics(labels, yp, 0.5, J_G_TP, J_G_FN, J_G_FP, J_G_TN)        
-
-
-        pbar.update(1)
-        pbar.set_postfix(
-            batch_id=batch_idx,
-            idx_train=len(train_loader)*BATCH_SIZE,
-            loss=f"{batch_loss:.6f}",
-            accuracy=f"{batch_acc:.6f}",
-            J_Precision=f"{J_TP/(J_TP+J_FP+1e-6):.6f}",
-            J_Recall=f"{J_TP/(J_TP+J_FN+1e-6):.6f}"
-        )
-
-        fw_train_log_loss.write(str(batch_loss)+ "\n")
-        fw_train_log_acc.write(str(batch_acc)+ "\n")
-        fw_train_log_lr.write(str(get_lr(optimizer))+ "\n")
-        # fw_train_log_A_topk_accuracy.write(str(A_accuracy)+ "\n")
-        # fw_train_log_A_auc.write(str(A_auc)+ "\n")
-        # fw_train_log_A_threshold_precision.write(f"{A_TP/(A_TP+A_FP+1e-6):.6f}\n")
-        # fw_train_log_A_threshold_recall.write(f"{A_TP/(A_TP+A_FN+1e-6):.6f}\n")
-        # fw_train_log_D_topk_accuracy.write(str(D_accuracy)+ "\n")
-        # fw_train_log_D_auc.write(str(D_auc)+ "\n")
-        # fw_train_log_D_threshold_precision.write(f"{D_TP/(D_TP+D_FP+1e-6):.6f}\n")
-        # fw_train_log_D_threshold_recall.write(f"{D_TP/(D_TP+D_FN+1e-6):.6f}\n")
-        fw_train_log_J_threshold_precision.write(f"{J_TP/(J_TP+J_FP+1e-6):.6f}\n")
-        fw_train_log_J_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1e-6):.6f}\n")
+            labels = labels.to("cpu")
+            yp = yp.to("cpu")
+            J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = junc_statistics(labels, yp, 0.5, J_G_TP, J_G_FN, J_G_FP, J_G_TN)        
 
 
-        #######################################
-        # predicting pb for every bp
-        #######################################    
-        # is_expr = (labels.sum(axis=(1,2)) >= 1)
+            pbar.update(1)
+            pbar.set_postfix(
+                batch_id=batch_idx,
+                idx_train=len(train_loader)*BATCH_SIZE,
+                loss=f"{batch_loss:.6f}",
+                accuracy=f"{batch_acc:.6f}",
+                J_Precision=f"{J_TP/(J_TP+J_FP+1e-6):.6f}",
+                J_Recall=f"{J_TP/(J_TP+J_FN+1e-6):.6f}"
+            )
 
-        # Acceptor_YL = labels[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-        # Acceptor_YP = yp[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-        # Donor_YL = labels[is_expr, 2, :].flatten().to('cpu').detach().numpy()
-        # Donor_YP = yp[is_expr, 2, :].flatten().to('cpu').detach().numpy()
+            fw_train_log_loss.write(str(batch_loss)+ "\n")
+            fw_train_log_acc.write(str(batch_acc)+ "\n")
+            fw_train_log_lr.write(str(get_lr(optimizer))+ "\n")
+            # fw_train_log_A_topk_accuracy.write(str(A_accuracy)+ "\n")
+            # fw_train_log_A_auc.write(str(A_auc)+ "\n")
+            # fw_train_log_A_threshold_precision.write(f"{A_TP/(A_TP+A_FP+1e-6):.6f}\n")
+            # fw_train_log_A_threshold_recall.write(f"{A_TP/(A_TP+A_FN+1e-6):.6f}\n")
+            # fw_train_log_D_topk_accuracy.write(str(D_accuracy)+ "\n")
+            # fw_train_log_D_auc.write(str(D_auc)+ "\n")
+            # fw_train_log_D_threshold_precision.write(f"{D_TP/(D_TP+D_FP+1e-6):.6f}\n")
+            # fw_train_log_D_threshold_recall.write(f"{D_TP/(D_TP+D_FN+1e-6):.6f}\n")
+            fw_train_log_J_threshold_precision.write(f"{J_TP/(J_TP+J_FP+1e-6):.6f}\n")
+            fw_train_log_J_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1e-6):.6f}\n")
 
-        # A_YL = labels[is_expr, 1, :].to('cpu').detach().numpy()
-        # A_YP = yp[is_expr, 1, :].to('cpu').detach().numpy()
-        # D_YL = labels[is_expr, 2, :].to('cpu').detach().numpy()
-        # D_YP = yp[is_expr, 2, :].to('cpu').detach().numpy()
-
-        # J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = print_junc_statistics(D_YL, A_YL, D_YP, A_YP, 0.5, J_G_TP, J_G_FN, J_G_FP, J_G_TN)
-        # A_accuracy, A_auc = print_top_1_statistics(Acceptor_YL, Acceptor_YP)
-        # D_accuracy, D_auc = print_top_1_statistics(Donor_YL, Donor_YP)
-
-        # A_G_TP, A_G_FN, A_G_FP, A_G_TN, A_TP, A_FN, A_FP, A_TN = print_threshold_statistics(Acceptor_YL, Acceptor_YP, 0.5, A_G_TP, A_G_FN, A_G_FP, A_G_TN)
-        # D_G_TP, D_G_FN, D_G_FP, D_G_TN, D_TP, D_FN, D_FP, D_TN = print_threshold_statistics(Donor_YL, Donor_YP, 0.5, D_G_TP, D_G_FN, D_G_FP, D_G_TN)
-
-        # batch_loss = loss.item()
-        # epoch_loss += loss.item()
-        # epoch_donor_acc += D_accuracy
-        # epoch_acceptor_acc += A_accuracy
-
-        # pbar.update(1)
-        # pbar.set_postfix(
-        #     batch_id=batch_idx,
-        #     idx_train=len(test_loader)*BATCH_SIZE,
-        #     loss=f"{batch_loss:.6f}",
-        #     # accuracy=f"{batch_acc:.6f}",
-        #     A_accuracy=f"{A_accuracy:.6f}",
-        #     D_accuracy=f"{D_accuracy:.6f}",
-        #     A_auc = f"{A_auc:.6f}",
-        #     D_auc = f"{D_auc:.6f}",
-        #     # A_TP=A_TP,
-        #     # A_FN=A_FN, 
-        #     # A_FP=A_FP, 
-        #     # A_TN=A_TN,
-        #     # D_TP=D_TP,
-        #     # D_FN=D_FN, 
-        #     # D_FP=D_FP, 
-        #     # D_TN=D_TN,
-        #     A_Precision=f"{A_TP/(A_TP+A_FP+1e-6):.6f}",
-        #     A_Recall=f"{A_TP/(A_TP+A_FN+1e-6):.6f}",
-        #     D_Precision=f"{D_TP/(D_TP+D_FP+1e-6):.6f}",
-        #     D_Recall=f"{D_TP/(D_TP+D_FN+1e-6):.6f}",
-        #     J_Precision=f"{J_TP/(J_TP+J_FP+1e-6):.6f}",
-        #     J_Recall=f"{J_TP/(J_TP+J_FN+1e-6):.6f}"
-        # )
-        fw_test_log_loss.write(str(batch_loss)+ "\n")
-        fw_test_log_acc.write(str(batch_acc)+"\n")
-        # # fw_test_log_A_topk_accuracy.write(str(A_accuracy)+ "\n")
-        # # fw_test_log_A_auc.write(str(A_auc)+ "\n")
-        # # fw_test_log_A_threshold_precision.write(f"{A_TP/(A_TP+A_FP+1e-6):.6f}\n")
-        # # fw_test_log_A_threshold_recall.write(f"{A_TP/(A_TP+A_FN+1e-6):.6f}\n")
-        # # fw_test_log_D_topk_accuracy.write(str(D_accuracy)+ "\n")
-        # # fw_test_log_D_auc.write(str(D_auc)+ "\n")
-        # # fw_test_log_D_threshold_precision.write(f"{D_TP/(D_TP+D_FP+1e-6):.6f}\n")
-        # # fw_test_log_D_threshold_recall.write(f"{D_TP/(D_TP+D_FN+1e-6):.6f}\n")
-        fw_test_log_J_threshold_precision.write(f"{J_TP/(J_TP+J_FP+1e-6):.6f}\n")
-        fw_test_log_J_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1e-6):.6f}\n")
+            fw_test_log_loss.write(str(batch_loss)+ "\n")
+            fw_test_log_acc.write(str(batch_acc)+"\n")
+            # # fw_test_log_A_topk_accuracy.write(str(A_accuracy)+ "\n")
+            # # fw_test_log_A_auc.write(str(A_auc)+ "\n")
+            # # fw_test_log_A_threshold_precision.write(f"{A_TP/(A_TP+A_FP+1e-6):.6f}\n")
+            # # fw_test_log_A_threshold_recall.write(f"{A_TP/(A_TP+A_FN+1e-6):.6f}\n")
+            # # fw_test_log_D_topk_accuracy.write(str(D_accuracy)+ "\n")
+            # # fw_test_log_D_auc.write(str(D_auc)+ "\n")
+            # # fw_test_log_D_threshold_precision.write(f"{D_TP/(D_TP+D_FP+1e-6):.6f}\n")
+            # # fw_test_log_D_threshold_recall.write(f"{D_TP/(D_TP+D_FN+1e-6):.6f}\n")
+            fw_test_log_J_threshold_precision.write(f"{J_TP/(J_TP+J_FP+1e-6):.6f}\n")
+            fw_test_log_J_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1e-6):.6f}\n")
     pbar.close()
     # print(f'Epoch {epoch_idx+0:03}: | Loss: {epoch_loss/len(test_loader):.5f} | Donor Acc: {epoch_donor_acc/len(test_loader):.3f} | Acceptor Acc: {epoch_acceptor_acc/len(test_loader):.3f}')
     # print(f'Junction Precision: {J_G_TP/(J_G_TP+J_G_FP):.5f} | Junction Recall: {J_G_TP/(J_G_TP+J_G_FN):.5f} | TP: {J_G_TP} | FN: {J_G_FN} | FP: {J_G_FP} | TN: {J_G_TN}')

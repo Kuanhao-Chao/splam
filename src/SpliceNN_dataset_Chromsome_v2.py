@@ -217,20 +217,20 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
     )
     if batch_size == 1:
         print("shuffle: ", shuffle)
-        torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.nobatch."+str(repeat_idx)+"."+str(batch_size)+".pt")
-        with open("../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.nobatch.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
+        # torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.nobatch."+str(repeat_idx)+"."+str(batch_size)+".pt")
+        with open("../src_spliceAI_benchmark/INPUT/splam.nobatch.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
             pickle.dump(testset.indices, f)
             
     elif shuffle:
         print("shuffle: ", shuffle)
-        torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.shuffle."+str(repeat_idx)+"."+str(batch_size)+".pt")
-        with open("../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.shuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
+        # torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.shuffle."+str(repeat_idx)+"."+str(batch_size)+".pt")
+        with open("../src_spliceAI_benchmark/INPUT/splam.shuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
             pickle.dump(testset.indices, f)
 
     else:
         print("shuffle: ", shuffle)
-        torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.noshuffle."+str(repeat_idx)+"."+str(batch_size)+".pt")
-        with open("../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.noshuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
+        # torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.noshuffle."+str(repeat_idx)+"."+str(batch_size)+".pt")
+        with open("../src_spliceAI_benchmark/INPUT/splam.noshuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
             pickle.dump(testset.indices, f)
 
     return test_loader
