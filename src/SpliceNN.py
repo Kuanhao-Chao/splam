@@ -11,19 +11,18 @@ class ResidualUnit(Module):
         super().__init__()
         bot_channels = int(round(l * bot_mul))
         self.batchnorm1 = BatchNorm1d(l)
-        # , momentum=0.8)
         self.relu = LeakyReLU(0.1)
         self.batchnorm2 = BatchNorm1d(l)
-        # , momentum=0.8)
         self.C = bot_channels//CARDINALITY_ITEM
         self.conv1 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
         self.conv2 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
 
     def forward(self, x, y):
-        # x1 = self.conv1(self.relu(self.batchnorm1(x)))
-        # x2 = self.conv2(self.relu(self.batchnorm2(x1)))
         x1 = self.relu(self.batchnorm1(self.conv1(x)))
         x2 = self.relu(self.batchnorm2(self.conv1(x1)))
+        # x1 = self.relu(self.batchnorm1(self.conv1(x)))
+        # x2 = self.relu(self.batchnorm1(self.conv1(x1)))
+
         # print("x : ", x.size())
         # print("x1: ", x1.size())
         # print("x2: ", x2.size())

@@ -399,15 +399,15 @@ def main():
         print("splam_v2_j_noshuffle_pred_prob : ", len(splam_v2_j_noshuffle_pred_prob))
         print("splam_v2_j_noshuffle_label_prob: ", len(splam_v2_j_noshuffle_label_prob))
 
-    # with open("./INPUT/splam.nobatch.0.1.pkl",'rb') as f:
-    #     splam_v2_j_nobatch_pred_prob = pickle.load(f)
-    #     splam_v2_j_nobatch_label_prob = pickle.load(f)
+    with open("./INPUT/splam.nobatch.0.100.pkl",'rb') as f:
+        splam_v2_j_nobatch_pred_prob = pickle.load(f)
+        splam_v2_j_nobatch_label_prob = pickle.load(f)
 
-    #     print("splam_v2_j_nobatch_pred_prob : ", splam_v2_j_nobatch_pred_prob)
-    #     print("splam_v2_j_nobatch_label_prob: ", splam_v2_j_nobatch_label_prob)
+        print("splam_v2_j_nobatch_pred_prob : ", splam_v2_j_nobatch_pred_prob)
+        print("splam_v2_j_nobatch_label_prob: ", splam_v2_j_nobatch_label_prob)
 
-    #     print("splam_v2_j_nobatch_pred_prob : ", len(splam_v2_j_nobatch_pred_prob))
-    #     print("splam_v2_j_nobatch_label_prob: ", len(splam_v2_j_nobatch_label_prob))
+        print("splam_v2_j_nobatch_pred_prob : ", len(splam_v2_j_nobatch_pred_prob))
+        print("splam_v2_j_nobatch_label_prob: ", len(splam_v2_j_nobatch_label_prob))
 
 
     # spliceai_N_d_label_prob = np.array(spliceai_N_d_label_prob)
@@ -428,8 +428,8 @@ def main():
     splam_v2_j_noshuffle_label_prob = np.array(splam_v2_j_noshuffle_label_prob)
     splam_v2_j_noshuffle_pred_prob = np.array(splam_v2_j_noshuffle_pred_prob)
 
-    # splam_v2_j_nobatch_label_prob = np.array(splam_v2_j_nobatch_label_prob)
-    # splam_v2_j_nobatch_pred_prob = np.array(splam_v2_j_nobatch_pred_prob)
+    splam_v2_j_nobatch_label_prob = np.array(splam_v2_j_nobatch_label_prob)
+    splam_v2_j_nobatch_pred_prob = np.array(splam_v2_j_nobatch_pred_prob)
     
     
     ###################################
@@ -441,7 +441,7 @@ def main():
     # plot_thresholds(splam_d_label_prob, splam_d_pred_prob, splam_a_pred_prob, "splam")
     plot_thresholds_J(splam_v2_j_shuffle_label_prob, splam_v2_j_shuffle_pred_prob, "splam_v2_shuffle")
     plot_thresholds_J(splam_v2_j_noshuffle_label_prob, splam_v2_j_noshuffle_pred_prob, "splam_v2_noshuffle")
-    # plot_thresholds_J(splam_v2_j_nobatch_label_prob, splam_v2_j_nobatch_pred_prob, "splam_v2_nobatch")
+    plot_thresholds_J(splam_v2_j_nobatch_label_prob, splam_v2_j_nobatch_pred_prob, "splam_v2_nobatch")
 
     
     ###################################
@@ -454,7 +454,7 @@ def main():
     plot_pr_curve(splam_v2_j_shuffle_label_prob, splam_v2_j_shuffle_pred_prob, "splam_v2_junc_shuffle", "sklean")
     #  "self")
     plot_pr_curve(splam_v2_j_noshuffle_label_prob, splam_v2_j_noshuffle_pred_prob, "splam_v2_junc_noshuffle", "sklean")
-    # plot_pr_curve(splam_v2_j_nobatch_label_prob, splam_v2_j_nobatch_pred_prob, "splam_v2_junc_nobatch", "sklean")
+    plot_pr_curve(splam_v2_j_nobatch_label_prob, splam_v2_j_nobatch_pred_prob, "splam_v2_junc_nobatch", "sklean")
 
     # "self")
     plt.savefig("./IMG/junction/junc_pr.png")
@@ -466,7 +466,7 @@ def main():
 
     plot_roc_curve(splam_v2_j_shuffle_label_prob, splam_v2_j_shuffle_pred_prob, "splam_v2_junc_shuffle", "self")
     plot_roc_curve(splam_v2_j_noshuffle_label_prob, splam_v2_j_noshuffle_pred_prob, "splam_v2_junc_noshuffle", "self")
-    # plot_roc_curve(splam_v2_j_nobatch_label_prob, splam_v2_j_nobatch_pred_prob, "splam_v2_junc_nobatch", "self")
+    plot_roc_curve(splam_v2_j_nobatch_label_prob, splam_v2_j_nobatch_pred_prob, "splam_v2_junc_nobatch", "self")
 
 
     plt.savefig("./IMG/junction/junc_roc.png")
