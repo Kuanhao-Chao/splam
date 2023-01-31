@@ -26,7 +26,7 @@ def main():
     N_WORKERS = 1
     device = torch.device("cuda" if torch.cuda.is_available() else "mps")
 
-    MODEL_BASE = "SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v28/"
+    MODEL_BASE = "SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v30/"
     MODEL = "../src/MODEL/"+MODEL_BASE+"SpliceNN_20.pt"
     MODEL_OUTPUT_BASE = "./TEST/"+MODEL_BASE+""
     model = torch.load(MODEL)
