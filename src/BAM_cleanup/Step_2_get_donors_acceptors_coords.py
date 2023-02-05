@@ -2,29 +2,23 @@ import pandas as pd
 import os 
 import sys
 
-def get_hg38_chrom_size():
-    f_chrs = open("../hg38_chrom_size.tsv", "r")
+def get_hg38_chrom_size(target):
+    if target == "STAR":
+        f_chrs = open("../hg38_chrom_size_refseq.tsv", "r")
+    else:
+        f_chrs = open("../hg38_chrom_size.tsv", "r")
     lines = f_chrs.read().splitlines()
     chrs = {}
     for line in lines:
-        eles = line.split("\t")
-        chrs[eles[0]] = int(eles[1])
-    return chrs
-
-def get_hg38_chrom_size_STAR():
-    f_chrs = open("../hg38_chrom_size_refseq.tsv", "r")
-    lines = f_chrs.read().splitlines()
-    chrs = {}
-    for line in lines:
-        eles = line.split(" ")
+        if target == "STAR":
+            eles = line.split(" ")
+        else:
+            eles = line.split("\t")
         chrs[eles[0]] = int(eles[1])
     return chrs
 
 def main(argv):
-    if (argv[1] == "STAR"):
-        chrs = get_hg38_chrom_size_STAR()        
-    else:
-        chrs = get_hg38_chrom_size()
+    chrs = get_hg38_chrom_size(argv[1])
 
     threshold = "100"
     SEQ_LEN="800"
@@ -41,8 +35,6 @@ def main(argv):
     
     d_a_bed = "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/d_a.bed"
     fw_da = open(d_a_bed, "w")
-    # fw_d = open("BAM_junctions/d.bed", "w")
-    # fw_a = open("BAM_junctions/a.bed", "w")
     JUNCS = set()
 
     with open("../../Dataset/"+argv[0]+"/"+argv[0]+".bed", "r") as f:

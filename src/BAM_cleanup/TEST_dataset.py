@@ -12,7 +12,7 @@ from SpliceNN_utils import *
 # Random_90_10 / Chromosome_90_10
 # TARGET = "Chromosome_split_p_n_nn_n1"
 SEQ_LEN = "800"
-os.makedirs("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/", exist_ok=True)
+os.makedirs("../src_spliceAI_benchmark/INPUTS/SPLAM_v2/", exist_ok=True)
 
 def split_seq_name(seq):
     return seq[1:]
@@ -33,8 +33,8 @@ def split_seq_name(seq):
 #         ## Processing 'POSITIVE' samples
 #         #################################
 #         pidx = 0
-#         with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/"+output_file+"splam.juncs.seq.fa", "r") as f:
-#             print("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/"+output_file+"splam.juncs.seq.fa")
+#         with open("../src_spliceAI_benchmark/"+output_file+"splam.juncs.seq.fa", "r") as f:
+#             print("../src_spliceAI_benchmark/"+output_file+"splam.juncs.seq.fa")
 #             lines = f.read().splitlines()
 #             seq_name = ""
 #             seq = ""
@@ -100,8 +100,8 @@ class myDataset(Dataset):
 
         output_files = ["OUTPUT/pos/", "OUTPUT/neg_can/", "OUTPUT/neg_noncan/", "OUTPUT/neg_1/"]
         for output_file in output_files:
-            with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/"+output_file+"splam.juncs.seq.fa", "r") as f:
-                print("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/"+output_file+"splam.juncs.seq.fa")
+            with open("../src_spliceAI_benchmark/"+output_file+"splam.juncs.seq.fa", "r") as f:
+                print("../src_spliceAI_benchmark/"+output_file+"splam.juncs.seq.fa")
                 lines = f.read().splitlines()
                 seq_name = ""
                 seq = ""
@@ -172,30 +172,30 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle):
     )
     if batch_size == 1:
         print("shuffle: ", shuffle)
-        torch.save(test_loader, "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/test.nobatch.pt")
-        with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/test.nobatch.indices.pkl", "wb") as f:
+        torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.nobatch.pt")
+        with open("../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.nobatch.indices.pkl", "wb") as f:
             pickle.dump(testset.indices, f)
             
     elif shuffle:
         print("shuffle: ", shuffle)
-        torch.save(test_loader, "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/test.shuffle.pt")
-        with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/test.shuffle.indices.pkl", "wb") as f:
+        torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.shuffle.pt")
+        with open("../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.shuffle.indices.pkl", "wb") as f:
             pickle.dump(testset.indices, f)
 
     else:
         print("shuffle: ", shuffle)
-        torch.save(test_loader, "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/test.noshuffle.pt")
-        with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/test.noshuffle.indices.pkl", "wb") as f:
+        torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.noshuffle.pt")
+        with open("../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.noshuffle.indices.pkl", "wb") as f:
             pickle.dump(testset.indices, f)
 
     return test_loader
 
 # def get_dataloader(batch_size, n_workers):
-#     # print("Loading dataset: ", "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
-#     train_loader = torch.load("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
+#     # print("Loading dataset: ", "../src_spliceAI_benchmark/INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
+#     train_loader = torch.load("../src_spliceAI_benchmark/INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
 
-#     print("Loading dataset: ", "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
-#     test_loader = torch.load("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+#     print("Loading dataset: ", "../src_spliceAI_benchmark/INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+#     test_loader = torch.load("../src_spliceAI_benchmark/INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
 #     # return test_loader
 #     return train_loader, test_loader
 
@@ -217,20 +217,20 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
     )
     if batch_size == 1:
         print("shuffle: ", shuffle)
-        # torch.save(test_loader, "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/test.nobatch."+str(repeat_idx)+"."+str(batch_size)+".pt")
-        with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUT/splam.nobatch.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
+        # torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.nobatch."+str(repeat_idx)+"."+str(batch_size)+".pt")
+        with open("../src_spliceAI_benchmark/INPUT/splam.nobatch.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
             pickle.dump(testset.indices, f)
             
     elif shuffle:
         print("shuffle: ", shuffle)
-        # torch.save(test_loader, "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/test.shuffle."+str(repeat_idx)+"."+str(batch_size)+".pt")
-        with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUT/splam.shuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
+        # torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.shuffle."+str(repeat_idx)+"."+str(batch_size)+".pt")
+        with open("../src_spliceAI_benchmark/INPUT/splam.shuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
             pickle.dump(testset.indices, f)
 
     else:
         print("shuffle: ", shuffle)
-        # torch.save(test_loader, "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/test.noshuffle."+str(repeat_idx)+"."+str(batch_size)+".pt")
-        with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUT/splam.noshuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
+        # torch.save(test_loader, "../src_spliceAI_benchmark/INPUTS/SPLAM_v2/test.noshuffle."+str(repeat_idx)+"."+str(batch_size)+".pt")
+        with open("../src_spliceAI_benchmark/INPUT/splam.noshuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
             pickle.dump(testset.indices, f)
 
     return test_loader

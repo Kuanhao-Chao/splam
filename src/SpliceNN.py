@@ -19,7 +19,7 @@ class ResidualUnit(Module):
 
     def forward(self, x, y):
         x1 = self.relu(self.batchnorm1(self.conv1(x)))
-        x2 = self.relu(self.batchnorm2(self.conv1(x1)))
+        x2 = self.relu(self.batchnorm2(self.conv2(x1)))
         # x1 = self.relu(self.batchnorm1(self.conv1(x)))
         # x2 = self.relu(self.batchnorm1(self.conv1(x1)))
 
