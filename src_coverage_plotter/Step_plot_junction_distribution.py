@@ -11,9 +11,9 @@ def main(argv):
 
     for sample in argv:
         print("sample: ", sample)
-        discard_file="/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/results/800bp/"+sample+"/OUTPUT/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v21/BAM/"+sample+".discard.juncs.bed"
+        discard_file="/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/results/800bp/"+sample+"/OUTPUT/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/BAM/"+sample+".discard.juncs.bed"
 
-        cleaned_file="/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/results/800bp/"+sample+"/OUTPUT/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v21/BAM/"+sample+".cleaned.juncs.bed"
+        cleaned_file="/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/results/800bp/"+sample+"/OUTPUT/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/BAM/"+sample+".cleaned.juncs.bed"
 
         with open(discard_file, "r") as f:
             lines = f.read().splitlines()
@@ -124,6 +124,6 @@ def main(argv):
 if __name__ == "__main__":
     main(sys.argv[1:])
 
-# samtools view /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/results/800bp/$SAMPLE/OUTPUT/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v21/BAM/$SAMPLE.cleaned.bam | grep -o "NH:i:[0-9]*" > 
+# samtools view /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/results/800bp/$SAMPLE/OUTPUT/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/BAM/$SAMPLE.cleaned.bam | grep -o "NH:i:[0-9]*" > 
 
-# samtools view /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/results/800bp/$SAMPLE/OUTPUT/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v21/BAM/$SAMPLE.discard.bam | grep -o "NH:i:[0-9]*" > /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/results/800bp/$SAMPLE/OUTPUT/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v21/BAM/$SAMPLE.discard.nh.txt
+# samtools view /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/results/800bp/$SAMPLE/OUTPUT/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/BAM/$SAMPLE.discard.bam | grep -o "NH:i:[0-9]*" > /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/results/800bp/$SAMPLE/OUTPUT/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/BAM/$SAMPLE.discard.nh.txt

@@ -149,6 +149,8 @@ class myDataset(Dataset):
         feature = self.data[index][0]
         label = self.data[index][1]
         seq_name = self.data[index][2]
+
+        print("seq_name: ", seq_name)
         feature = torch.flatten(feature, start_dim=1)
         return feature, label, seq_name
 
@@ -202,6 +204,7 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle):
 def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
     """Generate dataloader"""
     # testset = myDataset("test", output_file, int(SEQ_LEN))
+    print("output_file: ", output_file)
     testset = myDataset("test", output_file, shuffle, int(SEQ_LEN))
 
     # print("testset.indices: ", testset.indices)
