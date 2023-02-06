@@ -16,8 +16,10 @@ def main(argv):
     fr = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/OUTPUT/"+argv[1]+"/junc_scores.bed", 'r')
     lines = fr.read().splitlines()
     for line in lines:
-        chr, start, end, name, score, strand, d_score, a_score = line.split("\t")
-        if float(d_score) < threshold or float(a_score) < threshold:
+        chr, start, end, name, score, strand, j_score = line.split("\t")
+        if float(j_score) < threshold:
+            # print("Detection!!!!!")
+            print(">> chr, start, end, strand: ", chr, start, end, strand)
             invalid_juncs.add((chr, start, end, strand))
 
     # print("invalid_juncs: ", invalid_juncs)
