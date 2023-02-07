@@ -1,8 +1,0 @@
-/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_junction_extractor/build/CMakeFiles/htslib.dir
-/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_junction_extractor/build/CMakeFiles/junction_extractor.dir
-/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_junction_extractor/build/CMakeFiles/edit_cache.dir
-/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_junction_extractor/build/CMakeFiles/rebuild_cache.dir
-/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_junction_extractor/build/CMakeFiles/list_install_components.dir
-/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_junction_extractor/build/CMakeFiles/install.dir
-/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_junction_extractor/build/CMakeFiles/install/local.dir
-/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_junction_extractor/build/CMakeFiles/install/strip.dir
