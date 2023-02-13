@@ -1,7 +1,6 @@
 from torch.nn import Module, BatchNorm1d, ReLU, Conv1d, ModuleList, Softmax
 import numpy as np
 
-
 CL_max = 10000
 
 

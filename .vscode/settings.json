@@ -88,6 +88,8 @@
         "iterator": "cpp",
         "shared_mutex": "cpp",
         "thread": "cpp",
-        "utility": "cpp"
+        "utility": "cpp",
+        "__functional_03": "cpp",
+        "format": "cpp"
     }
 }
