@@ -1,0 +1,1 @@
+./Junction-Extractor/build/junction_extractor -o ../Dataset/$1/$1.bed ../Dataset/$1/$1.bam

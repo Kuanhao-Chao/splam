@@ -2,11 +2,46 @@ cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
 project(SPLAM)
 set(CMAKE_CXX_STANDARD 17)
 
-find_package(Torch REQUIRED)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS} -fpermissive -DNOCURL=1")
+# list(APPEND CMAKE_PREFIX_PATH "python -c 'import torch;print(torch.utils.cmake_prefix_path)'")	
+# find_package(Torch REQUIRED)
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${TORCH_CXX_FLAGS} -fpermissive -DNOCURL=1")
+# set(CMAKE_OSX_ARCHITECTURES "arm64")  # https://github.com/pytorch/pytorch/issues/63558
+
+# set(Python_ADDITIONAL_VERSIONS 3.4)
+
+set(PYTHON_INCLUDE_DIR /Users/chaokuan-hao/miniconda3/include/python3.8/ ) # path to header
+# find_package(PythonLibs REQUIRED)
+# find_package(Python COMPONENTS Interpreter Development)
+find_package(Python REQUIRED)
+# find_package(ZLIB)
+# find_library(ZLIB_LIBRARY zlib NAMES)
+# find_package(ZLIB ${ZLIB_VERSION} REQUIRED MODULE) 
+find_package(ZLIB)
+
+
+# export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib/"
+# export CPPFLAGS="-I/usr/local/opt/zlib/include"
+# export CPPFLAGS="-I/usr/local/opt/zlib/include"
+# find_package(PythonLibs REQUIRED)
+
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/opt/zlib/include")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/opt/bzip2/include")
+
+# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/opt/zlib/include")
+
+
+message("Python_FOUND:${Python_FOUND}")
+message("Python_VERSION:${Python_VERSION}")
+message("Python_Development_FOUND:${Python_Development_FOUND}")
+message("Python_LIBRARIES:${Python_LIBRARIES}")
+message("PYTHON_INCLUDE_DIR:${PYTHON_INCLUDE_DIR}")
+message("CMAKE_C_FLAGS:${CMAKE_C_FLAGS}")
+
 
 include_directories("${CMAKE_SOURCE_DIR}/include/")
 link_directories("${CMAKE_SOURCE_DIR}/include/htslib")
+include_directories(${PYTHON_INCLUDE_DIR})
+
 
 include(ExternalProject)
 ExternalProject_Add(htslib
@@ -17,11 +52,11 @@ ExternalProject_Add(htslib
         INSTALL_COMMAND ""
         )
 
-add_executable(SPLAM src/splam.cpp 
-        src/junc.cpp 
+add_executable(SPLAM src/splam.cpp  
         src/GSam.cpp
         src/util.h
         src/tmerge.cpp
+        src/junc.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GArgs.h
@@ -30,22 +65,30 @@ add_executable(SPLAM src/splam.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.cpp)
 
 add_dependencies(SPLAM htslib)
+
 target_link_libraries(SPLAM ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
-        
-target_link_libraries(SPLAM "${TORCH_LIBRARIES}")
+
+# target_link_libraries(SPLAM "${TORCH_LIBRARIES}")
+# target_include_directories(SPLAM PRIVATE ${PYTHON_INCLUDE_DIR})
+target_link_libraries(SPLAM PRIVATE ${PYTHON_LIBRARIES})
+# target_link_libraries(SPLAM PRIVATE ${ZLIB_LIBRARY})
+# target_link_libraries(SPLAM ZLIB::ZLIB)
+
 set_property(TARGET SPLAM PROPERTY CXX_STANDARD 17)
 
 
 # The following code block is suggested to be used on Windows.
 # According to https://github.com/pytorch/pytorch/issues/25457,
 # the DLLs need to be copied to avoid memory errors.
-if (MSVC)
-  file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
-  add_custom_command(TARGET example-app
-                     POST_BUILD
-                     COMMAND ${CMAKE_COMMAND} -E copy_if_different
-                     ${TORCH_DLLS}
-                     $<TARGET_FILE_DIR:example-app>)
-endif (MSVC)
+# if (MSVC)
+#   file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
+#   add_custom_command(TARGET SPLAM
+#                      POST_BUILD
+#                      COMMAND ${CMAKE_COMMAND} -E copy_if_different
+#                      ${TORCH_DLLS}
+#                      $<TARGET_FILE_DIR:SPLAM>)
+# endif (MSVC)
 
-# install(TARGETS SPLAM DESTINATION ${CMAKE_INSTALL_PREFIX})
+
+
+install(TARGETS SPLAM DESTINATION ${CMAKE_INSTALL_PREFIX})
