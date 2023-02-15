@@ -3,6 +3,7 @@
 
     File name: dataset.py
     Author: Kuan-Hao Chao
+    Email: kh.chao@cs.jhu.edu
     Date created: 12/20/2022
     Date last modified: 01/14/2023
     Python Version: 3.8
