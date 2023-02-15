@@ -33,15 +33,7 @@ JUNC_FA = args.f
 OUT_SCORE = args.o
 MODEL_PATH = args.m
 
-print("JUNC_FA: ", JUNC_FA)
-print("OUT_SCORE: ", OUT_SCORE)
-print("MODEL_PATH: ", MODEL_PATH)
-
 def test_model():
-    print("################################")
-    print("## Start the predictions now! ##")
-    print("################################")
-
     #############################
     # Global variable definition
     #############################
@@ -55,7 +47,8 @@ def test_model():
     # Model Initialization
     #############################
     print(f"[Info]: Finish loading model!",flush = True)
-    print("SPLAM! model: ", model)
+    print(f"[Info]: SPLAM! prediction",flush = True)
+    # print("SPLAM! model: ", model)
 
     #############################
     # Training Data initialization
@@ -69,9 +62,6 @@ def test_model():
     criterion = torch.nn.BCELoss()
 
     fw_junc_scores = open(OUT_SCORE, 'w')
-    print("*********************")
-    print("** Testing Dataset **")
-    print("*********************")
     model.eval()
     junc_counter = 0    
     pbar = Bar('SPLAM! prediction', max=len(test_loader))
@@ -97,7 +87,7 @@ def test_model():
     pbar.finish()
     fw_junc_scores.close()
     print(f'Expected #prediction: {len(test_loader)*BATCH_SIZE+0:03}')
-    print("\n\n\n")
+    print("\n\n")
 
 
 if __name__ == "__main__":

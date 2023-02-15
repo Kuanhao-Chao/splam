@@ -99,32 +99,30 @@ void writeJuncs(FILE* f) {
     for (int i=0;i<junctions.Count();i++) {
     	junctions[i].write(f);
     }
-
-	std::cout << ">> Junction count: " << junctions.Count() << std::endl;
-	for (int i = 0; i < junctions.Count(); i++) {
-		std::cout << i <<  " Junction name: " << junctions[i].start << " - " << junctions[i].end << std::endl;
-		std::cout << ">> Read count: " << junctions[i].read_ls.size() << std::endl;
-		for (int r = 0; r < junctions[i].read_ls.size(); r++) {
-			std::cout << "\tRead " <<  r << " : " << junctions[i].read_ls[r]->cigar() << std::endl;
-		}
-		std::cout << std::endl;
-	}
+	// std::cout << ">> Junction count: " << junctions.Count() << std::endl;
+	// for (int i = 0; i < junctions.Count(); i++) {
+	// 	std::cout << i <<  " Junction name: " << junctions[i].start << " - " << junctions[i].end << std::endl;
+	// 	std::cout << ">> Read count: " << junctions[i].read_ls.size() << std::endl;
+	// 	for (int r = 0; r < junctions[i].read_ls.size(); r++) {
+	// 		std::cout << "\tRead " <<  r << " : " << junctions[i].read_ls[r]->cigar() << std::endl;
+	// 	}
+	// 	std::cout << std::endl;
+	// }
 }
 
 void flushJuncs(FILE* f) {
     for (int i=0;i<junctions.Count();i++) {
     	junctions[i].write(f);
     }
-
-	std::cout << ">> Junction count: " << junctions.Count() << std::endl;
-	for (int i = 0; i < junctions.Count(); i++) {
-		std::cout << i <<  " Junction name: " << junctions[i].start << " - " << junctions[i].end << std::endl;
-		std::cout << ">> Read count: " << junctions[i].read_ls.size() << std::endl;
-		for (int r = 0; r < junctions[i].read_ls.size(); r++) {
-			std::cout << "\tRead " <<  r << " : " << junctions[i].read_ls[r]->cigar() << std::endl;
-		}
-		std::cout << std::endl;
-	}
+	// std::cout << ">> Junction count: " << junctions.Count() << std::endl;
+	// for (int i = 0; i < junctions.Count(); i++) {
+	// 	std::cout << i <<  " Junction name: " << junctions[i].start << " - " << junctions[i].end << std::endl;
+	// 	std::cout << ">> Read count: " << junctions[i].read_ls.size() << std::endl;
+	// 	for (int r = 0; r < junctions[i].read_ls.size(); r++) {
+	// 		std::cout << "\tRead " <<  r << " : " << junctions[i].read_ls[r]->cigar() << std::endl;
+	// 	}
+	// 	std::cout << std::endl;
+	// }
 
     junctions.Clear();
     junctions.setCapacity(128);
