@@ -29,7 +29,7 @@ find_package(ZLIB)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/opt/zlib/include")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/opt/bzip2/include")
 
-
+message("CMAKE_CURRENT_SOURCE_DIR:${CMAKE_CURRENT_SOURCE_DIR}")
 message("PYTHON_FOUND:${PYTHON_FOUND}")
 message("PYTHON_VERSION:${PYTHON_VERSION}")
 # message("Python_Development_FOUND:${Python_Development_FOUND}")
@@ -85,6 +85,7 @@ set_property(TARGET SPLAM PROPERTY CXX_STANDARD 17)
 #                      $<TARGET_FILE_DIR:SPLAM>)
 # endif (MSVC)
 
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/build/SPLAM ${CMAKE_CURRENT_SOURCE_DIR}/SPLAM/SPLAM COPYONLY)
 
 
 install(TARGETS SPLAM DESTINATION ${CMAKE_INSTALL_PREFIX})

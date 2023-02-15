@@ -90,6 +90,9 @@
         "thread": "cpp",
         "utility": "cpp",
         "__functional_03": "cpp",
-        "format": "cpp"
+        "format": "cpp",
+        "codecvt": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp"
     }
 }

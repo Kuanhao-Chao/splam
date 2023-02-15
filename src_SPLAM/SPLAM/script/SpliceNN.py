@@ -1,8 +1,16 @@
-from torch.nn import Module, BatchNorm1d, LazyBatchNorm1d, ReLU, LeakyReLU, Conv1d, LazyConv1d, ModuleList, Softmax, Sigmoid, Flatten, Dropout2d, Linear
+#! /usr/bin/python3
+"""Classes for SPLAM! model
+
+    File name: SpliceNN.py
+    Author: Kuan-Hao Chao
+    Email: kh.chao@cs.jhu.edu
+    Date created: 12/20/2022
+    Date last modified: 01/14/2023
+    Python Version: 3.8
+"""
+from torch.nn import Module, BatchNorm1d, LeakyReLU, Conv1d, ModuleList, Softmax, Sigmoid, Flatten, Dropout2d, Linear
 import numpy as np
 
-
-CL_max = 10000
 CARDINALITY_ITEM = 16
 
 class ResidualUnit(Module):
@@ -19,12 +27,6 @@ class ResidualUnit(Module):
     def forward(self, x, y):
         x1 = self.relu(self.batchnorm1(self.conv1(x)))
         x2 = self.relu(self.batchnorm2(self.conv2(x1)))
-        # x1 = self.relu(self.batchnorm1(self.conv1(x)))
-        # x2 = self.relu(self.batchnorm1(self.conv1(x1)))
-
-        # print("x : ", x.size())
-        # print("x1: ", x1.size())
-        # print("x2: ", x2.size())
         return x + x2, y
 
 
@@ -61,21 +63,8 @@ class SpliceNN(Module):
         x, skip = self.skip1(self.conv1(x), 0)
         for m in self.residual_blocks:
             x, skip = m(x, skip)
-        #     print("x.size(): ", x.size())
-        #     print("skip.size(): ", skip.size())
-        # print("self.softmax(self.last_cov(skip)[..., CL_max//2:-CL_max//2]): ", self.softmax(self.last_cov(skip)).size())
-
-        #######################################
-        # predicting pb for every bp
-        #######################################
-        output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
-        # output = self.sigmoid(self.fc(self.drop_out(self.flatten(self.last_cov(skip)))))
-        # print("output.size(): ", output.size())
-        return output
-
         #######################################
         # predicting splice / non-splice
         #######################################
-        # return self.softmax(self.last_cov(skip))
-
-        # return self.softmax(self.last_cov(skip)[..., CL_max//2:-CL_max//2])
+        output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
+        return output
