@@ -89,8 +89,7 @@ htslib-prefix/src/htslib-stamp/htslib-build: htslib-prefix/src/htslib-stamp/htsl
 htslib-prefix/src/htslib-stamp/htslib-configure: htslib-prefix/tmp/htslib-cfgcmd.txt
 htslib-prefix/src/htslib-stamp/htslib-configure: htslib-prefix/src/htslib-stamp/htslib-patch
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Performing configure step for 'htslib'"
-	cd /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib && autoheader
-	cd /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib && autoconf
+	cd /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib && autoconf -i
 	cd /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib && ./configure --without-libdeflate --disable-libcurl --disable-lzma
 	cd /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib && /Applications/CMake.app/Contents/bin/cmake -E touch /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/htslib-prefix/src/htslib-stamp/htslib-configure
 
