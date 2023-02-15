@@ -30,3 +30,4 @@ src_tools_evaluation/
 __pycache__/
 src_SPLAM/SPLAM/test/
 src_SPLAM/SPLAM/test_chr9/
+.vscode
