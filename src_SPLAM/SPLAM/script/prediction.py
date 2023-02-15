@@ -12,56 +12,59 @@
 import os, sys
 sys.path.append(os.path.dirname(os.path.realpath(__file__)))
 import torch
-import matplotlib.pyplot as plt; plt.rcdefaults()
+import argparse
 import numpy as np
-from progress.bar import Bar
 import warnings
+import matplotlib.pyplot as plt; plt.rcdefaults()
+from progress.bar import Bar
 from splam.dataset import *
 from SpliceNN import *
 from splam.splam_utils import *
 
 warnings.filterwarnings("ignore")
-argv = sys.argv[1:]
 
-print("")
-print("################################")
-print("## Start the predictions now! ##")
-print("################################")
+parser = argparse.ArgumentParser(description='SPLAM! splice junction prediction.')
+parser.add_argument('-f', metavar='<junction.fa>', required=True, help='the junction FASTA file in SPLAM! format')
+parser.add_argument('-o', metavar='<score.bed>', required=True, help='the output SPLAM! scores for junctions')
+parser.add_argument('-m', metavar='<model.pt>', required=True, help='the path to the SPLAM! model')
 
-#############################
-# Global variable definition
-#############################
-BATCH_SIZE = 100
-N_WORKERS = None
+args = parser.parse_args()
+JUNC_FA = args.f
+OUT_SCORE = args.o
+MODEL_PATH = args.m
 
-device = torch.device("cuda" if torch.cuda.is_available() else "mps")
-model = torch.load("../../src/MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/SpliceNN_19.pt")
-# model = torch.load(argv[1])
+def test_model():
+    print("################################")
+    print("## Start the predictions now! ##")
+    print("################################")
 
-#############################
-# Model Initialization
-#############################
-print(f"[Info]: Finish loading model!",flush = True)
-print("SPLAM! model: ", model)
+    #############################
+    # Global variable definition
+    #############################
+    BATCH_SIZE = 100
+    N_WORKERS = None
 
-#############################
-# Training Data initialization
-#############################
-test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, "./test_chr9/fasta/junction.fa", True, str(0))
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps")
+    model = torch.load(MODEL_PATH)
 
-MODEL_OUTPUT_BASE = "../test_chr9/OUTPUT/"
-TARGET_OUTPUT_BASE = MODEL_OUTPUT_BASE + "/"
-LOG_OUTPUT_TEST_BASE = TARGET_OUTPUT_BASE + "LOG/"
-os.makedirs(LOG_OUTPUT_TEST_BASE, exist_ok=True)
+    #############################
+    # Model Initialization
+    #############################
+    print(f"[Info]: Finish loading model!",flush = True)
+    print("SPLAM! model: ", model)
 
+    #############################
+    # Training Data initialization
+    #############################
+    # "./test_chr9/fasta/junction.fa"
+    test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, JUNC_FA, True, str(0))
 
-def test_model(epoch_idx, test_loader):
+    # MODEL_OUTPUT_BASE = "../test_chr9/OUTPUT/"
+    # TARGET_OUTPUT_BASE = MODEL_OUTPUT_BASE + "/"
+
     criterion = torch.nn.BCELoss()
-    ############################
-    # Log for testing
-    ############################
-    junc_scores = TARGET_OUTPUT_BASE + "junc_scores.bed"
-    fw_junc_scores = open(junc_scores, 'w')
+
+    fw_junc_scores = open(OUT_SCORE, 'w')
     print("*********************")
     print("** Testing Dataset **")
     print("*********************")
@@ -95,6 +98,6 @@ def test_model(epoch_idx, test_loader):
 
 
 if __name__ == "__main__":
-    test_model(0, test_loader)
+    test_model()
 
 # python prediction.py SRR1352129 ../../../src/MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/SpliceNN_19_traced.pt

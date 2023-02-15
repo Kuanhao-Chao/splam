@@ -1,0 +1,1 @@
+cmd='autoheader;COMMAND;autoconf;COMMAND;./configure;--without-libdeflate;--disable-libcurl;--disable-lzma'
