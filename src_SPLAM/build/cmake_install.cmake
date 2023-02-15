@@ -39,21 +39,21 @@ endif()
 
 if(CMAKE_INSTALL_COMPONENT STREQUAL "Unspecified" OR NOT CMAKE_INSTALL_COMPONENT)
   list(APPEND CMAKE_ABSOLUTE_DESTINATION_FILES
-   "/usr/local/SPLAM")
+   "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/SPLAM/SPLAM")
   if(CMAKE_WARN_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(WARNING "ABSOLUTE path INSTALL DESTINATION : ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
   if(CMAKE_ERROR_ON_ABSOLUTE_INSTALL_DESTINATION)
     message(FATAL_ERROR "ABSOLUTE path INSTALL DESTINATION forbidden (by caller): ${CMAKE_ABSOLUTE_DESTINATION_FILES}")
   endif()
-  file(INSTALL DESTINATION "/usr/local" TYPE EXECUTABLE FILES "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/SPLAM")
-  if(EXISTS "$ENV{DESTDIR}/usr/local/SPLAM" AND
-     NOT IS_SYMLINK "$ENV{DESTDIR}/usr/local/SPLAM")
+  file(INSTALL DESTINATION "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/SPLAM" TYPE EXECUTABLE FILES "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/SPLAM")
+  if(EXISTS "$ENV{DESTDIR}/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/SPLAM/SPLAM" AND
+     NOT IS_SYMLINK "$ENV{DESTDIR}/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/SPLAM/SPLAM")
     execute_process(COMMAND /usr/bin/install_name_tool
       -delete_rpath "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib"
-      "$ENV{DESTDIR}/usr/local/SPLAM")
+      "$ENV{DESTDIR}/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/SPLAM/SPLAM")
     if(CMAKE_INSTALL_DO_STRIP)
-      execute_process(COMMAND "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip" -u -r "$ENV{DESTDIR}/usr/local/SPLAM")
+      execute_process(COMMAND "/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/strip" -u -r "$ENV{DESTDIR}/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/SPLAM/SPLAM")
     endif()
   endif()
 endif()

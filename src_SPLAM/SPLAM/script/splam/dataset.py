@@ -100,7 +100,6 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle):
 
 
 def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
-    print("output_file: ", output_file)
     testset = myDataset("test", output_file, shuffle, int(SEQ_LEN))
     test_loader = DataLoader(
         testset,
@@ -108,18 +107,15 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
         drop_last = False,
         pin_memory = True,
     )
-    if batch_size == 1:
-        print("shuffle: ", shuffle)
-        with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUT/splam.nobatch.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
-            pickle.dump(testset.indices, f)
+    # if batch_size == 1:
+    #     with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUT/splam.nobatch.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
+    #         pickle.dump(testset.indices, f)
             
-    elif shuffle:
-        print("shuffle: ", shuffle)
-        with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUT/splam.shuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
-            pickle.dump(testset.indices, f)
+    # elif shuffle:
+    #     with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUT/splam.shuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
+    #         pickle.dump(testset.indices, f)
 
-    else:
-        print("shuffle: ", shuffle)
-        with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUT/splam.noshuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
-            pickle.dump(testset.indices, f)
+    # else:
+    #     with open("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUT/splam.noshuffle.indices."+str(repeat_idx)+"."+str(batch_size)+".pkl", "wb") as f:
+    #         pickle.dump(testset.indices, f)
     return test_loader

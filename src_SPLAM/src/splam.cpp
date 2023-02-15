@@ -140,14 +140,15 @@ int main(int argc, char* argv[]) {
     }
 
     faidx_t * ref_faidx = fai_load(infname_reffa.chars());
-    std::cout << "> Loading FASTA file" << std::endl;
+    std::cout << "> Loading FASTA file\n" << std::endl;
+
 
     /*********************************************
      * Step 1: generating spliced junctions in BED
     *********************************************/
     std::cout << "********************************************" << std::endl;
     std::cout << "** Step 1: generating spliced junctions in BED" << std::endl;
-    std::cout << "********************************************" << std::endl;
+    std::cout << "********************************************\n" << std::endl;
 
     // Creating the output junction bed file
     if (!outfname_junction.is_empty()) {
@@ -200,7 +201,7 @@ int main(int argc, char* argv[]) {
     writeJuncs(joutf);
     fclose(joutf);
 
-    // The reference is in refseq chr name.
+
     /*********************************************
      * Step 2: (1) getting coordinates of donors and acceptors
      *         (2) Writing FASTA file of donors and acceptors
@@ -218,6 +219,10 @@ int main(int argc, char* argv[]) {
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     *******************************************/
+    std::unordered_map<std::string, int> doner_dimers;
+    std::unordered_map<std::string, int> acceptor_dimers;
+
+
     GStr donor_bed(out_dir + "/bed/donor.bed");
     GStr acceptor_bed(out_dir + "/bed/acceptor.bed");
     GStr da_bed(out_dir + "/bed/d_a.bed");
@@ -237,8 +242,6 @@ int main(int argc, char* argv[]) {
     std::ifstream fr_junc(outfname_junction);
     std::string line;
     while(getline(fr_junc, line)){
-        std::cout << "fr_junc: " << line << std::endl;
-
         std::string chromosome;
         int start = 0, end = 0;
         std::string junc_name;
@@ -248,15 +251,6 @@ int main(int argc, char* argv[]) {
         std::stringstream ss(line);
 
         ss >> chromosome >> start >> end >> junc_name >> num_alignment >> strand;
-
-
-        std::cout << "** chromosome: " << chromosome << " ";
-        std::cout << "start: " << start << " ";
-        std::cout << "end: " << end << " ";
-        std::cout << "junc_name: " << junc_name << " ";
-        std::cout << "num_alignment: " << num_alignment << " ";
-        std::cout << "strand: " << strand << " " << std::endl;
-
         int splice_junc_len = 0;
         int flanking_size = QUOTER_SEQ_LEN;
 
@@ -340,69 +334,76 @@ int main(int argc, char* argv[]) {
             outfile_fa_junc << donor_seq << std::string(2*(400-(int)strlen(donor_seq)), 'N') << acceptor_seq << std::endl;
         }
 
-        std::cout << "donor   : " << donor_seq[200] << donor_seq[201] << std::endl;
-        std::cout << "acceptor: " << acceptor_seq[198] << acceptor_seq[199] << std::endl;
+        // std::cout << "donor   : " << donor_seq[200] << donor_seq[201] << std::endl;
+        // std::cout << "acceptor: " << acceptor_seq[198] << acceptor_seq[199] << std::endl;
 
+        
+        // char *donor_dim = (char*)malloc(2);
+        // std::memcpy(donor_dim, donor_seq[200], 2);
+
+        char donor_dim[3];
+        memcpy(donor_dim, &donor_seq[200], 2);
+        donor_dim[2] = '\0';
+        std::string donor_str(donor_dim);
+
+        char acceptor_dim[3];
+        memcpy(acceptor_dim, &acceptor_seq[198], 2);
+        acceptor_dim[2] = '\0';
+        std::string acceptor_str(acceptor_dim);
+
+        if (doner_dimers.find(donor_str) == doner_dimers.end()) {
+            doner_dimers[donor_str] = 1;
+        } else {
+            doner_dimers[donor_str] += 1;
+        }
+
+        if (acceptor_dimers.find(acceptor_str) == acceptor_dimers.end()) {
+            acceptor_dimers[acceptor_str] = 1;
+        } else {
+            acceptor_dimers[acceptor_str] += 1;
+        }
         if (strand == "+") {
             outfile_bed_da << chromosome + "\t" + std::to_string(donor) + "\t" + std::to_string(acceptor+1) + "\tJUNC\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
         } else if (strand == "-") {
             outfile_bed_da << chromosome + "\t" + std::to_string(acceptor) + "\t" + std::to_string(donor+1) + "\tJUNC\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
         }
-        std::cout << std::endl;
     }  
 
+    std::cout << ">> Donor dimers: " << std::endl;
+    for (auto i : doner_dimers) {
+        std::cout << "\t" << i.first << ": " << i.second << std::endl;
+    }
 
-
-
-
-
-
-
-
+    std::cout << ">> Acceptor dimers: " << std::endl;
+    for (auto i : acceptor_dimers) {
+        std::cout << "\t" << i.first << ": " << i.second << std::endl;
+    }
+        
 
     /*********************************************
      * Step 3: SPLAM model prediction
     *********************************************/
-
+    std::cout << "\n********************************************" << std::endl;
+    std::cout << "** Step 3: SPLAM! model prediction" << std::endl;
+    std::cout << "********************************************\n" << std::endl;
     Py_Initialize();
     GStr python_f = "./script/prediction.py";
     GStr outfile_junction_score(score_dir + "/junction_score.bed");
-
-    std::cout << "outfile_junction_score: " << outfile_junction_score.chars() << std::endl;
     wchar_t *argvv[] = {GetWC(python_f.chars()), L"-f", GetWC(junc_fasta.chars()), L"-o", GetWC(outfile_junction_score.chars()), L"-m", GetWC(model_name.chars())};
     PySys_SetArgv(7, argvv);
-    
     FILE *file = _Py_fopen(python_f.chars(), "r");
-
     if(file != NULL) {
-
         int re = PyRun_SimpleFileExFlags(file, python_f.chars(), false, {0});
-
-        std::cout << "************************" << std::endl;
-        std::cout << "Results: " << re << std::endl;
-        std::cout << "************************" << std::endl;
     }
-
-
-    // Py_Initialize();
-    // PyRun_SimpleString("from time import time,ctime\n"
-    //                     "print('Today is',ctime(time()))\n");
     Py_Finalize();
 
 
-
-
-
-
-
-
-
-
-
-
-    // /*********************************************
-    //  * Step 4: SPLAM filtering out reads.
-    // *********************************************/
+    /*********************************************
+     * Step 4: SPLAM filtering out reads.
+    *********************************************/
+    std::cout << "********************************************" << std::endl;
+    std::cout << "** Step 4: SPLAM filtering out reads." << std::endl;
+    std::cout << "********************************************\n" << std::endl;
     // // GSamReader bamreader(inbamname.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
     // // outfile=new GSamWriter(outfname, bamreader.header(), GSamFile_BAM);
     // // GSamRecord brec;
