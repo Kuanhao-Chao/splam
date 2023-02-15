@@ -105,8 +105,8 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
     test_loader = DataLoader(
         testset,
         batch_size = batch_size,
-        drop_last=True,
-        pin_memory=True,
+        drop_last = False,
+        pin_memory = True,
     )
     if batch_size == 1:
         print("shuffle: ", shuffle)

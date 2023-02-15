@@ -33,6 +33,10 @@ JUNC_FA = args.f
 OUT_SCORE = args.o
 MODEL_PATH = args.m
 
+print("JUNC_FA: ", JUNC_FA)
+print("OUT_SCORE: ", OUT_SCORE)
+print("MODEL_PATH: ", MODEL_PATH)
+
 def test_model():
     print("################################")
     print("## Start the predictions now! ##")
@@ -80,9 +84,8 @@ def test_model():
             loss, accuracy, yps = model_fn(DNAs, labels, model, criterion)
             labels = labels.to("cpu").detach().numpy()
             yps = yps.to("cpu").detach().numpy()
-            pbar.next()
-
-            for idx in range(BATCH_SIZE):
+            pbar.next()            
+            for idx in range(len(yps)):
                 junction_score = yps[idx]
                 chr, start, end, strand = seqname[idx].split(";")
                 if strand == "+":
