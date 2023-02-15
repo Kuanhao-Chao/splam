@@ -2,7 +2,7 @@
 159e9b1b9efa147436954c0b5485739a CMakeFiles/htslib
 09a08bc4e2a1083aabcc56bdbd4d650e CMakeFiles/htslib-complete
 bf303851687e37736d12838461c54fc0 htslib-prefix/src/htslib-stamp/htslib-build
-a85c510f1a42cb827295efb3f6d2acec htslib-prefix/src/htslib-stamp/htslib-configure
+df374bd4639e651219318d1f63ad331e htslib-prefix/src/htslib-stamp/htslib-configure
 6c045445b2a6bff9e3d64b88574b8147 htslib-prefix/src/htslib-stamp/htslib-download
 90b97f648b95f357fe3e01bf748eca09 htslib-prefix/src/htslib-stamp/htslib-install
 5ef9d0228a979ae472a39395f427ee8d htslib-prefix/src/htslib-stamp/htslib-mkdir
