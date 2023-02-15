@@ -24,6 +24,17 @@ void processOptions(int argc, char* argv[]);
 void loadBed(GStr inbedname, GArray<CJunc> &spur_juncs);
 void flushBrec(GVec<GSamRecord*> &pbrecs, std::unordered_map<std::string, int> &hits, GSamWriter* outfile_cleaned);
 
+
+wchar_t *GetWC(const char *c)
+{
+    const size_t cSize = strlen(c)+1;
+    wchar_t* wc = new wchar_t[cSize];
+    mbstowcs (wc, c, cSize);
+
+    return wc;
+}
+
+
 const char* USAGE = "SPLAM v" VERSION "\n"
                               "==========================================================================================\n"
                               "An accurate spliced alignment pruner and spliced junction predictor.\n"
@@ -72,6 +83,10 @@ std::unordered_map<std::string, int> get_hg38_chrom_size(std::string target) {
 }
 
 int main(int argc, char* argv[]) {
+
+    for(int i=0;i<argc-1;i++)
+      std::cout << argv[i] << " "; 
+    std::cout << std::endl;
 
 
     std::cout << "************************" << std::endl;
@@ -225,8 +240,7 @@ int main(int argc, char* argv[]) {
         std::cout << "fr_junc: " << line << std::endl;
 
         std::string chromosome;
-        int start;
-        int end;
+        int start = 0, end = 0;
         std::string junc_name;
         int num_alignment;
         std::string strand;
@@ -235,12 +249,6 @@ int main(int argc, char* argv[]) {
 
         ss >> chromosome >> start >> end >> junc_name >> num_alignment >> strand;
 
-        // ss >> chromosome;
-        // ss >> start;
-        // ss >> end;
-        // ss >> junc_name;
-        // ss >> num_alignment;
-        // ss >> strand;
 
         std::cout << "** chromosome: " << chromosome << " ";
         std::cout << "start: " << start << " ";
@@ -294,16 +302,8 @@ int main(int argc, char* argv[]) {
         }
 
 
-        std::cout << "Writing out outfile_bed_donor!" << std::endl;
         outfile_bed_donor << chromosome << "\t" + std::to_string(donor_s) + "\t" + std::to_string(donor_e) + "\t" + junc_name+"_donor" + "\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
         outfile_bed_acceptor << chromosome << "\t" + std::to_string(acceptor_s) + "\t" + std::to_string(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
-
-        std::cout << "Writing out outfile_bed_acceptor!" << std::endl;
-
-        std::cout << ">>> Before chromosome: " << chromosome << std::endl;
-        // chromosome = chrs_ucsc_2_refseq[chromosome];
-        std::cout << ">>> After chromosome: " << chromosome << std::endl;
-        std::cout << "strand: " << strand << std::endl;
 
         int donor_len = donor_e - donor_s;
         char* donor_seq = faidx_fetch_seq(ref_faidx, chromosome.c_str(), donor_s, donor_e-1, &donor_len);
@@ -311,12 +311,9 @@ int main(int argc, char* argv[]) {
         int acceptor_len = acceptor_e - acceptor_s;
         char* acceptor_seq = faidx_fetch_seq(ref_faidx, chromosome.c_str(), acceptor_s, acceptor_e-1, &acceptor_len);
 
-        if (strand == "+") {
-
-        } else if (strand == "-") {
+        if (strand == "-") {
             hts_pos_t donor_len_hts = donor_e - donor_s;
             hts_pos_t acceptor_len_hts = acceptor_e - acceptor_s;
-
             reverse_complement(donor_seq, donor_len_hts);
             reverse_complement(acceptor_seq, acceptor_len_hts);
         }
@@ -335,9 +332,6 @@ int main(int argc, char* argv[]) {
         outfile_fa_donor << donor_seq << std::endl;
         outfile_fa_acceptor << ">" << chromosome << std::endl;
         outfile_fa_acceptor << acceptor_seq << std::endl;
-
-        // std::cout << "strlen(donor_seq)   : " << strlen(donor_seq) << std::endl;
-        // std::cout << "strlen(acceptor_seq): " << strlen(acceptor_seq) << std::endl;
 
         outfile_fa_junc << ">" << chromosome << ";" << std::to_string(donor) << ";" << std::to_string(acceptor) << ";" << strand << std::endl;
         if (strlen(donor_seq) >= 400) {
@@ -366,37 +360,34 @@ int main(int argc, char* argv[]) {
 
 
 
-//     /*********************************************
-//      * Step 3: SPLAM model prediction
-//     *********************************************/
+    /*********************************************
+     * Step 3: SPLAM model prediction
+    *********************************************/
 
-//     Py_Initialize();
-//     // GStr python_f = "./script/prediction.py";
+    Py_Initialize();
+    GStr python_f = "./script/prediction.py";
+    GStr outfile_junction_score(score_dir + "/junction_score.bed");
 
-//     GStr python_f = "./script/prediction.py";
+    std::cout << "outfile_junction_score: " << outfile_junction_score.chars() << std::endl;
+    wchar_t *argvv[] = {GetWC(python_f.chars()), L"-f", GetWC(junc_fasta.chars()), L"-o", GetWC(outfile_junction_score.chars()), L"-m", GetWC(model_name.chars())};
+    PySys_SetArgv(7, argvv);
+    
+    FILE *file = _Py_fopen(python_f.chars(), "r");
 
-//     PyObject *obj = Py_BuildValue("s", python_f.chars());
-//     // PyObject* PyFileObject = PyFile_FromString(python_f.chars(), "r");
+    if(file != NULL) {
 
-//     FILE *file = _Py_fopen_obj(obj, "r+");
-// //    PyRun_SimpleFileEx(PyFile_AsFile(PyFileObject), "test.py", 1);
+        int re = PyRun_SimpleFileExFlags(file, python_f.chars(), false, {0});
 
-//     if(file != NULL) {
-//         int re = PyRun_SimpleFileEx(file, python_f.chars(), false);
-//         // PyRun_SimpleFileExFlags(file, python_f.chars(), "SRR1352129_chr9", "../../../src/MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/SpliceNN_19.pt");
-
-//         // SRR1352129_chr9 ../../../src/MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/SpliceNN_19.pt
-
-//         std::cout << "************************" << std::endl;
-//         std::cout << "Results: " << re << std::endl;
-//         std::cout << "************************" << std::endl;
-//     }
+        std::cout << "************************" << std::endl;
+        std::cout << "Results: " << re << std::endl;
+        std::cout << "************************" << std::endl;
+    }
 
 
-//     // Py_Initialize();
-//     // PyRun_SimpleString("from time import time,ctime\n"
-//     //                     "print('Today is',ctime(time()))\n");
-//     Py_Finalize();
+    // Py_Initialize();
+    // PyRun_SimpleString("from time import time,ctime\n"
+    //                     "print('Today is',ctime(time()))\n");
+    Py_Finalize();
 
 
 
