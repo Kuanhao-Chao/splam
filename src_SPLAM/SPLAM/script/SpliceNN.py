@@ -3,7 +3,6 @@ import numpy as np
 
 
 CL_max = 10000
-
 CARDINALITY_ITEM = 16
 
 class ResidualUnit(Module):

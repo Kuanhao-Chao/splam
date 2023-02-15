@@ -1,49 +1,30 @@
+import os, sys
+f = sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 import torch
-from torch.utils.data import Dataset, DataLoader, random_split
-from pathlib import Path
-import json
-import random
-import os
+from torch.utils.data import Dataset, DataLoader
 import math
 import pickle
-
+import random
 from splam_utils import *
 
-# Random_90_10 / Chromosome_90_10
-# TARGET = "Chromosome_split_p_n_nn_n1"
 SEQ_LEN = "800"
-os.makedirs("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_tools_evaluation/INPUTS/SPLAM_v2/", exist_ok=True)
 
 def split_seq_name(seq):
     return seq[1:]
-
-
 
 class myDataset(Dataset):
     def __init__(self, type, of, shuffle, segment_len=800):
         self.segment_len = segment_len
         self.data = []
         self.indices = []
-        if type == "train":
-            CONSTANT_SIZE = 176086
-        else:
-            CONSTANT_SIZE = 23914
 
-        # CONSTANT_SIZE = 500
-        CONSTANT_SIZE_NEG = math.ceil(CONSTANT_SIZE*2/3)
-        #################################
-        ## Processing 'POSITIVE' samples
-        #################################
         pidx = 0
-
-
         with open(of, "r") as f:
-            print("of: ", of)
             lines = f.read().splitlines()
             seq_name = ""
             seq = ""
             for line in lines:
-                # print(line)
                 if pidx % 2 == 0:
                     seq_name = split_seq_name(line)
                 elif pidx % 2 == 1:
@@ -54,8 +35,6 @@ class myDataset(Dataset):
                     
                     X, Y = create_datapoints(seq, '+')
                     X = torch.Tensor(np.array(X))
-                    # print(X)
-                    # print(Y)
                     if X.size()[0] != 800:
                         print("seq_name: ", seq_name)
                         print(X.size())

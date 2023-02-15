@@ -7,6 +7,7 @@
 #include <memory>
 #include <unordered_map>
 // #include <sys/stat.h>
+#include <filesystem>
 
 #include <gclib/GArgs.h>
 #include <gclib/GBase.h>
@@ -22,39 +23,40 @@
 
 #define VERSION "0.0.1"
 
-using namespace std;
+// using namespace std;
 
 const char* USAGE = "SPLAM v" VERSION "\n"
                               "==========================================================================================\n"
                               "An accurate spliced alignment pruner and spliced junction predictor.\n"
                               "==========================================================================================\n";
 
-GStr outfdir;
-GStr outfname_discard;
-GStr outfname_spliced;
-GStr outfname_cleaned;
+GStr outdir;
+// GStr outfname_discard;
+// GStr outfname_spliced;
+// GStr outfname_cleaned;
 
 GStr guidegff; // "G" tag
 GSamWriter* outfile_discard = NULL;
 GSamWriter* outfile_spliced = NULL;
 GSamWriter* outfile_cleaned = NULL;
 
-GStr modelname;
-GStr junctionfname;
+GStr model_name;
+GStr infname_reffa; // ("/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa")
+GStr outfname_junction;
 FILE* joutf=NULL;
 
 bool verbose = false;
 TInputFiles inRecords;
 TInputRecord* irec=NULL;
 GSamRecord* brec=NULL;
-float threshold = 0.3;
+float threshold = 0.2;
 
 void processOptions(int argc, char* argv[]);
-void loadBed(GStr inbedname, GArray<CJunc> &spur_juncs, unordered_map<string, string> &chrs_refseq_2_ucsc);
-void flushBrec(GVec<GSamRecord*> &pbrecs, unordered_map<string, int> &hits, GSamWriter* outfile_cleaned);
+void loadBed(GStr inbedname, GArray<CJunc> &spur_juncs);
+void flushBrec(GVec<GSamRecord*> &pbrecs, std::unordered_map<std::string, int> &hits, GSamWriter* outfile_cleaned);
 
 struct intron_key {
-	string seqname;
+	std::string seqname;
 	char strand;
 	uint start;
 	uint end;
@@ -73,81 +75,88 @@ struct intron_key {
     }
 };
 
-unordered_map<string, int> get_hg38_chrom_size(string target) {
-    unordered_map<string, int> chrs;
-    string ref_file;
+std::unordered_map<std::string, int> get_hg38_chrom_size(std::string target) {
+    std::unordered_map<std::string, int> chrs;
+    std::string ref_file;
     if (target == "STAR") {
         ref_file = "../../../src/hg38_chrom_size_refseq.tsv";
         // f_chrs = open("../hg38_chrom_size_refseq.tsv", "r")
     } else {
         ref_file = "../../../src/hg38_chrom_size.tsv";
     }
-    cout << "ref_file: " << ref_file << endl;
+    // std::cout << "ref_file: " << ref_file << std::endl;
     std::ifstream ref_f(ref_file);
 
 
-    string line;
+    std::string line;
     while(getline(ref_f, line)){
-        // cout << line << endl;
-        string chromosome;
+        // std::cout << line << std::endl;
+        std::string chromosome;
         int len;
 
         std::replace(line.begin(), line.end(), '\t', ' ');
 
-        stringstream ss(line);
+        std::stringstream ss(line);
 
         ss >> chromosome;
         ss >> len;
 
-        // cout << "chromosome: " << chromosome << " ";
-        // cout << "len: " << len << " " << endl;
+        // std::cout << "chromosome: " << chromosome << " ";
+        // std::cout << "len: " << len << " " << std::endl;
         chrs[chromosome] = len;
     }   
 
     // for (auto i : chrs) {
-    //   cout << i.first << " ---- " << i.second << endl;
+    //   std::cout << i.first << " ---- " << i.second << std::endl;
     // }
     return chrs;
 }
 
-void get_Refseq_2_UCSC_chr_names(unordered_map<string, string> &chrs_refseq_2_ucsc, unordered_map<string, string> &chrs_ucsc_2_refseq) {
+void get_Refseq_2_UCSC_chr_names(std::unordered_map<std::string, std::string> &chrs_refseq_2_ucsc, std::unordered_map<std::string, std::string> &chrs_ucsc_2_refseq) {
 
-    string ref_file;
+    std::string ref_file;
     ref_file = "../../../src/Refseq_2_UCSU_chromosome_names.tsv";
-    cout << "ref_file: " << ref_file << endl;
+    std::cout << "ref_file: " << ref_file << std::endl;
     std::ifstream ref_f(ref_file);
 
 
-    string line;
+    std::string line;
     while(getline(ref_f, line)){
-        // cout << line << endl;
-        string refseq;
-        string ucsc;
+        // std::cout << line << std::endl;
+        std::string refseq;
+        std::string ucsc;
 
         std::replace(line.begin(), line.end(), '\t', ' ');
 
-        stringstream ss(line);
+        std::stringstream ss(line);
 
         ss >> refseq;
         ss >> ucsc;
 
-        // cout << "chromosome: " << chromosome << " ";
-        // cout << "len: " << len << " " << endl;
+        // std::cout << "chromosome: " << chromosome << " ";
+        // std::cout << "len: " << len << " " << std::endl;
         chrs_ucsc_2_refseq[ucsc] = refseq;
         chrs_refseq_2_ucsc[refseq] = ucsc;
     }   
 
     for (auto i : chrs_refseq_2_ucsc) {
-      cout << i.first << " ---- " << i.second << endl;
+      std::cout << i.first << " ---- " << i.second << std::endl;
     }
 
     for (auto i : chrs_ucsc_2_refseq) {
-      cout << i.first << " ---- " << i.second << endl;
+      std::cout << i.first << " ---- " << i.second << std::endl;
     }
     // return chrs_refseq_2_ucsc;
 }
 
 int main(int argc, char* argv[]) {
+
+
+    std::cout << "************************" << std::endl;
+    std::cout << "* Start of the program: " << std::endl;
+    std::cout << "************************" << std::endl;
+
+
     const char *banner = R"""(
   ███████╗██████╗ ██╗      █████╗ ███╗   ███╗    ██╗
   ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║    ██║
@@ -161,320 +170,328 @@ int main(int argc, char* argv[]) {
     
     inRecords.setup(VERSION, argc, argv);
     processOptions(argc, argv);
-    int numSamples=inRecords.start();
-    cout << "numSamples: " << numSamples << endl;
-    cout << "outfdir        : " << outfdir << endl;
-    cout << "junctionfname  : " << junctionfname << endl;
+    
+    int num_samples=inRecords.start();
+    std::cout << "* Number of samples  : " << num_samples << std::endl;
+    std::cout << "* Output directory   : " << outdir << std::endl;
+    std::cout << "* Junction file name : " << outfname_junction << std::endl;
+    
+    //  Creating directories for bed & fasta files.
+    GStr bed_dir(outdir+"/bed");
+    GStr fasta_dir(outdir+"/fasta");
+    std::filesystem::create_directories(bed_dir.chars());
+    std::filesystem::create_directories(fasta_dir.chars());
 
-
-    mkdir(outfdir, 0777);
-    mkdir(outfdir+"/bed", 0777);
-    mkdir(outfdir+"/fasta", 0777);
-
-
-    outfname_discard = outfdir + "/discard.bam";
-    outfname_spliced = outfdir + "/spliced.bam";
-    outfname_cleaned = outfdir + "/cleaned.bam";
-
+    // Initializing the BAM files.
+    GStr outfname_discard(outdir + "/discard.bam");
+    GStr outfname_spliced(outdir + "/spliced.bam");
+    GStr outfname_cleaned(outdir + "/cleaned.bam");
     outfile_discard = new GSamWriter(outfname_discard, inRecords.header(), GSamFile_BAM);
     outfile_spliced = new GSamWriter(outfname_spliced, inRecords.header(), GSamFile_BAM);
     outfile_cleaned = new GSamWriter(outfname_cleaned, inRecords.header(), GSamFile_BAM);
 
 
-    unordered_map<string, int> chrs = get_hg38_chrom_size("HISAT2");
-
-    unordered_map<string, string> chrs_refseq_2_ucsc;
-    unordered_map<string, string> chrs_ucsc_2_refseq;
-    get_Refseq_2_UCSC_chr_names(chrs_refseq_2_ucsc, chrs_ucsc_2_refseq);
-
-    string fa_name = "/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/Dataset/GRCh38_latest_genomic.fna";
+    std::unordered_map<std::string, int> chrs = get_hg38_chrom_size("HISAT2");
+    // std::unordered_map<std::string, std::string> chrs_refseq_2_ucsc;
+    // std::unordered_map<std::string, std::string> chrs_ucsc_2_refseq;
+    // get_Refseq_2_UCSC_chr_names(chrs_refseq_2_ucsc, chrs_ucsc_2_refseq);
 
     FILE *ref_fa_f;
-    if (ref_fa_f = fopen(fa_name.c_str(), "r")) {
+    if ((ref_fa_f = fopen(infname_reffa.chars(), "r"))) {
         fclose(ref_fa_f);
-        cout << fa_name << "i has been created!" << endl;
+        std::cout << "> FASTA index \"" << infname_reffa << "i\" has been created!" << std::endl;
     } else {
-        int res = fai_build(fa_name.c_str());
-        cout << "Creating " << fa_name << "i" << endl;
-        cout << ">> res: " << res << endl;
+        int res = fai_build(infname_reffa.chars());
+        std::cout << "> Creating FASTA index \"" << infname_reffa << "i\"" << std::endl;
     }
 
-    faidx_t * ref_faidx = fai_load(fa_name.c_str());
-    cout << ">> ref_faidx: " << ref_faidx << endl;
-
-
-
-    /*********************************************
-     * Step 1: generating spliced junctions in BED
-    *********************************************/
-    cout << "********************************************" << endl;
-    cout << "** Step 1: generating spliced junctions in BED" << endl;
-    cout << "********************************************" << endl;
-
-    /***************************
-     * Creating the output junction bed file
-    ***************************/    
-    if (!junctionfname.is_empty()) {
-        if (strcmp(junctionfname.substr(junctionfname.length()-4, 4).chars(), ".bed")!=0) {
-            junctionfname.append(".bed");
-        }
-        joutf = fopen(junctionfname.chars(), "w");
-        if (joutf==NULL) GError("Error creating file %s\n", junctionfname.chars());
-        fprintf(joutf, "track name=junctions\n");
-    }
-
-    /***************************
-     * Reading BAM file.
-     ***************************/
-    int counter = 0;
-    int prev_tid=-1;
-    // char* prev_refname;
-    string prev_refname;
-    GVec<uint64_t> bcov(2048*1024);
-    std::vector<std::pair<float,uint64_t>> bsam(2048*1024,{0,1}); // number of samples. 1st - current average; 2nd - total number of values
-    //    std::vector<std::set<int>> bsam_idx(2048*1024,std::set<int>{}); // for indexed runs
-    int b_end=0; //bundle start, end (1-based)
-    int b_start=0; //1 based
-
-    while ((irec=inRecords.next())!=NULL) {
-        brec=irec->brec;
-        // cout << brec->refId() << endl;
-        uint32_t dupcount=0;
-        std::vector<int> cur_samples;
-        int endpos=brec->end;
-
-        if (brec->refId()!=prev_tid || (int)brec->start>b_end) {
-            // if (joutf) {
-            //     flushJuncs(joutf, prev_refname);
-            // } // TODO: write the last column to 3 dec places
-            b_start=brec->start;
-            b_end=endpos;
-            prev_tid=brec->refId();
-
-            prev_refname=(char*)brec->refName();
-        } else { //extending current bundle
-            if (b_end<endpos) {
-                b_end=endpos;
-                bcov.setCount(b_end-b_start+1, (int)0);
-            }
-        }
-        int accYC = 0;
-        accYC = brec->tag_int("YC", 1);
-        // cout << "accYC: " << accYC << endl;
-        if (joutf && brec->exons.Count()>1) {
-            // cout << "1 prev_refname: " << prev_refname << endl;
-            // prev_refname = chrs_convert[prev_refname];
-            // cout << "2 prev_refname: " << prev_refname << endl;
-            addJunction(*brec, accYC, prev_refname);
-            outfile_spliced->write(brec);
-        } else {
-            outfile_cleaned->write(brec);
-        }
-    }
-    writeJuncs(joutf);
-    fclose(joutf);
-
-    // The reference is in refseq chr name.
-    /*********************************************
-     * Step 2: (1) getting coordinates of donors and acceptors
-     *         (2) Writing FASTA file of donors and acceptors
-     *         (3) checking the junctions. (GT-AG ratio)
-    *********************************************/
-    cout << "********************************************" << endl;
-    cout << "** Step 2: getting coordinates of donors and acceptors" << endl;
-    cout << "********************************************" << endl;
-
-    string threshold = "100";
-    string SEQ_LEN="800";
-    int QUOTER_SEQ_LEN = stoi(SEQ_LEN)/4; // 4
-
-    /*********************************************
-    # For 'd_a.bed': 0-based, 1-based
-    # For 'donor.bed': 0-based, 0-based
-    # For 'acceptor.bed': 0-based, 0-based
-    *******************************************/
-    GStr donor_bed = outfdir + "/bed/donor.bed";
-    GStr acceptor_bed = outfdir + "/bed/acceptor.bed";
-
-    ofstream fw_donor(donor_bed);
-    ofstream fw_acceptor(acceptor_bed);
-    ofstream fw_da(outfdir + "/bed/d_a.bed");
-
-    GStr junc_fasta = outfdir + "/fasta/junction.fa";
-    GStr donor_fasta = outfdir + "/fasta/donor.fa";
-    GStr accceptor_fasta = outfdir + "/fasta/acceptor.fa";
-
-    ofstream fw_fa_junc(junc_fasta);
-    ofstream fw_fa_donor(donor_fasta);
-    ofstream fw_fa_acceptor(accceptor_fasta);
-
-
-    ifstream fr_junc(junctionfname);
-    string line;
-    while(getline(fr_junc, line)){
-        // cout << line << endl;
-
-        string chromosome;
-        int start;
-        int end;
-        string junc_name;
-        int num_alignment;
-        string strand;
-
-        std::replace(line.begin(), line.end(), '\t', ' ');
-
-        stringstream ss(line);
-
-        ss >> chromosome;
-        ss >> start;
-        ss >> end;
-        ss >> junc_name;
-        ss >> num_alignment;
-        ss >> strand;
-
-        // cout << "** chromosome: " << chromosome << " ";
-        // cout << "start: " << start << " ";
-        // cout << "end: " << end << " ";
-        // cout << "junc_name: " << junc_name << " ";
-        // cout << "num_alignment: " << num_alignment << " ";
-        // cout << "strand: " << strand << " " << endl;
-
-        int splice_junc_len = 0;
-        int flanking_size = QUOTER_SEQ_LEN;
-
-        int donor = 0;
-        int acceptor = 0;
-
-        int donor_s = 0;
-        int donor_e = 0;
-
-        int acceptor_s = 0;
-        int acceptor_e = 0;
-
-        splice_junc_len = end - start;
-        if (splice_junc_len < QUOTER_SEQ_LEN) {
-            flanking_size = splice_junc_len;
-        }
-
-        // cout << "QUOTER_SEQ_LEN: " << QUOTER_SEQ_LEN << endl;
-        // cout << "flanking_size : " << flanking_size << endl;
-        // cout << endl << endl;
-
-        if (strand == "+") {
-            donor = start;
-            acceptor = end;
-
-            donor_s = donor - QUOTER_SEQ_LEN;
-            donor_e = donor + flanking_size;
-            acceptor_s = acceptor - flanking_size;
-            acceptor_e = acceptor + QUOTER_SEQ_LEN;
-        } else if (strand == "-") {
-            donor = end;
-            acceptor = start;
-
-            donor_s = donor - flanking_size;
-            donor_e = donor + QUOTER_SEQ_LEN;
-            acceptor_s = acceptor - QUOTER_SEQ_LEN;
-            acceptor_e = acceptor + flanking_size;
-
-        } else if (strand == ".") {
-            continue;
-        }
-
-        if (donor_e >= chrs[chromosome] or acceptor_e >= chrs[chromosome]) {
-            cout << "Skip!!" << endl;
-            continue;
-        }
-        if (donor_s < 0 or acceptor_s < 0) {
-            cout << "Skip!!" << endl;
-            continue;
-        }
-
-
-        fw_donor << chromosome << "\t" + to_string(donor_s) + "\t" + to_string(donor_e) + "\t" + junc_name+"_donor" + "\t" + to_string(num_alignment) + "\t" + strand + "\n";
-
-        fw_acceptor << chromosome << "\t" + to_string(acceptor_s) + "\t" + to_string(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + to_string(num_alignment) + "\t" + strand + "\n";
-
-
-        cout << ">>> Before chromosome: " << chromosome << endl;
-        chromosome = chrs_ucsc_2_refseq[chromosome];
-        cout << ">>> After chromosome: " << chromosome << endl;
-        cout << "strand: " << strand << endl;
-
-        int donor_len = donor_e - donor_s;
-        char* donor_seq = faidx_fetch_seq(ref_faidx, chromosome.c_str(), donor_s, donor_e-1, &donor_len);
-
-        int acceptor_len = acceptor_e - acceptor_s;
-        char* acceptor_seq = faidx_fetch_seq(ref_faidx, chromosome.c_str(), acceptor_s, acceptor_e-1, &acceptor_len);
-
-        if (strand == "+") {
-
-        } else if (strand == "-") {
-            hts_pos_t donor_len_hts = donor_e - donor_s;
-            hts_pos_t acceptor_len_hts = acceptor_e - acceptor_s;
-
-            reverse_complement(donor_seq, donor_len_hts);
-            reverse_complement(acceptor_seq, acceptor_len_hts);
-        }
-
-        if ((donor_seq == NULL) ){
-            printf("c is empty\n");
-            continue;
-        }
-
-        if ((acceptor_seq == NULL) ) {
-            printf("c is empty\n");
-            continue;
-        }
-
-        fw_fa_donor << ">" << chromosome << endl;
-        fw_fa_donor << donor_seq << endl;
-        fw_fa_acceptor << ">" << chromosome << endl;
-        fw_fa_acceptor << acceptor_seq << endl;
-
-        cout << "strlen(donor_seq)   : " << strlen(donor_seq) << endl;
-        cout << "strlen(acceptor_seq): " << strlen(acceptor_seq) << endl;
-
-
-        fw_fa_junc << ">" << chromosome << ";" << to_string(donor) << ";" << to_string(acceptor) << ";" << strand << endl;
-        if (strlen(donor_seq) >= 400) {
-            fw_fa_junc << donor_seq << acceptor_seq << endl;
-        } else {
-            fw_fa_junc << donor_seq << string(2*(400-(int)strlen(donor_seq)), 'N') << acceptor_seq << endl;
-        }
-
-        cout << "donor   : " << donor_seq[200] << donor_seq[201] << endl;
-        cout << "acceptor: " << acceptor_seq[198] << acceptor_seq[199] << endl;
-
-        if (strand == "+") {
-            fw_da << chromosome + "\t" + to_string(donor) + "\t" + to_string(acceptor+1) + "\tJUNC\t" + to_string(num_alignment) + "\t" + strand + "\n";
-        } else if (strand == "-") {
-            fw_da << chromosome + "\t" + to_string(acceptor) + "\t" + to_string(donor+1) + "\tJUNC\t" + to_string(num_alignment) + "\t" + strand + "\n";
-        }
-        cout << endl;
-    }  
-
-
-
-
+    faidx_t * ref_faidx = fai_load(infname_reffa.chars());
+    std::cout << "> Loading FASTA file" << std::endl;
 
 
     // /*********************************************
-    //  * Step 3: SPLAM model prediction
+    //  * Step 1: generating spliced junctions in BED
     // *********************************************/
-    // Py_Initialize();
-    // PyRun_SimpleString("import sys");
+    // std::cout << "********************************************" << std::endl;
+    // std::cout << "** Step 1: generating spliced junctions in BED" << std::endl;
+    // std::cout << "********************************************" << std::endl;
 
-    // string python_f = "../script.py";
-    // PyObject *obj = Py_BuildValue("s", python_f.c_str());
-    // FILE *file = _Py_fopen_obj(obj, "r+");
-    // if(file != NULL) {
-    //     PyRun_SimpleFile(file, python_f.c_str());
+    // /***************************
+    //  * Creating the output junction bed file
+    // ***************************/    
+    // if (!outfname_junction.is_empty()) {
+    //     if (strcmp(outfname_junction.substr(outfname_junction.length()-4, 4).chars(), ".bed")!=0) {
+    //         outfname_junction.append(".bed");
+    //     }
+    //     joutf = fopen(outfname_junction.chars(), "w");
+    //     if (joutf==NULL) GError("Error creating file %s\n", outfname_junction.chars());
+    //     // fprintf(joutf, "track name=junctions\n");
     // }
 
-    // FILE *fd = fopen(python_f.c_str(), "r");
-    // PyRun_SimpleFile(fd, python_f.c_str()); // last parameter == 1 means to close the
-    //                                     // file before returning.
+    // /***************************
+    //  * Reading BAM file.
+    //  ***************************/
+    // int counter = 0;
+    // int prev_tid=-1;
+    // GStr prev_refname;
+    // GVec<uint64_t> bcov(2048*1024);
+    // std::vector<std::pair<float,uint64_t>> bsam(2048*1024,{0,1}); // number of samples. 1st - current average; 2nd - total number of values
+    // int b_end=0; //bundle start, end (1-based)
+    // int b_start=0; //1 based
+
+    // while ((irec=inRecords.next())!=NULL) {
+    //     brec=irec->brec;
+    //     uint32_t dupcount=0;
+    //     std::vector<int> cur_samples;
+    //     int endpos=brec->end;
+
+    //     if (brec->refId()!=prev_tid || (int)brec->start>b_end) {
+    //         // if (joutf) {
+    //         //     flushJuncs(joutf, prev_refname);
+    //         // } // TODO: write the last column to 3 dec places
+    //         b_start=brec->start;
+    //         b_end=endpos;
+    //         prev_tid=brec->refId();
+    //         prev_refname=(char*)brec->refName();
+    //     } else { //extending current bundle
+    //         if (b_end<endpos) {
+    //             b_end=endpos;
+    //             bcov.setCount(b_end-b_start+1, (int)0);
+    //         }
+    //     }
+    //     int accYC = 0;
+    //     accYC = brec->tag_int("YC", 1);
+    //     // std::cout << "accYC: " << accYC << std::endl;
+    //     if (joutf && brec->exons.Count()>1) {
+    //         // std::cout << "1 prev_refname: " << prev_refname << std::endl;
+    //         // prev_refname = chrs_convert[prev_refname];
+    //         // std::cout << "2 prev_refname: " << prev_refname << std::endl;
+    //         addJunction(*brec, accYC, prev_refname);
+    //         outfile_spliced->write(brec);
+    //     } else {
+    //         outfile_cleaned->write(brec);
+    //     }
+    // }
+    // writeJuncs(joutf);
+    // fclose(joutf);
+
+    // // The reference is in refseq chr name.
+    // /*********************************************
+    //  * Step 2: (1) getting coordinates of donors and acceptors
+    //  *         (2) Writing FASTA file of donors and acceptors
+    //  *         (3) checking the junctions. (GT-AG ratio)
+    // *********************************************/
+    // std::cout << "********************************************" << std::endl;
+    // std::cout << "** Step 2: getting coordinates of donors and acceptors" << std::endl;
+    // std::cout << "********************************************" << std::endl;
+
+    // int SEQ_LEN = 800;
+    // int QUOTER_SEQ_LEN = SEQ_LEN/4;
+
+    // /*********************************************
+    // # For 'd_a.bed': 0-based, 1-based
+    // # For 'donor.bed': 0-based, 0-based
+    // # For 'acceptor.bed': 0-based, 0-based
+    // *******************************************/
+    // GStr donor_bed(outdir + "/bed/donor.bed");
+    // GStr acceptor_bed(outdir + "/bed/acceptor.bed");
+
+    // std::ofstream outfile_bed_donor(donor_bed);
+    // std::ofstream outfile_bed_acceptor(acceptor_bed);
+    // std::ofstream outfile_bed_da(outdir + "/bed/d_a.bed");
+
+    // GStr junc_fasta(outdir + "/fasta/junction.fa");
+    // GStr donor_fasta(outdir + "/fasta/donor.fa");
+    // GStr accceptor_fasta(outdir + "/fasta/acceptor.fa");
+
+    // std::ofstream outfile_fa_junc(junc_fasta);
+    // std::ofstream outfile_fa_donor(donor_fasta);
+    // std::ofstream outfile_fa_acceptor(accceptor_fasta);
+
+    // std::ifstream fr_junc(outfname_junction);
+    // std::string line;
+    // while(getline(fr_junc, line)){
+    //     // std::cout << line << std::endl;
+
+    //     std::string chromosome;
+    //     int start;
+    //     int end;
+    //     std::string junc_name;
+    //     int num_alignment;
+    //     std::string strand;
+    //     std::replace(line.begin(), line.end(), '\t', ' ');
+    //     std::stringstream ss(line);
+
+    //     ss >> chromosome;
+    //     ss >> start;
+    //     ss >> end;
+    //     ss >> junc_name;
+    //     ss >> num_alignment;
+    //     ss >> strand;
+
+    //     // std::cout << "** chromosome: " << chromosome << " ";
+    //     // std::cout << "start: " << start << " ";
+    //     // std::cout << "end: " << end << " ";
+    //     // std::cout << "junc_name: " << junc_name << " ";
+    //     // std::cout << "num_alignment: " << num_alignment << " ";
+    //     // std::cout << "strand: " << strand << " " << std::endl;
+
+    //     int splice_junc_len = 0;
+    //     int flanking_size = QUOTER_SEQ_LEN;
+
+    //     int donor = 0;
+    //     int acceptor = 0;
+
+    //     int donor_s = 0;
+    //     int donor_e = 0;
+
+    //     int acceptor_s = 0;
+    //     int acceptor_e = 0;
+
+    //     splice_junc_len = end - start;
+    //     if (splice_junc_len < QUOTER_SEQ_LEN) {
+    //         flanking_size = splice_junc_len;
+    //     }
+
+    //     if (strand == "+") {
+    //         donor = start;
+    //         acceptor = end;
+    //         donor_s = donor - QUOTER_SEQ_LEN;
+    //         donor_e = donor + flanking_size;
+    //         acceptor_s = acceptor - flanking_size;
+    //         acceptor_e = acceptor + QUOTER_SEQ_LEN;
+    //     } else if (strand == "-") {
+    //         donor = end;
+    //         acceptor = start;
+    //         donor_s = donor - flanking_size;
+    //         donor_e = donor + QUOTER_SEQ_LEN;
+    //         acceptor_s = acceptor - QUOTER_SEQ_LEN;
+    //         acceptor_e = acceptor + flanking_size;
+    //     } else if (strand == ".") {
+    //         continue;
+    //     }
+
+    //     if (donor_e >= chrs[chromosome] or acceptor_e >= chrs[chromosome]) {
+    //         std::cout << "Skip!!" << std::endl;
+    //         continue;
+    //     }
+    //     if (donor_s < 0 or acceptor_s < 0) {
+    //         std::cout << "Skip!!" << std::endl;
+    //         continue;
+    //     }
+
+
+    //     outfile_bed_donor << chromosome << "\t" + std::to_string(donor_s) + "\t" + std::to_string(donor_e) + "\t" + junc_name+"_donor" + "\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
+    //     outfile_bed_acceptor << chromosome << "\t" + std::to_string(acceptor_s) + "\t" + std::to_string(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
+
+
+    //     std::cout << ">>> Before chromosome: " << chromosome << std::endl;
+    //     // chromosome = chrs_ucsc_2_refseq[chromosome];
+    //     std::cout << ">>> After chromosome: " << chromosome << std::endl;
+    //     std::cout << "strand: " << strand << std::endl;
+
+    //     int donor_len = donor_e - donor_s;
+    //     char* donor_seq = faidx_fetch_seq(ref_faidx, chromosome.c_str(), donor_s, donor_e-1, &donor_len);
+
+    //     int acceptor_len = acceptor_e - acceptor_s;
+    //     char* acceptor_seq = faidx_fetch_seq(ref_faidx, chromosome.c_str(), acceptor_s, acceptor_e-1, &acceptor_len);
+
+    //     if (strand == "+") {
+
+    //     } else if (strand == "-") {
+    //         hts_pos_t donor_len_hts = donor_e - donor_s;
+    //         hts_pos_t acceptor_len_hts = acceptor_e - acceptor_s;
+
+    //         reverse_complement(donor_seq, donor_len_hts);
+    //         reverse_complement(acceptor_seq, acceptor_len_hts);
+    //     }
+
+    //     if (donor_seq == NULL){
+    //         printf("c is empty\n");
+    //         continue;
+    //     }
+
+    //     if (acceptor_seq == NULL) {
+    //         printf("c is empty\n");
+    //         continue;
+    //     }
+
+    //     outfile_fa_donor << ">" << chromosome << std::endl;
+    //     outfile_fa_donor << donor_seq << std::endl;
+    //     outfile_fa_acceptor << ">" << chromosome << std::endl;
+    //     outfile_fa_acceptor << acceptor_seq << std::endl;
+
+    //     // std::cout << "strlen(donor_seq)   : " << strlen(donor_seq) << std::endl;
+    //     // std::cout << "strlen(acceptor_seq): " << strlen(acceptor_seq) << std::endl;
+
+    //     outfile_fa_junc << ">" << chromosome << ";" << std::to_string(donor) << ";" << std::to_string(acceptor) << ";" << strand << std::endl;
+    //     if (strlen(donor_seq) >= 400) {
+    //         outfile_fa_junc << donor_seq << acceptor_seq << std::endl;
+    //     } else {
+    //         outfile_fa_junc << donor_seq << std::string(2*(400-(int)strlen(donor_seq)), 'N') << acceptor_seq << std::endl;
+    //     }
+
+    //     std::cout << "donor   : " << donor_seq[200] << donor_seq[201] << std::endl;
+    //     std::cout << "acceptor: " << acceptor_seq[198] << acceptor_seq[199] << std::endl;
+
+    //     if (strand == "+") {
+    //         outfile_bed_da << chromosome + "\t" + std::to_string(donor) + "\t" + std::to_string(acceptor+1) + "\tJUNC\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
+    //     } else if (strand == "-") {
+    //         outfile_bed_da << chromosome + "\t" + std::to_string(acceptor) + "\t" + std::to_string(donor+1) + "\tJUNC\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
+    //     }
+    //     std::cout << std::endl;
+    // }  
+
+
+
+
+
+
+
+
+
+
+    /*********************************************
+     * Step 3: SPLAM model prediction
+    *********************************************/
+
+    Py_Initialize();
+    // GStr python_f = "./script/prediction.py";
+
+    GStr python_f = "./script/prediction.py";
+
+    PyObject *obj = Py_BuildValue("s", python_f.chars());
+    // PyObject* PyFileObject = PyFile_FromString(python_f.chars(), "r");
+
+    FILE *file = _Py_fopen_obj(obj, "r+");
+//    PyRun_SimpleFileEx(PyFile_AsFile(PyFileObject), "test.py", 1);
+
+    if(file != NULL) {
+        int re = PyRun_SimpleFileEx(file, python_f.chars(), false);
+        // PyRun_SimpleFileExFlags(file, python_f.chars(), "SRR1352129_chr9", "../../../src/MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/SpliceNN_19.pt");
+
+        // SRR1352129_chr9 ../../../src/MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v31/SpliceNN_19.pt
+
+        std::cout << "************************" << std::endl;
+        std::cout << "Results: " << re << std::endl;
+        std::cout << "************************" << std::endl;
+    }
+
+
+    // Py_Initialize();
+    // PyRun_SimpleString("from time import time,ctime\n"
+    //                     "print('Today is',ctime(time()))\n");
+    Py_Finalize();
+
+
+
+
+
+
+
+
+
+
 
 
     // /*********************************************
@@ -484,139 +501,138 @@ int main(int argc, char* argv[]) {
     // // outfile=new GSamWriter(outfname, bamreader.header(), GSamFile_BAM);
     // // GSamRecord brec;
 
+    // std::cout << "********************************************" << std::endl;
+    // std::cout << "** Step 4: SPLAM filtering out reads." << std::endl;
+    // std::cout << "********************************************" << std::endl;
 
-    cout << "********************************************" << endl;
-    cout << "** Step 4: SPLAM filtering out reads." << endl;
-    cout << "********************************************" << endl;
+    // auto start=std::chrono::high_resolution_clock::now();
+    // int spur_cnt = 0;
+    // std::cout << "brrrm! identifying alignment records with spurious splice junctions" << std::endl;
 
-    auto start=std::chrono::high_resolution_clock::now();
-    int spur_cnt = 0;
-    std::cout << "brrrm! identifying alignment records with spurious splice junctions" << std::endl;
+    // GArray<CJunc> spur_juncs;
+    // GVec<GSamRecord*> kept_brecs;
+    // std::unordered_map<std::string, int> hits;
+    // GStr inbedname(outdir + "/output/junc_scores.bed");
+    // loadBed(inbedname, spur_juncs);
 
-    GArray<CJunc> spur_juncs;
-    GVec<GSamRecord*> kept_brecs;
-    std::unordered_map<std::string, int> hits;
-    GStr inbedname(outfdir + "/output/junc_scores.bed");
-    loadBed(inbedname, spur_juncs, chrs_refseq_2_ucsc);
+    // std::cout << ">> (4) Junction count: " << junctions.Count() << std::endl;
+	// for (int i = 0; i < junctions.Count(); i++) {
+	// 	std::cout << i <<  " (4) Junction name: " << junctions[i].start << " - " << junctions[i].end << std::endl;
+	// 	std::cout << ">> (4) Read count: " << junctions[i].read_ls.size() << std::endl;
 
-    cout << ">> (4) Junction count: " << junctions.Count() << endl;
-	for (int i = 0; i < junctions.Count(); i++) {
-		cout << i <<  " (4) Junction name: " << junctions[i].start << " - " << junctions[i].end << endl;
-		cout << ">> (4) Read count: " << junctions[i].read_ls.size() << endl;
+    //     std::cout << "junctions[i].ref: " << junctions[i].ref << std::endl;
+    //     std::cout << "junctions[i].start: " << junctions[i].start << std::endl;
+    //     std::cout << "junctions[i].end: " << junctions[i].end << std::endl;
+    //     std::cout << "junctions[i].strand: " << junctions[i].strand << std::endl;
+    //     std::cout << std::endl;
 
-        cout << "junctions[i].ref: " << junctions[i].ref << endl;
-        cout << "junctions[i].start: " << junctions[i].start << endl;
-        cout << "junctions[i].end: " << junctions[i].end << endl;
-        cout << "junctions[i].strand: " << junctions[i].strand << endl;
-        cout << endl;
-
-        CJunc jnew(junctions[i].start, junctions[i].end, junctions[i].strand, junctions[i].ref);
+    //     CJunc jnew(junctions[i].start, junctions[i].end, junctions[i].strand, junctions[i].ref);
         
-        cout << "spur_juncs.Exists(jnew):  " << spur_juncs.Exists(jnew) << endl;
-        if (spur_juncs.Exists(jnew)) {
-            // spur = true;
-            cout << "spur_juncs.Exists! " << endl;
-            for (int j=0; j<junctions[i].read_ls.size(); j++) {
-                cout << "~~ SPLAM!" << endl;
-                outfile_discard->write(junctions[i].read_ls.at(j));
-                // delete junctions[i].read_ls.at(j);
-            }
-            cout << "spur_juncs.Exists Done! " << endl;
-        } else {
-            for (int j=0; j<junctions[i].read_ls.size(); j++) {
-                bool spur = false;
-                int r_exon_count = junctions[i].read_ls.at(j)->exons.Count();
-                if (r_exon_count > 1) {
-                    for (int e=1; e<r_exon_count; e++) {
-                        CJunc jnew_sub(junctions[i].read_ls.at(j)->exons[e-1].end, junctions[i].read_ls.at(j)->exons[e-1].start-1, junctions[i].strand, junctions[i].ref);
-                        if (spur_juncs.Exists(jnew_sub)) {
-                            spur = true;
-                            break;
-                        }
-                    }
-                }
+    //     std::cout << "spur_juncs.Exists(jnew):  " << spur_juncs.Exists(jnew) << std::endl;
+    //     if (spur_juncs.Exists(jnew)) {
+    //         // spur = true;
+    //         std::cout << "spur_juncs.Exists! " << std::endl;
+    //         for (int j=0; j<junctions[i].read_ls.size(); j++) {
+    //             std::cout << "~~ SPLAM!" << std::endl;
+    //             outfile_discard->write(junctions[i].read_ls.at(j));
+    //             // delete junctions[i].read_ls.at(j);
+    //         }
+    //         std::cout << "spur_juncs.Exists Done! " << std::endl;
+    //     } else {
+    //         for (int j=0; j<junctions[i].read_ls.size(); j++) {
+    //             bool spur = false;
+    //             int r_exon_count = junctions[i].read_ls.at(j)->exons.Count();
+    //             if (r_exon_count > 1) {
+    //                 for (int e=1; e<r_exon_count; e++) {
+    //                     CJunc jnew_sub(junctions[i].read_ls.at(j)->exons[e-1].end, junctions[i].read_ls.at(j)->exons[e-1].start-1, junctions[i].strand, junctions[i].ref);
+    //                     if (spur_juncs.Exists(jnew_sub)) {
+    //                         spur = true;
+    //                         break;
+    //                     }
+    //                 }
+    //             }
 
 
 
-    //         if (!spur) {
-    //             // cout << "Not spurious!" << endl;
-    //             GSamRecord *rec = new GSamRecord(*brec);
-    //             PBRec *newpbr = new PBRec(rec);
-    //             kept_brecs.Add(newpbr);
-    //         } else {
-    //             cout << "Spurious!" << endl;
-    //             spur_cnt++;
-    //             std::string kv = brec->name();
-    //             std::string tmp = std::to_string(brec->pairOrder());
-    //             kv += ";";
-    //             kv += tmp;
-    //             // key not present
-    //             if (hits.find(kv) == hits.end()) {
-    //                 hits[kv] = 1;
+    // //         if (!spur) {
+    // //             // std::cout << "Not spurious!" << std::endl;
+    // //             GSamRecord *rec = new GSamRecord(*brec);
+    // //             PBRec *newpbr = new PBRec(rec);
+    // //             kept_brecs.Add(newpbr);
+    // //         } else {
+    // //             std::cout << "Spurious!" << std::endl;
+    // //             spur_cnt++;
+    // //             std::string kv = brec->name();
+    // //             std::string tmp = std::to_string(brec->pairOrder());
+    // //             kv += ";";
+    // //             kv += tmp;
+    // //             // key not present
+    // //             if (hits.find(kv) == hits.end()) {
+    // //                 hits[kv] = 1;
+    // //             } else {
+    // //                 int val = hits[kv];
+    // //                 val++;
+    // //                 hits[kv] = val;
+    // //             }
+    // //         }
+
+    //             if (spur) {
+    //                 std::cout << "spur_juncs.Exists! " << std::endl;
+    //                 std::cout << "~~ SPLAM!" << std::endl;
+    //                 std::string kv = brec->name();
+    //                 std::string tmp = std::to_string(brec->pairOrder());
+    //                 kv += ";";
+    //                 kv += tmp;
+
+    //                 if (hits.find(kv) == hits.end()) {
+    //                     hits[kv] = 1;
+    //                 } else {
+    //                     int val = hits[kv];
+    //                     val++;
+    //                     hits[kv] = val;
+    //                 }
+
+    //                 outfile_discard->write(junctions[i].read_ls.at(j));
+    //                 // delete junctions[i].read_ls.at(j);
     //             } else {
-    //                 int val = hits[kv];
-    //                 val++;
-    //                 hits[kv] = val;
+    //                 std::cout << "spur_juncs not Exists! " << std::endl;
+    //                 kept_brecs.Add(junctions[i].read_ls.at(j));
+
+    //                 // std::cout << "~~ Clean!" << std::endl;
+    //                 // outfile_cleaned->write(junctions[i].read_ls.at(j));
+    //                 // delete junctions[i].read_ls.at(j);
     //             }
     //         }
+    //         std::cout << "~~~ Done! " << std::endl;
+    //     }
 
-                if (spur) {
-                    cout << "spur_juncs.Exists! " << endl;
-                    cout << "~~ SPLAM!" << endl;
-                    std::string kv = brec->name();
-                    std::string tmp = std::to_string(brec->pairOrder());
-                    kv += ";";
-                    kv += tmp;
-
-                    if (hits.find(kv) == hits.end()) {
-                        hits[kv] = 1;
-                    } else {
-                        int val = hits[kv];
-                        val++;
-                        hits[kv] = val;
-                    }
-
-                    outfile_discard->write(junctions[i].read_ls.at(j));
-                    // delete junctions[i].read_ls.at(j);
-                } else {
-                    cout << "spur_juncs not Exists! " << endl;
-                    kept_brecs.Add(junctions[i].read_ls.at(j));
-
-                    // cout << "~~ Clean!" << endl;
-                    // outfile_cleaned->write(junctions[i].read_ls.at(j));
-                    // delete junctions[i].read_ls.at(j);
-                }
-            }
-            cout << "~~~ Done! " << endl;
-        }
-
-        cout << "Done!" << endl;
+    //     std::cout << "Done!" << std::endl;
 
 		
-        // for (int r = 0; r < junctions[i].read_ls.size(); r++) {
-		// 	cout << "\tRead " <<  r << " : " << junctions[i].read_ls[r]->cigar() << endl;
-		// }
-		// cout << endl;
-	}
+    //     // for (int r = 0; r < junctions[i].read_ls.size(); r++) {
+	// 	// 	std::cout << "\tRead " <<  r << " : " << junctions[i].read_ls[r]->cigar() << std::endl;
+	// 	// }
+	// 	// std::cout << std::endl;
+	// }
 
-    flushBrec(kept_brecs, hits, outfile_cleaned);
-    auto end =std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
-    std::cout << spur_cnt << " spurious alignments were removed." << std::endl;
-    std::cout << "Completed in " << duration.count() << " seconds" << std::endl;
+    // flushBrec(kept_brecs, hits, outfile_cleaned);
+    // auto end =std::chrono::high_resolution_clock::now();
+    // auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
+    // std::cout << spur_cnt << " spurious alignments were removed." << std::endl;
+    // std::cout << "Completed in " << duration.count() << " seconds" << std::endl;
     
 
 
 	// while ((irec=inRecords.next())!=NULL) {
 	// 	brec=irec->brec;
-	// 	// cout << irec->fidx << endl;
+	// 	// std::cout << irec->fidx << std::endl;
 	// 	if (brec->hasIntrons()) {
     //         const char* chrname=brec->refName();
     //         char chr = chrname[strlen(chrname) - 1];
     //         char strand = brec->spliceStrand();
     //         bool spur = false;
 
-    //         // cout << "chrname: " << chrname << endl;
+    //         // std::cout << "chrname: " << chrname << std::endl;
     //         for (int i = 1; i < brec->exons.Count(); i++) {
     //             CJunc j(brec->exons[i-1].end, brec->exons[i].start-1, strand, chr);
     //             if (spur_juncs.Exists(j)) {
@@ -625,12 +641,12 @@ int main(int argc, char* argv[]) {
     //             }
     //         }
     //         if (!spur) {
-    //             // cout << "Not spurious!" << endl;
+    //             // std::cout << "Not spurious!" << std::endl;
     //             GSamRecord *rec = new GSamRecord(*brec);
     //             PBRec *newpbr = new PBRec(rec);
     //             kept_brecs.Add(newpbr);
     //         } else {
-    //             cout << "Spurious!" << endl;
+    //             std::cout << "Spurious!" << std::endl;
     //             spur_cnt++;
     //             std::string kv = brec->name();
     //             std::string tmp = std::to_string(brec->pairOrder());
@@ -665,28 +681,28 @@ int main(int argc, char* argv[]) {
     /************************
      * Loading the model
      ************************/
-    // cout << ">> Loading the model: " << endl;
+    // std::cout << ">> Loading the model: " << std::endl;
     // torch::jit::script::Module module;
-    // // module = torch::jit::load(modelname.chars());
+    // // module = torch::jit::load(model_name.chars());
 
     // try {
     //     // Deserialize the ScriptModule from a file using torch::jit::load().
-    //     std::cout << "Loading "<< modelname.chars() << std::endl;
-    //     module = torch::jit::load(modelname.chars());
+    //     std::cout << "Loading "<< model_name.chars() << std::endl;
+    //     module = torch::jit::load(model_name.chars());
     // }
     // catch (const c10::Error& e) {
     //     std::cerr << "error loading the model\n";
     //     return -1;
     // }
-    // std::cout << "Model "<< modelname.chars() <<" loaded fine\n";
+    // std::cout << "Model "<< model_name.chars() <<" loaded fine\n";
 
   // /************************
   //  * Processing JUNCTION file.
   //  ************************/
   // set<intron_key> bad_intron_set;
   // set<intron_key> good_intron_set;
-  // string line;
-  // ifstream myfile (junctionfname); // this is equivalent to the above method
+  // std::string line;
+  // std::ifstream myfile (outfname_junction); // this is equivalent to the above method
   // if ( myfile.is_open() ) { // always check whether the file is open
 
   //     // chr18	21682058	21596619	JUNC_144610	0	+	8.2311524e-10	4.0248174e-12
@@ -694,16 +710,16 @@ int main(int argc, char* argv[]) {
 
   //       int parser_counter = 0;
 
-  //       string chr = "";
+  //       std::string chr = "";
   //       int start = 0;
   //       int end = 0;
-  //       string junc_name = "";
+  //       std::string junc_name = "";
   //       int tmp = 0;
   //       char strand = ' ';
   //       float d_score = .0;
   //       float a_score = .0;
 
-  //       string token;
+  //       std::string token;
   //       istringstream ss(line);
 
   //       // then read each element by delimiter
@@ -720,14 +736,14 @@ int main(int argc, char* argv[]) {
   //           parser_counter += 1;
   //       }
 
-  //       // cout << "chr: " << chr << endl;
-  //       // cout << "start: " << start << endl;
-  //       // cout << "end: " << end << endl;
-  //       // cout << "junc_name: " << junc_name << endl;
-  //       // cout << "tmp: " << tmp << endl;
-  //       // cout << "strand: " << strand << endl;
-  //       // cout << "d_score: " << d_score << endl;
-  //       // cout << "a_score: " << a_score << endl;
+  //       // std::cout << "chr: " << chr << std::endl;
+  //       // std::cout << "start: " << start << std::endl;
+  //       // std::cout << "end: " << end << std::endl;
+  //       // std::cout << "junc_name: " << junc_name << std::endl;
+  //       // std::cout << "tmp: " << tmp << std::endl;
+  //       // std::cout << "strand: " << strand << std::endl;
+  //       // std::cout << "d_score: " << d_score << std::endl;
+  //       // std::cout << "a_score: " << a_score << std::endl;
 
   //       intron_key* intronkey = new intron_key;
   //       intronkey->seqname = chr;
@@ -743,8 +759,8 @@ int main(int argc, char* argv[]) {
   //     }
   //     myfile.close();
   // }
-  // cout << "bad_intron_set.size(): " << bad_intron_set.size() << endl;
-  // cout << "good_intron_set.size(): " << good_intron_set.size() << endl;
+  // std::cout << "bad_intron_set.size(): " << bad_intron_set.size() << std::endl;
+  // std::cout << "good_intron_set.size(): " << good_intron_set.size() << std::endl;
 
 
 
@@ -755,19 +771,19 @@ int main(int argc, char* argv[]) {
 	// int counter = 0;
 	// while ((irec=inRecords.next())!=NULL) {
 	// 	brec=irec->brec;
-	// 	// cout << irec->fidx << endl;
+	// 	// std::cout << irec->fidx << std::endl;
 	// 	if (brec->hasIntrons()) {
 	// 		// This is a spliced read => start processing it!
 	// 		// char strand = brec->spliceStrand();
-	// 		// cout << "strand       : " << strand << endl;
-	// 		// cout << "brec->cigar(): " << brec->cigar() << endl;
+	// 		// std::cout << "strand       : " << strand << std::endl;
+	// 		// std::cout << "brec->cigar(): " << brec->cigar() << std::endl;
 	// 		for (int i=1;i<brec->exons.Count();i++) {
 	// 			// int strand = 0;
 	// 			// if (brec->spliceStrand() == '+') strand = 1;
 	// 			// if (brec->spliceStrand() == '-') strand = -1;
-	// 			// cout << "brec->refName(): " << brec->refName()<< endl;
-	// 			string bamseq_name(brec->refName());
-	// 			// cout << "bamseq_name: " << bamseq_name << endl;
+	// 			// std::cout << "brec->refName(): " << brec->refName()<< std::endl;
+	// 			std::string bamseq_name(brec->refName());
+	// 			// std::cout << "bamseq_name: " << bamseq_name << std::endl;
 
 	// 			intron_key* bamkey = new intron_key;
 	// 			bamkey->seqname = bamseq_name;
@@ -787,18 +803,18 @@ int main(int argc, char* argv[]) {
 	// 				// BAM_hash.Add(bamkey);
 	// 				// BAM_set.insert(*bamkey);
 	// 				counter += 1;
-	// 				cout << "Splam!  " << counter << endl;
+	// 				std::cout << "Splam!  " << counter << std::endl;
 	//         outfile_discard->write(brec);
-	// 				// cout << "brec->spliceStrand()   : " << brec->spliceStrand() << endl;
-	// 				// cout << "brec->refName(),       : " << brec->refName() << endl;
-	// 				// cout << "brec->exons[i-1].end+1 : " << brec->exons[i-1].end+1 << endl;
-	// 				// cout << "brec->exons[i].start-1 : " << brec->exons[i].start-1 << endl;
+	// 				// std::cout << "brec->spliceStrand()   : " << brec->spliceStrand() << std::endl;
+	// 				// std::cout << "brec->refName(),       : " << brec->refName() << std::endl;
+	// 				// std::cout << "brec->exons[i-1].end+1 : " << brec->exons[i-1].end+1 << std::endl;
+	// 				// std::cout << "brec->exons[i].start-1 : " << brec->exons[i].start-1 << std::endl;
 
 	// 			} else {
 	// 				// BAM_unmapped_set.insert(*bamkey);
   //         outfile_cleaned->write(brec);
 	// 			}
-	// 			// cout << "\tIntron: " << brec->refName() << "; " << brec->spliceStrand() << "; " << brec->exons[i-1].end+1 << " - " << brec->exons[i].start-1 << endl;	
+	// 			// std::cout << "\tIntron: " << brec->refName() << "; " << brec->spliceStrand() << "; " << brec->exons[i-1].end+1 << " - " << brec->exons[i].start-1 << std::endl;	
 	// 			// CJunc j(brec->exons[i-1].end+1, brec->exons[i].start-1, strand,
 	// 			// 		dupcount);
 	// 		}
@@ -809,17 +825,17 @@ int main(int argc, char* argv[]) {
 
     
     delete outfile_discard;
-    cout << "Done delete outfile_discard!" << endl;
+    std::cout << "Done delete outfile_discard!" << std::endl;
     delete outfile_spliced;
-    cout << "Done delete outfile_spliced!" << endl;
+    std::cout << "Done delete outfile_spliced!" << std::endl;
     delete outfile_cleaned;
-    cout << "Done delete outfile_cleaned!" << endl;
+    std::cout << "Done delete outfile_cleaned!" << std::endl;
 
     return 0;
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;debug;verbose;version;SLPEDVho:N:Q:F:M:J:");
+    GArgs args(argc, argv, "help;debug;verbose;version;SLPEDVho:N:Q:F:M:J:R:");
     args.printError(USAGE, true);
 
     if (args.getOpt('h') || args.getOpt("help")) {
@@ -837,21 +853,20 @@ void processOptions(int argc, char* argv[]) {
         GMessage("\nError: no input provided!\n");
         exit(1);
     }
-    outfdir=args.getOpt('o');
-    if (outfdir.is_empty()) {
+    outdir=args.getOpt('o');
+    if (outdir.is_empty()) {
         GMessage(USAGE);
         GMessage("\nError: output filename must be provided (-o)!\n");
         exit(1);
     }
-
-    junctionfname = outfdir + "/bed/junction.bed";
+    outfname_junction = outdir + "/bed/junction.bed";
     // if (args.getOpt('J')) {
-    //   junctionfname=args.getOpt('J');
-    //   if (fileExists(junctionfname.chars())>1) {
-    //       GMessage("\nJunction bed file: ", junctionfname.chars());
+    //   outfname_junction=args.getOpt('J');
+    //   if (fileExists(outfname_junction.chars())>1) {
+    //       GMessage("\nJunction bed file: ", outfname_junction.chars());
     //   } else {
     //     GMessage("Error: bed file (%s) not found.\n",
-    //         junctionfname.chars());
+    //         outfname_junction.chars());
     //   }
     // } else {
     //       GMessage(USAGE);
@@ -859,20 +874,27 @@ void processOptions(int argc, char* argv[]) {
     //       exit(1);
     // }
 
-
-
-
-
-
-
+    if (args.getOpt('R')) {
+        infname_reffa=args.getOpt('R');
+        if (fileExists(infname_reffa.chars())>1) {
+            // guided=true;
+        } else {
+            GError("Error: reference fasta file (%s) not found.\n",
+                infname_reffa.chars());
+        }
+    } else {
+          GMessage(USAGE);
+          GMessage("\nError: reference fasta file must be provided (-R)!\n");
+          exit(1);
+    }
 
     if (args.getOpt('M')) {
-        modelname=args.getOpt('M');
-        if (fileExists(modelname.chars())>1) {
+        model_name=args.getOpt('M');
+        if (fileExists(model_name.chars())>1) {
             // guided=true;
         } else {
             GError("Error: model file (%s) not found.\n",
-                modelname.chars());
+                model_name.chars());
         }
     } else {
           GMessage(USAGE);
@@ -889,22 +911,22 @@ void processOptions(int argc, char* argv[]) {
     while ( (ifn=args.nextNonOpt())!=NULL) {
         //input alignment files
         std::string absolute_ifn = get_full_path(ifn);
-        cout << "absolute_ifn: " << absolute_ifn << endl;
+        std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
         inRecords.addFile(absolute_ifn.c_str());
     }
 }
 
-void flushBrec(GVec<GSamRecord*> &pbrecs, unordered_map<string, int> &hits, GSamWriter* outfile_cleaned) {
+void flushBrec(GVec<GSamRecord*> &pbrecs, std::unordered_map<std::string, int> &hits, GSamWriter* outfile_cleaned) {
     if (pbrecs.Count()==0) return;
     for (int i=0; i < pbrecs.Count(); i++) {
         std::string kv = pbrecs[i]->name();
 
-        cout << "kv: " << kv << endl;
+        std::cout << "kv: " << kv << std::endl;
         std::string tmp = std::to_string(pbrecs[i]->pairOrder());
         kv += ";";
         kv += tmp;
         if (hits.find(kv) != hits.end()) {
-            cout << "Update NH tage!!" << endl;
+            std::cout << "Update NH tage!!" << std::endl;
             int new_nh = pbrecs[i]->tag_int("NH", 0) - hits[kv];
             pbrecs[i]->add_int_tag("NH", new_nh);
         }
@@ -923,7 +945,7 @@ void flushBrec(GVec<GSamRecord*> &pbrecs, unordered_map<string, int> &hits, GSam
     }
 }
 
-void loadBed(GStr inbedname, GArray<CJunc> &spur_juncs, unordered_map<string, string> &chrs_refseq_2_ucsc) {
+void loadBed(GStr inbedname, GArray<CJunc> &spur_juncs) {
 
     // Bed score is in ncbi chr name.
     std::ifstream bed_f(inbedname);
@@ -931,51 +953,49 @@ void loadBed(GStr inbedname, GArray<CJunc> &spur_juncs, unordered_map<string, st
     int bed_counter = 0;
     while (getline(bed_f, line)) {
         bed_counter ++;
-        // cout << "line: " << line << endl;
+        // std::cout << "line: " << line << std::endl;
         GStr gline = line.c_str();
         GVec<GStr> junc;
         int cnt = 0;
         while (cnt < 7) {
             GStr tmp = gline.split("\t");
-            // cout << "tmp: " << tmp << endl;
+            // std::cout << "tmp: " << tmp << std::endl;
             junc.Add(gline);
             gline=tmp;
             cnt++;
         }
         char* chrname =junc[0].detach();
         // char chr = chrname[strlen(chrname) - 1];
-        string chr_str(chrname);
-        cout << "1 chr_str: " << chr_str << endl;
-        chr_str = chrs_refseq_2_ucsc[chr_str];
-        cout << "2 chr_str: " << chr_str << endl;
+        GStr chr_str(chrname);
+        std::cout << "1 chr_str: " << chr_str.chars() << std::endl;
 
 
-        // cout << ">> chrs_convert: " << endl;
+        // std::cout << ">> chrs_convert: " << std::endl;
         // for (auto i : chrs_convert) {
-        //     cout << i.first << " ---- " << i.second << endl;
+        //     std::cout << i.first << " ---- " << i.second << std::endl;
         // }
 
-        // cout << "1 chr_str: " << chr_str << endl;
+        // std::cout << "1 chr_str: " << chr_str << std::endl;
         // chr_str = chrs_convert[chr_str];
-        // cout << "2 chr_str: " << chr_str << endl;
+        // std::cout << "2 chr_str: " << chr_str << std::endl;
         
         // if (true) {
-        //     cout << "junc[1].asInt(): " << junc[1].asInt() << endl;
-        //     cout << "junc[2].asInt(): " << junc[2].asInt() << endl;
-        //     cout << "junc[5].detach(): " << *junc[5].detach() << endl;
-        //     cout << "junc[6].: " << junc[6].asDouble() << endl;
-        //     cout << "chr: " << chr << endl;
+        //     std::cout << "junc[1].asInt(): " << junc[1].asInt() << std::endl;
+        //     std::cout << "junc[2].asInt(): " << junc[2].asInt() << std::endl;
+        //     std::cout << "junc[5].detach(): " << *junc[5].detach() << std::endl;
+        //     std::cout << "junc[6].: " << junc[6].asDouble() << std::endl;
+        //     std::cout << "chr: " << chr << std::endl;
         // }
-        if (junc[6].asDouble() <= 0.2) {
-            cout << "junc[6].asDouble(): " << junc[6].asDouble() << endl;
+        if (junc[6].asDouble() <= threshold) {
+            std::cout << "junc[6].asDouble(): " << junc[6].asDouble() << std::endl;
 
-        	// CJunc(int vs=0, int ve=0, char vstrand='+', string vref=".", uint64_t dcount=1):
+        	// CJunc(int vs=0, int ve=0, char vstrand='+', std::string vref=".", uint64_t dcount=1):
             CJunc j(junc[1].asInt()+1, junc[2].asInt(), *junc[5].detach(), chr_str);
 
             spur_juncs.Add(j);
-            cout << "spur_juncs.size: " << spur_juncs.Count() << endl;
+            std::cout << "spur_juncs.size: " << spur_juncs.Count() << std::endl;
         }
     }
 
-    cout << "bed_counter: " << bed_counter << endl;
+    std::cout << "bed_counter: " << bed_counter << std::endl;
 }

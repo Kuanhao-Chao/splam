@@ -3,11 +3,6 @@
 // #include <vector>
 // #include <string>
 #include "tmerge.h"
-// #include <gclib/GArgs.h>
-// #include <gclib/GVec.hh>
-// #include <chrono>
-// #include <unordered_map>
-// #include <gclib/GHashMap.hh>
 
 struct CRead {
     char* read;
