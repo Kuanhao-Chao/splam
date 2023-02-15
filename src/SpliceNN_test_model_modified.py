@@ -26,8 +26,8 @@ def main():
     N_WORKERS = 1
     device = torch.device("cuda" if torch.cuda.is_available() else "mps")
 
-    MODEL_BASE = "SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v30/"
-    MODEL = "../src/MODEL/"+MODEL_BASE+"SpliceNN_20.pt"
+    MODEL_BASE = "SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v32/"
+    MODEL = "../src/MODEL/"+MODEL_BASE+"SpliceNN_24.pt"
     MODEL_OUTPUT_BASE = "./TEST/"+MODEL_BASE+""
     model = torch.load(MODEL)
     # model = torch.load("../src/MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v23/SpliceNN_19.pt")
@@ -204,7 +204,7 @@ def main():
                 TYPE = "noshuffle"
 
 
-            with open("../src_spliceAI_benchmark/INPUT/splam."+TYPE+"."+str(r_idx)+"."+str(BATCH_SIZE)+".pkl", 'wb') as f: 
+            with open("../src_tools_evaluation/INPUT/splam.v2."+TYPE+"."+str(r_idx)+"."+str(BATCH_SIZE)+".pkl", 'wb') as f: 
                 pickle.dump(All_Junction_YP, f)
                 pickle.dump(All_Junction_YL, f)
 
@@ -222,8 +222,6 @@ def main():
             print(f'Junction Precision  : {J_G_TP/(J_G_TP+J_G_FP):.5f} | Junction Recall: {J_G_TP/(J_G_TP+J_G_FN):.5f} | TP: {J_G_TP} | FN: {J_G_FN} | FP: {J_G_FP} | TN: {J_G_TN}')
             print("")
             print("\n\n")
-
-# def test_one_epoch(epoch_idx, test_loader):
 
 
 def plot_pr_curve(true_y, y_prob, label):

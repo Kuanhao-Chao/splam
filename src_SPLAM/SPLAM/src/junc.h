@@ -2,9 +2,11 @@
 #include <cstdlib>
 
 #include "GSam.h"
+#include <gclib/GStr.h>
+
 #include <string>
 
-using namespace std;
+// using namespace std;
 
 int juncCount=0;
 
@@ -12,28 +14,28 @@ int juncCount=0;
 class CJunc {
 
 public:
-	string ref;
+	GStr ref;
 	int start, end;
 	char strand;
 	uint64_t dupcount;
 	
-	vector<GSamRecord*> read_ls;
+	std::vector<GSamRecord*> read_ls;
 	// GArray<CJunc> junctionss;
 
 
-	CJunc(int vs=0, int ve=0, char vstrand='+', string vref=".", uint64_t dcount=1):
+	CJunc(int vs=0, int ve=0, char vstrand='+', GStr vref=".", uint64_t dcount=1):
 	  start(vs), end(ve), strand(vstrand), ref(vref), dupcount(dcount) { }
 
 	bool operator==(const CJunc& a) {
-		// cout << " >> 1 == : " << ref.c_str() << ";  strand: " << strand << ";  start: " << start << ";  end: " << end << endl;
-		// cout << " >> 2 == : " << a.ref.c_str() << ";  strand: " << a.strand << ";  start: " << a.start << ";  end: " << a.end << endl;
-		// cout << " >> == : " << strcmp(ref.c_str(), a.ref.c_str())==0 && strand==a.strand && start==a.start && end==a.end << endl;
-		// cout << "(strcmp(ref.c_str(), a.ref.c_str())==0 : " << (strcmp(ref.c_str(), a.ref.c_str())==0 ) << endl;
-		// cout << "strand==a.strand : " << (strand==a.strand) << endl;
-		// cout << "end==a.end       : " << (end==a.end) << endl;
+		// std::cout << " >> 1 == : " << ref.c_str() << ";  strand: " << strand << ";  start: " << start << ";  end: " << end << std::endl;
+		// std::cout << " >> 2 == : " << a.ref.c_str() << ";  strand: " << a.strand << ";  start: " << a.start << ";  end: " << a.end << std::endl;
+		// std::cout << " >> == : " << strcmp(ref.c_str(), a.ref.c_str())==0 && strand==a.strand && start==a.start && end==a.end << std::endl;
+		// std::cout << "(strcmp(ref.c_str(), a.ref.c_str())==0 : " << (strcmp(ref.c_str(), a.ref.c_str())==0 ) << std::endl;
+		// std::cout << "strand==a.strand : " << (strand==a.strand) << std::endl;
+		// std::cout << "end==a.end       : " << (end==a.end) << std::endl;
 
-		// cout << "(strcmp(ref.c_str(), a.ref.c_str())==0 && strand==a.strand && start==a.start && end==a.end): " << (strcmp(ref.c_str(), a.ref.c_str())==0 && strand==a.strand && start==a.start && end==a.end) << endl;
-		return (strcmp(ref.c_str(), a.ref.c_str())==0 && strand==a.strand && start==a.start && end==a.end);
+		// std::cout << "(strcmp(ref.c_str(), a.ref.c_str())==0 && strand==a.strand && start==a.start && end==a.end): " << (strcmp(ref.c_str(), a.ref.c_str())==0 && strand==a.strand && start==a.start && end==a.end) << std::endl;
+		return (ref==a.ref && strand==a.strand && start==a.start && end==a.end);
 	}
 
     bool operator<(const CJunc& a) { // sort by strand last
@@ -62,14 +64,14 @@ public:
 	void write(FILE* f) {
 		juncCount++;
 		fprintf(f, "%s\t%d\t%d\tJUNC%08d\t%ld\t%c\n",
-				ref.c_str(), start-1, end, juncCount, (long)dupcount, strand);
+				ref.chars(), start-1, end, juncCount, (long)dupcount, strand);
 	}
 };
 
 // The reference is in UCSC chr name.
 GArray<CJunc> junctions(64, true);
 
-void addJunction(GSamRecord& r, int dupcount, string ref) {
+void addJunction(GSamRecord& r, int dupcount, GStr ref) {
 	char strand = r.spliceStrand();
 //	if (strand!='+' && strand!='-') return; // TODO: should we output .?
     
@@ -98,14 +100,14 @@ void writeJuncs(FILE* f) {
     	junctions[i].write(f);
     }
 
-	cout << ">> Junction count: " << junctions.Count() << endl;
+	std::cout << ">> Junction count: " << junctions.Count() << std::endl;
 	for (int i = 0; i < junctions.Count(); i++) {
-		cout << i <<  " Junction name: " << junctions[i].start << " - " << junctions[i].end << endl;
-		cout << ">> Read count: " << junctions[i].read_ls.size() << endl;
+		std::cout << i <<  " Junction name: " << junctions[i].start << " - " << junctions[i].end << std::endl;
+		std::cout << ">> Read count: " << junctions[i].read_ls.size() << std::endl;
 		for (int r = 0; r < junctions[i].read_ls.size(); r++) {
-			cout << "\tRead " <<  r << " : " << junctions[i].read_ls[r]->cigar() << endl;
+			std::cout << "\tRead " <<  r << " : " << junctions[i].read_ls[r]->cigar() << std::endl;
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 }
 
@@ -114,14 +116,14 @@ void flushJuncs(FILE* f) {
     	junctions[i].write(f);
     }
 
-	cout << ">> Junction count: " << junctions.Count() << endl;
+	std::cout << ">> Junction count: " << junctions.Count() << std::endl;
 	for (int i = 0; i < junctions.Count(); i++) {
-		cout << i <<  " Junction name: " << junctions[i].start << " - " << junctions[i].end << endl;
-		cout << ">> Read count: " << junctions[i].read_ls.size() << endl;
+		std::cout << i <<  " Junction name: " << junctions[i].start << " - " << junctions[i].end << std::endl;
+		std::cout << ">> Read count: " << junctions[i].read_ls.size() << std::endl;
 		for (int r = 0; r < junctions[i].read_ls.size(); r++) {
-			cout << "\tRead " <<  r << " : " << junctions[i].read_ls[r]->cigar() << endl;
+			std::cout << "\tRead " <<  r << " : " << junctions[i].read_ls[r]->cigar() << std::endl;
 		}
-		cout << endl;
+		std::cout << std::endl;
 	}
 
     junctions.Clear();

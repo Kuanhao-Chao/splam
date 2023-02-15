@@ -9,38 +9,38 @@ set(CMAKE_CXX_STANDARD 17)
 
 # set(Python_ADDITIONAL_VERSIONS 3.4)
 
-set(PYTHON_INCLUDE_DIR /Users/chaokuan-hao/miniconda3/include/python3.8/ ) # path to header
+
+# set(PYTHON_INCLUDE_DIR /Users/chaokuan-hao/miniconda3/include/python3.8/) # path to header
+# set(PYTHON_LIBRARY /Users/chaokuan-hao/miniconda3/lib)
+
 # find_package(PythonLibs REQUIRED)
 # find_package(Python COMPONENTS Interpreter Development)
 find_package(Python REQUIRED)
-# find_package(ZLIB)
-# find_library(ZLIB_LIBRARY zlib NAMES)
-# find_package(ZLIB ${ZLIB_VERSION} REQUIRED MODULE) 
+set(PYTHON_INCLUDE_DIRS /Users/chaokuan-hao/miniconda3/include/python3.8) # path to header
+set(PYTHON_LIBRARIES /Users/chaokuan-hao/miniconda3/lib/libpython3.8.dylib)
+
 find_package(ZLIB)
 
 
 # export LDFLAGS="-L/usr/local/opt/zlib/lib -L/usr/local/opt/bzip2/lib/"
 # export CPPFLAGS="-I/usr/local/opt/zlib/include"
 # export CPPFLAGS="-I/usr/local/opt/zlib/include"
-# find_package(PythonLibs REQUIRED)
 
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/opt/zlib/include")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/opt/bzip2/include")
 
-# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/opt/zlib/include")
 
-
-message("Python_FOUND:${Python_FOUND}")
-message("Python_VERSION:${Python_VERSION}")
-message("Python_Development_FOUND:${Python_Development_FOUND}")
-message("Python_LIBRARIES:${Python_LIBRARIES}")
-message("PYTHON_INCLUDE_DIR:${PYTHON_INCLUDE_DIR}")
+message("PYTHON_FOUND:${PYTHON_FOUND}")
+message("PYTHON_VERSION:${PYTHON_VERSION}")
+# message("Python_Development_FOUND:${Python_Development_FOUND}")
+message("PYTHON_LIBRARIES:${PYTHON_LIBRARIES}")
+message("PYTHON_INCLUDE_DIRS:${PYTHON_INCLUDE_DIRS}")
 message("CMAKE_C_FLAGS:${CMAKE_C_FLAGS}")
 
 
 include_directories("${CMAKE_SOURCE_DIR}/include/")
 link_directories("${CMAKE_SOURCE_DIR}/include/htslib")
-include_directories(${PYTHON_INCLUDE_DIR})
+include_directories(${PYTHON_INCLUDE_DIRS})
 
 
 include(ExternalProject)
@@ -65,15 +65,11 @@ add_executable(SPLAM src/splam.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.cpp)
 
 add_dependencies(SPLAM htslib)
-
 target_link_libraries(SPLAM ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
-
 # target_link_libraries(SPLAM "${TORCH_LIBRARIES}")
-# target_include_directories(SPLAM PRIVATE ${PYTHON_INCLUDE_DIR})
-target_link_libraries(SPLAM PRIVATE ${PYTHON_LIBRARIES})
-# target_link_libraries(SPLAM PRIVATE ${ZLIB_LIBRARY})
-# target_link_libraries(SPLAM ZLIB::ZLIB)
+# target_include_directories(SPLAM PRIVATE ${PYTHON_INCLUDE_DIRS})
 
+target_link_libraries(SPLAM ${PYTHON_LIBRARIES})
 set_property(TARGET SPLAM PROPERTY CXX_STANDARD 17)
 
 
