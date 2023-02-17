@@ -15,12 +15,6 @@ void splamJExtract() {
     GMessage("[INFO] Output directory\t\t: %s\n", out_dir.chars());
     GMessage("[INFO] Output Junction file\t: %s\n", outfname_junction.chars());
 
-    //  Creating directories for bed & fasta files.
-    // GStr bed_dir(out_dir+"/bed");
-    // std::filesystem::create_directories(bed_dir.chars());
-
-    std::unordered_map<std::string, int> chrs = get_hg38_chrom_size("HISAT2");
-
     // Creating the output junction bed file
     if (!outfname_junction.is_empty()) {
         if (strcmp(outfname_junction.substr(outfname_junction.length()-4, 4).chars(), ".bed")!=0) {

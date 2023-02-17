@@ -13,6 +13,7 @@
 
 extern int juncCount;
 extern GArray<CJunc> junctions;
+// extern Gset<CJunc> junction;
 
 void addJunction(GSamRecord& r, int dupcount, GStr ref);
 

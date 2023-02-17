@@ -416,25 +416,30 @@ CMakeFiles/SPLAM.dir/src/splam.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__bsd_locale_defaults.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/vector \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__split_buffer \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__functional/is_transparent.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/math.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/math.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__node_handle \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/optional \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/filesystem \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/stack \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/deque \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/iomanip \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/extract.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/predict.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/faidx.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_defs.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/inttypes.h \
+  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include/inttypes.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/inttypes.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/xlocale/_inttypes.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_log.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/kstring.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/kroundup.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/clean.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/common.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/var.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/tmerge.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/map \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__functional/is_transparent.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__node_handle \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/optional \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__tree \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GStr.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GBase.h \
@@ -446,26 +451,112 @@ CMakeFiles/SPLAM.dir/src/splam.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_select.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_uuid_t.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/gethostuuid.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/math.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/math.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/stat.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_s_ifmt.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_filesec_t.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GVec.hh \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GList.hh \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/GSam.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/kstring.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_defs.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/kroundup.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/sam.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/inttypes.h \
-  /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include/inttypes.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/inttypes.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/xlocale/_inttypes.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_log.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/khash.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/util.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/filter.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GArgs.h
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GArgs.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/Python.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/patchlevel.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pyconfig.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pymacconfig.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pyport.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/time.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_timeval64.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pymacro.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pymath.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pytime.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/object.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pymem.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/pymem.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/object.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/objimpl.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/objimpl.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/typeslots.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pyhash.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pydebug.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/bytearrayobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/bytesobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/unicodeobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/unicodeobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/longobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/longintrepr.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/boolobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/floatobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/complexobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/rangeobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/memoryobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/tupleobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/tupleobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/listobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/dictobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/dictobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/odictobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/enumobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/setobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/methodobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/moduleobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/funcobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/classobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/fileobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/fileobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pycapsule.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/traceback.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/traceback.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/sliceobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cellobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/iterobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/genobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pystate.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pythread.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/pystate.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/initconfig.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/descrobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/warnings.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/weakrefobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/structseq.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/namespaceobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/picklebufobject.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/codecs.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pyerrors.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/pyerrors.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/context.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pyarena.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/modsupport.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/compile.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/code.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pythonrun.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pylifecycle.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/pylifecycle.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/ceval.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/sysmodule.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/sysmodule.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/osmodule.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/intrcheck.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/import.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/abstract.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/cpython/abstract.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/bltinmodule.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/eval.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pyctype.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pystrtod.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pystrcmp.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/dtoa.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/fileutils.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/pyfpe.h \
+  /Users/chaokuan-hao/miniconda3/include/python3.8/tracemalloc.h

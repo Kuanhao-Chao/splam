@@ -21,8 +21,6 @@ class CJunc {
 		uint64_t dupcount;
 		
 		std::vector<GSamRecord*> read_ls;
-		// GArray<CJunc> junctionss;
-
 
 		CJunc(int vs=0, int ve=0, char vstrand='+', GStr vref=".", uint64_t dcount=1):
 		start(vs), end(ve), strand(vstrand), ref(vref), dupcount(dcount) { }
@@ -68,7 +66,5 @@ class CJunc {
 					ref.chars(), start-1, end, juncCount, (long)dupcount, strand);
 		}
 };
-
-extern GArray<CJunc> junctions;
 
 #endif
