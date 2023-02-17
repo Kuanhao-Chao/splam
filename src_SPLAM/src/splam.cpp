@@ -1,7 +1,6 @@
 #include <iostream>
 #include <vector>
 #include <memory>
-#include <unordered_map>
 #include <filesystem>
 
 #include "extract.h"
@@ -14,9 +13,16 @@
 #include "junc.h"
 #include "filter.h"
 
+
+// #include "splam_stream.h"
+
+
 #include <gclib/GArgs.h>
 #include <gclib/GBase.h>
 #include <gclib/GStr.h>
+#include <robin_hood/robin_hood.h>
+
+#include <Python.h>
 
 #define VERSION "0.0.1"
 
@@ -161,15 +167,15 @@ void processOptions(int argc, char* argv[]) {
     }
     infname_bam=args.nextNonOpt(); 
 
-    if (COMMAND_MODE == J_EXTRACT) {
-        const char* ifn=NULL;
-        while ( (ifn=args.nextNonOpt())!=NULL) {
-            //input alignment files
-            std::string absolute_ifn = get_full_path(ifn);
-            std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
-            in_records.addFile(absolute_ifn.c_str());
-        }
-    } 
+    // if (COMMAND_MODE == J_EXTRACT) {
+    const char* ifn=NULL;
+    while ( (ifn=args.nextNonOpt())!=NULL) {
+        //input alignment files
+        std::string absolute_ifn = get_full_path(ifn);
+        std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
+        in_records.addFile(absolute_ifn.c_str());
+    }
+    // } 
     // else if (COMMAND_MODE == PREDICT) {
     //     const char* ifn=NULL;
     //     while ( (ifn=args.nextNonOpt())!=NULL) {
@@ -207,7 +213,7 @@ void processOptionsPredict(GArgs& args) {
     // -m / --model
     infname_model_name=args.getOpt('m');
     if (infname_model_name.is_empty()) {
-        infname_model_name=args.getOpt('model');
+        infname_model_name=args.getOpt("model");
         if (infname_model_name.is_empty()) {
             usage();
             GMessage("\n[ERROR] model file must be provided (-m)!\n");
@@ -250,7 +256,7 @@ void processOptionsPredict(GArgs& args) {
             exit(1);
         }
     }
-    outfname_junction = out_dir + "/bed/junction.bed";
+    outfname_junction = out_dir + "/junction.bed";
 }
 
 
@@ -258,7 +264,7 @@ void processOptionsClean(GArgs& args) {
     // -m / --model
     infname_model_name=args.getOpt('m');
     if (infname_model_name.is_empty()) {
-        infname_model_name=args.getOpt('model');
+        infname_model_name=args.getOpt("model");
         if (infname_model_name.is_empty()) {
             usage();
             GMessage("\n[ERROR] model file must be provided (-m)!\n");
@@ -301,5 +307,5 @@ void processOptionsClean(GArgs& args) {
             exit(1);
         }
     }
-    outfname_junction = out_dir + "/bed/junction.bed";
+    outfname_junction = out_dir + "/junction.bed";
 }
