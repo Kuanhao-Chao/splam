@@ -9,10 +9,12 @@ extern TInputFiles in_records;
 extern TInputRecord* irec;
 
 extern CommandMode COMMAND_MODE;
-extern GStr out_dir;
 
-extern GStr model_name;
+extern GStr infname_model_name;
 extern GStr infname_reffa;
+extern GStr infname_bam;
+
+extern GStr out_dir;
 extern GStr outfname_junction;
 
 extern bool verbose;

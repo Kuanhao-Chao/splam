@@ -3,7 +3,10 @@
 #include <memory>
 #include <unordered_map>
 
+#include "extract.h"
+#include "predict.h"
 #include "clean.h"
+
 #include "common.h"
 #include "tmerge.h"
 #include "util.h"
@@ -17,12 +20,18 @@
 #define VERSION "0.0.1"
 
 void processOptions(int argc, char* argv[]);
+void processOptionsJExtract(GArgs& args);
+void processOptionsPredict(GArgs& args);
+void processOptionsClean(GArgs& args);
 
-CommandMode COMMAND_MODE;
-GStr out_dir;
+CommandMode COMMAND_MODE = UNSET;
+GStr command_str;
 
-GStr model_name;
+GStr infname_model_name;
 GStr infname_reffa;
+GStr infname_bam;
+
+GStr out_dir;
 GStr outfname_junction;
 
 bool verbose = false;
@@ -52,11 +61,11 @@ int main(int argc, char* argv[]) {
     processOptions(argc, argv);
     
     if (COMMAND_MODE == PREDICT) {
-
+        splamPredict();
     } else if (COMMAND_MODE == CLEAN) {
         splamClean();
-    } else if (COMMAND_MODE == JUNC_EXTRACT) {
-
+    } else if (COMMAND_MODE == J_EXTRACT) {
+        splamJExtract();
     }
 
     return 0;
@@ -66,19 +75,13 @@ void processOptions(int argc, char* argv[]) {
 
     GArgs args(argc, argv, "help;cite;verbose;version;SLPEDVvhco:N:Q:m:r:");
     // args.printError(USAGE, true);
-
-    if (strcmp(argv[1], "junc-extract") == 0) {
-        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
-        COMMAND_MODE = JUNC_EXTRACT;
-    } else if (strcmp(argv[1], "predict") == 0) {
-        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
-        COMMAND_MODE = PREDICT;
-    } else if (strcmp(argv[1], "clean") == 0) {
-        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
-        COMMAND_MODE = CLEAN;
-    } else {
+    command_str=args.nextNonOpt();
+    GMessage(">> command_str       : %s\n", command_str.chars());
+    // command_str=args.nextNonOpt();
+    // GMessage(">> command_str       : %s\n", command_str.chars());
+    if (argc == 0) {
         usage();
-        GERROR("\n[ERROR] The subcommand must be 'junc-extract', 'predict', or 'clean'.\n");
+        GERROR("\n[ERROR] No command provide. The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
         exit(1);   
     }
 
@@ -97,40 +100,135 @@ void processOptions(int argc, char* argv[]) {
         exit(0);
     }
 
+    if (strcmp(command_str.chars(), "j-extract") == 0) {
+        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
+        COMMAND_MODE = J_EXTRACT;
+    } else if (strcmp(command_str.chars(), "predict") == 0) {
+        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
+        COMMAND_MODE = PREDICT;
+    } else if (strcmp(command_str.chars(), "clean") == 0) {
+        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
+        COMMAND_MODE = CLEAN;
+    } else {
+        usage();
+        GERROR("\n[ERROR] The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
+        exit(1);   
+    }
+
+
     printf("COMMAND_MODE: %d\n", COMMAND_MODE);
 
 
-    if (args.startNonOpt()==0) {
-        usage();
-        GMessage("\n[ERROR] no input provided!\n");
-        exit(1);
+    verbose=(args.getOpt("verbose")!=NULL || args.getOpt('V')!=NULL);
+    if (verbose) {
+        // fprintf(stderr, "Running SPLAM " VERSION ". Command line:\n");
+        args.printCmdLine(stderr);
     }
 
     /********************************
      * Process arguments by COMMAND_MODE
     *********************************/
-    if (COMMAND_MODE == PREDICT) {
+    if (COMMAND_MODE == J_EXTRACT) {
+        processOptionsJExtract(args);
+
+// GStr infname_model_name;
+// GStr infname_reffa;
+// GStr infname_bam;
+
+// GStr out_dir;
+// GStr outfname_junction;
+        GMessage(">>  command_str      : %s\n", command_str.chars());
+        GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
+        GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
+        GMessage(">> infname_bam       : %s\n", infname_bam.chars());
+        GMessage(">> out_dir           : %s\n", out_dir.chars());
+        GMessage(">> outfname_junction : %s\n", outfname_junction.chars());
+    } else if (COMMAND_MODE == PREDICT) {
+        processOptionsPredict(args);
 
     } else if (COMMAND_MODE == CLEAN) {
-        
-    } else if (COMMAND_MODE == JUNC_EXTRACT) {
-
+        processOptionsClean(args);
     }
 
+        GMessage(">> args.startNonOpt()       : %d\n", args.startNonOpt());
+
+    if (args.getNonOptCount()==1) {
+        usage();
+        GMessage("\n[ERROR] no input provided!\n");
+        exit(1);
+    }
+    infname_bam=args.nextNonOpt(); 
+
+    if (COMMAND_MODE == J_EXTRACT) {
+        infname_bam=args.nextNonOpt(); 
+            
+        GMessage(">> infname_bam       : %s\n", infname_bam.chars());
+    } 
+    // else if (COMMAND_MODE == PREDICT) {
+    //     const char* ifn=NULL;
+    //     while ( (ifn=args.nextNonOpt())!=NULL) {
+    //         //input alignment files
+    //         std::string absolute_ifn = get_full_path(ifn);
+    //         std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
+    //         in_records.addFile(absolute_ifn.c_str());
+    //     }
+    // } else if (COMMAND_MODE == CLEAN) {
+    // }
+}
+
+
+
+
+void processOptionsJExtract(GArgs& args) {
+    
+    // -r / --ref
+    infname_reffa=args.getOpt('r');        
+    if (infname_reffa.is_empty()) {
+        infname_reffa=args.getOpt("ref");
+        if (infname_reffa.is_empty()) {
+            usage();
+            GMessage("\n[ERROR] reference fasta file must be provided (-r)!\n");
+            exit(1);
+        } else {
+            if (fileExists(infname_reffa.chars())>1) {
+                // guided=true;
+            } else {
+                GError("[ERROR] reference fasta file (%s) not found.\n",
+                    infname_reffa.chars());
+            }
+        }
+    }
+    
+    // -o / --output
+    out_dir=args.getOpt('o');    
+    if (out_dir.is_empty()) {
+        out_dir=args.getOpt("output");
+        if (out_dir.is_empty()) {
+            usage();
+            GMessage("\n[ERROR] output directory must be provided (-o / --output)!\n");
+            exit(1);
+        }
+    }
+}
+
+
+
+
+void processOptionsPredict(GArgs& args) {
     // -m / --model
-    model_name=args.getOpt('m');
-    if (model_name.is_empty()) {
-        model_name=args.getOpt('model');
-        if (model_name.is_empty()) {
+    infname_model_name=args.getOpt('m');
+    if (infname_model_name.is_empty()) {
+        infname_model_name=args.getOpt('model');
+        if (infname_model_name.is_empty()) {
             usage();
             GMessage("\n[ERROR] model file must be provided (-m)!\n");
             exit(1);
         } else {
-            if (fileExists(model_name.chars())>1) {
+            if (fileExists(infname_model_name.chars())>1) {
                 // guided=true;
             } else {
                 GError("[ERROR] model file (%s) not found.\n",
-                    model_name.chars());
+                    infname_model_name.chars());
             }
         }
     }
@@ -164,20 +262,55 @@ void processOptions(int argc, char* argv[]) {
         }
     }
     outfname_junction = out_dir + "/bed/junction.bed";
+}
 
 
-
-
-    verbose=(args.getOpt("verbose")!=NULL || args.getOpt('V')!=NULL);
-    if (verbose) {
-        fprintf(stderr, "Running SPLAM " VERSION ". Command line:\n");
-        args.printCmdLine(stderr);
+void processOptionsClean(GArgs& args) {
+    // -m / --model
+    infname_model_name=args.getOpt('m');
+    if (infname_model_name.is_empty()) {
+        infname_model_name=args.getOpt('model');
+        if (infname_model_name.is_empty()) {
+            usage();
+            GMessage("\n[ERROR] model file must be provided (-m)!\n");
+            exit(1);
+        } else {
+            if (fileExists(infname_model_name.chars())>1) {
+                // guided=true;
+            } else {
+                GError("[ERROR] model file (%s) not found.\n",
+                    infname_model_name.chars());
+            }
+        }
     }
-    const char* ifn=NULL;
-    while ( (ifn=args.nextNonOpt())!=NULL) {
-        //input alignment files
-        std::string absolute_ifn = get_full_path(ifn);
-        std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
-        in_records.addFile(absolute_ifn.c_str());
+
+    // -r / --ref
+    infname_reffa=args.getOpt('r');        
+    if (infname_reffa.is_empty()) {
+        infname_reffa=args.getOpt("ref");
+        if (infname_reffa.is_empty()) {
+            usage();
+            GMessage("\n[ERROR] reference fasta file must be provided (-r)!\n");
+            exit(1);
+        } else {
+            if (fileExists(infname_reffa.chars())>1) {
+                // guided=true;
+            } else {
+                GError("[ERROR] reference fasta file (%s) not found.\n",
+                    infname_reffa.chars());
+            }
+        }
     }
+    
+    // -o / --output
+    out_dir=args.getOpt('o');    
+    if (out_dir.is_empty()) {
+        out_dir=args.getOpt("output");
+        if (out_dir.is_empty()) {
+            usage();
+            GMessage("\n[ERROR] output directory must be provided (-o / --output)!\n");
+            exit(1);
+        }
+    }
+    outfname_junction = out_dir + "/bed/junction.bed";
 }

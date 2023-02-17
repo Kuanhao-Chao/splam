@@ -61,10 +61,11 @@ ExternalProject_Add(htslib
 add_executable(SPLAM 
         src/splam.cpp  
         src/junc_func.cpp  
+        src/extract.cpp  
+        src/predict.cpp  
         src/clean.cpp  
         src/util.cpp  
         # src/filter.cpp  
-        src/predict.cpp  
         src/tmerge.cpp
         src/GSam.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h

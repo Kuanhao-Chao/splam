@@ -78,12 +78,18 @@ wchar_t *GetWC(const char *c)
 int usage(){ 
     // GMessage("splam v{}\n\n", VERSION);
 
-    if (COMMAND_MODE == JUNC_EXTRACT) {
-
+    if (COMMAND_MODE == J_EXTRACT) {
+        GMessage(
+        "Usage:  splam j-extract [arguments] BAM-file(s) \n\n");
+        GMessage(
+        "Required argument:\n"
+        "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
+        "\t-o / --output\t\tPath to the output directory\n\n"
+        );
 
     } else if (COMMAND_MODE == PREDICT) {
         GMessage(
-        "Usage:  splam predict [arguments] BAM-file \n\n");
+        "Usage:  splam predict [arguments] Junction-BED-file \n\n");
         GMessage(
         "Required argument:\n"
         // "\t-j / --junction\t\tPath to the splice junctions file (BED)\n"
@@ -106,8 +112,6 @@ int usage(){
         );
         // GMessage(
         // "Optional argument:\n");
-
-
     } else {
         GMessage(
         "Usage:  splam -h|--help or \n"
@@ -115,7 +119,7 @@ int usage(){
         "        splam -c|--cite or \n"
         "        splam <COMMAND> [-h | options]\n\n");
         GMessage("Commands:\n");
-        GMessage("     junc-extract : extract junctions from a BAM file / a list of BAM files.\n");
+        GMessage("     j-extract    : extract junctions from a BAM file / a list of BAM files.\n");
         GMessage("     predict      : score junctions\n");
         GMessage("     clean        : clean up a BAM file\n");
     }
