@@ -1,3 +1,6 @@
 [submodule "src_SPLAM/include/htslib"]
 	path = src_SPLAM/include/htslib
 	url = https://github.com/samtools/htslib
+[submodule "src_SPLAM/include/spdlog"]
+	path = src_SPLAM/include/spdlog
+	url = https://github.com/gabime/spdlog

@@ -14,8 +14,14 @@ set(CMAKE_CXX_STANDARD 17)
 # set(PYTHON_LIBRARY /Users/chaokuan-hao/miniconda3/lib)
 
 # find_package(PythonLibs REQUIRED)
+find_package(Python COMPONENTS Interpreter Development)
 # find_package(Python COMPONENTS Interpreter Development)
-find_package(Python REQUIRED)
+
+# find_package (Python3 COMPONENTS Interpreter Development)
+
+# find_package(PythonInterp 3.2 REQUIRED)
+# find_package(PythonLibs 3.2 REQUIRED)
+
 set(PYTHON_INCLUDE_DIRS /Users/chaokuan-hao/miniconda3/include/python3.8) # path to header
 set(PYTHON_LIBRARIES /Users/chaokuan-hao/miniconda3/lib/libpython3.8.dylib)
 
@@ -52,11 +58,15 @@ ExternalProject_Add(htslib
         INSTALL_COMMAND ""
         )
 
-add_executable(SPLAM src/splam.cpp  
-        src/GSam.cpp
-        src/util.h
+add_executable(SPLAM 
+        src/splam.cpp  
+        src/junc_func.cpp  
+        src/clean.cpp  
+        src/util.cpp  
+        # src/filter.cpp  
+        src/predict.cpp  
         src/tmerge.cpp
-        src/junc.h
+        src/GSam.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GArgs.h

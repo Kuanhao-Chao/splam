@@ -371,7 +371,7 @@ CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding Python
-FIND_PACKAGE_MESSAGE_DETAILS_Python:INTERNAL=[/usr/local/Frameworks/Python.framework/Versions/3.11/bin/python3.11][cfound components: Interpreter ][v3.11.2()]
+FIND_PACKAGE_MESSAGE_DETAILS_Python:INTERNAL=[/usr/local/Frameworks/Python.framework/Versions/3.11/bin/python3.11][/usr/local/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/include/python3.11][/usr/local/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/libpython3.11.dylib][cfound components: Interpreter Development Development.Module Development.Embed ][v3.11.2()]
 //Details about finding ZLIB
 FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libz.tbd][/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include][v1.2.11()]
 //ADVANCED property for variable: ZLIB_INCLUDE_DIR
@@ -380,9 +380,15 @@ ZLIB_INCLUDE_DIR-ADVANCED:INTERNAL=1
 ZLIB_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ZLIB_LIBRARY_RELEASE
 ZLIB_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+_Python_DEVELOPMENT_EMBED_SIGNATURE:INTERNAL=44e68451e89581eaa3c88b760b418eda
+_Python_DEVELOPMENT_MODULE_SIGNATURE:INTERNAL=793f46dfdb731d27c6305462d817e25a
 //Path to a program.
 _Python_EXECUTABLE:INTERNAL=/usr/local/Frameworks/Python.framework/Versions/3.11/bin/python3.11
+//Path to a file.
+_Python_INCLUDE_DIR:INTERNAL=/usr/local/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/include/python3.11
 //Python Properties
 _Python_INTERPRETER_PROPERTIES:INTERNAL=Python;3;11;2;64;;cpython-311-darwin;/usr/local/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11;/usr/local/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11;/usr/local/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages;/usr/local/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/python3.11/site-packages
 _Python_INTERPRETER_SIGNATURE:INTERNAL=13d2a29bd6967baf67402452542e0ce1
+//Path to a library.
+_Python_LIBRARY_RELEASE:INTERNAL=/usr/local/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/libpython3.11.dylib
 

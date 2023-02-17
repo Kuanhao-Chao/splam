@@ -93,6 +93,9 @@
         "format": "cpp",
         "codecvt": "cpp",
         "numbers": "cpp",
-        "semaphore": "cpp"
+        "semaphore": "cpp",
+        "__std_stream": "cpp",
+        "charconv": "cpp",
+        "span": "cpp"
     }
 }
