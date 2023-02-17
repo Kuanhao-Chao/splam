@@ -20,4 +20,10 @@ extern GStr outfname_junction;
 extern bool verbose;
 extern float threshold;
 
+extern GSamRecord* brec;
+extern GSamWriter* outfile_discard;
+extern GSamWriter* outfile_spliced;
+extern GSamWriter* outfile_cleaned;
+extern FILE* joutf;
+
 #endif /* TIEBRUSH_TMERGE_H_ */
