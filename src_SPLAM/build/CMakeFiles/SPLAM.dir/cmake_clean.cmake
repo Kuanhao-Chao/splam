@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/SPLAM.dir/src/GSam.cpp.o.d"
   "CMakeFiles/SPLAM.dir/src/clean.cpp.o"
   "CMakeFiles/SPLAM.dir/src/clean.cpp.o.d"
+  "CMakeFiles/SPLAM.dir/src/extract.cpp.o"
+  "CMakeFiles/SPLAM.dir/src/extract.cpp.o.d"
   "CMakeFiles/SPLAM.dir/src/junc_func.cpp.o"
   "CMakeFiles/SPLAM.dir/src/junc_func.cpp.o.d"
   "CMakeFiles/SPLAM.dir/src/predict.cpp.o"

@@ -2,7 +2,8 @@
 #define _VAR_H_
 
 enum CommandMode {
-  JUNC_EXTRACT,
+  UNSET,
+  J_EXTRACT,
   PREDICT,
   CLEAN
 };

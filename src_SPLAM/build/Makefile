@@ -307,6 +307,30 @@ src/clean.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/clean.cpp.s
 .PHONY : src/clean.cpp.s
 
+src/extract.o: src/extract.cpp.o
+.PHONY : src/extract.o
+
+# target to build an object file
+src/extract.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/extract.cpp.o
+.PHONY : src/extract.cpp.o
+
+src/extract.i: src/extract.cpp.i
+.PHONY : src/extract.i
+
+# target to preprocess a source file
+src/extract.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/extract.cpp.i
+.PHONY : src/extract.cpp.i
+
+src/extract.s: src/extract.cpp.s
+.PHONY : src/extract.s
+
+# target to generate assembly for a file
+src/extract.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/extract.cpp.s
+.PHONY : src/extract.cpp.s
+
 src/junc_func.o: src/junc_func.cpp.o
 .PHONY : src/junc_func.o
 
@@ -456,6 +480,9 @@ help:
 	@echo "... src/clean.o"
 	@echo "... src/clean.i"
 	@echo "... src/clean.s"
+	@echo "... src/extract.o"
+	@echo "... src/extract.i"
+	@echo "... src/extract.s"
 	@echo "... src/junc_func.o"
 	@echo "... src/junc_func.i"
 	@echo "... src/junc_func.s"

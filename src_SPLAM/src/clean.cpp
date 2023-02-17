@@ -300,7 +300,7 @@ void splamClean() {
     Py_Initialize();
     GStr python_f = "./script/splam.py";
     GStr outfile_junction_score(score_dir + "/junction_score.bed");
-    wchar_t *argvv[] = {GetWC(python_f.chars()), L"-f", GetWC(junc_fasta.chars()), L"-o", GetWC(outfile_junction_score.chars()), L"-m", GetWC(model_name.chars())};
+    wchar_t *argvv[] = {GetWC(python_f.chars()), L"-f", GetWC(junc_fasta.chars()), L"-o", GetWC(outfile_junction_score.chars()), L"-m", GetWC(infname_model_name.chars())};
     PySys_SetArgv(7, argvv);
     FILE *file = _Py_fopen(python_f.chars(), "r");
     if(file != NULL) {
