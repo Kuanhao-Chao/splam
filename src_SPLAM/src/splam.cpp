@@ -2,6 +2,7 @@
 #include <vector>
 #include <memory>
 #include <unordered_map>
+#include <filesystem>
 
 #include "extract.h"
 #include "predict.h"
@@ -42,6 +43,13 @@ float threshold = 0.2;
 // int juncCount = 0;
 // GArray<CJunc> junctions(64, true);
 
+GSamRecord* brec=NULL;
+GSamWriter* outfile_discard = NULL;
+GSamWriter* outfile_spliced = NULL;
+GSamWriter* outfile_cleaned = NULL;
+FILE* joutf=NULL;
+
+
 int main(int argc, char* argv[]) {
     GMessage(
             "==========================================================================================\n"
@@ -59,7 +67,8 @@ int main(int argc, char* argv[]) {
     
     in_records.setup(VERSION, argc, argv);
     processOptions(argc, argv);
-    
+    std::filesystem::create_directories(out_dir.chars());
+
     if (COMMAND_MODE == PREDICT) {
         splamPredict();
     } else if (COMMAND_MODE == CLEAN) {
@@ -67,7 +76,6 @@ int main(int argc, char* argv[]) {
     } else if (COMMAND_MODE == J_EXTRACT) {
         splamJExtract();
     }
-
     return 0;
 }
 
@@ -131,12 +139,6 @@ void processOptions(int argc, char* argv[]) {
     if (COMMAND_MODE == J_EXTRACT) {
         processOptionsJExtract(args);
 
-// GStr infname_model_name;
-// GStr infname_reffa;
-// GStr infname_bam;
-
-// GStr out_dir;
-// GStr outfname_junction;
         GMessage(">>  command_str      : %s\n", command_str.chars());
         GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
         GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
@@ -160,9 +162,13 @@ void processOptions(int argc, char* argv[]) {
     infname_bam=args.nextNonOpt(); 
 
     if (COMMAND_MODE == J_EXTRACT) {
-        infname_bam=args.nextNonOpt(); 
-            
-        GMessage(">> infname_bam       : %s\n", infname_bam.chars());
+        const char* ifn=NULL;
+        while ( (ifn=args.nextNonOpt())!=NULL) {
+            //input alignment files
+            std::string absolute_ifn = get_full_path(ifn);
+            std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
+            in_records.addFile(absolute_ifn.c_str());
+        }
     } 
     // else if (COMMAND_MODE == PREDICT) {
     //     const char* ifn=NULL;
@@ -181,24 +187,6 @@ void processOptions(int argc, char* argv[]) {
 
 void processOptionsJExtract(GArgs& args) {
     
-    // -r / --ref
-    infname_reffa=args.getOpt('r');        
-    if (infname_reffa.is_empty()) {
-        infname_reffa=args.getOpt("ref");
-        if (infname_reffa.is_empty()) {
-            usage();
-            GMessage("\n[ERROR] reference fasta file must be provided (-r)!\n");
-            exit(1);
-        } else {
-            if (fileExists(infname_reffa.chars())>1) {
-                // guided=true;
-            } else {
-                GError("[ERROR] reference fasta file (%s) not found.\n",
-                    infname_reffa.chars());
-            }
-        }
-    }
-    
     // -o / --output
     out_dir=args.getOpt('o');    
     if (out_dir.is_empty()) {
@@ -209,6 +197,7 @@ void processOptionsJExtract(GArgs& args) {
             exit(1);
         }
     }
+    outfname_junction = out_dir + "/junction.bed";
 }
 
 

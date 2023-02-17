@@ -39,7 +39,7 @@ void writeJuncs(FILE* f) {
     for (int i=0;i<junctions.Count();i++) {
     	junctions[i].write(f);
     }
-	// std::cout << ">> Junction count: " << junctions.Count() << std::endl;
+	std::cout << ">> Junction count: " << junctions.Count() << std::endl;
 	// for (int i = 0; i < junctions.Count(); i++) {
 	// 	std::cout << i <<  " Junction name: " << junctions[i].start << " - " << junctions[i].end << std::endl;
 	// 	std::cout << ">> Read count: " << junctions[i].read_ls.size() << std::endl;
@@ -54,7 +54,6 @@ void flushJuncs(FILE* f) {
     for (int i=0;i<junctions.Count();i++) {
     	junctions[i].write(f);
     }
-	// std::cout << ">> Junction count: " << junctions.Count() << std::endl;
 	// for (int i = 0; i < junctions.Count(); i++) {
 	// 	std::cout << i <<  " Junction name: " << junctions[i].start << " - " << junctions[i].end << std::endl;
 	// 	std::cout << ">> Read count: " << junctions[i].read_ls.size() << std::endl;

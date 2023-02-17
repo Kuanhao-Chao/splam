@@ -10,13 +10,6 @@
 #include <htslib/htslib/faidx.h>
 #include <Python.h>
 
-GSamRecord* brec=NULL;
-GSamWriter* outfile_discard = NULL;
-GSamWriter* outfile_spliced = NULL;
-GSamWriter* outfile_cleaned = NULL;
-FILE* joutf=NULL;
-// GArray<CJunc> junctions;
-
 void splamClean() {
     int num_samples=in_records.start();
     std::cout << "* Number of samples  : " << num_samples << std::endl;
@@ -57,9 +50,9 @@ void splamClean() {
     /*********************************************
      * Step 1: generating spliced junctions in BED
     *********************************************/
-    std::cout << "********************************************" << std::endl;
-    std::cout << "** Step 1: generating spliced junctions in BED" << std::endl;
-    std::cout << "********************************************\n" << std::endl;
+    GMessage("********************************************\n");
+    GMessage("** Step 1: generating spliced junctions in BED\n");
+    GMessage("********************************************\n\n");
 
     // Creating the output junction bed file
     if (!outfname_junction.is_empty()) {
@@ -118,9 +111,9 @@ void splamClean() {
      *         (2) Writing FASTA file of donors and acceptors
      *         (3) checking the junctions. (GT-AG ratio)
     *********************************************/
-    std::cout << "********************************************" << std::endl;
-    std::cout << "** Step 2: getting coordinates of donors and acceptors" << std::endl;
-    std::cout << "********************************************" << std::endl;
+    GMessage("********************************************\n");
+    GMessage("** Step 2: getting coordinates of donors and acceptors\n");
+    GMessage("********************************************\n\n");
 
     int SEQ_LEN = 800;
     int QUOTER_SEQ_LEN = SEQ_LEN/4;
@@ -294,9 +287,9 @@ void splamClean() {
     /*********************************************
      * Step 3: SPLAM model prediction
     *********************************************/
-    std::cout << "\n********************************************" << std::endl;
-    std::cout << "** Step 3: SPLAM! model prediction" << std::endl;
-    std::cout << "********************************************\n" << std::endl;
+    GMessage("********************************************\n");
+    GMessage("** Step 3: SPLAM model prediction\n");
+    GMessage("********************************************\n\n");
     Py_Initialize();
     GStr python_f = "./script/splam.py";
     GStr outfile_junction_score(score_dir + "/junction_score.bed");
@@ -312,16 +305,12 @@ void splamClean() {
     /*********************************************
      * Step 4: SPLAM filtering out reads.
     *********************************************/
-    std::cout << "********************************************" << std::endl;
-    std::cout << "** Step 4: SPLAM filtering out reads." << std::endl;
-    std::cout << "********************************************\n" << std::endl;
+    GMessage("********************************************\n");
+    GMessage("** Step 4: SPLAM filtering out reads\n");
+    GMessage("********************************************\n\n");
     // GSamReader bamreader(inbamname.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
     // outfile=new GSamWriter(outfname, bamreader.header(), GSamFile_BAM);
     // GSamRecord brec;
-
-    std::cout << "********************************************" << std::endl;
-    std::cout << "** Step 4: SPLAM filtering out reads." << std::endl;
-    std::cout << "********************************************" << std::endl;
 
     auto start=std::chrono::high_resolution_clock::now();
     int spur_cnt = 0;
