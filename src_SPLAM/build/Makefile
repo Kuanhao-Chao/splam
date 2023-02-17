@@ -283,6 +283,78 @@ src/GSam.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/GSam.cpp.s
 .PHONY : src/GSam.cpp.s
 
+src/clean.o: src/clean.cpp.o
+.PHONY : src/clean.o
+
+# target to build an object file
+src/clean.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/clean.cpp.o
+.PHONY : src/clean.cpp.o
+
+src/clean.i: src/clean.cpp.i
+.PHONY : src/clean.i
+
+# target to preprocess a source file
+src/clean.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/clean.cpp.i
+.PHONY : src/clean.cpp.i
+
+src/clean.s: src/clean.cpp.s
+.PHONY : src/clean.s
+
+# target to generate assembly for a file
+src/clean.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/clean.cpp.s
+.PHONY : src/clean.cpp.s
+
+src/junc_func.o: src/junc_func.cpp.o
+.PHONY : src/junc_func.o
+
+# target to build an object file
+src/junc_func.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/junc_func.cpp.o
+.PHONY : src/junc_func.cpp.o
+
+src/junc_func.i: src/junc_func.cpp.i
+.PHONY : src/junc_func.i
+
+# target to preprocess a source file
+src/junc_func.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/junc_func.cpp.i
+.PHONY : src/junc_func.cpp.i
+
+src/junc_func.s: src/junc_func.cpp.s
+.PHONY : src/junc_func.s
+
+# target to generate assembly for a file
+src/junc_func.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/junc_func.cpp.s
+.PHONY : src/junc_func.cpp.s
+
+src/predict.o: src/predict.cpp.o
+.PHONY : src/predict.o
+
+# target to build an object file
+src/predict.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/predict.cpp.o
+.PHONY : src/predict.cpp.o
+
+src/predict.i: src/predict.cpp.i
+.PHONY : src/predict.i
+
+# target to preprocess a source file
+src/predict.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/predict.cpp.i
+.PHONY : src/predict.cpp.i
+
+src/predict.s: src/predict.cpp.s
+.PHONY : src/predict.s
+
+# target to generate assembly for a file
+src/predict.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/predict.cpp.s
+.PHONY : src/predict.cpp.s
+
 src/splam.o: src/splam.cpp.o
 .PHONY : src/splam.o
 
@@ -331,6 +403,30 @@ src/tmerge.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/tmerge.cpp.s
 .PHONY : src/tmerge.cpp.s
 
+src/util.o: src/util.cpp.o
+.PHONY : src/util.o
+
+# target to build an object file
+src/util.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/util.cpp.o
+.PHONY : src/util.cpp.o
+
+src/util.i: src/util.cpp.i
+.PHONY : src/util.i
+
+# target to preprocess a source file
+src/util.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/util.cpp.i
+.PHONY : src/util.cpp.i
+
+src/util.s: src/util.cpp.s
+.PHONY : src/util.s
+
+# target to generate assembly for a file
+src/util.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/util.cpp.s
+.PHONY : src/util.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -357,12 +453,24 @@ help:
 	@echo "... src/GSam.o"
 	@echo "... src/GSam.i"
 	@echo "... src/GSam.s"
+	@echo "... src/clean.o"
+	@echo "... src/clean.i"
+	@echo "... src/clean.s"
+	@echo "... src/junc_func.o"
+	@echo "... src/junc_func.i"
+	@echo "... src/junc_func.s"
+	@echo "... src/predict.o"
+	@echo "... src/predict.i"
+	@echo "... src/predict.s"
 	@echo "... src/splam.o"
 	@echo "... src/splam.i"
 	@echo "... src/splam.s"
 	@echo "... src/tmerge.o"
 	@echo "... src/tmerge.i"
 	@echo "... src/tmerge.s"
+	@echo "... src/util.o"
+	@echo "... src/util.i"
+	@echo "... src/util.s"
 .PHONY : help
 
 

@@ -1,5 +1,5 @@
-#ifndef TIEBRUSH_TMERGE_H_
-#define TIEBRUSH_TMERGE_H_
+#ifndef _TMERGE_H_
+#define _TMERGE_H_
 
 #include <map>
 #include <gclib/GStr.h>

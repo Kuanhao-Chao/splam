@@ -1,8 +1,12 @@
-#include <iostream>
-#include <fstream>
+#ifndef _FILTER_H_
+#define _FILTER_H_
+
+// #include <iostream>
+// #include <fstream>
 // #include <vector>
-// #include <string>
-#include "tmerge.h"
+#include <string>
+#include "GSam.h"
+// #include "tmerge.h"
 
 struct CRead {
     char* read;
@@ -40,3 +44,5 @@ struct PBRec {
     PBRec(GSamRecord *rec=NULL):
     r(rec){ }
 };
+
+#endif

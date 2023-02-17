@@ -1,5 +1,6 @@
-CMakeFiles/SPLAM.dir/src/splam.cpp.o: \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/splam.cpp \
+CMakeFiles/SPLAM.dir/src/junc_func.cpp.o: \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc_func.cpp \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/iostream \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__config \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__config_site \
@@ -416,20 +417,6 @@ CMakeFiles/SPLAM.dir/src/splam.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__bsd_locale_defaults.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/vector \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__split_buffer \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__functional/is_transparent.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/math.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/math.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__node_handle \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/optional \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/clean.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/common.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/var.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/tmerge.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/map \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__tree \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GStr.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GBase.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/unistd.h \
@@ -440,9 +427,19 @@ CMakeFiles/SPLAM.dir/src/splam.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_select.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_uuid_t.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/gethostuuid.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/math.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/math.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/stat.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_s_ifmt.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_filesec_t.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/common.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/var.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/tmerge.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/map \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__functional/is_transparent.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__node_handle \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/optional \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__tree \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GVec.hh \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GList.hh \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/GSam.h \
@@ -459,7 +456,4 @@ CMakeFiles/SPLAM.dir/src/splam.cpp.o: \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/khash.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/util.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/filter.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GArgs.h
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc_func.h
