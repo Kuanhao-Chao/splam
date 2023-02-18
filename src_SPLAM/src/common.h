@@ -21,8 +21,15 @@ extern bool verbose;
 extern float threshold;
 
 extern GSamRecord* brec;
-extern GSamWriter* outfile_discard;
+
+extern GStr outfname_spliced;
+extern GStr outfname_nspliced;
+extern GStr outfname_discard;
+extern GStr outfname_cleaned;
+
 extern GSamWriter* outfile_spliced;
+extern GSamWriter* outfile_nspliced;
+extern GSamWriter* outfile_discard;
 extern GSamWriter* outfile_cleaned;
 extern FILE* joutf;
 

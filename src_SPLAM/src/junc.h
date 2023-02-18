@@ -16,13 +16,13 @@ class CJunc {
 
 	public:
 		GStr ref;
-		uint start, end;
+		int start, end;
 		char strand;
 		uint64_t dupcount;
 		
 		std::vector<GSamRecord*> read_ls;
 
-		CJunc(uint vs=0, uint ve=0, char vstrand='+', GStr vref=".", uint64_t dcount=1):
+		CJunc(int vs=0, int ve=0, char vstrand='+', GStr vref=".", uint64_t dcount=1):
 		start(vs), end(ve), strand(vstrand), ref(vref), dupcount(dcount) { }
 
 		bool operator==(const CJunc& a) {

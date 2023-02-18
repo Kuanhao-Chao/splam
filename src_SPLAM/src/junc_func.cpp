@@ -12,8 +12,9 @@ int juncCount;
 GArray<CJunc> junctions;
 
 void addJunction(GSamRecord& r, int dupcount, GStr ref) {
-	char strand = '+';
-	if (brec->revStrand()) strand = '-';
+	// char strand = '+';
+	// if (brec->revStrand()) strand = '-';
+	char strand = brec->spliceStrand();
 //	if (strand!='+' && strand!='-') return; // TODO: should we output .?
     
 	// GSamRecord *r_copy = new GSamRecord(r);
