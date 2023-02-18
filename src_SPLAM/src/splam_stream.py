@@ -159,17 +159,6 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     return weighted_binary_cross_entropy(y_pred, y_true, weights), get_accuracy(y_pred, y_true)
 
 
-
-
-
-
-
-
-
-
-
-
-
 def split_seq_name(seq):
     return seq[1:]
 
@@ -239,16 +228,16 @@ def test_model():
     BATCH_SIZE = 100
     N_WORKERS = None
     device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
-    print(f'[Info]: Loading model ...',flush = True)
+    print(f'[Info] Loading model ...',flush = True)
     # model = torch.load(MODEL_PATH)
     model = torch.jit.load(MODEL_PATH)
     model = model.to('mps')
 
 
-    print(f'[Info]: Done loading model',flush = True)
-    print(f'[Info]: Loading data ...',flush = True)
+    print(f'[Info] Done loading model',flush = True)
+    print(f'[Info] Loading data ...',flush = True)
     test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, JUNC_FA, True, str(0))
-    print(f'[Info]: Done loading data ...',flush = True)
+    print(f'[Info] Done loading data ...',flush = True)
 
     criterion = torch.nn.BCELoss()
 

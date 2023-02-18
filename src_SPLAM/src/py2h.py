@@ -1,11 +1,11 @@
-
 f = open("splam_stream.py", "r")
 
 fw = open("splam_stream.h", "w")
 
 with open("splam_stream.py", "r") as f:
     lines = f.read().splitlines()
-    fw.write("char* python_script = \n")
+    fw.write("#include <string>\n")
+    fw.write("std::string python_script = \n")
     counter = 0
     for line in lines:
         # print(len(line), line)

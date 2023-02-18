@@ -227,7 +227,7 @@ void loadBed(GStr inbedname, GArray<CJunc> &spur_juncs) {
         //     std::cout << "chr: " << chr << std::endl;
         // }
         if (junc[6].asDouble() <= threshold) {
-            std::cout << "junc[6].asDouble(): " << junc[6].asDouble() << std::endl;
+            // std::cout << "junc[6].asDouble(): " << junc[6].asDouble() << std::endl;
 
         	// CJunc(int vs=0, int ve=0, char vstrand='+', std::string vref=".", uint64_t dcount=1):
             CJunc j(junc[1].asInt()+1, junc[2].asInt(), *junc[5].detach(), chr_str);

@@ -16,18 +16,21 @@ class CJunc {
 
 	public:
 		GStr ref;
-		int start, end;
+		uint start, end;
 		char strand;
 		uint64_t dupcount;
 		
 		std::vector<GSamRecord*> read_ls;
 
-		CJunc(int vs=0, int ve=0, char vstrand='+', GStr vref=".", uint64_t dcount=1):
+		CJunc(uint vs=0, uint ve=0, char vstrand='+', GStr vref=".", uint64_t dcount=1):
 		start(vs), end(ve), strand(vstrand), ref(vref), dupcount(dcount) { }
 
 		bool operator==(const CJunc& a) {
-			// std::cout << " >> 1 == : " << ref.c_str() << ";  strand: " << strand << ";  start: " << start << ";  end: " << end << std::endl;
-			// std::cout << " >> 2 == : " << a.ref.c_str() << ";  strand: " << a.strand << ";  start: " << a.start << ";  end: " << a.end << std::endl;
+			// if (start==a.start && end==a.end) {
+			// 	std::cout << " >> 1 == : " << ref.chars() << ";  strand: " << strand << ";  start: " << start << ";  end: " << end << std::endl;
+			// 	std::cout << " >> 2 == : " << a.ref.chars() << ";  strand: " << a.strand << ";  start: " << a.start << ";  end: " << a.end << std::endl;
+			// }
+
 			// std::cout << " >> == : " << strcmp(ref.c_str(), a.ref.c_str())==0 && strand==a.strand && start==a.start && end==a.end << std::endl;
 			// std::cout << "(strcmp(ref.c_str(), a.ref.c_str())==0 : " << (strcmp(ref.c_str(), a.ref.c_str())==0 ) << std::endl;
 			// std::cout << "strand==a.strand : " << (strand==a.strand) << std::endl;

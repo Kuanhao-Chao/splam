@@ -346,6 +346,7 @@ int TInputFiles::start(){
     return freaders.Count();
 }
 
+
 TInputRecord* TInputFiles::next() {
     //must free old current record first
     delete crec;

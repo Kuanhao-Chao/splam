@@ -11,29 +11,99 @@
 
 #include <gclib/GBase.h>
 #include <htslib/htslib/faidx.h>
-#include <robin_hood/robin_hood.h>
 
 #include <Python.h>
 
-typedef robin_hood::unordered_map<std::string, int> dimer_hm;
-
-void splamPredict() {
-    splamJExtract();
-
-    std::unordered_map<std::string, int> chrs = get_hg38_chrom_size("HISAT2");
+GStr splamPredict() {
+    /*********************************************
+     * Step 1: (1) Iterating through a BAM file / BAM files
+     *         (2) Accumulate junctions in a BED file.
+    *********************************************/
+    GMessage("********************************************\n");
+    GMessage("** Step 1: generating spliced junctions in BED\n");
+    GMessage("********************************************\n");
+    GStr outfname_junc_bed = splamJExtract();
+    // std::unordered_map<std::string, int> chrs = get_hg38_chrom_size("HISAT2");
     faidx_t * ref_faidx = fastaIndex();
-    GMessage("[INFO] Predicting ...\n");
-
+    // GMessage("[INFO] Predicting ...\n");
 
     /*********************************************
      * Step 2: (1) getting coordinates of donors and acceptors
      *         (2) Writing FASTA file of donors and acceptors
      *         (3) checking the junctions. (GT-AG ratio)
     *********************************************/
-    GMessage("********************************************\n");
+    GMessage("\n********************************************\n");
     GMessage("** Step 2: getting coordinates of donors and acceptors\n");
-    GMessage("********************************************\n\n");
+    GMessage("********************************************\n");
 
+    dimer_hm doner_dimers;
+    dimer_hm acceptor_dimers;
+    GStr outfname_junc_fa = splamCreateFasta(outfname_junc_bed, doner_dimers, acceptor_dimers, ref_faidx);
+
+
+    std::cout << "[Info] Donor dimers: " << std::endl;
+    int cnl_donor_ct=0, ncnl_donor_ct=0, cnl_acceptor_ct=0, ncnl_acceptor_ct = 0;
+    for (auto i : doner_dimers) {
+        if (std::strcmp(i.first.c_str(), "GT") == 0) {
+            cnl_donor_ct += i.second;
+        } else {
+            ncnl_donor_ct += i.second;
+        }
+        // std::cout << "\t" << i.first << ": " << i.second << std::endl;
+    }
+    GMessage("\tCanonical donor\t\t: %d\n", cnl_donor_ct);
+    GMessage("\tNoncanonical donor\t: %d\n", ncnl_donor_ct);
+
+    std::cout << "[Info] Acceptor dimers: " << std::endl;
+    for (auto i : acceptor_dimers) {
+        if (std::strcmp(i.first.c_str(), "AG") == 0) {
+            cnl_acceptor_ct += i.second;
+        } else {
+            ncnl_acceptor_ct += i.second;
+        }
+        // std::cout << "\t" << i.first << ": " << i.second << std::endl;
+    }
+
+    GMessage("\tCanonical acceptor\t: %d\n", cnl_acceptor_ct);
+    GMessage("\tNoncanonical donor\t: %d\n", ncnl_acceptor_ct);
+
+
+    /*********************************************
+     * Step 3: SPLAM model prediction
+    *********************************************/
+    GMessage("\n********************************************\n");
+    GMessage("** Step 3: SPLAM model prediction\n");
+    GMessage("********************************************\n");
+    Py_Initialize();
+    // GStr python_f = "./script/splam.py";
+    GStr outfname_junc_score(out_dir + "/junction_score.bed");
+
+    wchar_t *argvv[] = {GetWC("."), GetWC("-f"), GetWC(outfname_junc_fa.chars()), GetWC("-o"), GetWC(outfname_junc_score.chars()), GetWC("-m"), GetWC(infname_model_name.chars())};
+    PySys_SetArgv(7, argvv);
+
+    PyRun_SimpleString(python_script.c_str());
+    Py_Finalize();
+
+    return outfname_junc_score;
+}
+
+
+faidx_t *fastaIndex() {
+    FILE *ref_fa_f;
+    if ((ref_fa_f = fopen(infname_reffa.chars(), "r"))) {
+        fclose(ref_fa_f);
+        GMessage("[INFO] FASTA index \"%si\" has been created!\n", infname_reffa.chars());
+    } else {
+        int res = fai_build(infname_reffa.chars());
+        GMessage("[INFO] Creating FASTA index \"%si\"\n", infname_reffa.chars());
+    }
+
+    faidx_t *ref_faidx = fai_load(infname_reffa.chars());
+    GMessage("[INFO] Loading FASTA file\n");
+    return ref_faidx;
+}
+
+GStr splamCreateFasta(GStr outfname_junc_bed, dimer_hm &doner_dimers, dimer_hm &acceptor_dimers, faidx_t *ref_faidx) {
     int SEQ_LEN = 800;
     int QUOTER_SEQ_LEN = SEQ_LEN/4;
 
@@ -42,9 +112,6 @@ void splamPredict() {
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     *******************************************/
-    dimer_hm doner_dimers;
-    dimer_hm acceptor_dimers;
-
     GStr bed_dir(out_dir + "/bed");
     GStr fa_dir(out_dir + "/fasta");
 
@@ -60,15 +127,15 @@ void splamPredict() {
     std::ofstream outfile_bed_acceptor(acceptor_bed);
     std::ofstream outfile_bed_da(da_bed);
 
-    GStr junc_fasta(fa_dir + "/junction.fa");
-    GStr donor_fasta(fa_dir + "/donor.fa");
-    GStr accceptor_fasta(fa_dir + "/acceptor.fa");
+    GStr outfname_junc_fa(fa_dir + "/junction.fa");
+    GStr outfname_donor_fa(fa_dir + "/donor.fa");
+    GStr outfname_accceptor_fa(fa_dir + "/acceptor.fa");
 
-    std::ofstream outfile_fa_junc(junc_fasta);
-    std::ofstream outfile_fa_donor(donor_fasta);
-    std::ofstream outfile_fa_acceptor(accceptor_fasta);
+    std::ofstream outfile_fa_junc(outfname_junc_fa);
+    std::ofstream outfile_fa_donor(outfname_donor_fa);
+    std::ofstream outfile_fa_acceptor(outfname_accceptor_fa);
 
-    std::ifstream fr_junc(outfname_junction);
+    std::ifstream fr_junc(outfname_junc_bed);
     std::string line;
     while(getline(fr_junc, line)){
         std::string chromosome;
@@ -163,12 +230,6 @@ void splamPredict() {
             outfile_fa_junc << donor_seq << std::string(2*(400-(int)strlen(donor_seq)), 'N') << acceptor_seq << std::endl;
         }
 
-        // std::cout << "donor   : " << donor_seq[200] << donor_seq[201] << std::endl;
-        // std::cout << "acceptor: " << acceptor_seq[198] << acceptor_seq[199] << std::endl;
-
-        
-        // char *donor_dim = (char*)malloc(2);
-        // std::memcpy(donor_dim, donor_seq[200], 2);
 
         char donor_dim[3];
         memcpy(donor_dim, &donor_seq[200], 2);
@@ -197,57 +258,5 @@ void splamPredict() {
             outfile_bed_da << chromosome + "\t" + std::to_string(acceptor) + "\t" + std::to_string(donor+1) + "\tJUNC\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
         }
     }  
-
-    std::cout << ">> Donor dimers: " << std::endl;
-    for (auto i : doner_dimers) {
-        std::cout << "\t" << i.first << ": " << i.second << std::endl;
-    }
-
-    std::cout << ">> Acceptor dimers: " << std::endl;
-    for (auto i : acceptor_dimers) {
-        std::cout << "\t" << i.first << ": " << i.second << std::endl;
-    }
-        
-
-    /*********************************************
-     * Step 3: SPLAM model prediction
-    *********************************************/
-    GMessage("********************************************\n");
-    GMessage("** Step 3: SPLAM model prediction\n");
-    GMessage("********************************************\n");
-    Py_Initialize();
-    // GStr python_f = "./script/splam.py";
-    GStr outfile_junction_score(out_dir + "/junction_score.bed");
-    
-    // wchar_t *argvv[] = {GetWC(python_f.chars()), GetWC("-f"), GetWC(junc_fasta.chars()), GetWC("-o"), GetWC(outfile_junction_score.chars()), GetWC("-m"), GetWC(infname_model_name.chars())};
-    // PySys_SetArgv(7, argvv);
-
-
-    wchar_t *argvv[] = {GetWC("./script/splam.py"), GetWC("-f"), GetWC(junc_fasta.chars()), GetWC("-o"), GetWC(outfile_junction_score.chars()), GetWC("-m"), GetWC(infname_model_name.chars())};
-    PySys_SetArgv(7, argvv);
-
-    GMessage("infname_model_name: %s\n", infname_model_name.chars());
-    PyRun_SimpleString(python_script);
-    // FILE *file = _Py_fopen(python_f.chars(), "r");
-    // if(file != NULL) {
-    //     int re = PyRun_SimpleFileExFlags(file, python_f.chars(), false, NULL);
-    // }
-    Py_Finalize();
-
-}
-
-
-faidx_t *fastaIndex() {
-    FILE *ref_fa_f;
-    if ((ref_fa_f = fopen(infname_reffa.chars(), "r"))) {
-        fclose(ref_fa_f);
-        GMessage("[INFO] FASTA index \"%si\" has been created!\n", infname_reffa.chars());
-    } else {
-        int res = fai_build(infname_reffa.chars());
-        GMessage("[INFO] Creating FASTA index \"%si\"\n", infname_reffa.chars());
-    }
-
-    faidx_t *ref_faidx = fai_load(infname_reffa.chars());
-    GMessage("[INFO] Loading FASTA file\n");
-    return ref_faidx;
+    return outfname_junc_fa;
 }
