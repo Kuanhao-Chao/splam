@@ -12,7 +12,8 @@ int juncCount;
 GArray<CJunc> junctions;
 
 void addJunction(GSamRecord& r, int dupcount, GStr ref) {
-	char strand = r.spliceStrand();
+	char strand = '+';
+	if (brec->revStrand()) strand = '-';
 //	if (strand!='+' && strand!='-') return; // TODO: should we output .?
     
 	// GSamRecord *r_copy = new GSamRecord(r);

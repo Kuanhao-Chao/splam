@@ -4,6 +4,7 @@
 #include "var.h"
 #include "tmerge.h"
 #include <gclib/GStr.h>
+#define VERSION "0.0.1"
 
 extern TInputFiles in_records;
 extern TInputRecord* irec;
@@ -15,7 +16,6 @@ extern GStr infname_reffa;
 extern GStr infname_bam;
 
 extern GStr out_dir;
-extern GStr outfname_junction;
 
 extern bool verbose;
 extern float threshold;

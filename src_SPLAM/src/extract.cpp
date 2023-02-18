@@ -8,20 +8,22 @@
 #include <unordered_map>
 #include <gclib/GBase.h>
 
-void splamJExtract() {
+GStr splamJExtract() {
     int num_samples=in_records.start();
+    GStr outfname_junc_bed = out_dir + "/junction.bed";
+    
     GMessage("[INFO] Extracting junctions ...\n");
     GMessage("[INFO] Number of samples\t: %d\n", num_samples);
     GMessage("[INFO] Output directory\t\t: %s\n", out_dir.chars());
-    GMessage("[INFO] Output Junction file\t: %s\n", outfname_junction.chars());
+    GMessage("[INFO] Output Junction file\t: %s\n", outfname_junc_bed.chars());
 
     // Creating the output junction bed file
-    if (!outfname_junction.is_empty()) {
-        if (strcmp(outfname_junction.substr(outfname_junction.length()-4, 4).chars(), ".bed")!=0) {
-            outfname_junction.append(".bed");
+    if (!outfname_junc_bed.is_empty()) {
+        if (strcmp(outfname_junc_bed.substr(outfname_junc_bed.length()-4, 4).chars(), ".bed")!=0) {
+            outfname_junc_bed.append(".bed");
         }
-        joutf = fopen(outfname_junction.chars(), "w");
-        if (joutf==NULL) GError("Error creating file %s\n", outfname_junction.chars());
+        joutf = fopen(outfname_junc_bed.chars(), "w");
+        if (joutf==NULL) GError("Error creating file %s\n", outfname_junc_bed.chars());
         // fprintf(joutf, "track name=junctions\n");
     }
 
@@ -62,8 +64,10 @@ void splamJExtract() {
             addJunction(*brec, accYC, prev_refname);
         }
     }
+    in_records.stop();
     flushJuncs(joutf);
     fclose(joutf);
 
     GMessage("[INFO] SPLAM! Total number of junctions: %d\n", juncCount);	
+    return outfname_junc_bed;
 }

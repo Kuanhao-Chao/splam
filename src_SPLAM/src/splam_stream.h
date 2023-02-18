@@ -1,4 +1,5 @@
-char* python_script = 
+#include <string>
+std::string python_script = 
 "import torch\n"
 "from torch.nn import Module, BatchNorm1d, LeakyReLU, Conv1d, ModuleList, Softmax, Sigmoid, Flatten, Dropout2d, Linear\n"
 "from torch.optim.lr_scheduler import LambdaLR\n"
@@ -187,14 +188,14 @@ char* python_script =
 "    BATCH_SIZE = 100\n"
 "    N_WORKERS = None\n"
 "    device = torch.device('cuda' if torch.cuda.is_available() else 'mps')\n"
-"    print(f'[Info]: Loading model ...',flush = True)\n"
+"    print(f'[Info] Loading model ...',flush = True)\n"
 "    # model = torch.load(MODEL_PATH)\n"
 "    model = torch.jit.load(MODEL_PATH)\n"
 "    model = model.to('mps')\n"
-"    print(f'[Info]: Done loading model',flush = True)\n"
-"    print(f'[Info]: Loading data ...',flush = True)\n"
+"    print(f'[Info] Done loading model',flush = True)\n"
+"    print(f'[Info] Loading data ...',flush = True)\n"
 "    test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, JUNC_FA, True, str(0))\n"
-"    print(f'[Info]: Done loading data ...',flush = True)\n"
+"    print(f'[Info] Done loading data ...',flush = True)\n"
 "    criterion = torch.nn.BCELoss()\n"
 "    fw_junc_scores = open(OUT_SCORE, 'w')\n"
 "    model.eval()\n"

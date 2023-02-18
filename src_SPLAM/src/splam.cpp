@@ -24,7 +24,6 @@
 
 #include <Python.h>
 
-#define VERSION "0.0.1"
 
 void processOptions(int argc, char* argv[]);
 void processOptionsJExtract(GArgs& args);
@@ -39,7 +38,6 @@ GStr infname_reffa;
 GStr infname_bam;
 
 GStr out_dir;
-GStr outfname_junction;
 
 bool verbose = false;
 TInputFiles in_records;
@@ -75,12 +73,12 @@ int main(int argc, char* argv[]) {
     processOptions(argc, argv);
     std::filesystem::create_directories(out_dir.chars());
 
-    if (COMMAND_MODE == PREDICT) {
+    if (COMMAND_MODE == J_EXTRACT) {
+        splamJExtract();
+    } else if (COMMAND_MODE == PREDICT) {
         splamPredict();
     } else if (COMMAND_MODE == CLEAN) {
-        splamClean();
-    } else if (COMMAND_MODE == J_EXTRACT) {
-        splamJExtract();
+        splamClean(argc, argv);
     }
     return 0;
 }
@@ -150,7 +148,6 @@ void processOptions(int argc, char* argv[]) {
         GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
         GMessage(">> infname_bam       : %s\n", infname_bam.chars());
         GMessage(">> out_dir           : %s\n", out_dir.chars());
-        GMessage(">> outfname_junction : %s\n", outfname_junction.chars());
     } else if (COMMAND_MODE == PREDICT) {
         processOptionsPredict(args);
 
@@ -203,7 +200,6 @@ void processOptionsJExtract(GArgs& args) {
             exit(1);
         }
     }
-    outfname_junction = out_dir + "/junction.bed";
 }
 
 
@@ -256,7 +252,6 @@ void processOptionsPredict(GArgs& args) {
             exit(1);
         }
     }
-    outfname_junction = out_dir + "/junction.bed";
 }
 
 
@@ -307,5 +302,4 @@ void processOptionsClean(GArgs& args) {
             exit(1);
         }
     }
-    outfname_junction = out_dir + "/junction.bed";
 }

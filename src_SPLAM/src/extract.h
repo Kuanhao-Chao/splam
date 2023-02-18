@@ -1,6 +1,6 @@
 #ifndef _EXTRACT_H_
 #define _EXTRACT_H_
+#include <gclib/GStr.h>
 
-void splamJExtract();
-
+GStr splamJExtract();
 #endif
