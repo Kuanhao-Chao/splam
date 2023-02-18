@@ -33,4 +33,9 @@ extern GSamWriter* outfile_discard;
 extern GSamWriter* outfile_cleaned;
 extern FILE* joutf;
 
+extern int ALN_COUNT;
+extern int ALN_COUNT_SPLICED;
+extern int ALN_COUNT_NSPLICED;
+extern int ALN_COUNT_BAD;
+extern int ALN_COUNT_GOOD;
 #endif /* TIEBRUSH_TMERGE_H_ */
