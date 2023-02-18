@@ -1,5 +1,6 @@
 #include <fstream>
 #include <iostream>
+#include <cctype>
 #include <sstream>
 #include <filesystem>
 
@@ -36,36 +37,46 @@ GStr splamPredict() {
     GMessage("** Step 2: getting coordinates of donors and acceptors\n");
     GMessage("********************************************\n");
 
-    dimer_hm doner_dimers;
-    dimer_hm acceptor_dimers;
+    robin_hdd_hm doner_dimers;
+    robin_hdd_hm acceptor_dimers;
     GStr outfname_junc_fa = splamCreateFasta(outfname_junc_bed, doner_dimers, acceptor_dimers, ref_faidx);
 
 
-    std::cout << "[Info] Donor dimers: " << std::endl;
-    int cnl_donor_ct=0, ncnl_donor_ct=0, cnl_acceptor_ct=0, ncnl_acceptor_ct = 0;
+    std::cout << ">> Donor dimers: " << std::endl;
     for (auto i : doner_dimers) {
-        if (std::strcmp(i.first.c_str(), "GT") == 0) {
-            cnl_donor_ct += i.second;
-        } else {
-            ncnl_donor_ct += i.second;
-        }
-        // std::cout << "\t" << i.first << ": " << i.second << std::endl;
+        std::cout << "\t" << i.first << ": " << i.second << std::endl;
     }
-    GMessage("\tCanonical donor\t\t: %d\n", cnl_donor_ct);
-    GMessage("\tNoncanonical donor\t: %d\n", ncnl_donor_ct);
 
-    std::cout << "[Info] Acceptor dimers: " << std::endl;
+    std::cout << ">> Acceptor dimers: " << std::endl;
     for (auto i : acceptor_dimers) {
-        if (std::strcmp(i.first.c_str(), "AG") == 0) {
-            cnl_acceptor_ct += i.second;
-        } else {
-            ncnl_acceptor_ct += i.second;
-        }
-        // std::cout << "\t" << i.first << ": " << i.second << std::endl;
+        std::cout << "\t" << i.first << ": " << i.second << std::endl;
     }
 
-    GMessage("\tCanonical acceptor\t: %d\n", cnl_acceptor_ct);
-    GMessage("\tNoncanonical donor\t: %d\n", ncnl_acceptor_ct);
+    // std::cout << "[Info] Donor dimers: " << std::endl;
+    // int cnl_donor_ct=0, ncnl_donor_ct=0, cnl_acceptor_ct=0, ncnl_acceptor_ct = 0;
+    // for (auto i : doner_dimers) {
+    //     if (std::strcmp(i.first.c_str(), "GT") == 0) {
+    //         cnl_donor_ct += i.second;
+    //     } else {
+    //         ncnl_donor_ct += i.second;
+    //     }
+    //     // std::cout << "\t" << i.first << ": " << i.second << std::endl;
+    // }
+    // GMessage("\tCanonical donor\t\t: %d\n", cnl_donor_ct);
+    // GMessage("\tNoncanonical donor\t: %d\n", ncnl_donor_ct);
+
+    // std::cout << "[Info] Acceptor dimers: " << std::endl;
+    // for (auto i : acceptor_dimers) {
+    //     if (std::strcmp(i.first.c_str(), "AG") == 0) {
+    //         cnl_acceptor_ct += i.second;
+    //     } else {
+    //         ncnl_acceptor_ct += i.second;
+    //     }
+    //     // std::cout << "\t" << i.first << ": " << i.second << std::endl;
+    // }
+
+    // GMessage("\tCanonical acceptor\t: %d\n", cnl_acceptor_ct);
+    // GMessage("\tNoncanonical donor\t: %d\n", ncnl_acceptor_ct);
 
 
     /*********************************************
@@ -103,7 +114,7 @@ faidx_t *fastaIndex() {
     return ref_faidx;
 }
 
-GStr splamCreateFasta(GStr outfname_junc_bed, dimer_hm &doner_dimers, dimer_hm &acceptor_dimers, faidx_t *ref_faidx) {
+GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_hm &doner_dimers, robin_hdd_hm &acceptor_dimers, faidx_t *ref_faidx) {
     int SEQ_LEN = 800;
     int QUOTER_SEQ_LEN = SEQ_LEN/4;
 
@@ -234,11 +245,15 @@ GStr splamCreateFasta(GStr outfname_junc_bed, dimer_hm &doner_dimers, dimer_hm &
         char donor_dim[3];
         memcpy(donor_dim, &donor_seq[200], 2);
         donor_dim[2] = '\0';
+        for(int i=0;i<strlen(donor_dim);i++)
+            donor_dim[i] = toupper(donor_dim[i]);
         std::string donor_str(donor_dim);
 
         char acceptor_dim[3];
         memcpy(acceptor_dim, &acceptor_seq[198], 2);
         acceptor_dim[2] = '\0';
+        for(int i=0;i<strlen(acceptor_dim);i++)
+            acceptor_dim[i] = toupper(acceptor_dim[i]);
         std::string acceptor_str(acceptor_dim);
 
         if (doner_dimers.find(donor_str) == doner_dimers.end()) {

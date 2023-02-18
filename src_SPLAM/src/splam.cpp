@@ -11,7 +11,7 @@
 #include "tmerge.h"
 #include "util.h"
 #include "junc.h"
-#include "filter.h"
+// #include "filter.h"
 
 
 // #include "splam_stream.h"
@@ -47,9 +47,17 @@ float threshold = 0.2;
 // int juncCount = 0;
 // GArray<CJunc> junctions(64, true);
 
+
+
+GStr outfname_spliced;
+GStr outfname_nspliced;
+GStr outfname_discard;
+GStr outfname_cleaned;
+
 GSamRecord* brec=NULL;
-GSamWriter* outfile_discard = NULL;
 GSamWriter* outfile_spliced = NULL;
+GSamWriter* outfile_nspliced = NULL;
+GSamWriter* outfile_discard = NULL;
 GSamWriter* outfile_cleaned = NULL;
 FILE* joutf=NULL;
 
@@ -71,7 +79,16 @@ int main(int argc, char* argv[]) {
     
     in_records.setup(VERSION, argc, argv);
     processOptions(argc, argv);
+
+    outfname_spliced = out_dir + "/TMP/spliced.bam";
+    outfname_nspliced = out_dir + "/TMP/non_spliced.bam";
+    outfname_discard = out_dir + "/discard.bam";
+    outfname_cleaned = out_dir + "/cleaned.bam";
+
     std::filesystem::create_directories(out_dir.chars());
+
+    GStr tmp_dir(out_dir + "/TMP");
+    std::filesystem::create_directories(tmp_dir.chars());
 
     if (COMMAND_MODE == J_EXTRACT) {
         splamJExtract();

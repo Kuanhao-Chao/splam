@@ -12,6 +12,9 @@ GStr splamJExtract() {
     int num_samples=in_records.start();
     GStr outfname_junc_bed = out_dir + "/junction.bed";
     
+    outfile_spliced = new GSamWriter(outfname_spliced, in_records.header(), GSamFile_BAM);
+    outfile_nspliced = new GSamWriter(outfname_nspliced, in_records.header(), GSamFile_BAM);
+
     GMessage("[INFO] Extracting junctions ...\n");
     GMessage("[INFO] Number of samples\t: %d\n", num_samples);
     GMessage("[INFO] Output directory\t\t: %s\n", out_dir.chars());
@@ -36,14 +39,13 @@ GStr splamJExtract() {
     int b_end=0;
     int b_start=0;
 
+    GMessage("[INFO] Processing BAM file ...\n");
+    int processed_alignment = 0;
     while ((irec=in_records.next())!=NULL) {
         brec=irec->brec;
         uint32_t dupcount=0;
         std::vector<int> cur_samples;
         int endpos=brec->end;
-
-        // std::cout << brec->refId() << std::endl;
-        // printf(">> %s \n", brec->refId());
         if (brec->refId()!=prev_tid || (int)brec->start>b_end) {
             if (joutf) {
                 flushJuncs(joutf);
@@ -62,12 +64,28 @@ GStr splamJExtract() {
         accYC = brec->tag_int("YC", 1);
         if (joutf && brec->exons.Count()>1) {
             addJunction(*brec, accYC, prev_refname);
+            outfile_spliced->write(brec);
+        } else {
+            outfile_nspliced->write(brec);
+        }
+        processed_alignment++;
+        if (processed_alignment % 1000000 == 0) {
+            GMessage("\t\t%d alignments processed.\n", processed_alignment);
         }
     }
+    GMessage("\t\t%d alignments processed.\n", processed_alignment);
     in_records.stop();
     flushJuncs(joutf);
     fclose(joutf);
 
+    delete outfile_spliced;
+    std::cout << "Done delete outfile_spliced!" << std::endl;
+    delete outfile_nspliced;
+    std::cout << "Done delete outfile_nspliced!" << std::endl;
+
     GMessage("[INFO] SPLAM! Total number of junctions: %d\n", juncCount);	
     return outfname_junc_bed;
+// extern GSamWriter* outfile_discard;
+// extern GSamWriter* outfile_spliced;
+// extern GSamWriter* outfile_cleaned;
 }
