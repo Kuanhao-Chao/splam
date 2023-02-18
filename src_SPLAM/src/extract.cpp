@@ -31,16 +31,13 @@ GStr splamJExtract() {
     }
 
     // Reading BAM file.
-    int counter = 0;
     int prev_tid=-1;
     GStr prev_refname;
     GVec<uint64_t> bcov(2048*1024);
     std::vector<std::pair<float,uint64_t>> bsam(2048*1024,{0,1}); // number of samples. 1st - current average; 2nd - total number of values
-    int b_end=0;
-    int b_start=0;
+    int b_end=0, b_start=0;
 
     GMessage("[INFO] Processing BAM file ...\n");
-    int processed_alignment = 0;
     while ((irec=in_records.next())!=NULL) {
         brec=irec->brec;
         uint32_t dupcount=0;
@@ -65,23 +62,25 @@ GStr splamJExtract() {
         if (joutf && brec->exons.Count()>1) {
             addJunction(*brec, accYC, prev_refname);
             outfile_spliced->write(brec);
+            ALN_COUNT_SPLICED++;
         } else {
             outfile_nspliced->write(brec);
+            ALN_COUNT_NSPLICED++;
         }
-        processed_alignment++;
-        if (processed_alignment % 1000000 == 0) {
-            GMessage("\t\t%d alignments processed.\n", processed_alignment);
+        ALN_COUNT++;
+        if (ALN_COUNT % 1000000 == 0) {
+            GMessage("\t\t%d alignments processed.\n", ALN_COUNT);
         }
     }
-    GMessage("\t\t%d alignments processed.\n", processed_alignment);
+    GMessage("\t\t%d alignments processed.\n", ALN_COUNT);
     in_records.stop();
     flushJuncs(joutf);
     fclose(joutf);
 
     delete outfile_spliced;
-    std::cout << "Done delete outfile_spliced!" << std::endl;
+    // std::cout << "Done delete outfile_spliced!" << std::endl;
     delete outfile_nspliced;
-    std::cout << "Done delete outfile_nspliced!" << std::endl;
+    // std::cout << "Done delete outfile_nspliced!" << std::endl;
 
     GMessage("[INFO] SPLAM! Total number of junctions: %d\n", juncCount);	
     return outfname_junc_bed;

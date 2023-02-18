@@ -159,13 +159,16 @@ void TInputFiles::load_hdr_samples(sam_hdr_t* hdr,std::string filename,bool tbMe
             else{
                 line = std::string(str.s);
                 bool ret = get_sample_from_line(line);
+
                 if(ret){
                     found_line=true;
                     this->s2l_it = this->sample2lineno.insert(std::make_pair(line,std::make_tuple(this->max_sample_id,sample_line_pos,filename,donor)));
-                    if(!this->s2l_it.second){ // not inserted
-                        std::cerr<<"duplicate entries detected"<<std::endl;
-                        exit(-1);
-                    }
+                    
+                    // if(!this->s2l_it.second){ // not inserted
+                    //     std::cerr<<"duplicate entries detected"<<std::endl;
+                    //     exit(-1);
+                    // }
+                    
                     this->lineno2sample.insert(std::make_pair(this->max_sample_id,std::make_tuple(line,sample_line_pos,filename,donor)));
                     sample_line_pos++;
                     this->max_sample_id++;
@@ -181,7 +184,12 @@ void TInputFiles::load_hdr_samples(sam_hdr_t* hdr,std::string filename,bool tbMe
     }
     else{ // no sample was found - need to add current name to the header
         this->s2l_it = this->sample2lineno.insert(std::make_pair(get_full_path(filename),std::make_tuple(this->max_sample_id,sample_line_pos,"",donor)));
+
+        // GMessage("this->max_sample_id: %d\n", this->max_sample_id);
+        // GMessage("donor: %d\n", donor);
+
         if(!this->s2l_it.second){ // not inserted
+            GMessage("this->s2l_it.second: %d\n", this->s2l_it.second);
             std::cerr<<"duplicate entries detected"<<std::endl;
             exit(-1);
         }

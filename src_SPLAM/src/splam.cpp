@@ -44,10 +44,6 @@ TInputFiles in_records;
 TInputRecord* irec=NULL;
 
 float threshold = 0.2;
-// int juncCount = 0;
-// GArray<CJunc> junctions(64, true);
-
-
 
 GStr outfname_spliced;
 GStr outfname_nspliced;
@@ -61,6 +57,11 @@ GSamWriter* outfile_discard = NULL;
 GSamWriter* outfile_cleaned = NULL;
 FILE* joutf=NULL;
 
+int ALN_COUNT = 0;
+int ALN_COUNT_SPLICED = 0;
+int ALN_COUNT_NSPLICED = 0;
+int ALN_COUNT_BAD = 0;
+int ALN_COUNT_GOOD = 0;
 
 int main(int argc, char* argv[]) {
     GMessage(
