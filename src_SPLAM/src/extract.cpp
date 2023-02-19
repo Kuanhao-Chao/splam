@@ -13,7 +13,6 @@ GStr splamJExtract() {
     GStr outfname_junc_bed = out_dir + "/junction.bed";
     
     outfile_spliced = new GSamWriter(outfname_spliced, in_records.header(), GSamFile_BAM);
-    outfile_nspliced = new GSamWriter(outfname_nspliced, in_records.header(), GSamFile_BAM);
 
     GMessage("[INFO] Extracting junctions ...\n");
     GMessage("[INFO] Number of samples\t: %d\n", num_samples);
@@ -33,7 +32,6 @@ GStr splamJExtract() {
     // Reading BAM file.
     int prev_tid=-1;
     GStr prev_refname;
-    GVec<uint64_t> bcov(2048*1024);
     std::vector<std::pair<float,uint64_t>> bsam(2048*1024,{0,1}); // number of samples. 1st - current average; 2nd - total number of values
     int b_end=0, b_start=0;
 
@@ -54,7 +52,6 @@ GStr splamJExtract() {
         } else { //extending current bundle
             if (b_end<endpos) {
                 b_end=endpos;
-                bcov.setCount(b_end-b_start+1, (int)0);
             }
         }
         int accYC = 0;
@@ -64,7 +61,6 @@ GStr splamJExtract() {
             outfile_spliced->write(brec);
             ALN_COUNT_SPLICED++;
         } else {
-            outfile_nspliced->write(brec);
             ALN_COUNT_NSPLICED++;
         }
         ALN_COUNT++;
@@ -78,13 +74,6 @@ GStr splamJExtract() {
     fclose(joutf);
 
     delete outfile_spliced;
-    // std::cout << "Done delete outfile_spliced!" << std::endl;
-    delete outfile_nspliced;
-    // std::cout << "Done delete outfile_nspliced!" << std::endl;
-
     GMessage("[INFO] SPLAM! Total number of junctions: %d\n", JUNC_COUNT);	
     return outfname_junc_bed;
-// extern GSamWriter* outfile_discard;
-// extern GSamWriter* outfile_spliced;
-// extern GSamWriter* outfile_cleaned;
 }
