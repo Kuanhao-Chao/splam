@@ -8,6 +8,7 @@
 // #include "progressbar.h"
 #include <progressbar/progressbar.hpp>
 
+#include <unordered_set>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
@@ -31,17 +32,35 @@ void splamClean(int argc, char* argv[]) {
     GMessage("## Step 4: SPLAM filtering out reads\n");
     GMessage("###########################################\n");
     robin_hdd_hm rm_rd_hm;
-    GStr outfname_spliced_good = filterSpurJuncs(outfname_junc_score, rm_rd_hm);
+    std::unordered_set<std::string> rm_rd_set;
+
+    GMessage(">> rm_rd_set size %d\n", rm_rd_set.size());
+    GStr outfname_spliced_good = filterSpurJuncs(outfname_junc_score, rm_rd_hm, rm_rd_set);
+    GMessage(">> rm_rd_set size %d\n", rm_rd_set.size());
+    // for (auto ele : rm_rd_set) {
+    //     GMessage("ele: %s \n", ele.c_str());
+    // }
+
 
     GMessage("\n###########################################\n");
     GMessage("** Step 5: Updating NH tags in final clean BAM file\n");
     GMessage("###########################################\n");
+
+
     TInputFiles final_bam_records;
     final_bam_records.setup(VERSION, argc, argv);
-    final_bam_records.addFile(get_full_path(outfname_nspliced.chars()).c_str());
-    final_bam_records.addFile(get_full_path(outfname_spliced_good.chars()).c_str());
+
+    for (int i=0; i<in_records.freaders.Count(); i++) {
+        GStr fname = in_records.freaders[i]->fname.chars();
+        GMessage(">> fname: %s\n", fname.chars());
+        final_bam_records.addFile(fname.chars());
+    }
+    // final_bam_records.addFile(get_full_path(outfname_nspliced.chars()).c_str());
+    // final_bam_records.addFile(get_full_path(outfname_spliced_good.chars()).c_str());
     int num_samples=final_bam_records.start();
+
     outfile_cleaned = new GSamWriter(outfname_cleaned, final_bam_records.header(), GSamFile_BAM);
+    outfile_discard = new GSamWriter(outfname_discard, final_bam_records.header(), GSamFile_BAM);
 
     // Reading BAM file.
     int counter = 0, prev_tid=-1;
@@ -54,34 +73,49 @@ void splamClean(int argc, char* argv[]) {
     // double percentage = 0;
     // double aln_count_good_counter = 0;
     // progressbar *progress = progressbar_new("Loading", ALN_COUNT_GOOD);
-    progressbar bar(ALN_COUNT_GOOD);
+    progressbar bar(ALN_COUNT);
     bar.set_opening_bracket_char("[INFO] SPLAM! Updating NH tags \n\t[");
 
     while ((irec=final_bam_records.next())!=NULL) {
-        // aln_count_good_counter ++;
-        // percentage = aln_count_good_counter/ALN_COUNT_GOOD;
-        // printProgress(percentage);
         bar.update();
 
         brec=irec->brec;
         int endpos=brec->end;
 
         std::string kv = brec->name();
-        kv = kv + ";" + std::to_string(brec->pairOrder());
-        if (rm_rd_hm.find(kv) != rm_rd_hm.end()) {
-            // Update NH tag.
-            // GMessage("Before updating NH tag: %d\n", brec->tag_int("NH", 0));   
-            int new_nh = brec->tag_int("NH", 0) - rm_rd_hm[kv];
-            // GMessage("New NH tag            : %d\n", new_nh);   
+        kv = kv + "_" + std::to_string(brec->pairOrder());
 
-            brec->add_int_tag("NH", new_nh);
-            // GMessage("After updating NH tag: %d\n\n\n", brec->tag_int("NH", 0));
+
+
+        char* seq = brec->sequence();
+        char* cigar_seq = brec->cigar();
+
+        std::string rm_rd_key = kv + "_" + seq + "_" + cigar_seq + "_" + std::to_string(brec->flags()) + "_" + std::to_string(brec->start);
+
+        free(seq);
+        free(cigar_seq);
+
+        if (rm_rd_set.find(rm_rd_key) != rm_rd_set.end()) {
+            // The alignment is found in the removed set.
+            outfile_discard->write(brec);
+        } else {
+            if (rm_rd_hm.find(kv) != rm_rd_hm.end()) {
+                // Update NH tag.
+                // GMessage("Before updating NH tag: %d\n", brec->tag_int("NH", 0));   
+                int new_nh = brec->tag_int("NH", 0) - rm_rd_hm[kv];
+                // GMessage("New NH tag            : %d\n", new_nh);   
+
+                brec->add_int_tag("NH", new_nh);
+                // GMessage("After updating NH tag: %d\n\n\n", brec->tag_int("NH", 0));
+            }
+            outfile_cleaned->write(brec);
         }
-        outfile_cleaned->write(brec);
     }
     GMessage("\n");
 
     final_bam_records.stop();
+
+    delete outfile_discard;
     delete outfile_cleaned;
     // std::cout << "Done delete outfile_cleaned!" << std::endl;
 
@@ -103,7 +137,7 @@ void splamClean(int argc, char* argv[]) {
 }
 
 
-void loadBed(GStr inbedname, GArray<CJunc> &spur_juncs) {
+void loadBed(GStr inbedname, std::unordered_set<std::string> &rm_juncs) {
 
     std::ifstream bed_f(inbedname);
     std::string line;
@@ -119,32 +153,38 @@ void loadBed(GStr inbedname, GArray<CJunc> &spur_juncs) {
             gline=tmp;
             cnt++;
         }
-        char* chrname =junc[0].detach();
-        GStr chr_str(chrname);
+        // GStr chr_str(chrname);
         if (junc[6].asDouble() <= threshold) {
-            CJunc j(junc[1].asInt()+1, junc[2].asInt(), *junc[5].detach(), chr_str);
-            spur_juncs.Add(j);
-            // std::cout << "spur_juncs.size: " << spur_juncs.Count() << std::endl;
+
+            char* chrname =junc[0].detach();
+            char* strand =junc[5].detach();
+            // CJunc j(junc[1].asInt()+1, junc[2].asInt(), *junc[5].detach(), chr_str);
+            std::string j = std::to_string(junc[1].asInt()+1) + "_" + std::to_string(junc[2].asInt()) + "_" + strand + "_" + chrname;
+
+            // GMessage(">> j: %s\n", j.c_str());
+            rm_juncs.insert(j);
+            // std::cout << "rm_juncs.size: " << rm_juncs.Count() << std::endl;
         }
     }
     // std::cout << "bed_counter: " << bed_counter << std::endl;
 }
 
 
-GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm) {
+GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm, std::unordered_set<std::string> &rm_rd_set) {
     GStr outfname_spliced_good;
-    GSamWriter* outfile_spliced_good = NULL;
+    // GSamWriter* outfile_spliced_good = NULL;
     outfname_spliced_good = out_dir + "/TMP/spliced_good.bam";
 
-    outfile_spliced_good = new GSamWriter(outfname_spliced_good, in_records.header(), GSamFile_BAM);
-    outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
+    // outfile_spliced_good = new GSamWriter(outfname_spliced_good, in_records.header(), GSamFile_BAM);
 
     GSamReader bam_reader_spliced(outfname_spliced.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
     int spur_cnt = 0;
 
-    GArray<CJunc> rm_juncs;
+    std::unordered_set<std::string> rm_juncs;
+    GMessage("Before rm_juncs.size()  %d\n", rm_juncs.size());
     loadBed(outfname_junc_score, rm_juncs);
+    GMessage("After rm_juncs.size()  %d\n", rm_juncs.size());
 
     int counter = 0, prev_tid=-1;
     GStr prev_refname;
@@ -162,28 +202,13 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm) {
 
     // int final_b = 0;
     double percentage = 0;
-    int aln_spliced_counter = 0;
-
     // std::cout << "ALN_COUNT_SPLICED:" << ALN_COUNT_SPLICED << std::endl;
-
 
     progressbar bar(ALN_COUNT_SPLICED);
     bar.set_opening_bracket_char("[INFO] SPLAM! Removing junctions with low scores \n\t[");
-    // for(int i=0; i < 100; i++)
-    // {
-    // // Do some stuff
-    // progressbar_inc(progress);
-    // }
-    // progressbar_finish(progress);
 
     while ((brec=bam_reader_spliced.next())!=NULL) {
-        // aln_spliced_counter++;
-        // GMessage("aln_spliced_counter: %d;  ALN_COUNT_SPLICED: %d\n", aln_spliced_counter, ALN_COUNT_SPLICED);
-        // percentage = aln_spliced_counter/ALN_COUNT_SPLICED;
-        // printProgress(percentage);
-
         bar.update();
-
 
         uint32_t dupcount=0;
         int endpos=brec->end;
@@ -192,8 +217,13 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm) {
         if (r_exon_count > 1) {
             for (int e=1; e<r_exon_count; e++) {
 	            char strand = brec->spliceStrand();
-                CJunc jnew_sub(brec->exons[e-1].end+1, brec->exons[e].start-1, strand, GStr(brec->refName()));
-                if (rm_juncs.Exists(jnew_sub)) {
+                // CJunc jnew_sub(brec->exons[e-1].end+1, brec->exons[e].start-1, strand, GStr(brec->refName()));
+
+                std::string jnew_sub = std::to_string(brec->exons[e-1].end+1) + "_" + std::to_string(brec->exons[e].start-1) + "_" + strand + "_" + brec->refName();
+
+                // GMessage(">> jnew_sub: %s\n", jnew_sub.c_str());
+
+                if (rm_juncs.find(jnew_sub) != rm_juncs.end()) {
                     spur = true;
                     break;
                 }
@@ -203,26 +233,28 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm) {
             spur_cnt++;
             // std::cout << "~~ SPLAM!" << std::endl;
             std::string kv = brec->name();
-            kv = kv + ";" + std::to_string(brec->pairOrder());
+            kv = kv + "_" + std::to_string(brec->pairOrder());
             if (rm_rd_hm.find(kv) == rm_rd_hm.end()) {
                 rm_rd_hm[kv] = 1;
             } else {
                 rm_rd_hm[kv]++;
             }
+            char* seq = brec->sequence();
+            char* cigar_seq = brec->cigar();
+
+            kv = kv + "_" + seq + "_" + cigar_seq + "_" + std::to_string(brec->flags()) + "_" + std::to_string(brec->start);
+            rm_rd_set.insert(kv);
+            // GMessage(">> rm_rd_set size: %d;  ALN_COUNT_BAD: %d\n", rm_rd_set.size(), ALN_COUNT_BAD);
+
             ALN_COUNT_BAD++;
-            outfile_discard->write(brec);
+            free(seq);
+            free(cigar_seq);
         } else {
             ALN_COUNT_GOOD++;
-            outfile_spliced_good->write(brec);
         }
     }
     GMessage("\n");
-
     ALN_COUNT_GOOD += ALN_COUNT_NSPLICED;
-    
-    delete outfile_discard;
-    delete outfile_spliced_good;
-    GMessage("[INFO] %d spurious alignments were removed.\n", spur_cnt);
-    
+    GMessage("[INFO] %d spurious alignments were removed.\n", ALN_COUNT_BAD);
     return outfname_spliced_good;
 }

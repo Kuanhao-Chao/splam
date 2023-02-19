@@ -46,13 +46,11 @@ TInputRecord* irec=NULL;
 float threshold = 0.1;
 
 GStr outfname_spliced;
-GStr outfname_nspliced;
 GStr outfname_discard;
 GStr outfname_cleaned;
 
 GSamRecord* brec=NULL;
 GSamWriter* outfile_spliced = NULL;
-GSamWriter* outfile_nspliced = NULL;
 GSamWriter* outfile_discard = NULL;
 GSamWriter* outfile_cleaned = NULL;
 FILE* joutf=NULL;
@@ -87,7 +85,6 @@ int main(int argc, char* argv[]) {
     processOptions(argc, argv);
 
     outfname_spliced = out_dir + "/TMP/spliced.bam";
-    outfname_nspliced = out_dir + "/TMP/non_spliced.bam";
     outfname_discard = out_dir + "/discard.bam";
     outfname_cleaned = out_dir + "/cleaned.bam";
 
