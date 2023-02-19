@@ -8,7 +8,6 @@
 
 #include "GSam.h"
 
-int juncCount;
 GArray<CJunc> junctions;
 
 void addJunction(GSamRecord& r, int dupcount, GStr ref) {

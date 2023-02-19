@@ -43,7 +43,7 @@ bool verbose = false;
 TInputFiles in_records;
 TInputRecord* irec=NULL;
 
-float threshold = 0.2;
+float threshold = 0.1;
 
 GStr outfname_spliced;
 GStr outfname_nspliced;
@@ -57,11 +57,16 @@ GSamWriter* outfile_discard = NULL;
 GSamWriter* outfile_cleaned = NULL;
 FILE* joutf=NULL;
 
+int JUNC_COUNT = 0;
 int ALN_COUNT = 0;
 int ALN_COUNT_SPLICED = 0;
 int ALN_COUNT_NSPLICED = 0;
 int ALN_COUNT_BAD = 0;
 int ALN_COUNT_GOOD = 0;
+
+std::unordered_map<std::string, int>  CHRS;
+
+bool skip_extact = false;
 
 int main(int argc, char* argv[]) {
     GMessage(
@@ -91,6 +96,8 @@ int main(int argc, char* argv[]) {
     GStr tmp_dir(out_dir + "/TMP");
     std::filesystem::create_directories(tmp_dir.chars());
 
+    create_CHRS();
+    
     if (COMMAND_MODE == J_EXTRACT) {
         splamJExtract();
     } else if (COMMAND_MODE == PREDICT) {
@@ -103,7 +110,7 @@ int main(int argc, char* argv[]) {
 
 void processOptions(int argc, char* argv[]) {
 
-    GArgs args(argc, argv, "help;cite;verbose;version;SLPEDVvhco:N:Q:m:r:");
+    GArgs args(argc, argv, "help;cite;verbose;version;skip-extract;SLPEDVvhco:N:Q:m:r:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -143,7 +150,10 @@ void processOptions(int argc, char* argv[]) {
     }
 
 
+    skip_extact=(args.getOpt("skip-extract")!=NULL);
 
+    GMessage("skip_extact: %d\n", skip_extact);
+    
     verbose=(args.getOpt("verbose")!=NULL || args.getOpt('V')!=NULL);
     if (verbose) {
         // fprintf(stderr, "Running SPLAM " VERSION ". Command line:\n");
