@@ -68,6 +68,7 @@ add_executable(SPLAM
         # src/filter.cpp  
         src/tmerge.cpp
         src/GSam.cpp
+
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GArgs.h
