@@ -21,5 +21,6 @@ std::unordered_map<std::string, int> get_hg38_chrom_size(std::string target);
 void flushBrec(GVec<GSamRecord*> &pbrecs, std::unordered_map<std::string, int> &hits, GSamWriter* outfile_cleaned);
 
 void loadBed(GStr inbedname, GArray<CJunc> &spur_juncs);
+void create_CHRS();
 
 #endif /* TIEBRUSH_TMERGE_H_ */

@@ -55,7 +55,7 @@ void splamClean(int argc, char* argv[]) {
     // double aln_count_good_counter = 0;
     // progressbar *progress = progressbar_new("Loading", ALN_COUNT_GOOD);
     progressbar bar(ALN_COUNT_GOOD);
-    bar.set_opening_bracket_char("[INFO] SPLAM! [");
+    bar.set_opening_bracket_char("[INFO] SPLAM! Updating NH tags \n\t[");
 
     while ((irec=final_bam_records.next())!=NULL) {
         // aln_count_good_counter ++;
@@ -168,7 +168,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm) {
 
 
     progressbar bar(ALN_COUNT_SPLICED);
-    bar.set_opening_bracket_char("[INFO] SPLAM! [");
+    bar.set_opening_bracket_char("[INFO] SPLAM! Removing junctions with low scores \n\t[");
     // for(int i=0; i < 100; i++)
     // {
     // // Do some stuff

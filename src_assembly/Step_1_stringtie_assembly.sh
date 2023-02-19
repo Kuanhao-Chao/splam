@@ -10,6 +10,7 @@ fi
 
 if [ $2 = "AFTER" ]
 then
-    samtools index ../results/800bp/$1/cleaned.sort.bam
-    stringtie -o ../results/800bp/$1/assembly/AFTER/$1.gtf ../results/800bp/$1/cleaned.sort.bam
+    samtools index  ../results/800bp/$1/cleaned.sort.bam
+    stringtie -o ../results/800bp/$1/assembly/AFTER/$1.gtf  ../results/800bp/$1/cleaned.sort.bam
+
 fi

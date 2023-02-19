@@ -96,6 +96,7 @@
         "semaphore": "cpp",
         "__std_stream": "cpp",
         "charconv": "cpp",
-        "span": "cpp"
+        "span": "cpp",
+        "termcap.h": "c"
     }
 }

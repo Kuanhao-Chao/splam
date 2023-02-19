@@ -10,7 +10,7 @@
 #include "common.h"
 #include "GSam.h"
 
-extern int juncCount;
+// JUNC_COUNT
 
 class CJunc {
 
@@ -64,9 +64,9 @@ class CJunc {
 
 
 		void write(FILE* f) {
-			juncCount++;
+			JUNC_COUNT++;
 			fprintf(f, "%s\t%d\t%d\tJUNC%08d\t%ld\t%c\n",
-					ref.chars(), start-1, end, juncCount, (long)dupcount, strand);
+					ref.chars(), start-1, end, JUNC_COUNT, (long)dupcount, strand);
 		}
 };
 

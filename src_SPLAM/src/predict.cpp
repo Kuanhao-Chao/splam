@@ -10,6 +10,7 @@
 #include "util.h"
 #include "splam_stream.h"
 
+#include <progressbar/progressbar.hpp>
 #include <gclib/GBase.h>
 #include <htslib/htslib/faidx.h>
 
@@ -23,7 +24,13 @@ GStr splamPredict() {
     GMessage("###########################################\n");
     GMessage("## Step 1: generating spliced junctions in BED\n");
     GMessage("###########################################\n");
-    GStr outfname_junc_bed = splamJExtract();
+
+    GStr outfname_junc_bed;
+    if (!skip_extact) {
+        outfname_junc_bed = splamJExtract();
+    } else {
+        outfname_junc_bed = out_dir + "/junction.bed";
+    }
     // std::unordered_map<std::string, int> chrs = get_hg38_chrom_size("HISAT2");
     faidx_t * ref_faidx = fastaIndex();
     // GMessage("[INFO] Predicting ...\n");
@@ -148,7 +155,13 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_hm &doner_dimers, robin_
 
     std::ifstream fr_junc(outfname_junc_bed);
     std::string line;
+
+    progressbar bar(JUNC_COUNT);
+    bar.set_opening_bracket_char("[INFO] SPLAM! Writing junction BED file \n\t[");
+
     while(getline(fr_junc, line)){
+        bar.update();
+
         std::string chromosome;
         int start = 0, end = 0;
         std::string junc_name;
@@ -187,30 +200,34 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_hm &doner_dimers, robin_
             continue;
         }
 
-        // std::cout << "chrs[chromosome]: " << chrs[chromosome] << std::endl;
-        // std::cout << "donor_e         : " << donor_e << std::endl;
-
-        // std::cout << "chrs[chromosome]: " << chrs[chromosome] << std::endl;
-        // std::cout << "acceptor_e      : " << acceptor_e << std::endl;
-
-        // if (donor_e >= chrs[chromosome] or acceptor_e >= chrs[chromosome]) {
-        //     std::cout << "Skip!!" << std::endl;
-        //     continue;
-        // }
-        // if (donor_s < 0 or acceptor_s < 0) {
-        //     std::cout << "Skip!!" << std::endl;
-        //     continue;
-        // }
-
+        if (donor_e >= CHRS[chromosome] or acceptor_e >= CHRS[chromosome]) {
+            continue;
+        }
+        if (donor_s < 0 or acceptor_s < 0) {
+            continue;
+        }
 
         outfile_bed_donor << chromosome << "\t" + std::to_string(donor_s) + "\t" + std::to_string(donor_e) + "\t" + junc_name+"_donor" + "\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
         outfile_bed_acceptor << chromosome << "\t" + std::to_string(acceptor_s) + "\t" + std::to_string(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
 
-        int donor_len = donor_e - donor_s;
-        char* donor_seq = faidx_fetch_seq(ref_faidx, chromosome.c_str(), donor_s, donor_e-1, &donor_len);
+        char* donor_seq = NULL;
+        char* acceptor_seq = NULL;
 
-        int acceptor_len = acceptor_e - acceptor_s;
-        char* acceptor_seq = faidx_fetch_seq(ref_faidx, chromosome.c_str(), acceptor_s, acceptor_e-1, &acceptor_len);
+        try {
+            int donor_len = donor_e - donor_s;
+            donor_seq = faidx_fetch_seq(ref_faidx, chromosome.c_str(), donor_s, donor_e-1, &donor_len);
+        }
+        catch (int a) {
+            continue;
+        }
+
+        try {
+            int acceptor_len = acceptor_e - acceptor_s;
+            acceptor_seq = faidx_fetch_seq(ref_faidx, chromosome.c_str(), acceptor_s, acceptor_e-1, &acceptor_len);
+        }
+        catch (int a) {
+            continue;
+        }
 
         if (strand == "-") {
             hts_pos_t donor_len_hts = donor_e - donor_s;
@@ -229,17 +246,25 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_hm &doner_dimers, robin_
             continue;
         }
 
+ 
         outfile_fa_donor << ">" << chromosome << std::endl;
         outfile_fa_donor << donor_seq << std::endl;
         outfile_fa_acceptor << ">" << chromosome << std::endl;
         outfile_fa_acceptor << acceptor_seq << std::endl;
 
-        outfile_fa_junc << ">" << chromosome << ";" << std::to_string(donor) << ";" << std::to_string(acceptor) << ";" << strand << std::endl;
-        if (strlen(donor_seq) >= 400) {
-            outfile_fa_junc << donor_seq << acceptor_seq << std::endl;
+
+        if (strlen(donor_seq) > 400 || strlen(acceptor_seq) > 400) {
+            continue;
         } else {
-            outfile_fa_junc << donor_seq << std::string(2*(400-(int)strlen(donor_seq)), 'N') << acceptor_seq << std::endl;
+            outfile_fa_junc << ">" << chromosome << ";" << std::to_string(donor) << ";" << std::to_string(acceptor) << ";" << strand << std::endl;
+            
+            if (strlen(donor_seq) == 400 &&  strlen(acceptor_seq) == 400) {
+                outfile_fa_junc << donor_seq << acceptor_seq << std::endl;
+            } else if (strlen(donor_seq) < 400 && strlen(donor_seq) == strlen(acceptor_seq)){
+                outfile_fa_junc << donor_seq << std::string(2*(400-(int)strlen(donor_seq)), 'N') << acceptor_seq << std::endl;
+            }
         }
+
 
 
         char donor_dim[3];
@@ -273,5 +298,6 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_hm &doner_dimers, robin_
             outfile_bed_da << chromosome + "\t" + std::to_string(acceptor) + "\t" + std::to_string(donor+1) + "\tJUNC\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
         }
     }  
+    GMessage("\n");
     return outfname_junc_fa;
 }

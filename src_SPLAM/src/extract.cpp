@@ -82,7 +82,7 @@ GStr splamJExtract() {
     delete outfile_nspliced;
     // std::cout << "Done delete outfile_nspliced!" << std::endl;
 
-    GMessage("[INFO] SPLAM! Total number of junctions: %d\n", juncCount);	
+    GMessage("[INFO] SPLAM! Total number of junctions: %d\n", JUNC_COUNT);	
     return outfname_junc_bed;
 // extern GSamWriter* outfile_discard;
 // extern GSamWriter* outfile_spliced;
