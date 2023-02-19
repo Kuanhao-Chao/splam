@@ -106,9 +106,6 @@ void processOptions(int argc, char* argv[]) {
     GArgs args(argc, argv, "help;cite;verbose;version;SLPEDVvhco:N:Q:m:r:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
-    GMessage(">> command_str       : %s\n", command_str.chars());
-    // command_str=args.nextNonOpt();
-    // GMessage(">> command_str       : %s\n", command_str.chars());
     if (argc == 0) {
         usage();
         GERROR("\n[ERROR] No command provide. The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
@@ -146,8 +143,6 @@ void processOptions(int argc, char* argv[]) {
     }
 
 
-    printf("COMMAND_MODE: %d\n", COMMAND_MODE);
-
 
     verbose=(args.getOpt("verbose")!=NULL || args.getOpt('V')!=NULL);
     if (verbose) {
@@ -173,7 +168,7 @@ void processOptions(int argc, char* argv[]) {
         processOptionsClean(args);
     }
 
-        GMessage(">> args.startNonOpt()       : %d\n", args.startNonOpt());
+    args.startNonOpt();
 
     if (args.getNonOptCount()==1) {
         usage();
@@ -187,7 +182,7 @@ void processOptions(int argc, char* argv[]) {
     while ( (ifn=args.nextNonOpt())!=NULL) {
         //input alignment files
         std::string absolute_ifn = get_full_path(ifn);
-        std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
+        // std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
         in_records.addFile(absolute_ifn.c_str());
     }
     // } 

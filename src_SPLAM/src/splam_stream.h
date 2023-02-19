@@ -200,7 +200,7 @@ std::string python_script =
 "    fw_junc_scores = open(OUT_SCORE, 'w')\n"
 "    model.eval()\n"
 "    junc_counter = 0    \n"
-"    pbar = Bar('[Info] SPLAM! prediction', max=len(test_loader))\n"
+"    pbar = Bar('[Info] SPLAM! ', max=len(test_loader))\n"
 "    with torch.no_grad():\n"
 "        for batch_idx, data in enumerate(test_loader):\n"
 "            DNAs, labels, seqname = data \n"

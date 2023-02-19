@@ -244,7 +244,7 @@ def test_model():
     fw_junc_scores = open(OUT_SCORE, 'w')
     model.eval()
     junc_counter = 0    
-    pbar = Bar('[Info] SPLAM! prediction', max=len(test_loader))
+    pbar = Bar('[Info] SPLAM! ', max=len(test_loader))
     with torch.no_grad():
         for batch_idx, data in enumerate(test_loader):
             DNAs, labels, seqname = data 

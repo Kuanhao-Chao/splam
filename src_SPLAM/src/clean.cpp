@@ -5,7 +5,8 @@
 #include "util.h"
 #include "extract.h"
 #include "predict.h"
-#include "progressbar.h"
+// #include "progressbar.h"
+#include <progressbar/progressbar.hpp>
 
 #include <fstream>
 #include <sstream>
@@ -26,15 +27,15 @@ void splamClean(int argc, char* argv[]) {
     // GMessage("> outfname_spliced: %s\n", outfname_spliced.chars());
     // GMessage("> outfname_nspliced: %s\n", outfname_nspliced.chars());
 
-    GMessage("\n********************************************\n");
-    GMessage("** Step 4: SPLAM filtering out reads\n");
-    GMessage("********************************************\n");
+    GMessage("\n###########################################\n");
+    GMessage("## Step 4: SPLAM filtering out reads\n");
+    GMessage("###########################################\n");
     robin_hdd_hm rm_rd_hm;
     GStr outfname_spliced_good = filterSpurJuncs(outfname_junc_score, rm_rd_hm);
 
-    GMessage("\n********************************************\n");
+    GMessage("\n###########################################\n");
     GMessage("** Step 5: Updating NH tags in final clean BAM file\n");
-    GMessage("********************************************\n");
+    GMessage("###########################################\n");
     TInputFiles final_bam_records;
     final_bam_records.setup(VERSION, argc, argv);
     final_bam_records.addFile(get_full_path(outfname_nspliced.chars()).c_str());
@@ -50,12 +51,18 @@ void splamClean(int argc, char* argv[]) {
     int b_end=0, b_start=0;
 
     // int final_b = 0;
-    double percentage = 0;
-    double aln_count_good_counter = 0;
+    // double percentage = 0;
+    // double aln_count_good_counter = 0;
+    // progressbar *progress = progressbar_new("Loading", ALN_COUNT_GOOD);
+    progressbar bar(ALN_COUNT_GOOD);
+    bar.set_opening_bracket_char("[INFO] SPLAM! [");
+
     while ((irec=final_bam_records.next())!=NULL) {
-        aln_count_good_counter ++;
-        percentage = aln_count_good_counter/ALN_COUNT_GOOD;
-        printProgress(percentage);
+        // aln_count_good_counter ++;
+        // percentage = aln_count_good_counter/ALN_COUNT_GOOD;
+        // printProgress(percentage);
+        bar.update();
+
         brec=irec->brec;
         int endpos=brec->end;
 
@@ -134,7 +141,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm) {
 
     GSamReader bam_reader_spliced(outfname_spliced.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
-    auto start=std::chrono::high_resolution_clock::now();
     int spur_cnt = 0;
 
     GArray<CJunc> rm_juncs;
@@ -159,11 +165,25 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm) {
     int aln_spliced_counter = 0;
 
     // std::cout << "ALN_COUNT_SPLICED:" << ALN_COUNT_SPLICED << std::endl;
+
+
+    progressbar bar(ALN_COUNT_SPLICED);
+    bar.set_opening_bracket_char("[INFO] SPLAM! [");
+    // for(int i=0; i < 100; i++)
+    // {
+    // // Do some stuff
+    // progressbar_inc(progress);
+    // }
+    // progressbar_finish(progress);
+
     while ((brec=bam_reader_spliced.next())!=NULL) {
-        aln_spliced_counter++;
-        GMessage("aln_spliced_counter: %d;  ALN_COUNT_SPLICED: %d\n", aln_spliced_counter, ALN_COUNT_SPLICED);
-        percentage = aln_spliced_counter/ALN_COUNT_SPLICED;
-        printProgress(percentage);
+        // aln_spliced_counter++;
+        // GMessage("aln_spliced_counter: %d;  ALN_COUNT_SPLICED: %d\n", aln_spliced_counter, ALN_COUNT_SPLICED);
+        // percentage = aln_spliced_counter/ALN_COUNT_SPLICED;
+        // printProgress(percentage);
+
+        bar.update();
+
 
         uint32_t dupcount=0;
         int endpos=brec->end;
@@ -201,18 +221,8 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm) {
     ALN_COUNT_GOOD += ALN_COUNT_NSPLICED;
     
     delete outfile_discard;
-    // std::cout << "Done delete outfile_discard!" << std::endl;
     delete outfile_spliced_good;
-    // std::cout << "Done delete outfile_spliced_good!" << std::endl;
-
-
-    auto end =std::chrono::high_resolution_clock::now();
-    auto duration = std::chrono::duration_cast<std::chrono::seconds>(end - start);
     GMessage("[INFO] %d spurious alignments were removed.\n", spur_cnt);
-    GMessage("[INFO] Completed in %f seconds.\n", duration.count());
-
-    // std::cout << spur_cnt << " spurious alignments were removed." << std::endl;
-    // std::cout << "Completed in " << duration.count() << " seconds" << std::endl;
     
     return outfname_spliced_good;
 }

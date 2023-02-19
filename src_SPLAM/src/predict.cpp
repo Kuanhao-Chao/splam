@@ -20,9 +20,9 @@ GStr splamPredict() {
      * Step 1: (1) Iterating through a BAM file / BAM files
      *         (2) Accumulate junctions in a BED file.
     *********************************************/
-    GMessage("********************************************\n");
-    GMessage("** Step 1: generating spliced junctions in BED\n");
-    GMessage("********************************************\n");
+    GMessage("###########################################\n");
+    GMessage("## Step 1: generating spliced junctions in BED\n");
+    GMessage("###########################################\n");
     GStr outfname_junc_bed = splamJExtract();
     // std::unordered_map<std::string, int> chrs = get_hg38_chrom_size("HISAT2");
     faidx_t * ref_faidx = fastaIndex();
@@ -33,58 +33,58 @@ GStr splamPredict() {
      *         (2) Writing FASTA file of donors and acceptors
      *         (3) checking the junctions. (GT-AG ratio)
     *********************************************/
-    GMessage("\n********************************************\n");
-    GMessage("** Step 2: getting coordinates of donors and acceptors\n");
-    GMessage("********************************************\n");
+    GMessage("\n###########################################\n");
+    GMessage("## Step 2: getting coordinates of donors and acceptors\n");
+    GMessage("###########################################\n");
 
     robin_hdd_hm doner_dimers;
     robin_hdd_hm acceptor_dimers;
     GStr outfname_junc_fa = splamCreateFasta(outfname_junc_bed, doner_dimers, acceptor_dimers, ref_faidx);
 
 
-    std::cout << ">> Donor dimers: " << std::endl;
-    for (auto i : doner_dimers) {
-        std::cout << "\t" << i.first << ": " << i.second << std::endl;
-    }
-
-    std::cout << ">> Acceptor dimers: " << std::endl;
-    for (auto i : acceptor_dimers) {
-        std::cout << "\t" << i.first << ": " << i.second << std::endl;
-    }
-
-    // std::cout << "[Info] Donor dimers: " << std::endl;
-    // int cnl_donor_ct=0, ncnl_donor_ct=0, cnl_acceptor_ct=0, ncnl_acceptor_ct = 0;
+    // std::cout << ">> Donor dimers: " << std::endl;
     // for (auto i : doner_dimers) {
-    //     if (std::strcmp(i.first.c_str(), "GT") == 0) {
-    //         cnl_donor_ct += i.second;
-    //     } else {
-    //         ncnl_donor_ct += i.second;
-    //     }
-    //     // std::cout << "\t" << i.first << ": " << i.second << std::endl;
+    //     std::cout << "\t" << i.first << ": " << i.second << std::endl;
     // }
-    // GMessage("\tCanonical donor\t\t: %d\n", cnl_donor_ct);
-    // GMessage("\tNoncanonical donor\t: %d\n", ncnl_donor_ct);
 
-    // std::cout << "[Info] Acceptor dimers: " << std::endl;
+    // std::cout << ">> Acceptor dimers: " << std::endl;
     // for (auto i : acceptor_dimers) {
-    //     if (std::strcmp(i.first.c_str(), "AG") == 0) {
-    //         cnl_acceptor_ct += i.second;
-    //     } else {
-    //         ncnl_acceptor_ct += i.second;
-    //     }
-    //     // std::cout << "\t" << i.first << ": " << i.second << std::endl;
+    //     std::cout << "\t" << i.first << ": " << i.second << std::endl;
     // }
 
-    // GMessage("\tCanonical acceptor\t: %d\n", cnl_acceptor_ct);
-    // GMessage("\tNoncanonical donor\t: %d\n", ncnl_acceptor_ct);
+    std::cout << "[Info] Donor dimers: " << std::endl;
+    int cnl_donor_ct=0, ncnl_donor_ct=0, cnl_acceptor_ct=0, ncnl_acceptor_ct = 0;
+    for (auto i : doner_dimers) {
+        if (std::strcmp(i.first.c_str(), "GT") == 0) {
+            cnl_donor_ct += i.second;
+        } else {
+            ncnl_donor_ct += i.second;
+        }
+        // std::cout << "\t" << i.first << ": " << i.second << std::endl;
+    }
+    GMessage("\tCanonical donor\t\t: %d\n", cnl_donor_ct);
+    GMessage("\tNoncanonical donor\t: %d\n", ncnl_donor_ct);
+
+    std::cout << "[Info] Acceptor dimers: " << std::endl;
+    for (auto i : acceptor_dimers) {
+        if (std::strcmp(i.first.c_str(), "AG") == 0) {
+            cnl_acceptor_ct += i.second;
+        } else {
+            ncnl_acceptor_ct += i.second;
+        }
+        // std::cout << "\t" << i.first << ": " << i.second << std::endl;
+    }
+
+    GMessage("\tCanonical acceptor\t: %d\n", cnl_acceptor_ct);
+    GMessage("\tNoncanonical donor\t: %d\n", ncnl_acceptor_ct);
 
 
     /*********************************************
      * Step 3: SPLAM model prediction
     *********************************************/
-    GMessage("\n********************************************\n");
-    GMessage("** Step 3: SPLAM model prediction\n");
-    GMessage("********************************************\n");
+    GMessage("\n###########################################\n");
+    GMessage("## Step 3: SPLAM model prediction\n");
+    GMessage("###########################################\n");
     Py_Initialize();
     // GStr python_f = "./script/splam.py";
     GStr outfname_junc_score(out_dir + "/junction_score.bed");
