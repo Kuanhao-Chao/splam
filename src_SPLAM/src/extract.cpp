@@ -9,13 +9,12 @@
 #include <gclib/GBase.h>
 
 GStr splamJExtract() {
-    int num_samples=in_records.start();
     GStr outfname_junc_bed = out_dir + "/junction.bed";
-    
+
     outfile_spliced = new GSamWriter(outfname_spliced, in_records.header(), GSamFile_BAM);
 
     GMessage("[INFO] Extracting junctions ...\n");
-    GMessage("[INFO] Number of samples\t: %d\n", num_samples);
+    // GMessage("[INFO] Number of samples\t: %d\n", num_samples);
     GMessage("[INFO] Output directory\t\t: %s\n", out_dir.chars());
     GMessage("[INFO] Output Junction file\t: %s\n", outfname_junc_bed.chars());
 
@@ -61,6 +60,7 @@ GStr splamJExtract() {
             outfile_spliced->write(brec);
             ALN_COUNT_SPLICED++;
         } else {
+            outfile_cleaned->write(brec);
             ALN_COUNT_NSPLICED++;
         }
         ALN_COUNT++;
