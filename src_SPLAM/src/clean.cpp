@@ -47,73 +47,76 @@ void splamClean(int argc, char* argv[]) {
     GMessage("###########################################\n");
 
 
-    TInputFiles final_bam_records;
-    final_bam_records.setup(VERSION, argc, argv);
+    // TInputFiles final_bam_records;
+    // final_bam_records.setup(VERSION, argc, argv);
 
-    for (int i=0; i<in_records.freaders.Count(); i++) {
-        GStr fname = in_records.freaders[i]->fname.chars();
-        GMessage(">> fname: %s\n", fname.chars());
-        final_bam_records.addFile(fname.chars());
-    }
-    // final_bam_records.addFile(get_full_path(outfname_nspliced.chars()).c_str());
-    // final_bam_records.addFile(get_full_path(outfname_spliced_good.chars()).c_str());
-    int num_samples=final_bam_records.start();
+    // for (int i=0; i<in_records.freaders.Count(); i++) {
+    //     GStr fname = in_records.freaders[i]->fname.chars();
+    //     GMessage(">> fname: %s\n", fname.chars());
+    //     final_bam_records.addFile(fname.chars());
+    // }
+    // // final_bam_records.addFile(get_full_path(outfname_nspliced.chars()).c_str());
+    // // final_bam_records.addFile(get_full_path(outfname_spliced_good.chars()).c_str());
+    // int num_samples=final_bam_records.start();
 
-    outfile_cleaned = new GSamWriter(outfname_cleaned, final_bam_records.header(), GSamFile_BAM);
-    outfile_discard = new GSamWriter(outfname_discard, final_bam_records.header(), GSamFile_BAM);
+    // outfile_cleaned = new GSamWriter(outfname_cleaned, final_bam_records.header(), GSamFile_BAM);
+    // outfile_discard = new GSamWriter(outfname_discard, final_bam_records.header(), GSamFile_BAM);
 
-    // Reading BAM file.
-    int counter = 0, prev_tid=-1;
-    GStr prev_refname;
-    GVec<uint64_t> bcov(2048*1024);
-    std::vector<std::pair<float,uint64_t>> bsam(2048*1024,{0,1}); // number of samples. 1st - current average; 2nd - total number of values
-    int b_end=0, b_start=0;
+    // // Reading BAM file.
+    // int counter = 0, prev_tid=-1;
+    // GStr prev_refname;
+    // GVec<uint64_t> bcov(2048*1024);
+    // std::vector<std::pair<float,uint64_t>> bsam(2048*1024,{0,1}); // number of samples. 1st - current average; 2nd - total number of values
+    // int b_end=0, b_start=0;
 
-    // int final_b = 0;
-    // double percentage = 0;
-    // double aln_count_good_counter = 0;
-    // progressbar *progress = progressbar_new("Loading", ALN_COUNT_GOOD);
-    progressbar bar(ALN_COUNT);
-    bar.set_opening_bracket_char("[INFO] SPLAM! Updating NH tags \n\t[");
 
-    while ((irec=final_bam_records.next())!=NULL) {
-        bar.update();
+    // progressbar bar(ALN_COUNT);
+    // bar.set_opening_bracket_char("[INFO] SPLAM! Updating NH tags \n\t[");
 
-        brec=irec->brec;
-        int endpos=brec->end;
+    // while ((irec=final_bam_records.next())!=NULL) {
+    //     bar.update();
 
-        std::string kv = brec->name();
-        kv = kv + "_" + std::to_string(brec->pairOrder());
+    //     brec=irec->brec;
+    //     int endpos=brec->end;
+
+    //     std::string kv = brec->name();
+    //     kv = kv + "_" + std::to_string(brec->pairOrder());
 
 
 
-        char* seq = brec->sequence();
-        char* cigar_seq = brec->cigar();
+    //     char* seq = brec->sequence();
+    //     char* cigar_seq = brec->cigar();
 
-        std::string rm_rd_key = kv + "_" + seq + "_" + cigar_seq + "_" + std::to_string(brec->flags()) + "_" + std::to_string(brec->start);
+    //     std::string rm_rd_key = kv + "_" + seq + "_" + cigar_seq + "_" + std::to_string(brec->flags()) + "_" + std::to_string(brec->start);
 
-        free(seq);
-        free(cigar_seq);
+    //     free(seq);
+    //     free(cigar_seq);
 
-        if (rm_rd_set.find(rm_rd_key) != rm_rd_set.end()) {
-            // The alignment is found in the removed set.
-            outfile_discard->write(brec);
-        } else {
-            if (rm_rd_hm.find(kv) != rm_rd_hm.end()) {
-                // Update NH tag.
-                // GMessage("Before updating NH tag: %d\n", brec->tag_int("NH", 0));   
-                int new_nh = brec->tag_int("NH", 0) - rm_rd_hm[kv];
-                // GMessage("New NH tag            : %d\n", new_nh);   
+    //     if (rm_rd_set.find(rm_rd_key) != rm_rd_set.end()) {
+    //         // The alignment is found in the removed set.
+    //         outfile_discard->write(brec);
+    //     } else {
+    //         if (rm_rd_hm.find(kv) != rm_rd_hm.end()) {
+    //             // Update NH tag.
+    //             int new_nh = brec->tag_int("NH", 0) - rm_rd_hm[kv];
 
-                brec->add_int_tag("NH", new_nh);
-                // GMessage("After updating NH tag: %d\n\n\n", brec->tag_int("NH", 0));
-            }
-            outfile_cleaned->write(brec);
-        }
-    }
-    GMessage("\n");
+    //             brec->add_int_tag("NH", new_nh);
+    //         }
+    //         outfile_cleaned->write(brec);
+    //     }
+    // }
+    // GMessage("\n");
 
-    final_bam_records.stop();
+
+
+
+
+
+
+
+
+
+    // final_bam_records.stop();
 
     delete outfile_discard;
     delete outfile_cleaned;
@@ -179,8 +182,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm, std::unor
 
     GSamReader bam_reader_spliced(outfname_spliced.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
-    int spur_cnt = 0;
-
     std::unordered_set<std::string> rm_juncs;
     GMessage("Before rm_juncs.size()  %d\n", rm_juncs.size());
     loadBed(outfname_junc_score, rm_juncs);
@@ -230,7 +231,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm, std::unor
             }
         }
         if (spur) {
-            spur_cnt++;
             // std::cout << "~~ SPLAM!" << std::endl;
             std::string kv = brec->name();
             kv = kv + "_" + std::to_string(brec->pairOrder());
@@ -245,16 +245,29 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm, std::unor
             kv = kv + "_" + seq + "_" + cigar_seq + "_" + std::to_string(brec->flags()) + "_" + std::to_string(brec->start);
             rm_rd_set.insert(kv);
             // GMessage(">> rm_rd_set size: %d;  ALN_COUNT_BAD: %d\n", rm_rd_set.size(), ALN_COUNT_BAD);
-
+            
+            outfile_discard->write(brec);
             ALN_COUNT_BAD++;
             free(seq);
             free(cigar_seq);
         } else {
+            outfile_cleaned->write(brec);
             ALN_COUNT_GOOD++;
         }
     }
     GMessage("\n");
     ALN_COUNT_GOOD += ALN_COUNT_NSPLICED;
     GMessage("[INFO] %d spurious alignments were removed.\n", ALN_COUNT_BAD);
+
+
+    // Writing out auxiliary file 
+    std::ofstream NH_tag_f;
+    GStr NH_tag_fname = out_dir + "/NH_tag_fix.csv";
+    NH_tag_f.open(NH_tag_fname.chars());   
+    for (auto ele : rm_rd_hm) {
+        NH_tag_f << ele.first << ","  << ele.second  << std::endl;
+    }
+    NH_tag_f.close();
+
     return outfname_spliced_good;
 }

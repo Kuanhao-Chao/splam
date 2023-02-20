@@ -85,8 +85,14 @@ int main(int argc, char* argv[]) {
     processOptions(argc, argv);
 
     outfname_spliced = out_dir + "/TMP/spliced.bam";
-    outfname_discard = out_dir + "/discard.bam";
     outfname_cleaned = out_dir + "/cleaned.bam";
+    outfname_discard = out_dir + "/discard.bam";
+
+    // GMessage(">> in_records.header(): %s\n", in_records.header());
+    
+    int num_samples=in_records.start();
+    outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
+    outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
 
     std::filesystem::create_directories(out_dir.chars());
 
