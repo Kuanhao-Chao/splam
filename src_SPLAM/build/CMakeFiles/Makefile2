@@ -83,7 +83,7 @@ clean: CMakeFiles/SPLAM.dir/clean
 CMakeFiles/htslib.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/htslib.dir/build.make CMakeFiles/htslib.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/htslib.dir/build.make CMakeFiles/htslib.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=13,14,15,16,17,18,19,20 "Built target htslib"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=14,15,16,17,18,19,20,21 "Built target htslib"
 .PHONY : CMakeFiles/htslib.dir/all
 
 # Build rule for subdir invocation for target.
@@ -109,12 +109,12 @@ CMakeFiles/htslib.dir/clean:
 CMakeFiles/SPLAM.dir/all: CMakeFiles/htslib.dir/all
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12 "Built target SPLAM"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13 "Built target SPLAM"
 .PHONY : CMakeFiles/SPLAM.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/SPLAM.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles 20
+	$(CMAKE_COMMAND) -E cmake_progress_start /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles 21
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/SPLAM.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles 0
 .PHONY : CMakeFiles/SPLAM.dir/rule

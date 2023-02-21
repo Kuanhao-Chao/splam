@@ -427,6 +427,30 @@ src/tmerge.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/tmerge.cpp.s
 .PHONY : src/tmerge.cpp.s
 
+src/update.o: src/update.cpp.o
+.PHONY : src/update.o
+
+# target to build an object file
+src/update.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/update.cpp.o
+.PHONY : src/update.cpp.o
+
+src/update.i: src/update.cpp.i
+.PHONY : src/update.i
+
+# target to preprocess a source file
+src/update.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/update.cpp.i
+.PHONY : src/update.cpp.i
+
+src/update.s: src/update.cpp.s
+.PHONY : src/update.s
+
+# target to generate assembly for a file
+src/update.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/SPLAM.dir/build.make CMakeFiles/SPLAM.dir/src/update.cpp.s
+.PHONY : src/update.cpp.s
+
 src/util.o: src/util.cpp.o
 .PHONY : src/util.o
 
@@ -495,6 +519,9 @@ help:
 	@echo "... src/tmerge.o"
 	@echo "... src/tmerge.i"
 	@echo "... src/tmerge.s"
+	@echo "... src/update.o"
+	@echo "... src/update.i"
+	@echo "... src/update.s"
 	@echo "... src/util.o"
 	@echo "... src/util.i"
 	@echo "... src/util.s"

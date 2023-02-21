@@ -19,6 +19,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/SPLAM.dir/src/splam.cpp.o.d"
   "CMakeFiles/SPLAM.dir/src/tmerge.cpp.o"
   "CMakeFiles/SPLAM.dir/src/tmerge.cpp.o.d"
+  "CMakeFiles/SPLAM.dir/src/update.cpp.o"
+  "CMakeFiles/SPLAM.dir/src/update.cpp.o.d"
   "CMakeFiles/SPLAM.dir/src/util.cpp.o"
   "CMakeFiles/SPLAM.dir/src/util.cpp.o.d"
   "SPLAM"

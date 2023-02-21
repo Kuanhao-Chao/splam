@@ -1,16 +1,27 @@
-mkdir ../results/800bp/$1/assembly/BEFORE
-mkdir ../results/800bp/$1/assembly/AFTER
+SAMPLE=$1
+TARGET=$2
 
 SEQ_LEN=800
-if [ $2 = "BEFORE" ]
+if [ $TARGET = "BEFORE" ]
 then
-    samtools index ../Dataset/$1/$1.bam
-    stringtie -o ../results/800bp/$1/assembly/BEFORE/$1.gtf ../Dataset/$1/$1.bam
+    mkdir ./results/$SAMPLE/assembly
+    mkdir ./results/$SAMPLE/assembly/BEFORE
+
+    echo "samtools index ../Dataset/$SAMPLE/$SAMPLE.bam"
+    samtools index ../Dataset/$SAMPLE/$SAMPLE.bam
+    
+    echo "stringtie -o ./results/$SAMPLE/assembly/BEFORE/$SAMPLE.gtf ../Dataset/$SAMPLE/$SAMPLE.bam"
+    stringtie -o ./results/$SAMPLE/assembly/BEFORE/$SAMPLE.gtf ../Dataset/$SAMPLE/$SAMPLE.bam
 fi
 
-if [ $2 = "AFTER" ]
+if [ $TARGET = "AFTER" ]
 then
-    samtools index  ../results/800bp/$1/cleaned.sort.bam
-    stringtie -o ../results/800bp/$1/assembly/AFTER/$1.gtf  ../results/800bp/$1/cleaned.sort.bam
+    mkdir ./results/$SAMPLE/assembly
+    mkdir ./results/$SAMPLE/assembly/AFTER
 
+    echo "samtools index /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.fix.sort.bam"
+    samtools index /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.fix.sort.bam
+    
+    echo "stringtie -o ./results/$SAMPLE/assembly/AFTER/$SAMPLE.gtf /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.fix.sort.bam"
+    stringtie -o ./results/$SAMPLE/assembly/AFTER/$SAMPLE.gtf /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.fix.sort.bam
 fi

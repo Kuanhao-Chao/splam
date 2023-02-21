@@ -11,6 +11,7 @@
 #include "tmerge.h"
 #include "util.h"
 #include "junc.h"
+#include "update.h"
 // #include "filter.h"
 
 
@@ -29,6 +30,7 @@ void processOptions(int argc, char* argv[]);
 void processOptionsJExtract(GArgs& args);
 void processOptionsPredict(GArgs& args);
 void processOptionsClean(GArgs& args);
+void processOptionsNHUpdate(GArgs& args);
 
 CommandMode COMMAND_MODE = UNSET;
 GStr command_str;
@@ -43,7 +45,7 @@ bool verbose = false;
 TInputFiles in_records;
 TInputRecord* irec=NULL;
 
-float threshold = 0.1;
+float threshold = 0.3;
 
 GStr outfname_spliced;
 GStr outfname_discard;
@@ -91,23 +93,30 @@ int main(int argc, char* argv[]) {
     // GMessage(">> in_records.header(): %s\n", in_records.header());
     
     int num_samples=in_records.start();
-    outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
-    outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
-
-    std::filesystem::create_directories(out_dir.chars());
 
     GStr tmp_dir(out_dir + "/TMP");
+    std::filesystem::create_directories(out_dir.chars());
     std::filesystem::create_directories(tmp_dir.chars());
 
     create_CHRS();
-    
+
     if (COMMAND_MODE == J_EXTRACT) {
         splamJExtract();
     } else if (COMMAND_MODE == PREDICT) {
         splamPredict();
     } else if (COMMAND_MODE == CLEAN) {
         splamClean(argc, argv);
+    } else if (COMMAND_MODE == NH_UPDATE) {
+        splamNHUpdate(argc, argv);
+    } else if (COMMAND_MODE == ALL) {
+        splamNHUpdate(argc, argv);
     }
+
+    GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
+    GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
+    GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
+    GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
+    GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
     return 0;
 }
 
@@ -146,6 +155,12 @@ void processOptions(int argc, char* argv[]) {
     } else if (strcmp(command_str.chars(), "clean") == 0) {
         GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
         COMMAND_MODE = CLEAN;
+    } else if (strcmp(command_str.chars(), "nh-update") == 0) {
+        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
+        COMMAND_MODE = NH_UPDATE;
+    } else if (strcmp(command_str.chars(), "all") == 0) {
+        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
+        COMMAND_MODE = ALL;
     } else {
         usage();
         GERROR("\n[ERROR] The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
@@ -176,8 +191,11 @@ void processOptions(int argc, char* argv[]) {
         GMessage(">> out_dir           : %s\n", out_dir.chars());
     } else if (COMMAND_MODE == PREDICT) {
         processOptionsPredict(args);
-
     } else if (COMMAND_MODE == CLEAN) {
+        processOptionsClean(args);
+    } else if (COMMAND_MODE == NH_UPDATE) {
+        processOptionsNHUpdate(args);
+    } else if (COMMAND_MODE == ALL) {
         processOptionsClean(args);
     }
 
@@ -190,12 +208,13 @@ void processOptions(int argc, char* argv[]) {
     }
     infname_bam=args.nextNonOpt(); 
 
+
     // if (COMMAND_MODE == J_EXTRACT) {
     const char* ifn=NULL;
     while ( (ifn=args.nextNonOpt())!=NULL) {
         //input alignment files
         std::string absolute_ifn = get_full_path(ifn);
-        // std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
+        std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
         in_records.addFile(absolute_ifn.c_str());
     }
     // } 
@@ -318,6 +337,20 @@ void processOptionsClean(GArgs& args) {
         }
     }
     
+    // -o / --output
+    out_dir=args.getOpt('o');    
+    if (out_dir.is_empty()) {
+        out_dir=args.getOpt("output");
+        if (out_dir.is_empty()) {
+            usage();
+            GMessage("\n[ERROR] output directory must be provided (-o / --output)!\n");
+            exit(1);
+        }
+    }
+}
+
+
+void processOptionsNHUpdate(GArgs& args) {
     // -o / --output
     out_dir=args.getOpt('o');    
     if (out_dir.is_empty()) {

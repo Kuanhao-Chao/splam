@@ -139,10 +139,24 @@ CMakeFiles/SPLAM.dir/src/clean.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/SPLAM.dir/src/clean.cpp.s"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/clean.cpp -o CMakeFiles/SPLAM.dir/src/clean.cpp.s
 
+CMakeFiles/SPLAM.dir/src/update.cpp.o: CMakeFiles/SPLAM.dir/flags.make
+CMakeFiles/SPLAM.dir/src/update.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/update.cpp
+CMakeFiles/SPLAM.dir/src/update.cpp.o: CMakeFiles/SPLAM.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/SPLAM.dir/src/update.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SPLAM.dir/src/update.cpp.o -MF CMakeFiles/SPLAM.dir/src/update.cpp.o.d -o CMakeFiles/SPLAM.dir/src/update.cpp.o -c /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/update.cpp
+
+CMakeFiles/SPLAM.dir/src/update.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/SPLAM.dir/src/update.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/update.cpp > CMakeFiles/SPLAM.dir/src/update.cpp.i
+
+CMakeFiles/SPLAM.dir/src/update.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/SPLAM.dir/src/update.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/update.cpp -o CMakeFiles/SPLAM.dir/src/update.cpp.s
+
 CMakeFiles/SPLAM.dir/src/util.cpp.o: CMakeFiles/SPLAM.dir/flags.make
 CMakeFiles/SPLAM.dir/src/util.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/util.cpp
 CMakeFiles/SPLAM.dir/src/util.cpp.o: CMakeFiles/SPLAM.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/SPLAM.dir/src/util.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/SPLAM.dir/src/util.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SPLAM.dir/src/util.cpp.o -MF CMakeFiles/SPLAM.dir/src/util.cpp.o.d -o CMakeFiles/SPLAM.dir/src/util.cpp.o -c /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/util.cpp
 
 CMakeFiles/SPLAM.dir/src/util.cpp.i: cmake_force
@@ -156,7 +170,7 @@ CMakeFiles/SPLAM.dir/src/util.cpp.s: cmake_force
 CMakeFiles/SPLAM.dir/src/tmerge.cpp.o: CMakeFiles/SPLAM.dir/flags.make
 CMakeFiles/SPLAM.dir/src/tmerge.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/tmerge.cpp
 CMakeFiles/SPLAM.dir/src/tmerge.cpp.o: CMakeFiles/SPLAM.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/SPLAM.dir/src/tmerge.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/SPLAM.dir/src/tmerge.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SPLAM.dir/src/tmerge.cpp.o -MF CMakeFiles/SPLAM.dir/src/tmerge.cpp.o.d -o CMakeFiles/SPLAM.dir/src/tmerge.cpp.o -c /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/tmerge.cpp
 
 CMakeFiles/SPLAM.dir/src/tmerge.cpp.i: cmake_force
@@ -170,7 +184,7 @@ CMakeFiles/SPLAM.dir/src/tmerge.cpp.s: cmake_force
 CMakeFiles/SPLAM.dir/src/GSam.cpp.o: CMakeFiles/SPLAM.dir/flags.make
 CMakeFiles/SPLAM.dir/src/GSam.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/GSam.cpp
 CMakeFiles/SPLAM.dir/src/GSam.cpp.o: CMakeFiles/SPLAM.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/SPLAM.dir/src/GSam.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/SPLAM.dir/src/GSam.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SPLAM.dir/src/GSam.cpp.o -MF CMakeFiles/SPLAM.dir/src/GSam.cpp.o.d -o CMakeFiles/SPLAM.dir/src/GSam.cpp.o -c /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/GSam.cpp
 
 CMakeFiles/SPLAM.dir/src/GSam.cpp.i: cmake_force
@@ -184,7 +198,7 @@ CMakeFiles/SPLAM.dir/src/GSam.cpp.s: cmake_force
 CMakeFiles/SPLAM.dir/include/gclib/GStr.cpp.o: CMakeFiles/SPLAM.dir/flags.make
 CMakeFiles/SPLAM.dir/include/gclib/GStr.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GStr.cpp
 CMakeFiles/SPLAM.dir/include/gclib/GStr.cpp.o: CMakeFiles/SPLAM.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/SPLAM.dir/include/gclib/GStr.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/SPLAM.dir/include/gclib/GStr.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SPLAM.dir/include/gclib/GStr.cpp.o -MF CMakeFiles/SPLAM.dir/include/gclib/GStr.cpp.o.d -o CMakeFiles/SPLAM.dir/include/gclib/GStr.cpp.o -c /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GStr.cpp
 
 CMakeFiles/SPLAM.dir/include/gclib/GStr.cpp.i: cmake_force
@@ -198,7 +212,7 @@ CMakeFiles/SPLAM.dir/include/gclib/GStr.cpp.s: cmake_force
 CMakeFiles/SPLAM.dir/include/gclib/GArgs.cpp.o: CMakeFiles/SPLAM.dir/flags.make
 CMakeFiles/SPLAM.dir/include/gclib/GArgs.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GArgs.cpp
 CMakeFiles/SPLAM.dir/include/gclib/GArgs.cpp.o: CMakeFiles/SPLAM.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/SPLAM.dir/include/gclib/GArgs.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/SPLAM.dir/include/gclib/GArgs.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SPLAM.dir/include/gclib/GArgs.cpp.o -MF CMakeFiles/SPLAM.dir/include/gclib/GArgs.cpp.o.d -o CMakeFiles/SPLAM.dir/include/gclib/GArgs.cpp.o -c /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GArgs.cpp
 
 CMakeFiles/SPLAM.dir/include/gclib/GArgs.cpp.i: cmake_force
@@ -212,7 +226,7 @@ CMakeFiles/SPLAM.dir/include/gclib/GArgs.cpp.s: cmake_force
 CMakeFiles/SPLAM.dir/include/gclib/GBase.cpp.o: CMakeFiles/SPLAM.dir/flags.make
 CMakeFiles/SPLAM.dir/include/gclib/GBase.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GBase.cpp
 CMakeFiles/SPLAM.dir/include/gclib/GBase.cpp.o: CMakeFiles/SPLAM.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Building CXX object CMakeFiles/SPLAM.dir/include/gclib/GBase.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building CXX object CMakeFiles/SPLAM.dir/include/gclib/GBase.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/SPLAM.dir/include/gclib/GBase.cpp.o -MF CMakeFiles/SPLAM.dir/include/gclib/GBase.cpp.o.d -o CMakeFiles/SPLAM.dir/include/gclib/GBase.cpp.o -c /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GBase.cpp
 
 CMakeFiles/SPLAM.dir/include/gclib/GBase.cpp.i: cmake_force
@@ -230,6 +244,7 @@ SPLAM_OBJECTS = \
 "CMakeFiles/SPLAM.dir/src/extract.cpp.o" \
 "CMakeFiles/SPLAM.dir/src/predict.cpp.o" \
 "CMakeFiles/SPLAM.dir/src/clean.cpp.o" \
+"CMakeFiles/SPLAM.dir/src/update.cpp.o" \
 "CMakeFiles/SPLAM.dir/src/util.cpp.o" \
 "CMakeFiles/SPLAM.dir/src/tmerge.cpp.o" \
 "CMakeFiles/SPLAM.dir/src/GSam.cpp.o" \
@@ -245,6 +260,7 @@ SPLAM: CMakeFiles/SPLAM.dir/src/junc_func.cpp.o
 SPLAM: CMakeFiles/SPLAM.dir/src/extract.cpp.o
 SPLAM: CMakeFiles/SPLAM.dir/src/predict.cpp.o
 SPLAM: CMakeFiles/SPLAM.dir/src/clean.cpp.o
+SPLAM: CMakeFiles/SPLAM.dir/src/update.cpp.o
 SPLAM: CMakeFiles/SPLAM.dir/src/util.cpp.o
 SPLAM: CMakeFiles/SPLAM.dir/src/tmerge.cpp.o
 SPLAM: CMakeFiles/SPLAM.dir/src/GSam.cpp.o
@@ -255,7 +271,7 @@ SPLAM: CMakeFiles/SPLAM.dir/build.make
 SPLAM: /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/libhts.a
 SPLAM: /Users/chaokuan-hao/miniconda3/lib/libpython3.8.dylib
 SPLAM: CMakeFiles/SPLAM.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Linking CXX executable SPLAM"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Linking CXX executable SPLAM"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/SPLAM.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
