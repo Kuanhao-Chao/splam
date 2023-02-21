@@ -22,6 +22,7 @@ def main(argv):
         if float(j_score) < threshold:
             print(">> chr, start, end, strand: ", chr, start, end, strand)
             invalid_juncs.add((chr, start, end, strand))
+            # invalid_juncs.add((chr, start, end))
 
     print("After invalid_juncs.size(): ", len(invalid_juncs))
 
@@ -33,12 +34,21 @@ def main(argv):
     discard_file = pysam.AlignmentFile(MODEL_OUTPUT_BASE + "/BAM/" + argv[0] + ".discard.bam", "wb", template=samfile)
 
     for read in samfile.fetch():
-        if read.is_forward:
-            strand = "+"
-        elif read.is_reverse:
-            strand = "-"
-        else:
-            strand = "?"
+
+        strand = "."
+        try:
+            strand = read.get_tag("XS")
+        except:
+            pass
+        # print("xs_tag: ", xs_tag)
+        
+        
+        # if read.is_forward:
+        #     strand = "+"
+        # elif read.is_reverse:
+        #     strand = "-"
+        # else:
+        #     strand = "?"
 
         # print(read.reference_start, " - ", read.reference_end)
         # print("read.reference: ", read.reference_name)
@@ -57,9 +67,8 @@ def main(argv):
                 # print(">> ", (read.reference_name , accum_len, accum_len+length, strand))
                 if ((read.reference_name , str(accum_len), str(accum_len+length), strand) in invalid_juncs):
                     keep_read = False
-                    print((read.reference_name , accum_len, accum_len+length, strand))
+                    print((read.reference_name , accum_len, accum_len+length, strand, read.cigarstring))
                     # break
-                # accum_len += length
             accum_len += length
             counter += 1
         # print("\n\n")

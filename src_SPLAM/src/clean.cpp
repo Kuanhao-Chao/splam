@@ -17,7 +17,7 @@
 #include <Python.h>
 #include <gclib/GStr.h>
 
-void splamClean(int argc, char* argv[]) {
+std::unordered_set<std::string>* splamClean(int argc, char* argv[]) {
     GStr outfname_junc_score = splamPredict();
 
     /*********************************************
@@ -32,14 +32,15 @@ void splamClean(int argc, char* argv[]) {
     GMessage("## Step 4: SPLAM filtering out reads\n");
     GMessage("###########################################\n\n");
     robin_hdd_hm rm_rd_hm;
-    std::unordered_set<std::string> rm_rd_set;
+    static std::unordered_set<std::string> rm_rd_set;
 
     GMessage(">> rm_rd_set size %d\n", rm_rd_set.size());
     GStr outfname_spliced_good = filterSpurJuncs(outfname_junc_score, rm_rd_hm, rm_rd_set);
     GMessage(">> rm_rd_set size %d\n", rm_rd_set.size());
 
     delete outfile_discard;
-    delete outfile_cleaned;
+    // delete outfile_cleaned;
+    return &rm_rd_set;
 }
 
 
@@ -58,14 +59,13 @@ void loadBed(GStr inbedname, std::unordered_set<std::string> &rm_juncs) {
             gline=tmp;
             cnt++;
         }
-        // GStr chr_str(chrname);
+        // if (junc[6].asDouble() <= threshold && junc[4].asInt() <= aln_num_thr) {
         if (junc[6].asDouble() <= threshold) {
-
             char* chrname =junc[0].detach();
             char* strand =junc[5].detach();
-            // CJunc j(junc[1].asInt()+1, junc[2].asInt(), *junc[5].detach(), chr_str);
             std::string j = std::to_string(junc[1].asInt()) + "_" + std::to_string(junc[2].asInt()) + "_" + strand + "_" + chrname;
             rm_juncs.insert(j);
+            // GMessage("%s %s %s %s\n", chrname, junc[1].chars(), junc[2].chars(), strand);
         }
     }
 }
@@ -75,8 +75,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm, std::unor
     GStr outfname_spliced_good;
     // GSamWriter* outfile_spliced_good = NULL;
     outfname_spliced_good = out_dir + "/TMP/spliced_good.bam";
-
-    // outfile_spliced_good = new GSamWriter(outfname_spliced_good, in_records.header(), GSamFile_BAM);
 
     GSamReader bam_reader_spliced(outfname_spliced.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
@@ -101,15 +99,14 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm, std::unor
         bool spur = false;
         // r_exon_count
         if (r_exon_count > 1) {
-            GMessage("cigar: %s\n", brec->cigar());
             for (int e=1; e<2; e++) {
 	            char strand = brec->spliceStrand();
                 std::string jnew_sub = std::to_string(brec->exons[e-1].end) + "_" + std::to_string(brec->exons[e].start-1) + "_" + strand + "_" + brec->refName();
+                // std::string jnew_sub = std::to_string(brec->exons[e-1].end) + "_" + std::to_string(brec->exons[e].start-1) + "_" + brec->refName();
                 if (rm_juncs.find(jnew_sub) != rm_juncs.end()) {
-
                     spur = true;
-                    GMessage("jnew_sub: %s\n", jnew_sub.c_str());
-
+                    // GMessage("cigar: %s\n", brec->cigar());
+                    // GMessage("jnew_sub: %s\n", jnew_sub.c_str());
                     break;
                 }
             }
@@ -133,7 +130,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score, robin_hdd_hm &rm_rd_hm, std::unor
             free(seq);
             free(cigar_seq);
         } else {
-            outfile_cleaned->write(brec);
+            // outfile_cleaned->write(brec);
             ALN_COUNT_GOOD++;
         }
     }

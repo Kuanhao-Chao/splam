@@ -256,7 +256,7 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_hm &doner_dimers, robin_
         if (strlen(donor_seq) > 400 || strlen(acceptor_seq) > 400) {
             continue;
         } else {
-            outfile_fa_junc << ">" << chromosome << ";" << std::to_string(donor) << ";" << std::to_string(acceptor) << ";" << strand << std::endl;
+            outfile_fa_junc << ">" << chromosome << ";" << std::to_string(donor) << ";" << std::to_string(acceptor) << ";" << strand << ";" << std::to_string(num_alignment) << std::endl;
             
             if (strlen(donor_seq) == 400 &&  strlen(acceptor_seq) == 400) {
                 outfile_fa_junc << donor_seq << acceptor_seq << std::endl;

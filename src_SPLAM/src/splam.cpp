@@ -46,6 +46,7 @@ TInputFiles in_records;
 TInputRecord* irec=NULL;
 
 float threshold = 0.3;
+int aln_num_thr = 4;
 
 GStr outfname_spliced;
 GStr outfname_discard;
