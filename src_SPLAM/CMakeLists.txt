@@ -63,7 +63,8 @@ add_executable(SPLAM
         src/junc_func.cpp  
         src/extract.cpp  
         src/predict.cpp  
-        src/clean.cpp  
+        src/clean.cpp 
+        src/update.cpp   
         src/util.cpp  
         # src/filter.cpp  
         src/tmerge.cpp

@@ -4,9 +4,9 @@ import sys
 
 def get_hg38_chrom_size(target):
     if target == "STAR":
-        f_chrs = open("../hg38_chrom_size_refseq.tsv", "r")
+        f_chrs = open("./hg38_chrom_size_refseq.tsv", "r")
     else:
-        f_chrs = open("../hg38_chrom_size.tsv", "r")
+        f_chrs = open("./hg38_chrom_size.tsv", "r")
     lines = f_chrs.read().splitlines()
     chrs = {}
     for line in lines:
@@ -29,34 +29,34 @@ def main(argv):
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     #################################
-    os.makedirs("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/", exist_ok=True)
-    fw_donor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor.bed", "w")
-    fw_acceptor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor.bed", "w")
+    os.makedirs("../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/", exist_ok=True)
+    fw_donor = open("../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor.bed", "w")
+    fw_acceptor = open("../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor.bed", "w")
     
-    d_a_bed = "../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/d_a.bed"
+    d_a_bed = "../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/d_a.bed"
     fw_da = open(d_a_bed, "w")
     JUNCS = set()
 
-    with open("../../Dataset/"+argv[0]+"/"+argv[0]+".bed", "r") as f:
+    with open("../Dataset/"+argv[0]+"/"+argv[0]+".bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             eles = line.split("\t")
-
+            if len(eles) == 1:
+                continue
+            print("eles: ", eles)
             chr = eles[0]
             junc_name = eles[3]
             score = eles[4]
             strand = eles[5]
 
-            lengths = eles[10].split(',')
-            len_1 = int(lengths[0])
-            len_2 = int(lengths[1])
+            
             if (strand == "+"):
-                donor = int(eles[1]) + len_1
-                acceptor = int(eles[2]) - len_2
+                donor = int(eles[1])
+                acceptor = int(eles[2])
                 splice_junc_len = acceptor - donor
             elif (strand == "-"):
-                acceptor = int(eles[1]) + len_1
-                donor = int(eles[2]) - len_2
+                acceptor = int(eles[1])
+                donor = int(eles[2])
                 splice_junc_len = donor - acceptor
 
             flanking_size = QUOTER_SEQ_LEN
@@ -74,6 +74,7 @@ def main(argv):
                 donor_e = donor + QUOTER_SEQ_LEN
                 acceptor_s = acceptor - QUOTER_SEQ_LEN
                 acceptor_e = acceptor + flanking_size
+
 
             if donor_e >= chrs[chr] or acceptor_e >= chrs[chr]:
                 continue

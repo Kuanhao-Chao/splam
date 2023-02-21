@@ -1,3 +1,16 @@
+"""All the utility function for SPLAM!
+
+    File name: prediction.py
+    Author: Kuan-Hao Chao
+    Email: kh.chao@cs.jhu.edu
+    Date created: 12/20/2022
+    Date last modified: 01/14/2023
+    Python Version: 3.8
+"""
+
+import os, sys
+sys.path.append(os.path.dirname(os.path.realpath(__file__)))
+
 import torch
 from torch.nn import Module, BatchNorm1d, LeakyReLU, Conv1d, ModuleList, Softmax, Sigmoid, Flatten, Dropout2d, Linear
 from torch.optim.lr_scheduler import LambdaLR
@@ -11,7 +24,7 @@ import numpy as np
 import warnings
 from progress.bar import Bar
 
-warnings.filterwarnings('ignore')
+warnings.filterwarnings("ignore")
 
 parser = argparse.ArgumentParser(description='SPLAM! splice junction prediction.')
 parser.add_argument('-f', metavar='<junction.fa>', required=True, help='the junction FASTA file in SPLAM! format')
@@ -84,6 +97,9 @@ class SpliceNN(Module):
         x, skip = self.skip1(self.conv1(x), 0)
         for m in self.residual_blocks:
             x, skip = m(x, skip)
+        #######################################
+        # predicting splice / non-splice
+        #######################################
         output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
         return output
 
@@ -103,6 +119,9 @@ def create_datapoints(seq, strand):
     jn_start = JUNC_START
     jn_end = JUNC_END
 
+    #######################################
+    # predicting splice / non-splice
+    #######################################
     X0 = np.asarray(list(map(int, list(seq))))
     Y0 = 0
     if strand == '+':
@@ -139,6 +158,7 @@ def get_accuracy(y_prob, y_true):
 
 
 def model_fn(DNAs, labels, model, criterion):
+    """Forward a batch through the model."""
     outs = model(DNAs)
     outs = torch.flatten(outs)
     loss, accuracy = categorical_crossentropy_2d(labels, outs, criterion)
@@ -148,7 +168,8 @@ def model_fn(DNAs, labels, model, criterion):
 def weighted_binary_cross_entropy(output, target, weights=None):    
     if weights is not None:
         assert len(weights) == 2
-        loss = weights[1] * (target * torch.log(output+1e-10)) + weights[0] * ((1 - target) * torch.log(1 - output+1e-10))
+        loss = weights[1] * (target * torch.log(output+1e-10)) + \
+               weights[0] * ((1 - target) * torch.log(1 - output+1e-10))
     else:
         loss = target * torch.log(output+1e-10) + (1 - target) * torch.log(1 - output+1e-10)
     return torch.neg(torch.mean(loss))
@@ -159,36 +180,49 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     return weighted_binary_cross_entropy(y_pred, y_true, weights), get_accuracy(y_pred, y_true)
 
 
+
+
+
+
+
+
+
+
+
+
+
 def split_seq_name(seq):
     return seq[1:]
 
 class myDataset(Dataset):
+    """myDataset for SPLAM!
+    """
     def __init__(self, type, of, shuffle, segment_len=800):
         self.segment_len = segment_len
         self.data = []
         self.indices = []
         pidx = 0
-        with open(of, 'r') as f:
+        with open(of, "r") as f:
             lines = f.read().splitlines()
-            seq_name = ''
-            seq = ''
+            seq_name = ""
+            seq = ""
             for line in lines:
                 if pidx % 2 == 0:
                     seq_name = split_seq_name(line)
                 elif pidx % 2 == 1:
                     seq = line
-                    if seq[0] == '>':
+                    if seq[0] == ">":
                         seq_name = line
                         continue
                     X, Y = create_datapoints(seq, '+')
                     X = torch.Tensor(np.array(X))
                     if X.size()[0] != 800:
-                        print('The length of input variable is not 800 (', seq_name, ')')
+                        print("The length of input variable 'X' is not 800 (", seq_name, ")")
                         print(X.size())
                     self.data.append([X, Y, seq_name])
                 pidx += 1
                 if pidx %10000 == 0:
-                    print('\t', pidx, ' junctions loaded.')
+                    print("pidx: ", pidx)
 
         index_shuf = list(range(len(self.data)))
         if shuffle:
@@ -196,7 +230,7 @@ class myDataset(Dataset):
         list_shuf = [self.data[i] for i in index_shuf]
         self.data = list_shuf 
         self.indices = index_shuf
-        print('\t', pidx, ' junctions loaded.')
+        print("pidx: ", pidx)
 
     def __len__(self):
         return len(self.data)
@@ -209,7 +243,7 @@ class myDataset(Dataset):
         return feature, label, seq_name
 
 def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
-    testset = myDataset('test', output_file, shuffle, SEQ_LEN)
+    testset = myDataset("test", output_file, shuffle, SEQ_LEN)
     test_loader = DataLoader(
         testset,
         batch_size = batch_size,
@@ -225,26 +259,37 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
 
 
 def test_model():
+    #############################
+    # Global variable definition
+    #############################
     BATCH_SIZE = 100
     N_WORKERS = None
-    device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
-    print(f'[Info] Loading model ...',flush = True)
-    # model = torch.load(MODEL_PATH)
-    model = torch.jit.load(MODEL_PATH)
-    model = model.to('mps')
 
+    device = torch.device("cuda" if torch.cuda.is_available() else "mps")
+    model = torch.load(MODEL_PATH)
 
-    print(f'[Info] Done loading model',flush = True)
-    print(f'[Info] Loading data ...',flush = True)
+    #############################
+    # Model Initialization
+    #############################
+    print(f"[Info]: Finish loading model!",flush = True)
+    print(f"[Info]: SPLAM! prediction",flush = True)
+    # print("SPLAM! model: ", model)
+
+    #############################
+    # Training Data initialization
+    #############################
+    # "./test_chr9/fasta/junction.fa"
     test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, JUNC_FA, True, str(0))
-    print(f'[Info] Done loading data ...',flush = True)
+
+    # MODEL_OUTPUT_BASE = "../test_chr9/OUTPUT/"
+    # TARGET_OUTPUT_BASE = MODEL_OUTPUT_BASE + "/"
 
     criterion = torch.nn.BCELoss()
 
     fw_junc_scores = open(OUT_SCORE, 'w')
     model.eval()
     junc_counter = 0    
-    pbar = Bar('[Info] SPLAM! prediction', max=len(test_loader))
+    pbar = Bar('SPLAM! prediction', max=len(test_loader))
     with torch.no_grad():
         for batch_idx, data in enumerate(test_loader):
             DNAs, labels, seqname = data 
@@ -252,20 +297,23 @@ def test_model():
             labels = labels.to(torch.float32).to(device)
             DNAs = torch.permute(DNAs, (0, 2, 1))
             loss, accuracy, yps = model_fn(DNAs, labels, model, criterion)
-            labels = labels.to('cpu').detach().numpy()
-            yps = yps.to('cpu').detach().numpy()
+            labels = labels.to("cpu").detach().numpy()
+            yps = yps.to("cpu").detach().numpy()
             pbar.next()            
             for idx in range(len(yps)):
                 junction_score = yps[idx]
-                chr, start, end, strand = seqname[idx].split(';')
-                if strand == '+':
-                    fw_junc_scores.write(chr+ '\t'+ start + '\t' + end + '\tJUNC_' + str(junc_counter) + '\t0\t'+ strand+ '\t' + str(junction_score) + '\\n')
-                elif strand == '-':
-                    fw_junc_scores.write(chr+ '\t'+ end + '\t' + start + '\tJUNC_' + str(junc_counter) + '\t0\t'+ strand+ '\t' + str(junction_score) + '\\n')
+                chr, start, end, strand = seqname[idx].split(";")
+                if strand == "+":
+                    fw_junc_scores.write(chr+ "\t"+ start + "\t" + end + "\tJUNC_" + str(junc_counter) + "\t0\t"+ strand+ "\t" + str(junction_score) + "\n")
+                elif strand == "-":
+                    fw_junc_scores.write(chr+ "\t"+ end + "\t" + start + "\tJUNC_" + str(junc_counter) + "\t0\t"+ strand+ "\t" + str(junction_score) + "\n")
                 junc_counter += 1
 
     pbar.finish()
     fw_junc_scores.close()
-    print(f'[Info] Expected #prediction: {len(test_loader)*BATCH_SIZE+0:03}')
-if __name__ == '__main__':
+    print(f'Expected #prediction: {len(test_loader)*BATCH_SIZE+0:03}')
+    print("\n\n")
+
+
+if __name__ == "__main__":
     test_model()

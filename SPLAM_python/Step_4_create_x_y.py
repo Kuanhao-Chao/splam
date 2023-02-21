@@ -5,10 +5,10 @@ def main(argv):
     SEQ_LEN="800"
     HALF_SEQ_LEN = int(SEQ_LEN)//2
     QUATER_SEQ_LEN = int(SEQ_LEN)//4
-    os.makedirs("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/", exist_ok=True)
-    fw = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/input.fa", "w")
-    fr_donor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor_seq.fa", "r")
-    fr_acceptor = open("../../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor_seq.fa", "r")
+    os.makedirs("../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/", exist_ok=True)
+    fw = open("../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/input.fa", "w")
+    fr_donor = open("../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor_seq.fa", "r")
+    fr_acceptor = open("../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor_seq.fa", "r")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()
@@ -43,8 +43,26 @@ def main(argv):
             print("Acceptor   : ", a_start, a_end)
             print("a_strand: ", a_strand)
 
-            donor_pos = (int(d_start) + int(d_end))//2
-            acceptor_pos = (int(a_start) + int(a_end))//2
+            # donor_pos = (int(d_start) + int(d_end))//2
+            # acceptor_pos = (int(a_start) + int(a_end))//2
+            if strand == "+":
+                donor_pos = int(d_start) + 200
+                acceptor_pos = int(a_end) - 200
+            elif strand == "-":
+                donor_pos = int(d_end) - 200
+                acceptor_pos = int(a_start) + 200
+
+            # if (strand == "+"):
+            #     donor_s = donor - QUOTER_SEQ_LEN
+            #     donor_e = donor + flanking_size
+            #     acceptor_s = acceptor - flanking_size
+            #     acceptor_e = acceptor + QUOTER_SEQ_LEN
+
+            # elif (strand == "-"):
+            #     donor_s = donor - flanking_size
+            #     donor_e = donor + QUOTER_SEQ_LEN
+            #     acceptor_s = acceptor - QUOTER_SEQ_LEN
+            #     acceptor_e = acceptor + flanking_size
 
             fw.write(chromosome + ";" + str(donor_pos) +";"+ str(acceptor_pos) + ";" + d_strand + "\n")
         else:

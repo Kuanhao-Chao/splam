@@ -9,6 +9,9 @@
 #include <gclib/GBase.h>
 
 GStr splamJExtract() {
+    outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
+    outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
+
     GStr outfname_junc_bed = out_dir + "/junction.bed";
 
     outfile_spliced = new GSamWriter(outfname_spliced, in_records.header(), GSamFile_BAM);
@@ -31,14 +34,11 @@ GStr splamJExtract() {
     // Reading BAM file.
     int prev_tid=-1;
     GStr prev_refname;
-    std::vector<std::pair<float,uint64_t>> bsam(2048*1024,{0,1}); // number of samples. 1st - current average; 2nd - total number of values
     int b_end=0, b_start=0;
 
     GMessage("[INFO] Processing BAM file ...\n");
     while ((irec=in_records.next())!=NULL) {
         brec=irec->brec;
-        uint32_t dupcount=0;
-        std::vector<int> cur_samples;
         int endpos=brec->end;
         if (brec->refId()!=prev_tid || (int)brec->start>b_end) {
             if (joutf) {
@@ -60,7 +60,7 @@ GStr splamJExtract() {
             outfile_spliced->write(brec);
             ALN_COUNT_SPLICED++;
         } else {
-            outfile_cleaned->write(brec);
+            // outfile_cleaned->write(brec);
             ALN_COUNT_NSPLICED++;
         }
         ALN_COUNT++;

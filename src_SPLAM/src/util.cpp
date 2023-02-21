@@ -112,6 +112,13 @@ int usage(){
         );
         // GMessage(
         // "Optional argument:\n");
+    } else if (COMMAND_MODE == NH_UPDATE) {
+        GMessage(
+        "Usage:  splam nh-update [arguments] BAM-file \n\n");
+        GMessage(
+        "Required argument:\n"
+        "\t-o / --output\t\tPath to the output directory\n\n"
+        );
     } else {
         GMessage(
         "Usage:  splam -h|--help or \n"
