@@ -43,7 +43,16 @@ class CJunc {
 		bool operator<(const CJunc& a) { // sort by strand last
 			if (start==a.start){
 				if(end==a.end){
-					return strand<a.strand;
+					if ((strand=='+') &&  (a.strand=='+')) {
+						return strand>a.strand;
+					} else if ((strand=='-') &&  (a.strand=='-')) {
+						return strand>a.strand;
+					} else if ((strand=='+') &&  (a.strand=='-')) {
+						return strand>a.strand;
+					} else if ((strand=='-') &&  (a.strand=='+')) {
+						return strand<a.strand;
+					}
+					return strand>a.strand;
 				}
 				else{
 					return (end<a.end);

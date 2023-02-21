@@ -11,7 +11,6 @@ touch ./results/$MODEL.txt
 
 
 
-
 echo ./Step_1_stringtie_assembly.sh $SAMPLE BEFORE
 ./Step_1_stringtie_assembly.sh $SAMPLE BEFORE
 

@@ -21,6 +21,7 @@ extern GStr infname_bam;
 extern GStr out_dir;
 
 extern bool verbose;
+extern int aln_num_thr;
 extern float threshold;
 
 extern GSamRecord* brec;

@@ -437,6 +437,7 @@ CMakeFiles/SPLAM.dir/src/update.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/iomanip \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/iostream \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/sstream \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/progressbar/progressbar.hpp \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/common.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/var.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/tmerge.h \
