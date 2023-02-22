@@ -4,9 +4,9 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import torch
 import torch.nn as nn
 # from TEST_dataset import *
-from SpliceNN_dataset_Chromsome_v2 import *
-from SpliceNN import *
-# from SpliceNN_utils import *
+from splam_dataset_Chromsome_v2 import *
+from SPLAM import *
+# from splam_utils import *
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 from tqdm import tqdm
@@ -27,10 +27,10 @@ def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "mps")
 
     MODEL_BASE = "SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v32/"
-    MODEL = "../src/MODEL/"+MODEL_BASE+"SpliceNN_24.pt"
+    MODEL = "../src/MODEL/"+MODEL_BASE+"splam_24.pt"
     MODEL_OUTPUT_BASE = "./TEST/"+MODEL_BASE+""
     model = torch.load(MODEL)
-    # model = torch.load("../src/MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v23/SpliceNN_19.pt")
+    # model = torch.load("../src/MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v23/splam_19.pt")
 
 
     for child in model.children():

@@ -38,7 +38,7 @@ class Skip(Module):
         return x, self.conv(x) + y
 
 
-class SpliceNN(Module):
+class SPLAM(Module):
     def __init__(self, L=64, W=np.array([11]*8+[21]*4+[41]*4), AR=np.array([1]*4+[4]*4+[10]*4+[25]*4)):
         super().__init__()
         self.CL = 2 * (AR * (W - 1)).sum()  # context length
@@ -62,21 +62,9 @@ class SpliceNN(Module):
         x, skip = self.skip1(self.conv1(x), 0)
         for m in self.residual_blocks:
             x, skip = m(x, skip)
-        #     print("x.size(): ", x.size())
-        #     print("skip.size(): ", skip.size())
-        # print("self.softmax(self.last_cov(skip)[..., CL_max//2:-CL_max//2]): ", self.softmax(self.last_cov(skip)).size())
-
-        #######################################
-        # predicting pb for every bp
-        #######################################
-        output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
-        # output = self.sigmoid(self.fc(self.drop_out(self.flatten(self.last_cov(skip)))))
-        # print("output.size(): ", output.size())
-        return output
 
         #######################################
         # predicting splice / non-splice
         #######################################
-        # return self.softmax(self.last_cov(skip))
-
-        # return self.softmax(self.last_cov(skip)[..., CL_max//2:-CL_max//2])
+        output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
+        return output

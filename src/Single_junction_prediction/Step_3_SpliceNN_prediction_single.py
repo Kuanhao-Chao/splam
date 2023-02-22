@@ -2,7 +2,7 @@ import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch
-from SpliceNN import *
+from SPLAM import *
 from SpliceNN_utils import *
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np

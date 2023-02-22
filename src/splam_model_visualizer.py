@@ -4,15 +4,15 @@ import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import torch
-from SpliceNN import *
-from SpliceNN_utils import *
+from SPLAM import *
+from splam_utils import *
 import matplotlib.pyplot as plt; plt.rcdefaults()
 import numpy as np
 import matplotlib.pyplot as pl
 
 def main():
     device = torch.device("cuda" if torch.cuda.is_available() else "mps")
-    model = torch.load("./MODEL/SpliceAI_6_RB_p1_n1_nn1_TB_all_samples_thr_100_splitByChrom_v9/SpliceNN_19.pt")
+    model = torch.load("./MODEL/SpliceAI_6_RB_p1_n1_nn1_TB_all_samples_thr_100_splitByChrom_v9/splam_19.pt")
     seq = "GGCATGAGGCACCGTGCCCGGCCCATGCTTTTCTTAAATGCTGTGGAATTGTGCCTCCCCATGTGTGTGTGTGTTCGGAGTAGGCACAGTGACAGGGGGCGGGAATATGGTTTCATTTCACACTTAGCCTTTGTTTGGTTCCCAGAGACTTCTAGGAGTATCACCGCCAGTCCAAAGGAGTCAGACTCTCCAGCTGGTGAGTAAGTCATCCTCTCCAGACCCCCTTCCTTCTCACCCGTCTCTTCACCAAAGCCAACTCCTTTGTCTACGCAGGGGCTGCAGCTCTCAGATCTTGGGTTCCAGTGTGTAGAGTAAAGGCAGAATATCAGCGTATGGGGTTCAGAATTGGGCATTAAGATCAGGTGGGAAGGTTGAGATTTTAAAAAGGGTCAGAGAAAGAAGGAGGGAGAGGTGCTACTTAGAGAATTGGGGTCATCTGGCCCTGACCCCTACTCGGGAAGGGAGGGACCCTCCAGGAAAGTGAGCGGCATCCCCTAGCTAGTAGAGAATAATAGGATCTCTGAGAAGCCCAGATGTGGCTTGGAGGGGGTCCTGGAGGTGGGCTCTTTCACCTGCTCCTGCCTCTCCTCATTCCTCCAGGTCCTGCCCGCCAGTACTACACCAAGGGCAACCTGGTCCGGATATGCCTCGGGGCTGTGATCCTAATAATCCTGGCGGGGTTTCTGGCAGAGGACTGGCACAGCCGGAGGAAGCGCCTGCGGCACAGGGGCAGGGCTGTGCAGAGGCCGCTTCCGCCCCTCCCGCCCCTCCCGCTGACCCGGAAATCAAACGGGGGTCAG"
     X, Y = create_datapoints(seq, '-')
     X = torch.Tensor(np.array([X])).to(torch.float32).to(device)
@@ -60,8 +60,8 @@ def main():
     # #     label.set_fontsize(10)
     # # plt.rc('xtick',labelsize=3)
     # # plt.xticks(y_pos, rotation = 45)
-    # plt.ylabel('SpliceNN prediction score')
-    # plt.title('SpliceNN')
+    # plt.ylabel('splam prediction score')
+    # plt.title('splam')
     # # plt.show()
     # plt.savefig("seq_1.png", dpi=300)
 

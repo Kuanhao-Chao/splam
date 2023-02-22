@@ -18,7 +18,7 @@ import warnings
 import matplotlib.pyplot as plt; plt.rcdefaults()
 from progress.bar import Bar
 from splam.dataset import *
-from SpliceNN import *
+from SPLAM import *
 from splam.splam_utils import *
 
 warnings.filterwarnings("ignore")
