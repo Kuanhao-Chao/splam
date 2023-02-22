@@ -63,11 +63,11 @@ chrs = get_hg38_chrom_size()
 # For 'acceptor.bed': 0-based, 0-based
 #################################
 def task(chromosome):
-    fw_donor = open("../NEG_noncan_junctions/"+SEQ_LEN+"bp/donor/"+chromosome+"_donor.bed", "w")
-    fw_acceptor = open("../NEG_noncan_junctions/"+SEQ_LEN+"bp/acceptor/"+chromosome+"_acceptor.bed", "w")
-    fw_da = open("../NEG_noncan_junctions/"+SEQ_LEN+"bp/d_a/"+chromosome+"_d_a.bed", "w")
+    os.makedirs("./NEG_noncan_junctions/")
+    fw_donor = open("./NEG_noncan_junctions/"+SEQ_LEN+"bp/donor/"+chromosome+"_donor.bed", "w")
+    fw_acceptor = open("./NEG_noncan_junctions/"+SEQ_LEN+"bp/acceptor/"+chromosome+"_acceptor.bed", "w")
+    fw_da = open("./NEG_noncan_junctions/"+SEQ_LEN+"bp/d_a/"+chromosome+"_d_a.bed", "w")
     print("chromosome: ", chromosome)
-    # for idx in range(EACH_CHR):
     idx = 0    
     while True:
         if idx >= EACH_CHR:
@@ -108,11 +108,11 @@ def task(chromosome):
         idx += 1
 
 def main():
-    Path("../NEG_noncan_junctions/"+SEQ_LEN+"bp/donor/").mkdir(parents=True, exist_ok=True)
-    Path("../NEG_noncan_junctions/"+SEQ_LEN+"bp/acceptor/").mkdir(parents=True, exist_ok=True)
-    Path("../NEG_noncan_junctions/"+SEQ_LEN+"bp/d_a/").mkdir(parents=True, exist_ok=True)
+    Path("./NEG_noncan_junctions/"+SEQ_LEN+"bp/donor/").mkdir(parents=True, exist_ok=True)
+    Path("./NEG_noncan_junctions/"+SEQ_LEN+"bp/acceptor/").mkdir(parents=True, exist_ok=True)
+    Path("./NEG_noncan_junctions/"+SEQ_LEN+"bp/d_a/").mkdir(parents=True, exist_ok=True)
 
-    with open("../BAM_junctions/"+SEQ_LEN+"bp/"+str(THRESHOLD)+"_juncs/d_a.bed", "r") as f:
+    with open("../1_GET_BAM_JUNCS/BAM_junctions/"+SEQ_LEN+"bp/"+str(THRESHOLD)+"_juncs/d_a.bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             # print(line)
@@ -121,7 +121,7 @@ def main():
             D_A_POSITIONS.add((eles[0], eles[1]))
             D_A_POSITIONS.add((eles[0], eles[2]))
 
-    with open("../REF_junctions/ref_d_a.sort.bed", "r") as f:
+    with open("../2_GET_REF_JUNCS/REF_junctions/ref_d_a.sort.bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             # print(line)

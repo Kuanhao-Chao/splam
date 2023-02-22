@@ -3,8 +3,8 @@ def main():
     SEQ_LEN = "1000"
     HALF_SEQ_LEN = 500
     fw = open("../INPUTS/"+SEQ_LEN+"bp/input_pos.fa", "w")
-    fr_donor = open("../BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/donor_seq.fa", "r")
-    fr_acceptor = open("../BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/acceptor_seq.fa", "r")
+    fr_donor = open("./BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/donor_seq.fa", "r")
+    fr_acceptor = open("./BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/acceptor_seq.fa", "r")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()

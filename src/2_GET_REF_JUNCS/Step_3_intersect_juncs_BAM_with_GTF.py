@@ -15,17 +15,17 @@ def main():
     SEQ_LEN="800"
     QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 
-    bam_juncs = pd.read_csv('../BAM_junctions/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/d_a.bed', sep="\t", header=None)
-    ref_juncs = pd.read_csv('../REF_junctions/ref_d_a.sort.bed', sep="\t", header=None)
+    bam_juncs = pd.read_csv('../1_GET_BAM_JUNCS/BAM_junctions/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/d_a.bed', sep="\t", header=None)
+    ref_juncs = pd.read_csv('./REF_junctions/ref_d_a.sort.bed', sep="\t", header=None)
     
     print(bam_juncs)
     print(ref_juncs)
     
     # Calling merge() function
-    os.makedirs('../BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/', exist_ok=True)
-    d_a_out = '../BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/d_a.bed'
-    d_out = '../BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/donor.bed'
-    a_out = '../BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/acceptor.bed'
+    os.makedirs('./BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/', exist_ok=True)
+    d_a_out = './BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/d_a.bed'
+    d_out = './BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/donor.bed'
+    a_out = './BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/acceptor.bed'
 
     intersect_df = pd.merge(ref_juncs, bam_juncs, how ='inner', on =[0, 1, 2, 5])
     print("intersect_df: ", intersect_df)
@@ -34,7 +34,6 @@ def main():
     print("out_df: ", out_df)
 
     out_df.to_csv(d_a_out, sep="\t", index=False, header=None)
-
     chrs = get_hg38_chrom_size()
     fw_donor = open(d_out, "w")
     fw_acceptor = open(a_out, "w")

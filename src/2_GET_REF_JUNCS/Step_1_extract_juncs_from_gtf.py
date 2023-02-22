@@ -15,38 +15,26 @@ def chr_name_convert():
 
 def main():
 
-    chrs = chr_name_convert()
-    
-    mapping_f = open("../../Dataset/mapping.json")
-    mapping = json.load(mapping_f)
-    mapping_f.close()
-    print(mapping)
-    gene_id_2_name = {}
-    gene_id_2_features = {}
+    chrs = chr_name_convert()    
+    # mapping_f = open("../../Dataset/mapping.json")
+    # mapping = json.load(mapping_f)
+    # mapping_f.close()
+    # print(mapping)
     JUNC_COUNTER = 0
-    fw = open("../REF_junctions/ref_d_a.bed", 'w')
+    os.mkdir("./REF_junctions/")
+    fw = open("./REF_junctions/ref_d_a.bed", 'w')
     with open("../../Dataset/GRCh38_latest_genomic.gff", 'r') as f:
-    # with open("../../Dataset/hg38c_protein_and_lncRNA.gtf", 'r') as f:
-
         lists = f.read().splitlines() 
-
         transcript_id = ""
         prev_transcript_id = ""
-        gene_id = ""
-        prev_gene_id = ""
-        gene_name = ""
-        prev_gene_name = ""
         chr = ""
         prev_chr = ""
         strand = "."
         prev_strand = "."
-        boundaries = set()
 
         starts = []
         ends = []
 
-        WRITE = False
-        encoding_ls = [0]
         for line in lists:
             line = line.split("\t")
             if len(line) < 8:
@@ -54,8 +42,6 @@ def main():
 
             if (line[2] == "exon"):
 
-                # features = line[8].split(";")
-                # print("features: ", features)
                 match = re.search(r"transcript_id=\w+", line[8])
                 if match is not None:
                     # print(match.group()[14:])
