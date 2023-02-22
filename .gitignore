@@ -34,3 +34,5 @@ src_SPLAM/SPLAM/test_chr9/
 src_SPLAM/build/SRR1352129/
 src_SPLAM/build/SRR1352129_chr9/
 src_SPLAM/build/SRR1352129_chr9_sub/
+src/prev/
+src/prev_MODEL/

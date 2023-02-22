@@ -7,8 +7,8 @@ def main():
     THRESHOLD = "100"
     os.makedirs("../INPUTS/"+SEQ_LEN+"bp/", exist_ok=True)
     fw = open("../INPUTS/"+SEQ_LEN+"bp/input_pos.fa", "w")
-    fr_donor = open("../BAM_REF_Intersection/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/donor_seq.fa", "r")
-    fr_acceptor = open("../BAM_REF_Intersection/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/acceptor_seq.fa", "r")
+    fr_donor = open("./BAM_REF_Intersection/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/donor_seq.fa", "r")
+    fr_acceptor = open("./BAM_REF_Intersection/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/acceptor_seq.fa", "r")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()

@@ -49,17 +49,17 @@ EACH_JUNC_PER_CHROM = 5000
 MIN_JUNC = 400
 THRESHOLD = "100"
 hg38_ref = "../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa"
-output_bed = "../NEG_junctions/"+SEQ_LENGTH+"bp/neg_junctions.bed"
-output_file = "../INPUTS/"+SEQ_LENGTH+"bp/input_neg.fa"
+os.makedirs("./NEG_can_junctions/"+SEQ_LENGTH+"bp/")
+output_bed = "./NEG_can_junctions/"+SEQ_LENGTH+"bp/neg_junctions.bed"
+output_file = "../INPUTS/"+SEQ_LENGTH+"bp/input_can_neg.fa"
 D_A_POSITIONS = set()
-os.makedirs("../NEG_junctions/"+SEQ_LENGTH+"bp/", exist_ok=True)
+os.makedirs("./NEG_can_junctions/"+SEQ_LENGTH+"bp/", exist_ok=True)
 
 def task(description, sequence):
-    fw_donor = open("../NEG_junctions/"+SEQ_LENGTH+"bp/donor/"+description+"_donor.bed", "w")
-    fw_acceptor = open("../NEG_junctions/"+SEQ_LENGTH+"bp/acceptor/"+description+"_acceptor.bed", "w")
-    fw_da = open("../NEG_junctions/"+SEQ_LENGTH+"bp/d_a/"+description+"_d_a.bed", "w")
+    fw_donor = open("./NEG_can_junctions/"+SEQ_LENGTH+"bp/donor/"+description+"_donor.bed", "w")
+    fw_acceptor = open("./NEG_can_junctions/"+SEQ_LENGTH+"bp/acceptor/"+description+"_acceptor.bed", "w")
+    fw_da = open("./NEG_can_junctions/"+SEQ_LENGTH+"bp/d_a/"+description+"_d_a.bed", "w")
     print("description: ", description)
-    # for i in range(EACH_JUNC_PER_CHROM):
     idx = 0
     while True:
         # if description == "chr13":
@@ -139,34 +139,36 @@ def task(description, sequence):
     fw_da.close()
 
 def main():
-    with open("../BAM_junctions/"+SEQ_LENGTH+"bp/"+str(THRESHOLD)+"_juncs/d_a.bed", "r") as f:
+    with open("../1_GET_BAM_JUNCS/BAM_junctions/"+SEQ_LENGTH+"bp/"+str(THRESHOLD)+"_juncs/d_a.bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             # print(line)
             eles = line.split("\t")
             # print("eles[0], eles[1]: ", eles[0], eles[1], eles[2])
+            # Adding donor into the set.
             D_A_POSITIONS.add((eles[0], eles[1]))
+            # Adding acceptor into the set.
             D_A_POSITIONS.add((eles[0], eles[2]))
 
-    with open("../REF_junctions/ref_d_a.sort.bed", "r") as f:
+    with open("../2_GET_REF_JUNCS/REF_junctions/ref_d_a.sort.bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             # print(line)
             eles = line.split("\t")
             # print("eles[0], eles[1]: ", eles[0], eles[1], eles[2])
+            # Adding donor into the set.
             D_A_POSITIONS.add((eles[0], eles[1]))
+            # Adding acceptor into the set.
             D_A_POSITIONS.add((eles[0], eles[2]))
 
     print("D_A_POSITIONS size: ", len(D_A_POSITIONS))
 
     with open(hg38_ref, 'r') as handle:
-        # print("Len: ", len(SeqIO.parse(handle, 'fasta')))
-        Path("../NEG_junctions/"+SEQ_LENGTH+"bp/donor/").mkdir(parents=True, exist_ok=True)
-        Path("../NEG_junctions/"+SEQ_LENGTH+"bp/acceptor/").mkdir(parents=True, exist_ok=True)
-        Path("../NEG_junctions/"+SEQ_LENGTH+"bp/d_a/").mkdir(parents=True, exist_ok=True)
+        Path("./NEG_can_junctions/"+SEQ_LENGTH+"bp/donor/").mkdir(parents=True, exist_ok=True)
+        Path("./NEG_can_junctions/"+SEQ_LENGTH+"bp/acceptor/").mkdir(parents=True, exist_ok=True)
+        Path("./NEG_can_junctions/"+SEQ_LENGTH+"bp/d_a/").mkdir(parents=True, exist_ok=True)
 
         workers = 20
-        # with ThreadPoolExecutor(workers) as pool:
         for record in SeqIO.parse(handle, 'fasta'):            
             # Extract individual parts of the FASTA record
             identifier = record.id
@@ -174,10 +176,8 @@ def main():
             sequence = record.seq
             sequence = str(sequence).upper()
 
-            # print("description: ", description)
             if (description in targets.keys()):
                 task(description, sequence)
-                # processed = pool.submit(task, description, sequence[0:100000])
 
 if __name__ == "__main__":
     main()

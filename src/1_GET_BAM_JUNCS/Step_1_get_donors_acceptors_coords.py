@@ -23,15 +23,15 @@ def main():
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     #################################
-    os.makedirs("../BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/", exist_ok=True)
-    fw_donor = open("../BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/donor.bed", "w")
-    fw_acceptor = open("../BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/acceptor.bed", "w")
+    os.makedirs("./BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/", exist_ok=True)
+    fw_donor = open("./BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/donor.bed", "w")
+    fw_acceptor = open("./BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/acceptor.bed", "w")
     
-    d_a_bed = "../BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/d_a.bed"
+    d_a_bed = "./BAM_junctions/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/d_a.bed"
     fw_da = open(d_a_bed, "w")
     JUNCS = set()
 
-    with open("../BAM_junctions/junctions_"+str(THRESHOLD)+".bed", "r") as f:
+    with open("./BAM_junctions/junctions_"+str(THRESHOLD)+".bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             eles = line.split("\t")
