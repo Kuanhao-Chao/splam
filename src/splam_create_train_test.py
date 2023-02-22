@@ -1,7 +1,7 @@
-from SpliceNN_utils import *
-from SpliceNN_dataset_Chromsome import *
-# from SpliceNN_Conformer import *
-from SpliceNN import *
+from splam_utils import *
+from splam_dataset_Chromsome import *
+# from splam_Conformer import *
+from SPLAM import *
 import numpy as np
 import torch
 import torch.nn as nn
@@ -42,7 +42,7 @@ def main():
     #############################
     # Model Initialization
     #############################
-    model = SpliceNN(L, W, AR).to(device)
+    model = SPLAM(L, W, AR).to(device)
     # criterion = nn.CrossEntropyLoss()
     # optimizer = AdamW(model.parameters(), lr=1e-4)
     # scheduler = get_cosine_schedule_with_warmup(optimizer, 1000, 200000)

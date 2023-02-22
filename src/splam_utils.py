@@ -14,8 +14,8 @@ import re
 import math
 from math import ceil
 from sklearn.metrics import average_precision_score
-from SpliceNN_constant import *
-from SpliceNN import *
+from splam_constant import *
+from SPLAM import *
 
 SEQ_LEN = 800
 # fix random seed
