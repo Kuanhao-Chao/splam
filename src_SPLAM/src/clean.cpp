@@ -59,7 +59,6 @@ void loadBed(GStr inbedname, std::unordered_set<std::string> &rm_juncs) {
             gline=tmp;
             cnt++;
         }
-        // if (junc[6].asDouble() <= threshold && junc[4].asInt() <= aln_num_thr) {
         if (junc[6].asDouble() <= threshold) {
             char* chrname =junc[0].detach();
             char* strand =junc[5].detach();

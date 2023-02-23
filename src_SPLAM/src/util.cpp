@@ -102,7 +102,7 @@ int usage(){
 
     } else if (COMMAND_MODE == CLEAN) {
         GMessage(
-        "Usage:  splam clean [arguments] BAM-file \n\n");
+        "Usage:  splam clean [arguments] BAM-file(s) \n\n");
         GMessage(
         "Required argument:\n"
         // "\t-b / --bam\t\tPath to the alignment file (BAM)\n"
@@ -119,6 +119,15 @@ int usage(){
         "Required argument:\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
         );
+    } else if (COMMAND_MODE == ALL) {
+        GMessage(
+        "Usage:  splam all [arguments] BAM-file(s) \n\n");
+        GMessage(
+        "Required argument:\n"
+        "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
+        "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
+        "\t-o / --output\t\tPath to the output directory\n\n"
+        );
     } else {
         GMessage(
         "Usage:  splam -h|--help or \n"
@@ -129,6 +138,8 @@ int usage(){
         GMessage("     j-extract    : extract junctions from a BAM file / a list of BAM files.\n");
         GMessage("     predict      : score junctions\n");
         GMessage("     clean        : clean up a BAM file\n");
+        GMessage("     nh-update    : update NH tags in the BAM file.\n");
+        GMessage("     all          : run all steps: [j-extract], [predict], [clean], [nh-update] \n");
     }
 
 
