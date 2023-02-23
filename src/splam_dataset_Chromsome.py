@@ -16,7 +16,7 @@ def split_seq_name(seq):
     return seq[1:]
 
 class myDataset(Dataset):
-    def __init__(self, type, segment_len=800):
+    def __init__(self, type, segment_len=800, shuffle=True):
         self.segment_len = segment_len
         self.data = []
 
@@ -162,7 +162,7 @@ class myDataset(Dataset):
                 if nnidx >= CONSTANT_SIZE_NEG:
                     break
         print("nnidx: ", nnidx)
-        random.shuffle(self.data)
+        if shuffle: random.shuffle(self.data)
 
     def __len__(self):
         return len(self.data)
@@ -221,3 +221,19 @@ def get_dataloader(batch_size, n_workers):
     print("[INFO] Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
     test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
     return train_loader, val_loader, test_loader
+
+def get_test_dataloader(batch_size, n_workers, shuffle):
+    #######################################
+    # predicting splice / non-splice
+    #######################################
+    testset = myDataset("test", int(SEQ_LEN), shuffle)
+    test_loader = DataLoader(
+        testset,
+        batch_size = batch_size,
+        shuffle = shuffle,
+        drop_last = False,
+        pin_memory = True,
+    )
+    print("[INFO] Loading dataset (shuffle: " + str(shuffle) + "): ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+    test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+    return test_loader

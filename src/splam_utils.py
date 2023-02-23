@@ -211,7 +211,9 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     # WEIGHT = 800
     # print("y_true: ", y_true)
     # print("y_pred: ", y_pred)
-    weights = torch.FloatTensor([1.0, 4.0]) 
+    # weights = torch.FloatTensor([1.0, 4.0]) 
+    weights = torch.FloatTensor([1.0, 20.0]) 
+
     return weighted_binary_cross_entropy(y_pred, y_true, weights), get_accuracy(y_pred, y_true)
     # prod = output[:,0]*target
     # return -prod[prod<0].sum()
