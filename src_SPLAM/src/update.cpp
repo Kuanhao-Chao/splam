@@ -12,9 +12,11 @@
 #include "util.h"
 #include "clean.h"
 
+/****************************
+* Input : (1) unordered_set of reads, (2) hashmap of removed hits.
+* Output: (1) cleamed BAM file.
+*****************************/
 GStr splamNHUpdate(int argc, char* argv[]) {
-
-
     std::unordered_set<std::string>* rm_rd_set = splamClean(argc, argv);
 
     GMessage("\n###########################################\n");

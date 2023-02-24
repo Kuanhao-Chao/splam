@@ -19,13 +19,25 @@ class myDataset(Dataset):
     def __init__(self, type, segment_len=800, shuffle=True):
         self.segment_len = segment_len
         self.data = []
+        pos_f = ""
+        neg_can_f = ""
+        neg_noncan_f = ""
+
+        if type == "train" or type == "test":
+            pos_f = "./INPUTS/"+SEQ_LEN+"bp/input_pos/"+type+"_pos.shuffle.fa"
+            neg_can_f = "./INPUTS/"+SEQ_LEN+"bp/input_neg_can/"+type+"_neg_can.shuffle.fa"
+            neg_noncan_f = "./INPUTS/"+SEQ_LEN+"bp/input_neg_noncan/"+type+"_neg_noncan.shuffle.fa"
+        elif type == "eval":
+            pos_f = "../src_tools_evaluation/dataset/pos/splam/splam.juncs.seq.fa"
+            neg_can_f = "../src_tools_evaluation/dataset/neg_can/splam/splam.juncs.seq.fa"
+            neg_noncan_f = "../src_tools_evaluation/dataset/neg_noncan/splam/splam.juncs.seq.fa"
 
         #################################
         ## Processing 'POSITIVE' samples
         #################################
         pidx = 0
-        with open("./INPUTS/"+SEQ_LEN+"bp/input_pos/"+type+"_pos.shuffle.fa", "r") as f:
-            print("Processing ./INPUTS/"+SEQ_LEN+"bp/input_pos/"+type+"_pos.shuffle.fa")
+        with open(pos_f, "r") as f:
+            print("Processing ", pos_f)
             lines = f.read().splitlines()
             seq_name = ""
             seq = ""
@@ -99,8 +111,8 @@ class myDataset(Dataset):
         ## Processing 'NEGATIVE' samples
         #################################
         nidx = 0
-        with open("./INPUTS/"+SEQ_LEN+"bp/input_neg_can/"+type+"_neg_can.shuffle.fa", "r") as f:
-            print("Processing ./INPUTS/"+SEQ_LEN+"bp/input_neg_can/"+type+"_neg_can.shuffle.fa")
+        with open(neg_can_f, "r") as f:
+            print("Processing ", neg_can_f)
             lines = f.read().splitlines()
             seq_name = ""
             seq = ""
@@ -133,8 +145,8 @@ class myDataset(Dataset):
         ## Processing 'Non-canonical NEGATIVE' samples
         #################################
         nnidx = 0
-        with open("./INPUTS/"+SEQ_LEN+"bp/input_neg_noncan/"+type+"_neg_noncan.shuffle.fa", "r") as f:
-            print("Processing ./INPUTS/"+SEQ_LEN+"bp/input_neg_noncan/"+type+"_neg_noncan.shuffle.fa")
+        with open(neg_noncan_f, "r") as f:
+            print("Processing ", neg_noncan_f)
             lines = f.read().splitlines()
             seq_name = ""
             seq = ""
@@ -222,6 +234,7 @@ def get_dataloader(batch_size, n_workers):
     test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
     return train_loader, val_loader, test_loader
 
+
 def get_test_dataloader(batch_size, n_workers, shuffle):
     #######################################
     # predicting splice / non-splice
@@ -235,5 +248,21 @@ def get_test_dataloader(batch_size, n_workers, shuffle):
         pin_memory = True,
     )
     print("[INFO] Loading dataset (shuffle: " + str(shuffle) + "): ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
-    test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+    # test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+    return test_loader
+
+def get_eval_dataloader(batch_size, n_workers, shuffle):
+    #######################################
+    # predicting splice / non-splice
+    #######################################
+    testset = myDataset("eval", int(SEQ_LEN), shuffle)
+    test_loader = DataLoader(
+        testset,
+        batch_size = batch_size,
+        shuffle = shuffle,
+        drop_last = False,
+        pin_memory = True,
+    )
+    print("[INFO] Loading dataset (shuffle: " + str(shuffle) + "): ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+    torch.save(test_loader, "../src_tools_evaluation/splam_result/splam_dataloader.pt")
     return test_loader

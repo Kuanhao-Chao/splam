@@ -13,7 +13,7 @@ from tqdm import tqdm
 import warnings
 from sklearn.metrics import precision_recall_curve, roc_curve
 import pickle 
-
+import platform
 
 warnings.filterwarnings("ignore")
 
@@ -24,13 +24,30 @@ def main():
     EPOCH_NUM = 20
     BATCH_SIZE = 100
     N_WORKERS = 1
-    device = torch.device("cuda" if torch.cuda.is_available() else "mps")
+
+    #############################
+    # Selecting device
+    #############################
+    device_str = None
+    if torch.cuda.is_available():
+        device_str = "cuda"
+    else:
+        if platform.system() == "Darwin":
+            device_str = "mps"
+        else:
+            device_str = "cpu"
+    device = torch.device(device_str)
+    print(f"\033[1m[Info]: Use {device} now!\033[0m")
 
     MODEL_BASE = "SPLAM_v1/"
     MODEL = "./MODEL/"+MODEL_BASE+"splam_24.pt"
-    MODEL_OUTPUT_BASE = "../src_tools_evaluation/SPLAM_test/"+MODEL_BASE+""
+    MODEL_OUTPUT_BASE = "../src_tools_evaluation/splam_result/"
+    os.makedirs(MODEL_OUTPUT_BASE)
     model = torch.load(MODEL)
 
+    #############################
+    # Advance. Set 'track_running_stats' & 'momentum' in batch normalization layers
+    #############################
     # for child in model.children():
     #     # print("child: ", child)
     #     if type(child)==ModuleList:
@@ -72,23 +89,13 @@ def main():
     TARGET = 'test'
 
     criterion = nn.BCELoss()
-    # output_files = ["OUTPUT/pos/", "OUTPUT/neg_can/", "OUTPUT/neg_noncan/", "OUTPUT/neg_1/"]
-    # for output_file in output_files:
-        
-    # test_loader = get_dataloader(BATCH_SIZE, 'negative_canonical', N_WORKERS)
 
-
-    # Experiment => batch size => see if it matters
-    # for b_idx in range(10, 110, 10):
-    #     print("b_idx: ", b_idx)
-    #     shuffle = False
-    #     BATCH_SIZE = b_idx
     BATCH_SIZE = 100
     for shuffle in [True, False]:
         print("########################################")
         print(" Model: ", model)
         print("########################################")
-        test_loader = get_test_dataloader(BATCH_SIZE, N_WORKERS, shuffle)
+        test_loader = get_eval_dataloader(BATCH_SIZE, N_WORKERS, shuffle)
 
         # test_iterator = iter(test_loader)
         print(f"[Info]: Finish loading data!", flush = True)
@@ -170,17 +177,19 @@ def main():
 
         TYPE = "shuffle" if shuffle else "noshuffle"
 
-        with open(MODEL_OUTPUT_BASE + "/SPLAM_" + TYPE + ".pkl", 'wb') as f: 
+        with open(MODEL_OUTPUT_BASE + "/splam." + TYPE + ".pkl", 'wb') as f: 
             pickle.dump(All_Junction_YP, f)
             pickle.dump(All_Junction_YL, f)
 
 
+        ############################
+        # Plotting ROC / PR curves
+        ############################
         plot_roc_curve(All_Junction_YL, All_Junction_YP, "Acceptor")
-        plt.savefig("output_800bp_roc.png", dpi=300)
+        plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_roc.png", dpi=300)
         plt.close()
-
         plot_pr_curve(All_Junction_YL, All_Junction_YP, "Acceptor")
-        plt.savefig("output_800bp_pr.png", dpi=300)
+        plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_pr.png", dpi=300)
         plt.close()
 
         print(f'Epoch {0+0:03}: | Loss: {epoch_loss/len(test_loader):.5f} | Acc: {epoch_acc/len(test_loader):.3f}')
