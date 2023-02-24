@@ -44,15 +44,15 @@ class CJunc {
 			if (start==a.start){
 				if(end==a.end){
 					if ((strand=='+') &&  (a.strand=='+')) {
-						return strand>a.strand;
+						return false;
 					} else if ((strand=='-') &&  (a.strand=='-')) {
-						return strand>a.strand;
+						return false;
 					} else if ((strand=='+') &&  (a.strand=='-')) {
-						return strand>a.strand;
+						return true;
 					} else if ((strand=='-') &&  (a.strand=='+')) {
-						return strand<a.strand;
+						return false;
 					}
-					return strand>a.strand;
+					return false;
 				}
 				else{
 					return (end<a.end);
