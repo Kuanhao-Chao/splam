@@ -8,7 +8,15 @@
 #include <unordered_map>
 #include <gclib/GBase.h>
 
+/****************************
+* Input : BAM file (s)
+* Output: Junction bed file.
+*****************************/
 GStr splamJExtract() {
+    GMessage("###########################################\n");
+    GMessage("## Step 1: generating spliced junctions in BED\n");
+    GMessage("###########################################\n");
+
     outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
     outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
 

@@ -16,24 +16,17 @@
 
 #include <Python.h>
 
+/****************************
+* Input : (1)Junction bed files, (2) SPLAM model
+* Output: (2) Bed file of junction scores.
+*****************************/
 GStr splamPredict() {
     /*********************************************
      * Step 1: (1) Iterating through a BAM file / BAM files
      *         (2) Accumulate junctions in a BED file.
     *********************************************/
-    GMessage("###########################################\n");
-    GMessage("## Step 1: generating spliced junctions in BED\n");
-    GMessage("###########################################\n");
-
-    GStr outfname_junc_bed;
-    if (!skip_extact) {
-        outfname_junc_bed = splamJExtract();
-    } else {
-        outfname_junc_bed = out_dir + "/junction.bed";
-    }
-    // std::unordered_map<std::string, int> chrs = get_hg38_chrom_size("HISAT2");
+    GStr outfname_junc_bed = splamJExtract();
     faidx_t * ref_faidx = fastaIndex();
-    // GMessage("[INFO] Predicting ...\n");
 
     /*********************************************
      * Step 2: (1) getting coordinates of donors and acceptors

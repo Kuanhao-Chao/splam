@@ -67,8 +67,6 @@ int ALN_COUNT_GOOD = 0;
 
 std::unordered_map<std::string, int>  CHRS;
 
-bool skip_extact = false;
-
 int main(int argc, char* argv[]) {
     GMessage(
             "==========================================================================================\n"
@@ -123,7 +121,7 @@ int main(int argc, char* argv[]) {
 
 void processOptions(int argc, char* argv[]) {
 
-    GArgs args(argc, argv, "help;cite;verbose;version;skip-extract;SLPEDVvhco:N:Q:m:r:");
+    GArgs args(argc, argv, "help;cite;verbose;version;SLPEDVvhco:N:Q:m:r:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -167,11 +165,6 @@ void processOptions(int argc, char* argv[]) {
         GERROR("\n[ERROR] The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
         exit(1);   
     }
-
-
-    skip_extact=(args.getOpt("skip-extract")!=NULL);
-
-    GMessage("skip_extact: %d\n", skip_extact);
     
     verbose=(args.getOpt("verbose")!=NULL || args.getOpt('V')!=NULL);
     if (verbose) {

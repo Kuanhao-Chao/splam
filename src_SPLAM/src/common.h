@@ -42,6 +42,4 @@ extern int ALN_COUNT_NSPLICED;
 extern int ALN_COUNT_BAD;
 extern int ALN_COUNT_GOOD;
 
-extern bool skip_extact;
-
 #endif /* TIEBRUSH_TMERGE_H_ */

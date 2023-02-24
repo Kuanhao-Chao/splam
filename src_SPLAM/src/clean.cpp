@@ -17,17 +17,16 @@
 #include <Python.h>
 #include <gclib/GStr.h>
 
+/****************************
+* Input : (1) Bed file of junction scores. (2) spliced alignment BAM file.
+* Output: (2) unordered_set of reads, (2) hashmap of removed hits.
+*****************************/
 std::unordered_set<std::string>* splamClean(int argc, char* argv[]) {
     GStr outfname_junc_score = splamPredict();
 
     /*********************************************
      * Step 4: SPLAM filtering out reads.
     *********************************************/
-    // GMessage("> outfname_discard: %s\n", outfname_discard.chars());
-    // GMessage("> outfname_cleaned: %s\n", outfname_cleaned.chars());
-    // GMessage("> outfname_spliced: %s\n", outfname_spliced.chars());
-    // GMessage("> outfname_nspliced: %s\n", outfname_nspliced.chars());
-
     GMessage("\n###########################################\n");
     GMessage("## Step 4: SPLAM filtering out reads\n");
     GMessage("###########################################\n\n");
