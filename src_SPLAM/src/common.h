@@ -42,4 +42,5 @@ extern int ALN_COUNT_NSPLICED;
 extern int ALN_COUNT_BAD;
 extern int ALN_COUNT_GOOD;
 
+extern std::unordered_map<std::string, GSamRecordList> read_hashmap;
 #endif /* TIEBRUSH_TMERGE_H_ */

@@ -66,6 +66,7 @@ int ALN_COUNT_BAD = 0;
 int ALN_COUNT_GOOD = 0;
 
 std::unordered_map<std::string, int>  CHRS;
+std::unordered_map<std::string, GSamRecordList> read_hashmap;
 
 int main(int argc, char* argv[]) {
     GMessage(

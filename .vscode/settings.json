@@ -97,6 +97,7 @@
         "__std_stream": "cpp",
         "charconv": "cpp",
         "span": "cpp",
-        "termcap.h": "c"
+        "termcap.h": "c",
+        "memory_resource": "cpp"
     }
 }

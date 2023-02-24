@@ -45,6 +45,7 @@ GStr splamJExtract() {
     int b_end=0, b_start=0;
 
     GMessage("[INFO] Processing BAM file ...\n");
+    GMessage("\t\tBefore Hash map size: %d\n", read_hashmap.size());
     while ((irec=in_records.next())!=NULL) {
         brec=irec->brec;
         int endpos=brec->end;
@@ -69,6 +70,30 @@ GStr splamJExtract() {
             ALN_COUNT_SPLICED++;
         } else {
             // outfile_cleaned->write(brec);
+            // Not spliced => check their NH tags!
+            int new_nh = brec->tag_int("NH", 0);
+            if (new_nh == 1) {
+                outfile_cleaned->write(brec);
+            } else if (new_nh == 0){
+                GMessage("\t\t NH tag is zero !!!: %d\n", new_nh);
+            } else {
+                std::string kv = brec->name();
+                // kv = kv + "_" + std::to_string(brec->pairOrder());
+
+                GSamRecord brec_cp = GSamRecord(*brec);
+                if (read_hashmap.find(kv) == read_hashmap.end()) {
+                    GMessage("\t\t Creating (%s); read_ls NH tag: %d\n", kv.c_str(), brec_cp.tag_int("NH", 0));
+                    GSamRecordList read_ls(brec_cp);
+                    GMessage("\t\t Insertting a read (%s); read_ls NH tag: %d\n", kv.c_str(), read_ls.NH_tag_bound);
+                    // read_hashmap[kv] = read_ls;
+                    read_hashmap.insert({kv, read_ls});
+                } else {
+                    read_hashmap.at(kv).add(brec_cp);
+                }
+                // GSamRecordList(brec_cp);
+                // read_hashmap[kv];
+            }
+
             ALN_COUNT_NSPLICED++;
         }
         ALN_COUNT++;
@@ -76,6 +101,7 @@ GStr splamJExtract() {
             GMessage("\t\t%d alignments processed.\n", ALN_COUNT);
         }
     }
+    GMessage("\t\tAfter Hash map size: %d\n", read_hashmap.size());
     GMessage("\t\t%d alignments processed.\n", ALN_COUNT);
     in_records.stop();
     flushJuncs(joutf);

@@ -99,7 +99,7 @@ class GSamRecord: public GSeg {
 #endif
    }
 
-   const GSamRecord& operator=(GSamRecord& r) {
+   const GSamRecord& operator=(const GSamRecord& r) {
       //copy operator
       //makes a new copy of the bam1_t struct etc.
       clear();
@@ -117,6 +117,30 @@ class GSamRecord: public GSeg {
       _read=r._read;
 #endif
       return *this;
+   }
+   
+
+   bool operator == (const GSamRecord& brec) {
+      // if (brec.start == start && brec.end == end && brec.b->data == b->data) {
+      if((bam_get_qual(brec.b)==bam_get_qual(b)) && (bam_get_cigar(brec.b)==bam_get_cigar(b)) && (bam_get_seq(b)==bam_get_seq(b)) && (bam_get_aux(b)==bam_get_aux(b)) ) {
+         return true;
+      } else {
+         return false;
+      }
+   }
+
+   bool operator<(const GSamRecord& brec) { // sort by strand last
+      if (start==brec.start){
+         if(end==brec.end) {
+				if(end==brec.end) {
+					return false;
+				}
+				else{
+					return (end < brec.end);
+				}
+			}
+      }
+      return (start < brec.start);
    }
 
      void setupCoordinates();
@@ -425,61 +449,7 @@ class GSamReader {
       bclose();
       GFREE(fname);
    }
-   /*
-   int64_t fpos() { //ftell
-     if (hts_file->is_bgzf) { // bam_ptell() from sam.c
-    	    if (hts_file->fp.bgzf==NULL)
-    	        return -1L;
-    	    return bgzf_tell(hts_file->fp.bgzf);
-     }
-     else if (hts_file->is_cram) { // cram_ptell() from sam.c
-    	    cram_container *c;
-    	    cram_slice *s;
-    	    int64_t ret = -1L;
-    	    if (hts_file->fp.cram) {
-    	        if ((c = hts_file->fp.cram->ctr) != NULL) {
-    	            if ((s = c->slice) != NULL && s->max_rec) {
-    	                if ((c->curr_slice + s->curr_rec/s->max_rec) >= (c->max_slice + 1))
-    	                	hts_file->fp.cram->curr_position += c->offset + c->length;
-    	            }
-    	        }
-    	        ret = hts_file->fp.cram->curr_position;
-    	    }
 
-    	    return ret;
-     }
-     else {
-    	 return htell(hts_file->fp.hfile);
-     }
-
-   }
-
-   int64_t fseek(int64_t offs) {
-    if (hts_file->is_bgzf) { //bam_pseek() from sam.c
-    	 return bgzf_seek(hts_file->fp.bgzf, offs, SEEK_SET);
-       }
-    else if (hts_file->is_cram) { //cram_pseek() from sam.c
-        if ((0 != cram_seek(hts_file->fp.cram, offs, SEEK_SET))
-         && (0 != cram_seek(hts_file->fp.cram, offs - hts_file->fp.cram->first_container, SEEK_CUR)))
-            return -1;
-
-        hts_file->fp.cram->curr_position = offs;
-
-        if (hts_file->fp.cram->ctr) {
-            cram_free_container(hts_file->fp.cram->ctr);
-            if (hts_file->fp.cram->ctr_mt && hts_file->fp.cram->ctr_mt != hts_file->fp.cram->ctr)
-                cram_free_container(hts_file->fp.cram->ctr_mt);
-
-            hts_file->fp.cram->ctr = NULL;
-            hts_file->fp.cram->ctr_mt = NULL;
-            hts_file->fp.cram->ooc = 0;
-        }
-        return offs;
-      }
-    else
-        return hseek(hts_file->fp.hfile, offs, SEEK_SET);
-   }
-   */
    void rewind() {
      if (fname==NULL) {
        GMessage("Warning: GSamReader::rewind() called without a file name.\n");
@@ -645,6 +615,35 @@ class GSamWriter {
      if (sam_write1(this->bam_file, this->hdr, xb)<0)
     	 GError("Error writing SAM record!\n");
    }
+};
+
+class GSamRecordList {
+ public:
+   int NH_tag_bound = 0;
+   GVec<GSamRecord> sam_list;
+   // if (sam_list.Count() == 0) {
+   //    NH_tag_bound = ;
+   // }
+   GSamRecordList(GSamRecord &brec) {
+      // GMessage("Before sam_list size: %d\n", sam_list.Count());
+      NH_tag_bound = brec.tag_int("NH", 0);
+      sam_list.Add(brec);
+      // GMessage("After sam_list size: %d\n", sam_list.Count());
+   }
+   
+   ~GSamRecordList() {
+
+   }
+   
+   void add(GSamRecord &brec) {
+      GMessage("@@ Adding an element!\n");
+      sam_list.Add(brec);
+      std::string kv = brec.name();
+      // kv = kv + "_" + std::to_string(brec.pairOrder());
+      GMessage("\tNH tag: %d\n", brec.tag_int("NH", 0));
+      GMessage("\tkv: %s\n", kv.c_str());
+      GMessage("\tAfter sam_list size: %d\n\n\n", sam_list.Count());
+   }   
 };
 
 #endif
