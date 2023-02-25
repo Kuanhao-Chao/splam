@@ -48,11 +48,13 @@ TInputRecord* irec=NULL;
 float threshold = 0.3;
 int aln_num_thr = 4;
 
+GStr outfname_multimapped;
 GStr outfname_spliced;
 GStr outfname_discard;
 GStr outfname_cleaned;
 
 GSamRecord* brec=NULL;
+GSamWriter* outfile_multimapped = NULL;
 GSamWriter* outfile_spliced = NULL;
 GSamWriter* outfile_discard = NULL;
 GSamWriter* outfile_cleaned = NULL;
@@ -64,6 +66,7 @@ int ALN_COUNT_SPLICED = 0;
 int ALN_COUNT_NSPLICED = 0;
 int ALN_COUNT_BAD = 0;
 int ALN_COUNT_GOOD = 0;
+int ALN_COUNT_NH_UPDATE = 0;
 
 std::unordered_map<std::string, int>  CHRS;
 std::unordered_map<std::string, GSamRecordList> read_hashmap;
@@ -86,14 +89,12 @@ int main(int argc, char* argv[]) {
     in_records.setup(VERSION, argc, argv);
     processOptions(argc, argv);
 
+    outfname_multimapped = out_dir + "/TMP/multimapped.bam";
     outfname_spliced = out_dir + "/TMP/spliced.bam";
     outfname_cleaned = out_dir + "/cleaned.bam";
     outfname_discard = out_dir + "/discard.bam";
-
-    // GMessage(">> in_records.header(): %s\n", in_records.header());
     
     int num_samples=in_records.start();
-
     GStr tmp_dir(out_dir + "/TMP");
     std::filesystem::create_directories(out_dir.chars());
     std::filesystem::create_directories(tmp_dir.chars());

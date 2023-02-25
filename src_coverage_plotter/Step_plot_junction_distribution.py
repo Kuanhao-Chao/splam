@@ -41,8 +41,8 @@ def main(argv):
     num_ls_discard = np.array(num_ls_discard)
     num_ls_discard_counter = Counter(num_ls_discard)
     print("num_ls_discard_counter: ", num_ls_discard_counter)
-    num_ls_cleaned = np.array(num_ls_cleaned)
-    num_ls_cleaned_counter = Counter(num_ls_cleaned)
+    # num_ls_cleaned = np.array(num_ls_cleaned)
+    # num_ls_cleaned_counter = Counter(num_ls_cleaned)
 
     keys_ls_discard = np.array(list(num_ls_discard_counter.keys()))
     vals_ls_discard = np.array(list(num_ls_discard_counter.values()))
@@ -53,20 +53,22 @@ def main(argv):
     print("vals_ls discard: ", vals_ls_discard)
     print("idices discard : ", idices_discard)
 
-    keys_ls_cleaned = np.array(list(num_ls_cleaned_counter.keys()))
-    vals_ls_cleaned = np.array(list(num_ls_cleaned_counter.values()))
-    idices_cleaned = np.argsort(keys_ls_cleaned, axis=0)
-    keys_ls_cleaned = keys_ls_cleaned[idices_cleaned]
-    vals_ls_cleaned = vals_ls_cleaned[idices_cleaned]
-    print("keys_ls cleaned: ", keys_ls_cleaned)
-    print("vals_ls cleaned: ", vals_ls_cleaned)
-    print("idices cleaned : ", idices_cleaned)
+    # keys_ls_cleaned = np.array(list(num_ls_cleaned_counter.keys()))
+    # vals_ls_cleaned = np.array(list(num_ls_cleaned_counter.values()))
+    # idices_cleaned = np.argsort(keys_ls_cleaned, axis=0)
+    # keys_ls_cleaned = keys_ls_cleaned[idices_cleaned]
+    # vals_ls_cleaned = vals_ls_cleaned[idices_cleaned]
+    # print("keys_ls cleaned: ", keys_ls_cleaned)
+    # print("vals_ls cleaned: ", vals_ls_cleaned)
+    # print("idices cleaned : ", idices_cleaned)
 
     # plt.bar(keys_ls_discard[:100]-0.2, vals_ls_discard[:100], width=0.2)
     # plt.bar(keys_ls_cleaned[:100]+0.2, vals_ls_cleaned[:100], width=0.2)
 
-    plt.bar(keys_ls_discard[100:200]-0.2, vals_ls_discard[100:200], width=0.2)
-    plt.bar(keys_ls_cleaned[100:200]+0.2, vals_ls_cleaned[100:200], width=0.2)
+    # plt.bar(keys_ls_discard[:1000], vals_ls_discard[:1000])
+    plt.bar(keys_ls_discard[:100], vals_ls_discard[:100])
+
+    # plt.bar(keys_ls_cleaned[100:200]+0.2, vals_ls_cleaned[100:200], width=0.2)
 
     # plt.bar(num_ls_cleaned_counter.keys()[10:100], num_ls_cleaned_counter.values()[10:100], width=0.2)
     plt.xlabel("The alignment count for junctions")

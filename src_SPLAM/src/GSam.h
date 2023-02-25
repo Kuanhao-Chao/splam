@@ -636,13 +636,13 @@ class GSamRecordList {
    }
    
    void add(GSamRecord &brec) {
-      GMessage("@@ Adding an element!\n");
+      // GMessage("@@ Adding an element!\n");
       sam_list.Add(brec);
       std::string kv = brec.name();
       // kv = kv + "_" + std::to_string(brec.pairOrder());
-      GMessage("\tNH tag: %d\n", brec.tag_int("NH", 0));
-      GMessage("\tkv: %s\n", kv.c_str());
-      GMessage("\tAfter sam_list size: %d\n\n\n", sam_list.Count());
+      // GMessage("\tNH tag: %d\n", brec.tag_int("NH", 0));
+      // GMessage("\tkv: %s\n", kv.c_str());
+      // GMessage("\tAfter sam_list size: %d\n\n\n", sam_list.Count());
    }   
 };
 
