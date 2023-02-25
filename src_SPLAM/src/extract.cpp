@@ -17,6 +17,7 @@ GStr splamJExtract() {
     GMessage("## Step 1: generating spliced junctions in BED\n");
     GMessage("###########################################\n");
 
+    outfile_multimapped = new GSamWriter(outfname_multimapped, in_records.header(), GSamFile_BAM);
     outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
     outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
 
@@ -62,38 +63,42 @@ GStr splamJExtract() {
                 b_end=endpos;
             }
         }
+
         int accYC = 0;
         accYC = brec->tag_int("YC", 1);
         if (joutf && brec->exons.Count()>1) {
+            // Spliced reads
             addJunction(*brec, accYC, prev_refname);
             outfile_spliced->write(brec);
             ALN_COUNT_SPLICED++;
         } else {
-            // outfile_cleaned->write(brec);
+            // Non-spliced reads.
             // Not spliced => check their NH tags!
+            if (brec->isUnmapped()) continue;
             int new_nh = brec->tag_int("NH", 0);
             if (new_nh == 1) {
                 outfile_cleaned->write(brec);
             } else if (new_nh == 0){
+                GMessage("\t\t brec->name(): %s !!!\n", brec->name());
                 GMessage("\t\t NH tag is zero !!!: %d\n", new_nh);
             } else {
-                std::string kv = brec->name();
+                outfile_multimapped->write(brec);
+                ALN_COUNT_NH_UPDATE++;
+                // std::string kv = brec->name();
                 // kv = kv + "_" + std::to_string(brec->pairOrder());
-
-                GSamRecord brec_cp = GSamRecord(*brec);
-                if (read_hashmap.find(kv) == read_hashmap.end()) {
-                    GMessage("\t\t Creating (%s); read_ls NH tag: %d\n", kv.c_str(), brec_cp.tag_int("NH", 0));
-                    GSamRecordList read_ls(brec_cp);
-                    GMessage("\t\t Insertting a read (%s); read_ls NH tag: %d\n", kv.c_str(), read_ls.NH_tag_bound);
-                    // read_hashmap[kv] = read_ls;
-                    read_hashmap.insert({kv, read_ls});
-                } else {
-                    read_hashmap.at(kv).add(brec_cp);
-                }
+                // GSamRecord brec_cp = GSamRecord(*brec);
+                // if (read_hashmap.find(kv) == read_hashmap.end()) {
+                //     // GMessage("\t\t Creating (%s); read_ls NH tag: %d\n", kv.c_str(), brec_cp.tag_int("NH", 0));
+                //     GSamRecordList read_ls(brec_cp);
+                //     // GMessage("\t\t Insertting a read (%s); read_ls NH tag: %d\n", kv.c_str(), read_ls.NH_tag_bound);
+                //     // read_hashmap[kv] = read_ls;
+                //     read_hashmap.insert({kv, read_ls});
+                // } else {
+                //     read_hashmap.at(kv).add(brec_cp);
+                // }
                 // GSamRecordList(brec_cp);
                 // read_hashmap[kv];
             }
-
             ALN_COUNT_NSPLICED++;
         }
         ALN_COUNT++;
@@ -102,6 +107,12 @@ GStr splamJExtract() {
         }
     }
     GMessage("\t\tAfter Hash map size: %d\n", read_hashmap.size());
+    // for (auto it : read_hashmap) {
+    //     std::cout << " " << it.first << ":" << "(NH tag) " << it.second.NH_tag_bound << std::endl;
+    //     for (int i=0; i<it.second.sam_list.Count(); i++) {
+    //         std::cout << it.second.sam_list[i].name() << std::endl;
+    //     }
+    // }
     GMessage("\t\t%d alignments processed.\n", ALN_COUNT);
     in_records.stop();
     flushJuncs(joutf);

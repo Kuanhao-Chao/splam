@@ -26,10 +26,12 @@ extern float threshold;
 
 extern GSamRecord* brec;
 
+extern GStr outfname_multimapped;
 extern GStr outfname_spliced;
 extern GStr outfname_discard;
 extern GStr outfname_cleaned;
 
+extern GSamWriter* outfile_multimapped;
 extern GSamWriter* outfile_spliced;
 extern GSamWriter* outfile_discard;
 extern GSamWriter* outfile_cleaned;
@@ -41,6 +43,7 @@ extern int ALN_COUNT_SPLICED;
 extern int ALN_COUNT_NSPLICED;
 extern int ALN_COUNT_BAD;
 extern int ALN_COUNT_GOOD;
+extern int ALN_COUNT_NH_UPDATE;
 
 extern std::unordered_map<std::string, GSamRecordList> read_hashmap;
 #endif /* TIEBRUSH_TMERGE_H_ */
