@@ -70,6 +70,7 @@ add_executable(SPLAM
         src/tmerge.cpp
         src/GSam.cpp
 
+        ${CMAKE_SOURCE_DIR}/include/gclib/GHash.hh
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GArgs.h

@@ -30,6 +30,7 @@ void processOptions(int argc, char* argv[]);
 void processOptionsJExtract(GArgs& args);
 void processOptionsPredict(GArgs& args);
 void processOptionsClean(GArgs& args);
+void processOptionsAll(GArgs& args);
 void processOptionsNHUpdate(GArgs& args);
 
 
@@ -47,6 +48,7 @@ GStr infname_reffa("");
 GStr infname_bam("");
 GStr infname_juncbed("");
 GStr infname_scorebed("");
+GStr infname_NH_tag("");
 
 GStr out_dir;
 
@@ -77,8 +79,8 @@ int ALN_COUNT_BAD = 0;
 int ALN_COUNT_GOOD = 0;
 int ALN_COUNT_NH_UPDATE = 0;
 
-std::unordered_map<std::string, int>  CHRS;
-std::unordered_map<std::string, GSamRecordList> read_hashmap;
+robin_hood::unordered_map<std::string, int>  CHRS;
+robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
 
 int STEP_COUNTER = 0;
 // j-extract parameters:
@@ -87,6 +89,8 @@ GSamWriter* outfile_above_spliced = NULL;
 GSamWriter* outfile_below_spliced = NULL;
 FILE* joutf_above=NULL;
 FILE* joutf_below=NULL;
+
+// robin_hood::unordered_set<std::string>* rm_rd_set;
 
 int main(int argc, char* argv[]) {
     GMessage(
@@ -111,7 +115,6 @@ int main(int argc, char* argv[]) {
     outfname_cleaned = out_dir + "/cleaned.bam";
     outfname_discard = out_dir + "/discard.bam";
     
-    int num_samples=in_records.start();
     GStr tmp_dir(out_dir + "/TMP");
     std::filesystem::create_directories(out_dir.chars());
     std::filesystem::create_directories(tmp_dir.chars());
@@ -119,23 +122,30 @@ int main(int argc, char* argv[]) {
     create_CHRS();
 
     if (COMMAND_MODE == J_EXTRACT) {
-        splamJExtract();
+        infname_juncbed = splamJExtract();
     } else if (COMMAND_MODE == PREDICT) {
-        splamPredict();
+        infname_scorebed = splamPredict();
     } else if (COMMAND_MODE == CLEAN) {
-        splamClean(argc, argv);
-
+        infname_NH_tag = splamClean();
+        
         GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
         GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
         GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
         GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
         GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
-
-    // } else if (COMMAND_MODE == NH_UPDATE) {
-    //     splamNHUpdate(argc, argv);
-
+        
     } else if (COMMAND_MODE == ALL) {
-        splamNHUpdate(argc, argv);
+        infname_juncbed = splamJExtract();
+        infname_scorebed = splamPredict();
+        infname_NH_tag = splamClean();
+
+        // GStr outfname_cleaned = splamNHUpdate();
+        
+        GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
+        GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
+        GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
+        GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
+        GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
     }
 
     return 0;
@@ -175,9 +185,6 @@ void processOptions(int argc, char* argv[]) {
     } else if (strcmp(command_str.chars(), "clean") == 0) {
         GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
         COMMAND_MODE = CLEAN;
-    // } else if (strcmp(command_str.chars(), "nh-update") == 0) {
-    //     GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
-    //     COMMAND_MODE = NH_UPDATE;
     } else if (strcmp(command_str.chars(), "all") == 0) {
         GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
         COMMAND_MODE = ALL;
@@ -204,10 +211,8 @@ void processOptions(int argc, char* argv[]) {
         processOptionsPredict(args);
     } else if (COMMAND_MODE == CLEAN) {
         processOptionsClean(args);
-    // } else if (COMMAND_MODE == NH_UPDATE) {
-    //     processOptionsNHUpdate(args);
     } else if (COMMAND_MODE == ALL) {
-        processOptionsClean(args);
+        processOptionsAll(args);
     }
 
     GMessage(">>  command_str      : %s\n", command_str.chars());
@@ -281,6 +286,12 @@ void processOptionsClean(GArgs& args) {
     optionsModel(args);
     optionsRef(args);
     optionsScore(args);
+    optionsOutput(args);
+}
+
+void processOptionsAll(GArgs& args) {
+    optionsModel(args);
+    optionsRef(args);
     optionsOutput(args);
 }
 

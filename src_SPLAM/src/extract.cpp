@@ -18,28 +18,29 @@ GStr splamJExtract() {
     GMessage("## Step %d: generating spliced junctions in BED\n", STEP_COUNTER);
     GMessage("###########################################\n");
 
+    int num_samples=in_records.start();
+
     // This is normal workflow for writing out all junctions.
     outfile_multimapped = new GSamWriter(outfname_multimapped, in_records.header(), GSamFile_BAM);
     outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
-    outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
-
-    infname_juncbed = out_dir + "/junction.bed";
+    
+    GStr outfname_junc_bed = out_dir + "/junction.bed";
     outfile_spliced = new GSamWriter(outfname_spliced, in_records.header(), GSamFile_BAM);
 
     GMessage("[INFO] Extracting junctions ...\n");
     GMessage("[INFO] Output directory\t\t: %s\n", out_dir.chars());
-    GMessage("[INFO] Output Junction file\t: %s\n", infname_juncbed.chars());
+    GMessage("[INFO] Output Junction file\t: %s\n", outfname_junc_bed.chars());
 
     /****************************
     * Creating junction bed files.
     *****************************/
     // Creating the output junction bed file
-    if (!infname_juncbed.is_empty()) {
-        if (strcmp(infname_juncbed.substr(infname_juncbed.length()-4, 4).chars(), ".bed")!=0) {
-            infname_juncbed.append(".bed");
+    if (!outfname_junc_bed.is_empty()) {
+        if (strcmp(outfname_junc_bed.substr(outfname_junc_bed.length()-4, 4).chars(), ".bed")!=0) {
+            outfname_junc_bed.append(".bed");
         }
-        joutf = fopen(infname_juncbed.chars(), "w");
-        if (joutf==NULL) GError("Error creating file %s\n", infname_juncbed.chars());
+        joutf = fopen(outfname_junc_bed.chars(), "w");
+        if (joutf==NULL) GError("Error creating file %s\n", outfname_junc_bed.chars());
     }
 
     // This is additional workflow to write out junctions above & below the thresholds.
@@ -150,5 +151,5 @@ GStr splamJExtract() {
     junctions.setCapacity(128);
     delete outfile_spliced;
     GMessage("[INFO] SPLAM! Total number of junctions: %d\n", JUNC_COUNT);	
-    return infname_juncbed;
+    return outfname_junc_bed;
 }

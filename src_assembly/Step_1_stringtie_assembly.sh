@@ -19,9 +19,9 @@ then
     mkdir ./results/$SAMPLE/assembly
     mkdir ./results/$SAMPLE/assembly/AFTER
 
-    echo "samtools index /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.bam"
-    samtools index /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.bam
+    echo "samtools index /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.sort.bam"
+    samtools index /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.sort.bam
     
-    echo "stringtie -o ./results/$SAMPLE/assembly/AFTER/$SAMPLE.gtf /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.bam"
-    stringtie -o ./results/$SAMPLE/assembly/AFTER/$SAMPLE.gtf /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.bam
+    echo "stringtie -o ./results/$SAMPLE/assembly/AFTER/$SAMPLE.gtf /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.sort.bam"
+    stringtie -o ./results/$SAMPLE/assembly/AFTER/$SAMPLE.gtf /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/build/$SAMPLE/cleaned.sort.bam
 fi
