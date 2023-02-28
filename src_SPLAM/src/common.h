@@ -17,6 +17,8 @@ extern CommandMode COMMAND_MODE;
 extern GStr infname_model_name;
 extern GStr infname_reffa;
 extern GStr infname_bam;
+extern GStr infname_juncbed;
+extern GStr infname_scorebed;
 
 extern GStr out_dir;
 
@@ -46,4 +48,14 @@ extern int ALN_COUNT_GOOD;
 extern int ALN_COUNT_NH_UPDATE;
 
 extern std::unordered_map<std::string, GSamRecordList> read_hashmap;
+
+extern int STEP_COUNTER;
+
+// j-extract parameters.
+extern int j_extract_threshold;
+extern GSamWriter* outfile_above_spliced;
+extern GSamWriter* outfile_below_spliced;
+extern FILE* joutf_above;
+extern FILE* joutf_below;
+
 #endif /* TIEBRUSH_TMERGE_H_ */

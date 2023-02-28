@@ -32,12 +32,21 @@ void processOptionsPredict(GArgs& args);
 void processOptionsClean(GArgs& args);
 void processOptionsNHUpdate(GArgs& args);
 
+
+void optionsModel(GArgs& args);
+void optionsRef(GArgs& args);
+void optionsOutput(GArgs& args);
+void optionsJunction(GArgs& args);
+void optionsScore(GArgs& args);
+
 CommandMode COMMAND_MODE = UNSET;
 GStr command_str;
 
-GStr infname_model_name;
-GStr infname_reffa;
-GStr infname_bam;
+GStr infname_model_name("");
+GStr infname_reffa("");
+GStr infname_bam("");
+GStr infname_juncbed("");
+GStr infname_scorebed("");
 
 GStr out_dir;
 
@@ -70,6 +79,14 @@ int ALN_COUNT_NH_UPDATE = 0;
 
 std::unordered_map<std::string, int>  CHRS;
 std::unordered_map<std::string, GSamRecordList> read_hashmap;
+
+int STEP_COUNTER = 0;
+// j-extract parameters:
+int j_extract_threshold = 0;
+GSamWriter* outfile_above_spliced = NULL;
+GSamWriter* outfile_below_spliced = NULL;
+FILE* joutf_above=NULL;
+FILE* joutf_below=NULL;
 
 int main(int argc, char* argv[]) {
     GMessage(
@@ -107,23 +124,25 @@ int main(int argc, char* argv[]) {
         splamPredict();
     } else if (COMMAND_MODE == CLEAN) {
         splamClean(argc, argv);
-    } else if (COMMAND_MODE == NH_UPDATE) {
-        splamNHUpdate(argc, argv);
+
+        GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
+        GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
+        GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
+        GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
+        GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
+
+    // } else if (COMMAND_MODE == NH_UPDATE) {
+    //     splamNHUpdate(argc, argv);
+
     } else if (COMMAND_MODE == ALL) {
         splamNHUpdate(argc, argv);
     }
 
-    GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
-    GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
-    GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
-    GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
-    GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
     return 0;
 }
 
 void processOptions(int argc, char* argv[]) {
-
-    GArgs args(argc, argv, "help;cite;verbose;version;SLPEDVvhco:N:Q:m:r:");
+    GArgs args(argc, argv, "help;cite;verbose;version;model=;junction=;threshold=;output=;score=;hvcVo:t:N:Q:m:j:r:s:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -156,9 +175,9 @@ void processOptions(int argc, char* argv[]) {
     } else if (strcmp(command_str.chars(), "clean") == 0) {
         GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
         COMMAND_MODE = CLEAN;
-    } else if (strcmp(command_str.chars(), "nh-update") == 0) {
-        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
-        COMMAND_MODE = NH_UPDATE;
+    // } else if (strcmp(command_str.chars(), "nh-update") == 0) {
+    //     GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
+    //     COMMAND_MODE = NH_UPDATE;
     } else if (strcmp(command_str.chars(), "all") == 0) {
         GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
         COMMAND_MODE = ALL;
@@ -179,21 +198,25 @@ void processOptions(int argc, char* argv[]) {
     *********************************/
     if (COMMAND_MODE == J_EXTRACT) {
         processOptionsJExtract(args);
-
-        GMessage(">>  command_str      : %s\n", command_str.chars());
-        GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
-        GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
-        GMessage(">> infname_bam       : %s\n", infname_bam.chars());
-        GMessage(">> out_dir           : %s\n", out_dir.chars());
+        
     } else if (COMMAND_MODE == PREDICT) {
+        GMessage(">> Inside PREDICT:\n");
         processOptionsPredict(args);
     } else if (COMMAND_MODE == CLEAN) {
         processOptionsClean(args);
-    } else if (COMMAND_MODE == NH_UPDATE) {
-        processOptionsNHUpdate(args);
+    // } else if (COMMAND_MODE == NH_UPDATE) {
+    //     processOptionsNHUpdate(args);
     } else if (COMMAND_MODE == ALL) {
         processOptionsClean(args);
     }
+
+    GMessage(">>  command_str      : %s\n", command_str.chars());
+    GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
+    GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
+    GMessage(">> infname_scorebed  : %s\n", infname_scorebed.chars());
+    GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
+    GMessage(">> infname_bam       : %s\n", infname_bam.chars());
+    GMessage(">> out_dir           : %s\n", out_dir.chars());
 
     args.startNonOpt();
 
@@ -227,76 +250,42 @@ void processOptions(int argc, char* argv[]) {
 }
 
 
-
-
 void processOptionsJExtract(GArgs& args) {
-    
-    // -o / --output
-    out_dir=args.getOpt('o');    
-    if (out_dir.is_empty()) {
-        out_dir=args.getOpt("output");
-        if (out_dir.is_empty()) {
-            usage();
-            GMessage("\n[ERROR] output directory must be provided (-o / --output)!\n");
-            exit(1);
+    optionsOutput(args);
+
+    // -t / --threshold
+    GStr s;
+    s = args.getOpt('t');
+    if (s.is_empty()) {
+        s = args.getOpt("threshold");
+        if (s.is_empty()) {
+            j_extract_threshold = 0;
+        } else {
+            j_extract_threshold = s.asInt();
         }
+    } else {
+        j_extract_threshold = s.asInt();       
     }
 }
 
 
-
-
 void processOptionsPredict(GArgs& args) {
-    // -m / --model
-    infname_model_name=args.getOpt('m');
-    if (infname_model_name.is_empty()) {
-        infname_model_name=args.getOpt("model");
-        if (infname_model_name.is_empty()) {
-            usage();
-            GMessage("\n[ERROR] model file must be provided (-m)!\n");
-            exit(1);
-        } else {
-            if (fileExists(infname_model_name.chars())>1) {
-                // guided=true;
-            } else {
-                GError("[ERROR] model file (%s) not found.\n",
-                    infname_model_name.chars());
-            }
-        }
-    }
-
-    // -r / --ref
-    infname_reffa=args.getOpt('r');        
-    if (infname_reffa.is_empty()) {
-        infname_reffa=args.getOpt("ref");
-        if (infname_reffa.is_empty()) {
-            usage();
-            GMessage("\n[ERROR] reference fasta file must be provided (-r)!\n");
-            exit(1);
-        } else {
-            if (fileExists(infname_reffa.chars())>1) {
-                // guided=true;
-            } else {
-                GError("[ERROR] reference fasta file (%s) not found.\n",
-                    infname_reffa.chars());
-            }
-        }
-    }
-    
-    // -o / --output
-    out_dir=args.getOpt('o');    
-    if (out_dir.is_empty()) {
-        out_dir=args.getOpt("output");
-        if (out_dir.is_empty()) {
-            usage();
-            GMessage("\n[ERROR] output directory must be provided (-o / --output)!\n");
-            exit(1);
-        }
-    }
+    optionsModel(args);
+    optionsJunction(args);
+    optionsRef(args);
+    optionsOutput(args);
 }
 
 
 void processOptionsClean(GArgs& args) {
+    optionsModel(args);
+    optionsRef(args);
+    optionsScore(args);
+    optionsOutput(args);
+}
+
+
+void optionsModel(GArgs& args) {
     // -m / --model
     infname_model_name=args.getOpt('m');
     if (infname_model_name.is_empty()) {
@@ -314,7 +303,10 @@ void processOptionsClean(GArgs& args) {
             }
         }
     }
+} 
 
+
+void optionsRef(GArgs& args) {
     // -r / --ref
     infname_reffa=args.getOpt('r');        
     if (infname_reffa.is_empty()) {
@@ -332,7 +324,10 @@ void processOptionsClean(GArgs& args) {
             }
         }
     }
-    
+}
+
+
+void optionsOutput(GArgs& args) {
     // -o / --output
     out_dir=args.getOpt('o');    
     if (out_dir.is_empty()) {
@@ -346,15 +341,57 @@ void processOptionsClean(GArgs& args) {
 }
 
 
-void processOptionsNHUpdate(GArgs& args) {
-    // -o / --output
-    out_dir=args.getOpt('o');    
-    if (out_dir.is_empty()) {
-        out_dir=args.getOpt("output");
-        if (out_dir.is_empty()) {
+void optionsJunction(GArgs& args) {
+    // -j / --junction
+    infname_juncbed = args.getOpt('j');
+    if (infname_juncbed.is_empty()) {
+        infname_juncbed=args.getOpt("junction");
+        if (infname_juncbed.is_empty()) {
             usage();
-            GMessage("\n[ERROR] output directory must be provided (-o / --output)!\n");
+            GMessage("\n[ERROR] junction bed file must be provided (-j / --junction)!\n");
             exit(1);
+        } else {
+            if (fileExists(infname_juncbed.chars())>1) {
+                // guided=true;
+            } else {
+                GError("[ERROR] junction bed file (%s) not found.\n",
+                    infname_juncbed.chars());
+            }
+        }
+    } else {
+        if (fileExists(infname_juncbed.chars())>1) {
+            // guided=true;
+        } else {
+            GError("[ERROR] junction bed file (%s) not found.\n",
+                infname_juncbed.chars());
+        }
+    }
+}
+
+
+void optionsScore(GArgs& args) {
+    // -s / --score
+    infname_scorebed = args.getOpt('s');
+    if (infname_scorebed.is_empty()) {
+        infname_scorebed=args.getOpt("score");
+        if (infname_scorebed.is_empty()) {
+            usage();
+            GMessage("\n[ERROR] junction score bed file must be provided (-s / --score)!\n");
+            exit(1);
+        } else {
+            if (fileExists(infname_scorebed.chars())>1) {
+                // guided=true;
+            } else {
+                GError("[ERROR] junction score bed file (%s) not found.\n",
+                    infname_scorebed.chars());
+            }
+        }
+    } else {
+        if (fileExists(infname_scorebed.chars())>1) {
+            // guided=true;
+        } else {
+            GError("[ERROR] junction score bed file (%s) not found.\n",
+                infname_scorebed.chars());
         }
     }
 }

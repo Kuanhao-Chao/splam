@@ -20,5 +20,6 @@ void addJunction(GSamRecord& r, int dupcount, GStr ref);
 void writeJuncs(FILE* f);
 
 void flushJuncs(FILE* f);
+void flushJuncs(FILE* f1, FILE* f2);
 
 #endif

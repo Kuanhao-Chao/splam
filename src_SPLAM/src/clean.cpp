@@ -22,19 +22,18 @@
 * Output: (2) unordered_set of reads, (2) hashmap of removed hits.
 *****************************/
 std::unordered_set<std::string>* splamClean(int argc, char* argv[]) {
-    GStr outfname_junc_score = splamPredict();
-
     /*********************************************
      * Step 4: SPLAM filtering out reads.
     *********************************************/
+    STEP_COUNTER += 1;
     GMessage("\n###########################################\n");
-    GMessage("## Step 4: SPLAM filtering out reads\n");
+    GMessage("## Step %d: SPLAM filtering out reads\n", STEP_COUNTER);
     GMessage("###########################################\n\n");
     robin_hdd_hm rm_rd_hm;
     static std::unordered_set<std::string> rm_rd_set;
 
     GMessage(">> rm_rd_set size %d\n", rm_rd_set.size());
-    GStr outfname_spliced_good = filterSpurJuncs(outfname_junc_score, rm_rd_hm, rm_rd_set);
+    GStr outfname_spliced_good = filterSpurJuncs(infname_scorebed, rm_rd_hm, rm_rd_set);
     GMessage(">> rm_rd_set size %d\n", rm_rd_set.size());
 
     delete outfile_discard;
