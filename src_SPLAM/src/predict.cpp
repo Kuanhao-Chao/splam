@@ -35,8 +35,8 @@ GStr splamPredict() {
 
     GMessage("After creating `fastaIndex`.\n");
 
-    robin_hdd_hm doner_dimers;
-    robin_hdd_hm acceptor_dimers;
+    robin_hdd_rm_hit doner_dimers;
+    robin_hdd_rm_hit acceptor_dimers;
     GStr outfname_junc_fa = splamCreateFasta(infname_juncbed, doner_dimers, acceptor_dimers, ref_faidx);
 
 
@@ -113,7 +113,7 @@ faidx_t *fastaIndex() {
     return ref_faidx;
 }
 
-GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_hm &doner_dimers, robin_hdd_hm &acceptor_dimers, faidx_t *ref_faidx) {
+GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_rm_hit &doner_dimers, robin_hdd_rm_hit &acceptor_dimers, faidx_t *ref_faidx) {
     int SEQ_LEN = 800;
     int QUOTER_SEQ_LEN = SEQ_LEN/4;
 
@@ -150,6 +150,7 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_hm &doner_dimers, robin_
     std::ifstream fr_junc(outfname_junc_bed);
     std::string line;
 
+    GMessage("ALN_COUNT_SPLICED: %d\n", ALN_COUNT_SPLICED);
     progressbar bar(ALN_COUNT_SPLICED);
     if (COMMAND_MODE == ALL) {
         bar.set_opening_bracket_char("[INFO] SPLAM! Writing junction BED file \n\t[");

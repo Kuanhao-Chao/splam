@@ -2,6 +2,6 @@
 #define _UPDATE_H_
 #include <gclib/GStr.h>
 
-GStr splamNHUpdate(int argc, char* argv[]);
+GStr splamNHUpdate();
 
 #endif

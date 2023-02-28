@@ -6,7 +6,6 @@ enum CommandMode {
   J_EXTRACT,
   PREDICT,
   CLEAN,
-  NH_UPDATE,
   ALL
 };
 

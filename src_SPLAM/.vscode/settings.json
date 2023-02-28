@@ -89,6 +89,12 @@
         "vector": "cpp",
         "__bits": "cpp",
         "format": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "__std_stream": "cpp",
+        "charconv": "cpp",
+        "codecvt": "cpp",
+        "numbers": "cpp",
+        "semaphore": "cpp",
+        "span": "cpp"
     }
 }

@@ -1086,6 +1086,7 @@ CMakeFiles/SPLAM.dir/src/clean.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_s_ifmt.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_filesec_t.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include/stdarg.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GHash.hh \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/iostream \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/ios \
@@ -1389,13 +1390,14 @@ CMakeFiles/SPLAM.dir/src/clean.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/khash.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/bundle.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_set \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_set \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc_func.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/util.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/extract.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/predict.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/faidx.h \
@@ -1951,14 +1953,15 @@ CMakeFiles/SPLAM.dir/src/extract.cpp.o: /Users/chaokuan-hao/Documents/Projects/P
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/khash.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc_func.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/vector \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__split_buffer \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/util.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/filesystem \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/stack \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/deque \
@@ -2421,9 +2424,7 @@ CMakeFiles/SPLAM.dir/src/junc_func.cpp.o: /Users/chaokuan-hao/Documents/Projects
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/khash.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc_func.h
 
 CMakeFiles/SPLAM.dir/src/predict.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/predict.cpp \
@@ -2891,12 +2892,12 @@ CMakeFiles/SPLAM.dir/src/predict.cpp.o: /Users/chaokuan-hao/Documents/Projects/P
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/khash.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/util.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/vector \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/splam_stream.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/progressbar/progressbar.hpp \
   /Users/chaokuan-hao/miniconda3/include/python3.8/Python.h \
@@ -3439,6 +3440,7 @@ CMakeFiles/SPLAM.dir/src/splam.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/kroundup.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/clean.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GHash.hh \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/common.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/var.h \
@@ -3455,11 +3457,12 @@ CMakeFiles/SPLAM.dir/src/splam.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/khash.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/bundle.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_set \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_set \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/util.h \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/update.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GArgs.h \
   /Users/chaokuan-hao/miniconda3/include/python3.8/Python.h \
@@ -4469,14 +4472,16 @@ CMakeFiles/SPLAM.dir/src/update.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/khash.h \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
-  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/util.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/vector \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
+  /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/clean.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GHash.hh \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/bundle.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_set
 
 CMakeFiles/SPLAM.dir/src/util.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/util.cpp \
@@ -4937,6 +4942,7 @@ CMakeFiles/SPLAM.dir/src/util.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_S
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/khash.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_map \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \
@@ -5076,11 +5082,13 @@ CMakeFiles/SPLAM.dir/src/util.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_S
 
 /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc_func.h:
 
-/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_set:
-
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table:
+
+/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_set:
+
+/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/bundle.h:
 
 /Users/chaokuan-hao/miniconda3/include/python3.8/odictobject.h:
 
@@ -5363,6 +5371,8 @@ CMakeFiles/SPLAM.dir/src/util.cpp.o: /Users/chaokuan-hao/Documents/Projects/PR_S
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/initializer_list:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__variant/monostate.h:
+
+/Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GHash.hh:
 
 /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__utility/__decay_copy.h:
 

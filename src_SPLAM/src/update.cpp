@@ -16,11 +16,10 @@
 * Input : (1) unordered_set of reads, (2) hashmap of removed hits.
 * Output: (1) cleamed BAM file.
 *****************************/
-GStr splamNHUpdate(int argc, char* argv[]) {
-    std::unordered_set<std::string>* rm_rd_set = splamClean(argc, argv);
-
+GStr splamNHUpdate() {
+    STEP_COUNTER += 1;
     GMessage("\n###########################################\n");
-    GMessage("** Step 5: Updating NH tags in final clean BAM file\n");
+    GMessage("** Step %d: Updating NH tags in final clean BAM file\n", STEP_COUNTER);
     GMessage("###########################################\n");
     std::unordered_map<std::string, int> nh_hm;
 

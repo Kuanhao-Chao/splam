@@ -4,10 +4,10 @@
 #include "var.h"
 #include "tmerge.h"
 #include <gclib/GStr.h>
-#include <unordered_map>
+#include <robin_hood/robin_hood.h>
 #define VERSION "0.0.1"
 
-extern std::unordered_map<std::string, int>  CHRS;
+extern robin_hood::unordered_map<std::string, int>  CHRS;
 
 extern TInputFiles in_records;
 extern TInputRecord* irec;
@@ -19,6 +19,7 @@ extern GStr infname_reffa;
 extern GStr infname_bam;
 extern GStr infname_juncbed;
 extern GStr infname_scorebed;
+extern GStr infname_NH_tag;
 
 extern GStr out_dir;
 
@@ -47,7 +48,6 @@ extern int ALN_COUNT_BAD;
 extern int ALN_COUNT_GOOD;
 extern int ALN_COUNT_NH_UPDATE;
 
-extern std::unordered_map<std::string, GSamRecordList> read_hashmap;
 
 extern int STEP_COUNTER;
 
@@ -57,5 +57,9 @@ extern GSamWriter* outfile_above_spliced;
 extern GSamWriter* outfile_below_spliced;
 extern FILE* joutf_above;
 extern FILE* joutf_below;
+
+// clean parameters
+extern robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
+// extern robin_hood::unordered_set<std::string>* rm_rd_set;
 
 #endif /* TIEBRUSH_TMERGE_H_ */
