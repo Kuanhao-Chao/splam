@@ -22,24 +22,22 @@
 *****************************/
 GStr splamPredict() {
     /*********************************************
-     * Step 1: (1) Iterating through a BAM file / BAM files
-     *         (2) Accumulate junctions in a BED file.
-    *********************************************/
-    GStr outfname_junc_bed = splamJExtract();
-    faidx_t * ref_faidx = fastaIndex();
-
-    /*********************************************
      * Step 2: (1) getting coordinates of donors and acceptors
      *         (2) Writing FASTA file of donors and acceptors
      *         (3) checking the junctions. (GT-AG ratio)
-    *********************************************/
+    *********************************************/  
+    STEP_COUNTER += 1;
     GMessage("\n###########################################\n");
-    GMessage("## Step 2: getting coordinates of donors and acceptors\n");
+    GMessage("## Step %d: getting coordinates of donors and acceptors\n", STEP_COUNTER);
     GMessage("###########################################\n");
+
+    faidx_t * ref_faidx = fastaIndex();
+
+    GMessage("After creating `fastaIndex`.\n");
 
     robin_hdd_hm doner_dimers;
     robin_hdd_hm acceptor_dimers;
-    GStr outfname_junc_fa = splamCreateFasta(outfname_junc_bed, doner_dimers, acceptor_dimers, ref_faidx);
+    GStr outfname_junc_fa = splamCreateFasta(infname_juncbed, doner_dimers, acceptor_dimers, ref_faidx);
 
 
     // std::cout << ">> Donor dimers: " << std::endl;
@@ -82,8 +80,9 @@ GStr splamPredict() {
     /*********************************************
      * Step 3: SPLAM model prediction
     *********************************************/
+    STEP_COUNTER += 1;
     GMessage("\n###########################################\n");
-    GMessage("## Step 3: SPLAM model prediction\n");
+    GMessage("## Step %d: SPLAM model prediction\n", STEP_COUNTER);
     GMessage("###########################################\n");
     Py_Initialize();
     // GStr python_f = "./script/splam.py";
@@ -118,6 +117,8 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_hm &doner_dimers, robin_
     int SEQ_LEN = 800;
     int QUOTER_SEQ_LEN = SEQ_LEN/4;
 
+    GMessage("outfname_junc_bed: %s\n", outfname_junc_bed.chars());
+
     /*********************************************
     # For 'd_a.bed': 0-based, 1-based
     # For 'donor.bed': 0-based, 0-based
@@ -149,11 +150,14 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_hm &doner_dimers, robin_
     std::ifstream fr_junc(outfname_junc_bed);
     std::string line;
 
-    progressbar bar(JUNC_COUNT);
-    bar.set_opening_bracket_char("[INFO] SPLAM! Writing junction BED file \n\t[");
-
+    progressbar bar(ALN_COUNT_SPLICED);
+    if (COMMAND_MODE == ALL) {
+        bar.set_opening_bracket_char("[INFO] SPLAM! Writing junction BED file \n\t[");
+    }
     while(getline(fr_junc, line)){
-        bar.update();
+        if (COMMAND_MODE == ALL) {
+            bar.update();
+        }
 
         std::string chromosome;
         int start = 0, end = 0;

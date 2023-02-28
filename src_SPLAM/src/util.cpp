@@ -83,8 +83,9 @@ int usage(){
         "Usage:  splam j-extract [arguments] BAM-file(s) \n\n");
         GMessage(
         "Required argument:\n"
-        "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
+        "Optional argument:\n"
+        "\t-t / --threshold:\tThreshold of the number of alignments supporting a junction. Junctions are distributed into two files \"junctions_above.bed\" and \"junctions_below.bed\".\n\n"
         );
 
     } else if (COMMAND_MODE == PREDICT) {
@@ -94,12 +95,10 @@ int usage(){
         "Required argument:\n"
         // "\t-j / --junction\t\tPath to the splice junctions file (BED)\n"
         "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
+        "\t-j / --junction\t\tPath to a list of junctions (BED).\n"
         "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
         );
-        // GMessage(
-        // "Optional argument:\n");
-
     } else if (COMMAND_MODE == CLEAN) {
         GMessage(
         "Usage:  splam clean [arguments] BAM-file(s) \n\n");
@@ -107,16 +106,8 @@ int usage(){
         "Required argument:\n"
         // "\t-b / --bam\t\tPath to the alignment file (BAM)\n"
         "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
+        "\t-s / --score\t\tPath to a list of junctions with scores (BED).\n"
         "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
-        "\t-o / --output\t\tPath to the output directory\n\n"
-        );
-        // GMessage(
-        // "Optional argument:\n");
-    } else if (COMMAND_MODE == NH_UPDATE) {
-        GMessage(
-        "Usage:  splam nh-update [arguments] BAM-file \n\n");
-        GMessage(
-        "Required argument:\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
         );
     } else if (COMMAND_MODE == ALL) {
