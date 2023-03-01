@@ -2,7 +2,7 @@
 #define _CLEAN_H_
 
 #include <gclib/GStr.h>
-#include <gclib/GHash.hh>
+#include <gclib/GHashMap.hh>
 #include "junc.h"
 #include "bundle.h"
 #include <robin_hood/robin_hood.h>
@@ -16,6 +16,6 @@ GStr splamClean();
 GStr filterSpurJuncs(GStr outfname_junc_score);
 void loadBed(GStr inbedname, std::unordered_set<std::string> &spur_juncs);
 void processBundle(BundleData* bundle);
-void processRead(int currentstart, int currentend, BundleData& bdata,
-		 GHash<int>& hashread,  GReadAlnData& alndata);
+void processRead(int currentstart, int currentend, BundleData& bdata, GHash<int>& hashread, CReadAln& alndata);
+void noMoreBundles();
 #endif

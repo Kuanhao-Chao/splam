@@ -5,69 +5,38 @@
 #include "gclib/GList.hh"
 #include "GSam.h"
 
-// struct CReadAln:public GSeg {
-// 	//DEBUG ONLY:
-// 	// GStr name;
-// 	char strand; // 1, 0 (unkown), -1 (reverse)
-// 	short int nh;
-// 	uint len;
-// 	float read_count;       // keeps count for all reads (including paired and unpaired)
-// 	bool unitig:1;			// set if read come from an unitig
-// 	bool longread:1;	    // set if read comes from long read data
-// 	GVec<float> pair_count;   // keeps count for all paired reads
-// 	GVec<int> pair_idx;     // keeps indeces for all pairs in assembly mode, or all reads that were collapsed in merge mode
-// 	GVec<GSeg> segs; //"exons"
-// 	// GPVec<CJunction> juncs;
+struct CReadAln:public GSeg {
+	//DEBUG ONLY:
+	GSamRecord brec;
+	int pair_idx;     // keeps index for the pair of the alignment.
+	// GVec<GSeg> segs; //"exons"
 
-// 	CReadAln(char _strand=0, short int _nh=0,
-// 			int rstart=0, int rend=0): GSeg(rstart, rend), //name(rname),
-// 					strand(_strand),nh(_nh), len(0), read_count(0), unitig(false),longread(false),pair_count(),pair_idx(),
-// 					segs() {}
-//                     // , juncs(false) { }
-// 	CReadAln(CReadAln &rd):GSeg(rd.start,rd.end) { // copy contructor
-// 		strand=rd.strand;
-// 		nh=rd.nh;
-// 		len=rd.len;
-// 		read_count=rd.read_count;
-// 		unitig=rd.unitig;
-// 		longread=rd.longread;
-// 		pair_count=rd.pair_count;
-// 		pair_idx=rd.pair_idx;
-// 	}
-// 	int overlapSegLen(CReadAln* r) {
+	CReadAln(GSamRecord* bamrec=NULL): 
+			GSeg(bamrec->start, bamrec->end), pair_idx() {
+		// GMessage("bamrec: %s\n", bamrec->name());
+		brec = GSamRecord(*bamrec);
+	}
+	
+	CReadAln(CReadAln &rd):GSeg(rd.start,rd.end) { // copy contructor
+		pair_idx=rd.pair_idx;
+		brec = GSamRecord(rd.brec);
+	}
 
-// 		if (r->start>end || start>r->end) return 0;
-
-// 		int i=0;
-// 		int j=0;
-// 		int len=0;
-// 		while(i<segs.Count()) {
-// 			if(segs[i].end<r->segs[j].start) i++;
-// 			else if(r->segs[j].end<segs[i].start) j++;
-// 			else { // there is overlap
-// 				len+=segs[i].overlapLen(r->segs[j].start,r->segs[j].end);
-// 				if(segs[i].end<r->segs[j].end) i++;
-// 				else j++;
-// 			}
-// 			if(j==r->segs.Count()) break;
-// 		}
-// 		return len;
-// 	}
-// 	~CReadAln() { }
-// };
-
-struct GReadAlnData {
-	GSamRecord* brec;
-	char strand; //-1, 0, 1
-	int nh;
-	int hi;
-	// GPVec<CJunction> juncs;
-	//GPVec< GVec<RC_ExonOvl> > g_exonovls; //>5bp overlaps with guide exons, for each read "exon"
-	GReadAlnData(GSamRecord* bamrec=NULL, char nstrand=0, int num_hits=0,
-			int hit_idx=0):brec(bamrec), strand(nstrand),
-					nh(num_hits), hi(hit_idx) { } //, g_exonovls(true)
-	~GReadAlnData() { }
+	~CReadAln() { }
 };
+
+// struct GReadAlnData {
+// 	GSamRecord* brec;
+// 	char strand; //-1, 0, 1
+// 	int nh;
+// 	int hi;
+// 	// GPVec<CJunction> juncs;
+// 	//GPVec< GVec<RC_ExonOvl> > g_exonovls; //>5bp overlaps with guide exons, for each read "exon"
+// 	GReadAlnData(GSamRecord* bamrec=NULL, char nstrand=0, int num_hits=0,
+// 			int hit_idx=0):brec(bamrec), strand(nstrand),
+// 					nh(num_hits), hi(hit_idx) { } //, g_exonovls(true)
+// 	~GReadAlnData() { }
+// };
 
 // bundle data structure, holds all data needed for
 // infering transcripts from a bundle
@@ -102,7 +71,7 @@ struct BundleData {
 
 	GStr refseq; //reference sequence name
 	char* gseq; //actual genomic sequence for the bundle
-	GList<GSamRecord> readlist;
+	GList<CReadAln> readlist;
 	//  GList<CJunction> junction;
 	BundleData():status(BUNDLE_STATUS_CLEAR), idx(0), start(0), end(0),
 			numreads(0),
@@ -112,21 +81,18 @@ struct BundleData {
 	}
 
 	void getReady(int currentstart, int currentend) {
-		GMessage("getReady bundle!\n");
 		//this is only called when the bundle is valid and ready to be processed
 		start=currentstart;
 		end=currentend;
 		//refseq=ref;
 		//tag all these guides
 		status=BUNDLE_STATUS_READY;
-		GMessage("Done getReady bundle!\n");
 	}
 
 	//bool evalReadAln(GSamRecord& brec, char& strand, int nh); //, int hi);
 	//  bool evalReadAln(GReadAlnData& alndata, char& strand);
 
 	void Clear() {
-		GMessage("Clearing bundle!\n");
 		readlist.Clear();
 		// junction.Clear();
 		start=0;
@@ -138,7 +104,6 @@ struct BundleData {
 		sum_cov=0;
 		covflags=0;
 		GFREE(gseq);
-		GMessage("~ Done Clearing bundle!\n");
 	}
 
 	~BundleData() {

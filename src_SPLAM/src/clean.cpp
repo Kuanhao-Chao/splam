@@ -80,7 +80,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
         int num_samples=in_records.start();
 
 
-    outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
+        outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
 
 
 
@@ -92,7 +92,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
         GStr lastref;
         bool more_alns=true;
         int prev_pos=0;
-        bool skipGseq=false;
         int lastref_id=-1; //last seen gseq_id
 
         bool fr_strand=false;
@@ -112,13 +111,15 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             //delete brec;
             if ((irec=in_records.next())!=NULL) {
                 brec=irec->brec;
-                GMessage("Read: %s; %s\n", brec->refName(), brec->name());
+
+                /***********************************
+                 * Alignment filtering criteria.
+                ************************************/
+                // GMessage("Read: %s; %s\n", brec->refName(), brec->name());
                 if (brec->isUnmapped()) {
                     outfile_discard->write(brec);
                     continue;
                 }
-
-
                 if (brec->start<1 || brec->mapped_len<10) {
                     if (verbose) GMessage("Warning: invalid mapping found for read %s (position=%d, mapped length=%d)\n",
                             brec->name(), brec->start, brec->mapped_len);
@@ -126,8 +127,15 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                     continue;
                 }
 
+
+                /***********************************
+                 * Setting the "chr" "strand" of the current alignment.
+                ************************************/
                 refseqName=brec->refName();
-                GMessage("RefseqName: %s!!\n", refseqName);
+                if (refseqName==NULL) {
+                    GMessage("Error: cannot retrieve target seq name from BAM record!\n");
+                    outfile_discard->write(brec);
+                }
 
                 xstrand=brec->spliceStrand(); // tagged strand gets priority
                 if(xstrand=='.' && (fr_strand || rf_strand)) { // set strand if stranded library
@@ -147,25 +155,20 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                     }
                 }
 
-                if (refseqName==NULL) {
-                    GMessage("Error: cannot retrieve target seq name from BAM record!\n");
-                    outfile_discard->write(brec);
-                }
-
-                GMessage("Processing reads!!\n");
-
+                /***********************************
+                 * Setting the "chr_changed" and "new_bundle" parameters.
+                ************************************/
                 pos=brec->start; //BAM is 0 based, but GBamRecord makes it 1-based
                 chr_changed=(lastref.is_empty() || lastref!=refseqName);
                 if (chr_changed) {
                     prev_pos=0;
                 }
-                if (pos<prev_pos) GError("%s\nread %s (start %d) found at position %d on %s when prev_pos=%d\n",
+                if (pos<prev_pos) {
+                    GMessage("[ERROR] %s\nread %s (start %d) found at position %d on %s when prev_pos=%d\n",
                     brec->name(), brec->start,  pos, refseqName, prev_pos);
-                prev_pos=pos;
-                if (skipGseq) {
-                    outfile_discard->write(brec);
-                    continue;
+                    exit(-1);
                 }
+                prev_pos=pos;
                 nh=brec->tag_int("NH");
                 if (nh==0) nh=1;
                 hi=brec->tag_int("HI");
@@ -177,23 +180,18 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 new_bundle=true; //fake a new start (end of last bundle)
             }
 
-            GMessage("Before processing a bundle!! %d; %d; %d\n", new_bundle, chr_changed, more_alns);
-
+            /***********************************
+             * Process the bundle!
+            ************************************/
             if (new_bundle || chr_changed) {
                 hashread.Clear();
-
-
-                if (bundle->readlist.Count()>0) { // process reads in previous bundle
+                if (bundle->readlist.Count()>0) {
+                    // process reads in previous bundle
                     bundle->getReady(currentstart, currentend);
                     processBundle(bundle);
-
-
-                } //have alignments to process
-                else { //no read alignments in this bundle?
-                    
+                } else { 
+                    //no read alignments in this bundle?  
                     bundle->Clear();
-
-
                 } //nothing to do with this bundle
 
                 if (chr_changed) {
@@ -203,7 +201,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 }
 
                 if (!more_alns) {
-                    // noMoreBundles();
+                    noMoreBundles();
                     break;
                 }
                 currentstart=pos;
@@ -213,7 +211,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 bundle->end=currentend;
             } //<---- new bundle started
 
-            GMessage("brec->end: %d\n", brec->end);
             if (currentend<(int)brec->end) {
                 //current read extends the bundle
                 //this might not happen if a longer guide had already been added to the bundle
@@ -224,15 +221,16 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             
             
             // GReadAlnData alndata(brec, 0, nh, hi);
+            CReadAln alndata(brec);
 
             // if (xstrand=='+') alndata.strand=1;
             // else if (xstrand=='-') alndata.strand=-1;
-            // //const char* bname=brec->name();
-            // //GMessage("%s\t%c\t%d\thi=%d\n",bname, xstrand, alndata.strand,hi);
-            // //countFragment(*bundle, *brec, hi,nh); // we count this in build_graphs to only include mapped fragments that we consider correctly mapped
-            // //fprintf(stderr,"fragno=%d fraglen=%lu\n",bundle->num_fragments,bundle->frag_len);if(bundle->num_fragments==100) exit(0);
+            //const char* bname=brec->name();
+            //GMessage("%s\t%c\t%d\thi=%d\n",bname, xstrand, alndata.strand,hi);
+            //countFragment(*bundle, *brec, hi,nh); // we count this in build_graphs to only include mapped fragments that we consider correctly mapped
+            //fprintf(stderr,"fragno=%d fraglen=%lu\n",bundle->num_fragments,bundle->frag_len);if(bundle->num_fragments==100) exit(0);
 
-            // processRead(currentstart, currentend, *bundle, hashread, alndata);
+            processRead(currentstart, currentend, *bundle, hashread, alndata);
 
 
         } //for each read alignment
@@ -434,24 +432,23 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
 }
 
 void processBundle(BundleData* bundle) {
-    // for (int i=0; i<bundle->readlist.Count(); i++) {
-    //     bundle->readlist[i];
-    // }
+    for (int i=0; i<bundle->readlist.Count(); i++) {
+        int pair_idx = bundle->readlist[i]->pair_idx;
+        GMessage("%s_%d_%c\t\t: %d; n: %d;    %d; np: %d\n", bundle->readlist[i]->brec.name(), bundle->readlist[i]->brec.pairOrder(), bundle->readlist[i]->brec.spliceStrand(), bundle->readlist[i]->brec.start, i, bundle->readlist[i]->brec.mate_start(), pair_idx);
+    }
 }
 
 
-void processRead(int currentstart, int currentend, BundleData& bdata, GHash<int>& hashread,  GReadAlnData& alndata) { // some false positives should be eliminated here in order to break the bundle
-	GSamRecord& brec=*(alndata.brec);			   // bam record
-	GList<GSamRecord>& readlist = bdata.readlist;    // list of reads gathered so far
-    char strand=alndata.strand;
-    int nh=alndata.nh;
-    int hi=alndata.hi;
+void processRead(int currentstart, int currentend, BundleData& bdata, GHash<int>& hashread, CReadAln& alndata) { // some false positives should be eliminated here in order to break the bundle
+	GSamRecord& brec=(alndata.brec);			   // bam record
+	GList<CReadAln>& readlist = bdata.readlist;    // list of reads gathered so far
 	int readstart=brec.start;
-	//bool covSaturated=false;                       // coverage is set to not saturated
 
+    static GStr _id("", 256); //to prevent repeated reallocation for each parsed read
+    static GStr _id_p("", 256); //to prevent repeated reallocation for each parsed read
 	/*
 	{ // DEBUG ONLY
-		fprintf(stderr,"Process read %s with strand=%d and exons:",brec.name(),strand);
+		fprintf(stderr,"Process read %s with exons:", brec.name());
 		for (int i=0;i<brec.exons.Count();i++) {
 			fprintf(stderr," %d-%d", brec.exons[i].start, brec.exons[i].end);
 		}
@@ -463,127 +460,114 @@ void processRead(int currentstart, int currentend, BundleData& bdata, GHash<int>
 	float unitig_cov = unitig_cov=brec.tag_float("YK");
 
 	bool match=false;  // true if current read matches a previous read
-	int n=readlist.Count()-1;
+	int n = 0;
+    // readlist.Count()-1;
+	if (bdata.end<currentend) {
+		bdata.start=currentstart;
+		bdata.end=currentend;
+	}
+	bdata.numreads++;                         // number of reads gets increased no matter what
 
-    // while(n>-1 && readlist[n]->start==brec.start) {
-	// 	if(strand==readlist[n]->strand && (readlist[n]->longread==longr)) {
-	// 		match=exonmatch(readlist[n]->segs,brec.exons);
-	// 		// if(match && (longreads || mixedMode)) match=deljuncmatch(readlist[n],brec.juncsdel); //DEL AWARE
-	// 	}
-	// 	//if(strand==readlist[n]->strand) match=exonmatch(readlist[n]->segs,brec.exons);
-	// 	if(match) break; // this way I make sure that I keep the n of the matching readlist
-	// 	n--;
-	// }
+    CReadAln* readaln = new CReadAln(&brec);
+    
+    // for (int i=0;i<brec.exons.Count();i++) {
+    //     readaln->len+=brec.exons[i].len();
+    //     if(i) {
+    //         int jstrand=strand;
+    //         uint jstart=brec.exons[i-1].end;
+    //         uint jend=brec.exons[i].start;
+    //     }
+    //     readaln->segs.Add(brec.exons[i]);
+    // }
+    n=readlist.Add(readaln);  // reset n for the case there is no match
 
-	// if (bdata.end<currentend) {
-	// 	bdata.start=currentstart;
-	// 	bdata.end=currentend;
-	// }
-	// bdata.numreads++;                         // number of reads gets increased no matter what
-	// //bdata.wnumreads+=float(1)/nh;
+	/*
+	{ // DEBUG ONLY
+		fprintf(stderr,"Add read %s with strand=%d and exons:",brec.name(),strand);
+		for (int i=0;i<brec.exons.Count();i++) {
+			fprintf(stderr," %d-%d", brec.exons[i].start, brec.exons[i].end);
+		}
+		fprintf(stderr,"\n");
+		//fprintf(stderr,"Read %s is at n=%d with unitig_cov=%f and strand=%d\n",brec.name(),n,unitig_cov,strand);
+	}
+	*/
 
-	// if (!match) { // if this is a new read I am seeing I need to set it up
-	// 	readaln = new CReadAln(strand, nh, brec.start, brec.end);
-	// 	for (int i=0;i<brec.exons.Count();i++) {
-	// 		readaln->len+=brec.exons[i].len();
-	// 		if(i) {
-	// 			int jstrand=strand;
-	// 			uint jstart=brec.exons[i-1].end;
-	// 			uint jend=brec.exons[i].start;
-	// 		}
-	// 		readaln->segs.Add(brec.exons[i]);
-	// 	}
-	// 	n=readlist.Add(readaln);  // reset n for the case there is no match
-	// } else { //redundant read alignment matching a previous alignment
-	// 	// keep shortest nh so that I can see for each particular read the multi-hit proportion
-	// 	if(nh<readlist[n]->nh) readlist[n]->nh=nh;
-	// 	/*
-	// 	//for mergeMode, we have to free the transcript info:
-	// 	if (alndata.tinfo!=NULL) {
-	// 		 delete alndata.tinfo;
-	// 		 alndata.tinfo=NULL;
-	// 	}
-	// 	*/
-	// }
+	if((int)brec.end>currentend) {
+		currentend=brec.end;
+	  	bdata.end=currentend;
+	}
 
-	// /*
-	// { // DEBUG ONLY
-	// 	fprintf(stderr,"Add read %s with strand=%d and exons:",brec.name(),strand);
-	// 	for (int i=0;i<brec.exons.Count();i++) {
-	// 		fprintf(stderr," %d-%d", brec.exons[i].start, brec.exons[i].end);
-	// 	}
-	// 	fprintf(stderr,"\n");
-	// 	//fprintf(stderr,"Read %s is at n=%d with unitig_cov=%f and strand=%d\n",brec.name(),n,unitig_cov,strand);
-	// }
-	// */
+	// now set up the pairing
+	if (brec.refId()==brec.mate_refId()) {  //only consider mate pairing data if mates are on the same chromosome/contig and are properly paired
+        int selfstart = brec.start;
+		int pairstart = brec.mate_start();
+		if (currentstart<=pairstart) { // if pairstart is in a previous bundle I don't care about it
+			//GStr readname();
+			//GStr id(brec.name(), 16); // init id with readname
+			_id.assign(brec.name()); //assign can be forced to prevent shrinking of the string
+            _id_p.assign(brec.name());
+            _id+='-';_id+=selfstart;_id+='-';_id+=pairstart;
+			_id_p+='-';_id_p+=pairstart;_id_p+='-';_id_p+=selfstart;
 
-	// if((int)brec.end>currentend) {
-	// 		currentend=brec.end;
-	//   	bdata.end=currentend;
-	// }
+            GMessage("_id.chars()  : %s\n", _id.chars());
+            GMessage("_id_p.chars(): %s\n", _id_p.chars());
+            // GMessage("n: %d\n", n);
+			if(pairstart<=readstart) { // if I've seen the pair already <- I might not have seen it yet because the pair starts at the same place
+				const int* np=hashread[_id_p.chars()];
+                if (np) {
+                    GMessage("np: %d\n\n", *np);
 
-	// float rdcount=(float)brec.tag_int("YC"); // alignment count
-	// if(!rdcount) rdcount=1;
-	
-	// if(!nomulti) rdcount/=nh;
-	// readlist[n]->read_count+=rdcount; // increase single count just in case I don't see the pair
+                    readlist[*np]->pair_idx = n;
+                    readlist[n]->pair_idx = *np;
+                }
+                hashread.Remove(_id_p.chars());
+				// if(np) { // the pair was stored --> why wouldn't it be? : only in the case that the pair starts at the same position
+				// // 	// if(readlist[*np]->nh>nh && !nomulti) rdcount=float(1)/readlist[*np]->nh;
+                // //     readlist[*np]->pair_idx
 
-	// // store the mismatch count per junction so that I can eliminate it later
-	// if(!nm) {
-	// 	nm=(double)brec.tag_int("nM"); // paired mismatch : big problem with STAR alignments
-	// 	if(brec.isPaired()) nm/=2;
-	// }
-	// if(brec.clipL) nm++;
-	// if(brec.clipR) nm++;
 
-	// // now set up the pairing
-	// if (brec.refId()==brec.mate_refId()) {  //only consider mate pairing data if mates are on the same chromosome/contig and are properly paired
-	// //if (brec.refId()==brec.mate_refId() && brec.isProperlyPaired()) {  //only consider mate pairing data if mates are on the same chromosome/contig and are properly paired
-	// //if (brec.isProperlyPaired()) {  //only consider mate pairing data if mates  are properly paired
-	// 	int pairstart=brec.mate_start();
-	// 	if (currentstart<=pairstart) { // if pairstart is in a previous bundle I don't care about it
-	// 		//GStr readname();
-	// 		//GStr id(brec.name(), 16); // init id with readname
-	// 		_id.assign(brec.name()); //assign can be forced to prevent shrinking of the string
-	// 		if(pairstart<=readstart) { // if I've seen the pair already <- I might not have seen it yet because the pair starts at the same place
-	// 			_id+='-';_id+=pairstart;
-	// 			_id+=".=";_id+=hi; // (!) this suffix actually speeds up the hash by improving distribution!
-	// 			const int* np=hashread[_id.chars()];
-	// 			if(np) { // the pair was stored --> why wouldn't it be? : only in the case that the pair starts at the same position
-	// 				if(readlist[*np]->nh>nh && !nomulti) rdcount=float(1)/readlist[*np]->nh;
-	// 				bool notfound=true;
-	// 				for(int i=0;i<readlist[*np]->pair_idx.Count();i++)
-	// 					if(readlist[*np]->pair_idx[i]==n) {
-	// 						readlist[*np]->pair_count[i]+=rdcount;
-	// 						notfound=false;
-	// 						break;
-	// 					}
-	// 				if(notfound) { // I didn't see the pairing before
-	// 					readlist[*np]->pair_idx.Add(n);
-	// 					readlist[*np]->pair_count.Add(rdcount);
-	// 				}
 
-	// 				notfound=true;
-	// 				for(int i=0;i<readlist[n]->pair_idx.Count();i++)
-	// 					if(readlist[n]->pair_idx[i]==*np) {
-	// 						readlist[n]->pair_count[i]+=rdcount;
-	// 						notfound=false;
-	// 						break;
-	// 					}
-	// 				if(notfound) { // I didn't see the pairing before
-	// 					int i=*np;
-	// 					readlist[n]->pair_idx.Add(i);
-	// 					readlist[n]->pair_count.Add(rdcount);
-	// 				}
-	// 				hashread.Remove(_id.chars());
-	// 			}
-	// 		}
-	// 		else { // I might still see the pair in the future
-	// 			_id+='-';_id+=readstart; // this is the correct way
-	// 			_id+=".=";_id+=hi;
-	// 			hashread.Add(_id.chars(), n);
-	// 		}
-	// 	}
-	// } //<-- if mate is mapped on the same chromosome
+				// 	bool notfound=true;
+
+                //     if(readlist[*np]->pair_idx[i]==n) {
+                //     }
+
+
+				// 	for(int i=0;i<readlist[*np]->pair_idx.Count();i++)
+				// 		if(readlist[*np]->pair_idx[i]==n) {
+				// 			readlist[*np]->pair_count[i]+=rdcount;
+				// 			notfound=false;
+				// 			break;
+				// 		}
+				// 	if(notfound) { // I didn't see the pairing before
+				// 		readlist[*np]->pair_idx.Add(n);
+				// 		readlist[*np]->pair_count.Add(rdcount);
+				// 	}
+
+				// // 	notfound=true;
+				// // 	for(int i=0;i<readlist[n]->pair_idx.Count();i++)
+				// // 		if(readlist[n]->pair_idx[i]==*np) {
+				// // 			readlist[n]->pair_count[i]+=rdcount;
+				// // 			notfound=false;
+				// // 			break;
+				// // 		}
+				// // 	if(notfound) { // I didn't see the pairing before
+				// // 		int i=*np;
+				// // 		readlist[n]->pair_idx.Add(i);
+				// // 		readlist[n]->pair_count.Add(rdcount);
+				// // 	}
+				// // 	hashread.Remove(_id.chars());
+				// }
+            }
+			else { // I might still see the pair in the future
+                GMessage("Bigger!\n");
+				hashread.Add(_id.chars(), n);
+			}
+		}
+	} //<-- if mate is mapped on the same chromosome
 }
 
+
+void noMoreBundles() {
+
+}
