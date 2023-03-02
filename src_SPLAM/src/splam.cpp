@@ -63,12 +63,14 @@ GStr outfname_multimapped;
 GStr outfname_spliced;
 GStr outfname_discard;
 GStr outfname_cleaned;
+GStr outfname_cleaned_tmp;
 
 GSamRecord* brec=NULL;
 GSamWriter* outfile_multimapped = NULL;
 GSamWriter* outfile_spliced = NULL;
 GSamWriter* outfile_discard = NULL;
 GSamWriter* outfile_cleaned = NULL;
+GSamWriter* outfile_cleaned_tmp = NULL;
 FILE* joutf=NULL;
 
 int JUNC_COUNT = 0;
@@ -80,7 +82,7 @@ int ALN_COUNT_GOOD = 0;
 int ALN_COUNT_NH_UPDATE = 0;
 
 robin_hood::unordered_map<std::string, int>  CHRS;
-robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
+// robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
 
 int STEP_COUNTER = 0;
 // j-extract parameters:
@@ -110,6 +112,8 @@ int main(int argc, char* argv[]) {
     in_records.setup(VERSION, argc, argv);
     processOptions(argc, argv);
 
+
+    outfname_cleaned_tmp = out_dir + "/TMP/cleaned_tmp.bam";
     outfname_multimapped = out_dir + "/TMP/multimapped.bam";
     outfname_spliced = out_dir + "/TMP/spliced.bam";
     outfname_cleaned = out_dir + "/cleaned.bam";

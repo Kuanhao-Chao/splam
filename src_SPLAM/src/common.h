@@ -33,12 +33,16 @@ extern GStr outfname_multimapped;
 extern GStr outfname_spliced;
 extern GStr outfname_discard;
 extern GStr outfname_cleaned;
+extern GStr outfname_cleaned_tmp;
 
 extern GSamWriter* outfile_multimapped;
 extern GSamWriter* outfile_spliced;
 extern GSamWriter* outfile_discard;
 extern GSamWriter* outfile_cleaned;
+extern GSamWriter* outfile_cleaned_tmp;
+
 extern FILE* joutf;
+
 
 extern int JUNC_COUNT;
 extern int ALN_COUNT;
@@ -59,7 +63,7 @@ extern FILE* joutf_above;
 extern FILE* joutf_below;
 
 // clean parameters
-extern robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
+// extern robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
 // extern robin_hood::unordered_set<std::string>* rm_rd_set;
 
 #endif /* TIEBRUSH_TMERGE_H_ */
