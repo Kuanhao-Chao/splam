@@ -90,6 +90,7 @@ class GSamRecord: public GSeg {
    GSamRecord(GSamRecord& r):GSeg(r.start, r.end), iflags(r.iflags), b_hdr(r.b_hdr),
 		   exons(r.exons), clipL(r.clipL), clipR(r.clipR), mapped_len(r.mapped_len)
 		   {
+            GMessage("@@ Inside 'GSamRecord' deep copy constructor!\n");
 	      //makes a new copy of the bam1_t record etc.
 	      b=bam_dup1(r.b);
 	      novel=true; //will also free b when destroyed
@@ -99,11 +100,17 @@ class GSamRecord: public GSeg {
 #endif
    }
 
-   const GSamRecord& operator=(const GSamRecord& r) {
+   const GSamRecord& operator=(GSamRecord& r) {
       //copy operator
       //makes a new copy of the bam1_t struct etc.
+      // GMessage("@@ Inside 'GSamRecord' copy constructor!\n");
+
       clear();
+      // GMessage("\tr.refName()  : %s\n", r.refName());
       b=bam_dup1(r.b);
+      b_hdr = r.b_hdr;
+      // GMessage("\tnew.refName(): %s\n", this->refName());
+
       iflags=r.iflags;
       novel=true; //will also free b when destroyed
       start=r.start;
@@ -617,33 +624,33 @@ class GSamWriter {
    }
 };
 
-class GSamRecordList {
- public:
-   int NH_tag_bound = 0;
-   GVec<GSamRecord> sam_list;
-   // if (sam_list.Count() == 0) {
-   //    NH_tag_bound = ;
-   // }
-   GSamRecordList(GSamRecord &brec) {
-      // GMessage("Before sam_list size: %d\n", sam_list.Count());
-      NH_tag_bound = brec.tag_int("NH", 0);
-      sam_list.Add(brec);
-      // GMessage("After sam_list size: %d\n", sam_list.Count());
-   }
+// class GSamRecordList {
+//  public:
+//    int NH_tag_bound = 0;
+//    GVec<GSamRecord> sam_list;
+//    // if (sam_list.Count() == 0) {
+//    //    NH_tag_bound = ;
+//    // }
+//    GSamRecordList(GSamRecord &brec) {
+//       // GMessage("Before sam_list size: %d\n", sam_list.Count());
+//       NH_tag_bound = brec.tag_int("NH", 0);
+//       sam_list.Add(brec);
+//       // GMessage("After sam_list size: %d\n", sam_list.Count());
+//    }
    
-   ~GSamRecordList() {
+//    ~GSamRecordList() {
 
-   }
+//    }
    
-   void add(GSamRecord &brec) {
-      // GMessage("@@ Adding an element!\n");
-      sam_list.Add(brec);
-      std::string kv = brec.name();
-      // kv = kv + "_" + std::to_string(brec.pairOrder());
-      // GMessage("\tNH tag: %d\n", brec.tag_int("NH", 0));
-      // GMessage("\tkv: %s\n", kv.c_str());
-      // GMessage("\tAfter sam_list size: %d\n\n\n", sam_list.Count());
-   }   
-};
+//    void add(GSamRecord &brec) {
+//       // GMessage("@@ Adding an element!\n");
+//       sam_list.Add(brec);
+//       std::string kv = brec.name();
+//       // kv = kv + "_" + std::to_string(brec.pairOrder());
+//       // GMessage("\tNH tag: %d\n", brec.tag_int("NH", 0));
+//       // GMessage("\tkv: %s\n", kv.c_str());
+//       // GMessage("\tAfter sam_list size: %d\n\n\n", sam_list.Count());
+//    }   
+// };
 
 #endif

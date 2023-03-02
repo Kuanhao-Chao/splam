@@ -81,7 +81,7 @@ GStr splamJExtract() {
     int b_end=0, b_start=0;
 
     GMessage("[INFO] Processing BAM file ...\n");
-    GMessage("\t\tBefore Hash map size: %d\n", read_hashmap.size());
+    // GMessage("\t\tBefore Hash map size: %d\n", read_hashmap.size());
     while ((irec=in_records.next())!=NULL) {
         brec=irec->brec;
         int endpos=brec->end;
@@ -129,7 +129,7 @@ GStr splamJExtract() {
             GMessage("\t\t%d alignments processed.\n", ALN_COUNT);
         }
     }
-    GMessage("\t\tAfter Hash map size: %d\n", read_hashmap.size());
+    // GMessage("\t\tAfter Hash map size: %d\n", read_hashmap.size());
     // for (auto it : read_hashmap) {
     //     std::cout << " " << it.first << ":" << "(NH tag) " << it.second.NH_tag_bound << std::endl;
     //     for (int i=0; i<it.second.sam_list.Count(); i++) {

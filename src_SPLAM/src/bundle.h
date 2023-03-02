@@ -11,18 +11,47 @@ struct CReadAln:public GSeg {
 	int pair_idx;     // keeps index for the pair of the alignment.
 	// GVec<GSeg> segs; //"exons"
 
-	CReadAln(GSamRecord* bamrec=NULL): 
-			GSeg(bamrec->start, bamrec->end), pair_idx() {
-		// GMessage("bamrec: %s\n", bamrec->name());
-		brec = GSamRecord(*bamrec);
+	CReadAln(GSamRecord* bamrec): 
+			GSeg(bamrec->start, bamrec->end), brec(NULL), pair_idx() {
+
+		// GMessage("Inside CReadAln constructore!\n");
+		// GMessage("CReadAln constructor called\n");
+
+		// GMessage("bamrec: %s\n", bamrec->refName());
+		// GMessage("==> Before      : %p\n", &bamrec);
+		// GMessage("==> Before brec  : %s\n", bamrec->refName());
+		// GSamRecord brec_tmp = *bamrec;
+		this->brec = (*bamrec);
+
+		// this->brec = bamrec;
+
+		// this->brec = &brec_tmp;
+
+		// * brec = brec_tmp;
+
+		// brec = &brec_tmp;
+		// brec = bamrec;
+		// GMessage("After bamrec: %s\n", brec_tmp.refName());
+		// GMessage("After brec  : %p\n", &brec_tmp);
+		// GMessage("==> After brec  : %p\n", &brec);
+		// GMessage("==> After brecrefname: %s\n", this->brec.refName());
+		// GMessage("==> After materefname: %s\n", this->brec.mate_refName());
+		// GMessage("==> After brec start : %d\n", brec.start);
+		// GMessage("==> After brec start : %p\n", &(brec.start));
+		// GMessage("==> After brec end : %d\n", brec.end);
+		// GMessage("==> After brec end : %p\n", &(brec.end));
 	}
 	
-	CReadAln(CReadAln &rd):GSeg(rd.start,rd.end) { // copy contructor
-		pair_idx=rd.pair_idx;
-		brec = GSamRecord(rd.brec);
-	}
+	// CReadAln(CReadAln &rd):GSeg(rd.start,rd.end) { // copy contructor
+	// 	pair_idx=rd.pair_idx;
+	// 	GSamRecord brec_tmp = GSamRecord(rd.brec);
+	// 	brec = &brec_tmp;
+	// }
 
-	~CReadAln() { }
+	~CReadAln() { 
+		// GMessage("CReadAln destructor called\n");
+		// delete brec;
+	}
 };
 
 // struct GReadAlnData {
@@ -70,13 +99,12 @@ struct BundleData {
 	char covflags;
 
 	GStr refseq; //reference sequence name
-	char* gseq; //actual genomic sequence for the bundle
-	GList<CReadAln> readlist;
+	// GList<CReadAln> readlist;
 	//  GList<CJunction> junction;
 	BundleData():status(BUNDLE_STATUS_CLEAR), idx(0), start(0), end(0),
 			numreads(0),
 			num_fragments(0), frag_len(0),sum_cov(0),covflags(0),
-			refseq(), gseq(NULL), readlist(false,true) {
+			refseq() {
 				// , //bpcov(1024), junction(true, true, true) {
 	}
 
@@ -93,7 +121,8 @@ struct BundleData {
 	//  bool evalReadAln(GReadAlnData& alndata, char& strand);
 
 	void Clear() {
-		readlist.Clear();
+		GMessage("Clear bundle!\n");
+		// readlist.Clear();
 		// junction.Clear();
 		start=0;
 		end=0;
@@ -103,7 +132,6 @@ struct BundleData {
 		frag_len=0;
 		sum_cov=0;
 		covflags=0;
-		GFREE(gseq);
 	}
 
 	~BundleData() {
