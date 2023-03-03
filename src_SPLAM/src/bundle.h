@@ -12,7 +12,7 @@ struct CReadAln:public GSeg {
 	// GVec<GSeg> segs; //"exons"
 
 	CReadAln(GSamRecord* bamrec): 
-			GSeg(bamrec->start, bamrec->end), brec(NULL), pair_idx() {
+			GSeg(bamrec->start, bamrec->end), brec(NULL), pair_idx(-1) {
 
 		// GMessage("Inside CReadAln constructore!\n");
 		// GMessage("CReadAln constructor called\n");

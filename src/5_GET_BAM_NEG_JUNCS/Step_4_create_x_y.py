@@ -4,8 +4,8 @@ HALF_SEQ_LEN = int(SEQ_LEN) // 2
 QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 def main():
     fw = open("../INPUTS/"+SEQ_LEN+"bp/input_neg_"+str(THRESHOLD)+".fa", "w")
-    fr_donor = open("../BAM_junctions/"+SEQ_LEN+"bp/"+str(THRESHOLD)+"_juncs/donor_seq.fa", "r")
-    fr_acceptor = open("../BAM_junctions/"+SEQ_LEN+"bp/"+str(THRESHOLD)+"_juncs/acceptor_seq.fa", "r")
+    fr_donor = open("./BAM_junctions/"+SEQ_LEN+"bp/"+str(THRESHOLD)+"_juncs/donor_seq.fa", "r")
+    fr_acceptor = open("./BAM_junctions/"+SEQ_LEN+"bp/"+str(THRESHOLD)+"_juncs/acceptor_seq.fa", "r")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()

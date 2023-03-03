@@ -131,6 +131,7 @@ int main(int argc, char* argv[]) {
         infname_scorebed = splamPredict();
     } else if (COMMAND_MODE == CLEAN) {
         infname_NH_tag = splamClean();
+        splamNHUpdate();
         
         GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
         GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
