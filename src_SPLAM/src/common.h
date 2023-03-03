@@ -7,6 +7,10 @@
 #include <robin_hood/robin_hood.h>
 #define VERSION "0.0.1"
 
+typedef robin_hood::unordered_map<std::string, int> robin_hdd_rm_hit;
+typedef robin_hood::unordered_set<std::string> robin_hdd_rm_algn;
+typedef robin_hood::unordered_set<int> robin_hdd_int;
+
 extern robin_hood::unordered_map<std::string, int>  CHRS;
 
 extern TInputFiles in_records;

@@ -63,34 +63,24 @@ void loadBed(GStr inbedname, std::unordered_set<std::string> &rm_juncs) {
     }
 }
 
-bool exonmatch(GVec<GSeg> &prevexons, GVec<GSeg> &exons) {
-	if(prevexons.Count() != exons.Count()) return false;
-	for(int i=0;i<exons.Count();i++) {
-		if(prevexons[i].end!=exons[i].end || prevexons[i].start!=exons[i].start) return false;
-	}
-	return true;
-}
-
 GStr filterSpurJuncs(GStr outfname_junc_score) {
     robin_hdd_rm_hit rm_hit;
     robin_hdd_rm_algn rm_algn;
 
+
+    std::unordered_set<std::string> rm_juncs;
+    loadBed(outfname_junc_score, rm_juncs);
     // infname_scorebed
     if (COMMAND_MODE == CLEAN) {
-
-        // GSamReader bam_reader_spliced(ofn .chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
         int num_samples=in_records.start();
-
-
         outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
         outfile_cleaned_tmp = new GSamWriter(outfname_cleaned_tmp, in_records.header(), GSamFile_BAM);
 
-
         BundleData* bundle = new BundleData();
 	    GList<CReadAln> readlist;
-        // CReadAln* alndata = NULL;
-        uint runoffdist=200;
-        GHash<int> hashread;      //read_name:pos:hit_index => readlist index
+
+        uint runoffdist=100;
+        GHash<int> hashread; //read_name:pos:hit_index => readlist index
         GStr lastref;
         bool more_alns=true;
         int prev_pos=0;
@@ -100,11 +90,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
         bool rf_strand=false;
         int currentstart=0, currentend=0;
         int bundle_counter = 0;
-
-
-        std::unordered_set<std::string> rm_juncs;
-        loadBed(outfname_junc_score, rm_juncs);
-
 
         while (more_alns) {
             bool chr_changed=false;
@@ -121,27 +106,30 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 /***********************************
                  * Alignment filtering criteria.
                 ************************************/
-                // GMessage("Read: %s; %s\n", brec->refName(), brec->name());
+                // Unmapped reads.
                 if (brec->isUnmapped()) {
-                    outfile_discard->write(brec);
-                    continue;
+                    // GMessage("Unmapped read: %s - %d\n", brec->name(), brec->pairOrder());
+                    // removeAlignment(brec, rm_hit);
+                    // continue;
                 }
-                if (brec->start<1 || brec->mapped_len<10) {
-                    if (verbose) GMessage("Warning: invalid mapping found for read %s (position=%d, mapped length=%d)\n",
-                            brec->name(), brec->start, brec->mapped_len);
-                    outfile_discard->write(brec);
-                    continue;
-                }
+                // // Invalid mapping reads.
+                // if (brec->start<1 || brec->mapped_len<10) {
+                //     GMessage("Warning: invalid mapping found for read %s (position=%d, mapped length=%d)\n",
+                //             brec->name(), brec->start, brec->mapped_len);
+                //     removeAlignment(brec, rm_hit);
+                //     continue;
+                // }
 
 
                 /***********************************
                  * Setting the "chr" "strand" of the current alignment.
                 ************************************/
                 refseqName=brec->refName();
-                if (refseqName==NULL) {
-                    GMessage("Error: cannot retrieve target seq name from BAM record!\n");
-                    outfile_discard->write(brec);
-                }
+                // // Invalid mapping reads.
+                // if (refseqName==NULL) {
+                //     GMessage("Error: cannot retrieve target seq name from BAM record!\n");
+                //     removeAlignment(brec, rm_hit);
+                // }
 
                 xstrand=brec->spliceStrand(); // tagged strand gets priority
                 if(xstrand=='.' && (fr_strand || rf_strand)) { // set strand if stranded library
@@ -165,19 +153,25 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                  * Setting the "chr_changed" and "new_bundle" parameters.
                 ************************************/
                 pos=brec->start; //BAM is 0 based, but GBamRecord makes it 1-based
+
+                // GMessage("pos: %d; prev_pos: %d\n", pos, prev_pos);
+
                 chr_changed=(lastref.is_empty() || lastref!=refseqName);
                 if (chr_changed) {
                     prev_pos=0;
                 }
-                if (pos<prev_pos) {
+
+                if (pos == 0) {
+                    // This is an unmapped read
+                } else if (pos<prev_pos) {
                     GMessage("[ERROR] %s\nread %s (start %d) found at position %d on %s when prev_pos=%d\n",
                     brec->name(), brec->start,  pos, refseqName, prev_pos);
                     exit(-1);
                 }
                 prev_pos=pos;
-                nh=brec->tag_int("NH");
+                nh=brec->tag_int("NH", 0);
                 if (nh==0) nh=1;
-                hi=brec->tag_int("HI");
+                hi=brec->tag_int("HI", 0);
                 if (!chr_changed && currentend>0 && pos>currentend+(int)runoffdist) {
                     new_bundle=true;
                 }
@@ -199,8 +193,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                     GMessage(">> bundle start     : %d\n", bundle->start);
                     GMessage(">> bundle end       : %d\n", bundle->end);
 
-                    processBundle(bundle, readlist, rm_juncs, bundle_counter);
-                    bundle->Clear();
+                    processBundle(bundle, readlist, rm_juncs, rm_hit, bundle_counter);
                     readlist.Clear();
                 } else { 
                     //no read alignments in this bundle?  
@@ -209,21 +202,23 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 } //nothing to do with this bundle
 
                 if (chr_changed) {
-                    lastref=refseqName;
-                    lastref_id=gseq_id;
-                    currentend=0;
+                    lastref = refseqName;
+                    lastref_id = gseq_id;
+                    currentend = 0;
                 }
 
                 if (!more_alns) {
                     noMoreBundles();
                     break;
                 }
-                currentstart=pos;
-                currentend=brec->end;
-                bundle->refseq=lastref;
-                bundle->start=currentstart;
-                bundle->end=currentend;
-                // bundle->Clear();
+
+                if (brec->start > 0) {
+                    currentstart = pos;
+                    currentend = brec->end;
+                }
+                bundle->refseq = lastref;
+                bundle->start = currentstart;
+                bundle->end = currentend;
             } //<---- new bundle started
 
             int fragment_end = 0;
@@ -240,25 +235,13 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
 
             if (currentend<fragment_end) {
                 //current read extends the bundle
-                //this might not happen if a longer guide had already been added to the bundle
                 currentend=fragment_end;
             } //adjusted currentend and checked for overlapping reference transcripts
 
             // GMessage("brec->refName(): %s\n", brec->refName());
-            // CReadAln alndata(*brec);
             CReadAln* alndata = new CReadAln(brec);
-
-            // GMessage("~alndata->brec           : %p\n", &alndata->brec);
-            // GMessage("~alndata->brec.start    : %p\n", &(alndata->brec.start));
-            // GMessage("~alndata->brec.start    : %d\n", alndata->brec.start);
-            // GMessage("~alndata->brec.end      : %p\n", &(alndata->brec.end));
-            // GMessage("~alndata->brec.end      : %d\n", alndata->brec.end);
-
             processRead(currentstart, currentend, readlist, *bundle, hashread, alndata);
         } //for each read alignment
-
-        //cleaning up
-        // delete brec;
 
 
 
@@ -280,14 +263,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
 
 
     } else if (COMMAND_MODE == ALL) {
-        infname_scorebed;
-
         GSamReader bam_reader_spliced(outfname_spliced.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
-
-        std::unordered_set<std::string> rm_juncs;
-        // GMessage("Before rm_juncs.size()  %d\n", rm_juncs.size());
-        loadBed(outfname_junc_score, rm_juncs);
-        // GMessage("After rm_juncs.size()  %d\n", rm_juncs.size());
 
         int counter = 0, prev_tid=-1;
         GStr prev_refname;
@@ -312,27 +288,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 }
             }
             if (spur) {
-                std::string kv = brec->name();
-                kv = kv + "_" + std::to_string(brec->pairOrder());
-
-                GMessage("brec->mate_refId(): %s\n", brec->mate_refName());
-                GMessage("brec->mate_start(): %d\n", brec->mate_start());
-                GMessage("brec->mate_start(): %d\n", brec);
-                GMessage("kv: %s\n", kv.c_str());
-
-                if (rm_hit.find(kv) == rm_hit.end()) {
-                    rm_hit[kv] = 1;
-                } else {
-                    rm_hit[kv]++;
-                }
-                // char* seq = brec->sequence();
-                // char* cigar_seq = brec->cigar();
-                // kv = kv + "_" + seq + "_" + cigar_seq + "_" + std::to_string(brec->flags()) + "_" + std::to_string(brec->start);
-                // rm_rd_set.insert(kv);
-                outfile_discard->write(brec);
-                ALN_COUNT_BAD++;
-                // free(seq);
-                // free(cigar_seq);
+                removeAlignment(brec, rm_hit);
             } else {
                 int nh_tag = brec->tag_int("NH", 1);
                 if (nh_tag == 1) {
@@ -349,21 +305,13 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
 
         GMessage("\n");
         ALN_COUNT_GOOD += ALN_COUNT_NSPLICED;
-        GMessage("[INFO] %d spurious alignments were removed.\n", ALN_COUNT_BAD);
-        // Writing out auxiliary file 
-        std::ofstream NH_tag_f;
-        GStr outfname_NH_tag = out_dir + "/NH_tag_fix.csv";
-        NH_tag_f.open(outfname_NH_tag.chars());   
-        for (auto ele : rm_hit) {
-            NH_tag_f << ele.first << ","  << ele.second  << std::endl;
-        }
-        NH_tag_f.close();
-        return outfname_NH_tag;
     }
-    return GStr("");
+    GMessage("[INFO] %d spurious alignments were removed.\n", ALN_COUNT_BAD);
+    GStr outfname_NH_tag = writenhHitFile(rm_hit);
+    return outfname_NH_tag;
 }
 
-void processBundle(BundleData* bundle, GList<CReadAln>& readlist, std::unordered_set<std::string>& rm_juncs, int& bundle_counter) {
+void processBundle(BundleData* bundle, GList<CReadAln>& readlist, std::unordered_set<std::string>& rm_juncs, robin_hdd_rm_hit& rm_hit, int& bundle_counter) {
     bundle_counter += 1;
     GMessage("In bundle %d\n", bundle_counter);
 
@@ -376,7 +324,6 @@ void processBundle(BundleData* bundle, GList<CReadAln>& readlist, std::unordered
     // GMessage("\treadlist[2]: %p\n", &readlist[2]->brec);
     // GMessage("\treadlist[-1]: %p\n", &(readlist[readlist.Count()-1]->brec));
 
-
     // GMessage("\treadlist[0]->brec.start: %u\n", readlist[0]->brec.start);
     // GMessage("\treadlist[0]->brec.end  : %u\n", readlist[0]->brec.end);
     // GMessage("\treadlist[-1]->brec.start: %u\n", readlist[readlist.Count()-1]->brec.start);
@@ -384,46 +331,79 @@ void processBundle(BundleData* bundle, GList<CReadAln>& readlist, std::unordered
 
     for (int idx=0; idx<readlist.Count(); idx++) {
         int pair_idx = readlist[idx]->pair_idx;
+        GMessage(">> pair_idx  : %d\n", pair_idx);
+
+        // Just write out the read to cleaned BAM
+        //    if it is unpaired.
+        if (pair_idx == -1) {
+
+        }
 
         GSamRecord& brec_bd = readlist[idx]->brec;
         GSamRecord& brec_bd_p = readlist[readlist[idx]->pair_idx]->brec;
 
-        // GMessage("\t      idx: %d\n", idx);
-        // GMessage("\t pair_idx: %d\n", readlist[idx]->pair_idx);
+        GMessage(">> brec_bd  : %s (%d)\n", brec_bd.name(), idx);
+        GMessage(">> brec_bd_p: %s (%d)\n", brec_bd_p.name(), pair_idx);
 
+        /***********************************
+         * Writing out cleaned & discard alignment
+         *  for the *second* seen paired alignments.
+        ************************************/
         if (hash_good_pair_idx.find(idx) != hash_good_pair_idx.end()) {
             // It's already been added into the hash => 
-            //    Just write out the alignment
-            outfile_cleaned_tmp->write(&brec_bd);
+            //  It is the second read in a pair being seen.
+            keepAlignment(&brec_bd);
             continue;
         } 
         if (hash_bad_pair_idx.find(idx) != hash_bad_pair_idx.end()) {
             // It's already been added into the hash => 
-            //    Just write out the alignment
-            outfile_discard->write(&brec_bd);
+            //  It is the second read in a pair being seen.
             continue;
         } 
 
-        // GMessage("brec_bd.refName() %s\n", brec_bd.refName());
+        if (brec_bd.isUnmapped() || brec_bd_p.isUnmapped()) {
+            // Writing out alignments into the file in a pair.
+            // GMessage("Unmapped read: %s - %d\n", brec_bd.name(), brec_bd.pairOrder());
 
-    // if (brec_bd.exons.Count() > 0) {
-    //     GMessage("brec_bd.exons.Count() %d\n", brec_bd.exons.Count());
-    // }
+            GMessage("brec_bd  : %s\n", brec_bd.name());
+            GMessage("brec_bd_p: %s\n", brec_bd_p.name());
+
+            removeAlignment(&brec_bd, rm_hit);
+            removeAlignment(&brec_bd_p, rm_hit);
+            hash_bad_pair_idx.insert(idx);
+            hash_bad_pair_idx.insert(pair_idx);
+            // continue;
+        }
 
 
+        // Invalid mapping reads.
+        if (brec_bd.refName()==NULL || brec_bd_p.refName()==NULL) {
+            GMessage("Error: cannot retrieve target seq name from BAM record!\n");
+
+            // GMessage("brec_bd  : %s\n", brec_bd.name());
+            // GMessage("brec_bd_p: %s\n", brec_bd_p.name());
+
+            removeAlignment(&brec_bd, rm_hit);
+            removeAlignment(&brec_bd_p, rm_hit);
+            hash_bad_pair_idx.insert(idx);
+            hash_bad_pair_idx.insert(pair_idx);
+        }
+
+        /***********************************
+         * Checking spurious spliced alignments for 
+         *  frist & second alignments.
+        ************************************/
         bool spur_m = false;
         bool spur_p = false;
         if (brec_bd.exons.Count() > 1) {
             for (int e=1; e<2; e++) {
                 char strand = brec_bd.spliceStrand();
                 std::string jnew_sub = std::to_string(brec_bd.exons[e-1].end) + "_" + std::to_string(brec_bd.exons[e].start-1) + "_" + strand + "_" + brec_bd.refName();
-                // GMessage("brec_bd.refName(): %s\n", brec_bd.refName());
-
+                // GMessage("jnew_sub: %s\n", jnew_sub.c_str());
                 if (rm_juncs.find(jnew_sub) != rm_juncs.end()) {
                     spur_m = true;
                     break;
                 }
-
             }
         }
 
@@ -441,64 +421,39 @@ void processBundle(BundleData* bundle, GList<CReadAln>& readlist, std::unordered
 
                     std::string jnew_sub_p = std::to_string(brec_bd_p.exons[e-1].end) + "_" + std::to_string(brec_bd_p.exons[e].start-1) + "_" + strand + "_" + brec_bd_p.refName();
                     // GMessage("jnew_sub_p: %s\n", jnew_sub_p.c_str());
-                    
                     if (rm_juncs.find(jnew_sub_p) != rm_juncs.end()) {
                         spur_p = true;
                         break;
                     }
-
                 }
             }
         }
-        
+
+        /***********************************
+         * Writing out cleaned & discard alignment
+         *  for the *first* seen paired alignments.
+        ************************************/
         if (!spur_m && !spur_p) {
             // Writing out two reads.
-            // if (idx ) {
-            // }
-            outfile_cleaned_tmp->write(&brec_bd);
-
-            // hash_good_pair_idx.insert(idx);
+            keepAlignment(&brec_bd);
+            hash_good_pair_idx.insert(idx);
             hash_good_pair_idx.insert(pair_idx);
         } else {
             // Writing out two alignments into a discarded BAM file.
-            outfile_discard->write(&brec_bd);
-            // hash_bad_pair_idx.insert(idx);
+
+            // GMessage("brec_bd  : %s\n", brec_bd.name());
+            // GMessage("brec_bd_p: %s\n", brec_bd_p.name());
+
+            removeAlignment(&brec_bd, rm_hit);
+            removeAlignment(&brec_bd_p, rm_hit);
+            hash_bad_pair_idx.insert(idx);
             hash_bad_pair_idx.insert(pair_idx);
-
-            // if (spur_m) {
-            // } if (spur_p) {
-            //     hash_bad_pair_idx.insert(pair_idx);
-            // }
-                // std::string kv = brec->name();
-                // kv = kv + "_" + std::to_string(brec->pairOrder());
-
-                // GMessage("brec->mate_refId(): %s\n", brec->mate_refName());
-                // GMessage("brec->mate_start(): %d\n", brec->mate_start());
-                // GMessage("brec->mate_start(): %d\n", brec);
-                // GMessage("kv: %s\n", kv.c_str());
-
-                // if (rm_hit.find(kv) == rm_hit.end()) {
-                //     rm_hit[kv] = 1;
-                // } else {
-                //     rm_hit[kv]++;
-                // }
-
         }
-
-
-
-
-
-// GMessage("%s_%d_%c\t\t: %d; n: %d;    %d; np: %d\n", readlist[idx]->brec.name());
 
         // GMessage("%s_%d_%c\t\t: %d; n: %d;    %d; np: %d\n", readlist[idx]->brec.name(), readlist[idx]->brec.pairOrder(), readlist[idx]->brec.spliceStrand(), readlist[idx]->brec.start, idx, readlist[idx]->brec.mate_start(), pair_idx);
     }
-
-    // for (auto const& x : hash_good_pair_idx) {
-    //     GMessage("hash_good_pair_idx[i]: %d\n", x);
-    // }
+    bundle->Clear();
 }
-
 
 void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, BundleData& bdata, GHash<int>& hashread, CReadAln* alndata) { // some false positives should be eliminated here in order to break the bundle
 
@@ -508,7 +463,8 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
 
     static GStr _id("", 256); //to prevent repeated reallocation for each parsed read
     static GStr _id_p("", 256); //to prevent repeated reallocation for each parsed read
-	/*
+	
+    /*
 	{ // DEBUG ONLY
 		fprintf(stderr,"Process read %s with exons:", brec->name());
 		for (int i=0;i<brec->exons.Count();i++) {
@@ -598,4 +554,34 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
 
 void noMoreBundles() {
 
+}
+
+void removeAlignment(GSamRecord* brec, robin_hdd_rm_hit& rm_hit) {
+    outfile_discard->write(brec);
+
+    std::string kv = brec->name();
+    kv = kv + "_" + std::to_string(brec->pairOrder());
+    if (rm_hit.find(kv) == rm_hit.end()) {
+        rm_hit[kv] = 1;
+    } else {
+        rm_hit[kv]++;
+    }
+    ALN_COUNT_BAD++;
+}
+
+void keepAlignment(GSamRecord* brec) {
+    outfile_cleaned_tmp->write(brec);
+    ALN_COUNT_GOOD++;
+}
+
+GStr writenhHitFile(robin_hdd_rm_hit& rm_hit) {
+    // Writing out auxiliary file 
+    std::ofstream NH_tag_f;
+    GStr outfname_NH_tag = out_dir + "/TMP/NH_tag_fix.csv";
+    NH_tag_f.open(outfname_NH_tag.chars());   
+    for (auto ele : rm_hit) {
+        NH_tag_f << ele.first << ","  << ele.second  << std::endl;
+    }
+    NH_tag_f.close();
+    return outfname_NH_tag;
 }
