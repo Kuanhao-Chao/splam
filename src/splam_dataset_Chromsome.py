@@ -29,8 +29,9 @@ class myDataset(Dataset):
             neg_noncan_f = "./INPUTS/"+SEQ_LEN+"bp/input_neg_noncan/"+type+"_neg_noncan.shuffle.fa"
         elif type == "eval":
             pos_f = "../src_tools_evaluation/dataset/pos/splam/splam.juncs.seq.fa"
-            neg_can_f = "../src_tools_evaluation/dataset/neg_can/splam/splam.juncs.seq.fa"
-            neg_noncan_f = "../src_tools_evaluation/dataset/neg_noncan/splam/splam.juncs.seq.fa"
+            # neg_noncan_f = "../src_tools_evaluation/dataset/neg_noncan/splam/splam.juncs.seq.fa"
+            # neg_can_f = "../src_tools_evaluation/dataset/neg_can/splam/splam.juncs.seq.fa"
+            neg_1_f = "../src_tools_evaluation/dataset/neg_1/splam/splam.juncs.seq.fa"
 
         #################################
         ## Processing 'POSITIVE' samples
@@ -74,106 +75,115 @@ class myDataset(Dataset):
         print("\033[1m[INFO] CONSTANT_SIZE     : ", CONSTANT_SIZE, "\033[0m")
         print("\033[1m[INFO] CONSTANT_SIZE_NEG : ", CONSTANT_SIZE_NEG, "\033[0m")
 
-        # #################################
-        # ## Processing 'NEGATIVE_1' samples
-        # #################################
-        # n1idx = 0
-        # with open("./INPUTS/"+SEQ_LEN+"bp/input_neg_1/"+type+"_neg_1.shuffle.fa", "r") as f:
-        #     print("Processing ./INPUTS/"+SEQ_LEN+"bp/input_neg_1/"+type+"_neg_1.shuffle.fa")
-        #     lines = f.read().splitlines()
-        #     seq_name = ""
-        #     seq = ""
-        #     for line in lines:
-        #         # print(line)
-        #         if n1idx % 2 == 0:
-        #             seq_name = split_seq_name(line)
-        #         elif n1idx % 2 == 1:
-        #             seq = line
-        #             # print(seq)
-        #             X, Y = create_datapoints(seq, '-')
-        #             X = torch.Tensor(np.array(X))
-        #             # Y = torch.Tensor(np.array(Y)[0])
-        #             # print(X)
-        #             # print(Y)
-        #             if X.size()[0] != 800:
-        #                 print("seq_name: ", seq_name)
-        #                 print(X.size())
-        #                 print(Y.size())
-        #             self.data.append([X, Y, seq_name])
-        #         n1idx += 1
-        #         if n1idx %10000 == 0:
-        #             print("n1idx: ", n1idx)
-        #             print(seq_name)
-        #         if n1idx >= CONSTANT_SIZE_NEG:
-        #             break
 
-        #################################
-        ## Processing 'NEGATIVE' samples
-        #################################
-        nidx = 0
-        with open(neg_can_f, "r") as f:
-            print("Processing ", neg_can_f)
-            lines = f.read().splitlines()
-            seq_name = ""
-            seq = ""
-            for line in lines:
-                # print(line)
-                if nidx % 2 == 0:
-                    seq_name = split_seq_name(line)
-                elif nidx % 2 == 1:
-                    seq = line
-                    # print(seq)
-                    X, Y = create_datapoints(seq, '-')
-                    X = torch.Tensor(np.array(X))
-                    # Y = torch.Tensor(np.array(Y)[0])
-                    # print(X)
-                    # print(Y)
-                    if X.size()[0] != 800:
-                        print("seq_name: ", seq_name)
-                        print(X.size())
-                        print(Y.size())
-                    self.data.append([X, Y, seq_name])
-                nidx += 1
-                if nidx %10000 == 0:
-                    print("nidx: ", nidx)
-                    # print(seq_name)
-                if nidx >= CONSTANT_SIZE_NEG:
-                    break
-        print("nidx: ", nidx)
+        if type == "eval":
+            #################################
+            ## Processing 'NEGATIVE_1' samples
+            #################################
+            n1idx = 0
+            with open(neg_1_f, "r") as f:
+                print("Processing ", neg_1_f)
+                lines = f.read().splitlines()
+                seq_name = ""
+                seq = ""
+                for line in lines:
+                    # print(line)
+                    if n1idx % 2 == 0:
+                        seq_name = split_seq_name(line)
+                    elif n1idx % 2 == 1:
+                        seq = line
+                        # print(seq)
+                        X, Y = create_datapoints(seq, '-')
+                        X = torch.Tensor(np.array(X))
+                        # Y = torch.Tensor(np.array(Y)[0])
+                        # print(X)
+                        # print(Y)
+                        if X.size()[0] != 800:
+                            print("seq_name: ", seq_name)
+                            print(X.size())
+                            print(Y.size())
+                        self.data.append([X, Y, seq_name])
+                    n1idx += 1
+                    if n1idx %10000 == 0:
+                        print("n1idx: ", n1idx)
+                        print(seq_name)
+                    if n1idx >= CONSTANT_SIZE_NEG:
+                        break
+            print("n1idx: ", n1idx)
 
+
+        elif type == "train" or type == "test":
+            #################################
+            ## Processing 'NEGATIVE' samples
+            #################################
+            nidx = 0
+            with open(neg_can_f, "r") as f:
+                print("Processing ", neg_can_f)
+                lines = f.read().splitlines()
+                seq_name = ""
+                seq = ""
+                for line in lines:
+                    # print(line)
+                    if nidx % 2 == 0:
+                        seq_name = split_seq_name(line)
+                    elif nidx % 2 == 1:
+                        seq = line
+                        # print(seq)
+                        X, Y = create_datapoints(seq, '-')
+                        X = torch.Tensor(np.array(X))
+                        # Y = torch.Tensor(np.array(Y)[0])
+                        # print(X)
+                        # print(Y)
+                        if X.size()[0] != 800:
+                            print("seq_name: ", seq_name)
+                            print(X.size())
+                            print(Y.size())
+                        self.data.append([X, Y, seq_name])
+                    nidx += 1
+                    if nidx %10000 == 0:
+                        print("nidx: ", nidx)
+                        # print(seq_name)
+                    if nidx >= CONSTANT_SIZE_NEG:
+                        break
+            print("nidx: ", nidx)
+
+            #################################
+            ## Processing 'Non-canonical NEGATIVE' samples
+            #################################
+            nnidx = 0
+            with open(neg_noncan_f, "r") as f:
+                print("Processing ", neg_noncan_f)
+                lines = f.read().splitlines()
+                seq_name = ""
+                seq = ""
+                for line in lines:
+                    # print(line)
+                    if nnidx % 2 == 0:
+                        seq_name = split_seq_name(line)
+                    elif nnidx % 2 == 1:
+                        seq = line
+                        # print(seq)
+                        X, Y = create_datapoints(seq, '-')
+                        X = torch.Tensor(np.array(X))
+                        # Y = torch.Tensor(np.array(Y)[0])
+                        # print(X)
+                        # print(Y)
+                        if X.size()[0] != 800:
+                            print("seq_name: ", seq_name)
+                            print(X.size())
+                            print(Y.size())
+                        self.data.append([X, Y, seq_name])
+                    nnidx += 1
+                    if nnidx %10000 == 0:
+                        print("nnidx: ", nnidx)
+                        # print(seq_name)
+                    if nnidx >= CONSTANT_SIZE_NEG:
+                        break
+            print("nnidx: ", nnidx)
+        
         #################################
-        ## Processing 'Non-canonical NEGATIVE' samples
+        ## Shuffle the data 
         #################################
-        nnidx = 0
-        with open(neg_noncan_f, "r") as f:
-            print("Processing ", neg_noncan_f)
-            lines = f.read().splitlines()
-            seq_name = ""
-            seq = ""
-            for line in lines:
-                # print(line)
-                if nnidx % 2 == 0:
-                    seq_name = split_seq_name(line)
-                elif nnidx % 2 == 1:
-                    seq = line
-                    # print(seq)
-                    X, Y = create_datapoints(seq, '-')
-                    X = torch.Tensor(np.array(X))
-                    # Y = torch.Tensor(np.array(Y)[0])
-                    # print(X)
-                    # print(Y)
-                    if X.size()[0] != 800:
-                        print("seq_name: ", seq_name)
-                        print(X.size())
-                        print(Y.size())
-                    self.data.append([X, Y, seq_name])
-                nnidx += 1
-                if nnidx %10000 == 0:
-                    print("nnidx: ", nnidx)
-                    # print(seq_name)
-                if nnidx >= CONSTANT_SIZE_NEG:
-                    break
-        print("nnidx: ", nnidx)
         if shuffle: random.shuffle(self.data)
 
     def __len__(self):

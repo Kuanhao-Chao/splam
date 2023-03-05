@@ -46,38 +46,6 @@ def main():
     model = torch.load(MODEL)
 
     #############################
-    # Advance. Set 'track_running_stats' & 'momentum' in batch normalization layers
-    #############################
-    # for child in model.children():
-    #     # print("child: ", child)
-    #     if type(child)==ModuleList:
-    #         for ii in range(len(child)):
-    #             if type(child[ii])==ResidualUnit:
-    #                 # child[ii].track_running_stats = False
-    #                 # print("child[ii]: ", child[ii])
-    #                 for jj in (child[ii].children()):
-    #                     if type(jj)==BatchNorm1d:
-    #                         # child[ii].track_running_stats = False
-    #                         print("jj: ", jj)
-    #                         jj.trainning = False
-    #                         jj.track_running_stats = True
-    #                         # jj.track_running_stats = False
-    #                         jj.momentum = 0.1
-
-    # print("After updating 'BatchNorm1d'")
-    # for child in model.children():
-    #     # print("child: ", child)
-    #     if type(child)==ModuleList:
-    #         for ii in range(len(child)):
-    #             if type(child[ii])==ResidualUnit:
-    #                 # child[ii].track_running_stats = False
-    #                 # print("child[ii]: ", child[ii])
-    #                 for jj in (child[ii].children()):
-    #                     if type(jj)==BatchNorm1d:
-    #                         # child[ii].track_running_stats = False
-    #                         print("jj: ", jj)
-
-    #############################
     # Model Initialization
     #############################
     print(f"[Info]: Finish loading model!",flush = True)
@@ -177,6 +145,9 @@ def main():
 
         TYPE = "shuffle" if shuffle else "noshuffle"
 
+        print("All_Junction_YP: ", All_Junction_YP)
+        print("All_Junction_YL: ", All_Junction_YL)
+
         with open(MODEL_OUTPUT_BASE + "/splam." + TYPE + ".pkl", 'wb') as f: 
             pickle.dump(All_Junction_YP, f)
             pickle.dump(All_Junction_YL, f)
@@ -186,10 +157,10 @@ def main():
         # Plotting ROC / PR curves
         ############################
         plot_roc_curve(All_Junction_YL, All_Junction_YP, "Acceptor")
-        plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_roc.png", dpi=300)
+        plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_roc_"+TYPE+".png", dpi=300)
         plt.close()
         plot_pr_curve(All_Junction_YL, All_Junction_YP, "Acceptor")
-        plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_pr.png", dpi=300)
+        plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_pr_"+TYPE+".png", dpi=300)
         plt.close()
 
         print(f'Epoch {0+0:03}: | Loss: {epoch_loss/len(test_loader):.5f} | Acc: {epoch_acc/len(test_loader):.3f}')
