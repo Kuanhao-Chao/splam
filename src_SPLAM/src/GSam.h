@@ -338,6 +338,9 @@ class GSamRecord: public GSeg {
  uint32_t flags() { return b->core.flag; } //return SAM flags
  bool isUnmapped() { return ((b->core.flag & BAM_FUNMAP) != 0); }
  bool isMapped() { return ((b->core.flag & BAM_FUNMAP) == 0); }
+
+ bool isMateUnmapped() { return ((b->core.flag & BAM_FMUNMAP) != 0); }
+ bool isMateMapped() { return ((b->core.flag & BAM_FMUNMAP) == 0); }
  bool isPaired() { return ((b->core.flag & BAM_FPAIRED) != 0); }
  const char* name() { return bam_get_qname(b); }
  int pairOrder() {

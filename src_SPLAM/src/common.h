@@ -10,6 +10,7 @@
 typedef robin_hood::unordered_map<std::string, int> robin_hdd_rm_hit;
 typedef robin_hood::unordered_set<std::string> robin_hdd_rm_algn;
 typedef robin_hood::unordered_set<int> robin_hdd_int;
+typedef robin_hood::unordered_set<std::string> robin_hdd_string;
 
 extern robin_hood::unordered_map<std::string, int>  CHRS;
 
