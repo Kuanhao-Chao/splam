@@ -489,7 +489,7 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
 
 
 
-        GMessage("brecname: %s; self_start: %d;  pair_start: %d;  currentstart: %d\n", brec.name(), self_start, pair_start, currentstart);
+        GMessage("brecname: %s; self_start: %d;  pair_start: %d;  currentstart: %d; insert_size: %d; pair_insert_size:%d; pair_idx:%d\n", brec.name(), self_start, pair_start, currentstart, insert_size, pair_insert_size, pair_idx);
 		if (currentstart<=pair_start) { // if pair_start is in a previous bundle I don't care about it
 			//GStr readname();
 			//GStr id(brec->name(), 16); // init id with readname
@@ -509,15 +509,23 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
 
 
 
-    
-            const int* n_check=hashread[_id.chars()];
-            if (n_check) {
+
+            int* n_check=hashread[_id.chars()];
+            while (n_check) {
                 GMessage("element in readlist \n");
+                GMessage("\tChecking repeat: %s;  %d\n", _id.chars(), *n_check);
+
+                _id+='*';
+                _id_p+='*';
+                n_check=hashread[_id.chars()];
                 // GMessage("\t old n: %d;\n", n);
                 // readlist.Remove(alndata);
                 // n = n-1;
                 // GMessage("\t new n: %d \n", n);
             }
+
+
+
 
 			if(pair_start < self_start) { // if I've seen the pair already <- I might not have seen it yet because the pair starts at the same place
 				const int* np=hashread[_id_p.chars()];
@@ -531,26 +539,41 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
                     // GMessage(">> Pair not in the same bundle\n");
                 }
                 // hashread.Remove(_id_p.chars());
+
+
+
             } else if (pair_start == self_start) {
 				hashread.Add(_id.chars(), n);
 				const int* np=hashread[_id_p.chars()];
                 // GMessage("\t_equal condition\n");
-                    // GMessage("\t\tn : %d\n\n", n);
-                    // GMessage("\t\tnp: %d\n\n", *np);                    
+                // GMessage("\t\tn : %d\n\n", n);
+                // GMessage("\t\tnp: %d\n\n", *np);                    
 
                 if (np) {
-                    // GMessage("\t\tn : %d\n\n", n);
-                    // GMessage("\t\tnp: %d\n\n", *np);
+                    GMessage("\t\tn : %d\n\n", n);
+                    GMessage("\t\tnp: %d\n\n", *np);
                     readlist[*np]->pair_idx = n;
                     readlist[n]->pair_idx = *np;
-                    hashread.Remove(_id.chars());
-                    hashread.Remove(_id_p.chars());
+                    // hashread.Remove(_id.chars());
+                    // hashread.Remove(_id_p.chars());
                 // } else {
                 //     GMessage("\tHasn't seen the pair yet\n");
                 }
+
+
+
+
             } else { // I might still see the pair in the future
-				hashread.Add(_id.chars(), n);
+
 			}
+
+
+            GMessage("Adding read to hash: %s;  %d\n", _id.chars(), n);
+            hashread.Add(_id.chars(), n);
+
+            const int* n_check_final=hashread[_id.chars()];
+
+            GMessage("Retrieving read from hash: %s;  %d\n", _id.chars(), *n_check_final);
 		}
 	} else {
 
