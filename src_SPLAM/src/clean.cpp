@@ -105,34 +105,11 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             //delete brec;
             if ((irec=in_records.next())!=NULL) {
                 brec=irec->brec;
-                /***********************************
-                 * Alignment filtering criteria.
-                ************************************/
-                // // Unmapped reads.
-                // if (brec->isUnmapped()) {
-                //     // GMessage("Unmapped read: %s - %d\n", brec->name(), brec->pairOrder());
-                //     // removeAlignment(brec, rm_hit);
-                //     // continue;
-                // }
-                // // Invalid mapping reads.
-                // if (brec->start<1 || brec->mapped_len<10) {
-                //     GMessage("Warning: invalid mapping found for read %s (position=%d, mapped length=%d)\n",
-                //             brec->name(), brec->start, brec->mapped_len);
-                //     removeAlignment(brec, rm_hit);
-                //     continue;
-                // }
-
 
                 /***********************************
                  * Setting the "chr" "strand" of the current alignment.
                 ************************************/
                 refseqName=brec->refName();
-                // // Invalid mapping reads.
-                // if (refseqName==NULL) {
-                //     GMessage("Error: cannot retrieve target seq name from BAM record!\n");
-                //     removeAlignment(brec, rm_hit);
-                // }
-
                 xstrand=brec->spliceStrand(); // tagged strand gets priority
                 if(xstrand=='.' && (fr_strand || rf_strand)) { // set strand if stranded library
                     if(brec->isPaired()) { // read is paired
@@ -155,9 +132,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                  * Setting the "chr_changed" and "new_bundle" parameters.
                 ************************************/
                 pos=brec->start; //BAM is 0 based, but GBamRecord makes it 1-based
-
-                // GMessage("pos: %d; prev_pos: %d\n", pos, prev_pos);
-
                 chr_changed=(lastref.is_empty() || lastref!=refseqName);
                 if (chr_changed) {
                     prev_pos=0;

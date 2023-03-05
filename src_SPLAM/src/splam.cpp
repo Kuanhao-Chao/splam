@@ -143,6 +143,7 @@ int main(int argc, char* argv[]) {
         infname_juncbed = splamJExtract();
         infname_scorebed = splamPredict();
         infname_NH_tag = splamClean();
+        splamNHUpdate();
 
         // GStr outfname_cleaned = splamNHUpdate();
         
