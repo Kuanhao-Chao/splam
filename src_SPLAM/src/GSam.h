@@ -379,6 +379,14 @@ class GSamRecord: public GSeg {
  char* sequence(); //user should free after use
  char* qualities();//user should free after use
  char* cigar(); //returns text version of the CIGAR string; user must deallocate
+
+ void unpair_mate_refName() {
+   b->core.mtid = -1;
+ }
+ void unpair_mate_start() {
+   b->core.mpos = -1;
+ }
+
 };
 
 // from sam.c:

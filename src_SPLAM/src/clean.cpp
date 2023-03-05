@@ -318,7 +318,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
 
 void processBundle(BundleData* bundle, GList<CReadAln>& readlist, robin_hdd_string& rm_juncs, robin_hdd_rm_hit& rm_hit, int& bundle_counter) {
     bundle_counter += 1;
-    GMessage("In bundle %d\n", bundle_counter);
+    // GMessage("In bundle %d\n", bundle_counter);
 
     robin_hdd_int hash_good_pair_idx;
     robin_hdd_int hash_bad_pair_idx;
@@ -328,10 +328,9 @@ void processBundle(BundleData* bundle, GList<CReadAln>& readlist, robin_hdd_stri
         int pair_idx = readlist[idx]->pair_idx;
         GSamRecord& brec_bd = readlist[idx]->brec;
 
-        GMessage("brec_bd  : %s\n", brec_bd.name());
 
-        GMessage("idx      : %d\n", idx);
-        GMessage("pair_idx : %d\n", pair_idx);
+        // GMessage("idx      : %d\n", idx);
+        // GMessage("pair_idx : %d\n", pair_idx);
         
 
         /***********************************
@@ -339,14 +338,33 @@ void processBundle(BundleData* bundle, GList<CReadAln>& readlist, robin_hdd_stri
         ************************************/
         // Check the global hash => only used when its mate is unpaired.
         if (pair_idx == -1) {
-            // Just remove the reads
-            removeAlignment(&brec_bd, rm_hit);
-            hash_bad_pair_idx.insert(idx);
+            // Check if the read is spuriously spliced.
+            bool spur = false;
+            spur = alignmentAssessment(&brec_bd, rm_juncs);
+            if (spur) {
+                removeAlignment(&brec_bd, rm_hit);
+                hash_bad_pair_idx.insert(idx);
+            } else {
+                // make the read single-ended.
+                // GMessage("brec_bd      : %d\n", brec_bd.flags());
+
+                if (brec_bd.isUnmapped()) {
+                    // Make it single-end but its unmapped => removed
+                    removeAlignment(&brec_bd, rm_hit);
+                    hash_bad_pair_idx.insert(idx);
+                } else {
+                    int sngle_end_filter = 3860;
+                    brec_bd.set_flags(brec_bd.flags()&sngle_end_filter);
+                    // GMessage("brec_bd new  : %d\n", brec_bd.flags());
+                    // brec_bd
+                    brec_bd.unpair_mate_refName();
+                    brec_bd.unpair_mate_start();
+                    keepAlignment(&brec_bd);
+                    hash_good_pair_idx.insert(idx);
+                }
+            }
             continue;
         }
-
-
-
         /***********************************
          * Case 2: Find its pair.
         ************************************/
@@ -360,14 +378,14 @@ void processBundle(BundleData* bundle, GList<CReadAln>& readlist, robin_hdd_stri
         if (hash_good_pair_idx.find(idx) != hash_good_pair_idx.end()) {
             // It's already been added into the hash => 
             //  It is the second read in a pair being seen.
-            GMessage("Alingment in 'hash_good_pair_idx'\n");
-            keepAlignment(&brec_bd, rm_hit);
+            // GMessage("Alingment in 'hash_good_pair_idx'\n");
+            keepAlignment(&brec_bd);
             continue;
         } 
         if (hash_bad_pair_idx.find(idx) != hash_bad_pair_idx.end()) {
             // It's already been added into the hash => 
             //  It is the second read in a pair being seen.
-            GMessage("Alingment in 'hash_bad_pair_idx'\n");
+            // GMessage("Alingment in 'hash_bad_pair_idx'\n");
             removeAlignment(&brec_bd, rm_hit);
             continue;
         } 
@@ -396,7 +414,7 @@ void processBundle(BundleData* bundle, GList<CReadAln>& readlist, robin_hdd_stri
             spur_p = alignmentAssessment(&brec_bd_p, rm_juncs);
         }
 
-        GMessage("Spurious results: %d; %d'\n", spur_m, spur_p);
+        // GMessage("Spurious results: %d; %d'\n", spur_m, spur_p);
 
         /***********************************
          * Writing out cleaned & discard alignment
@@ -404,7 +422,7 @@ void processBundle(BundleData* bundle, GList<CReadAln>& readlist, robin_hdd_stri
         ************************************/
         if (!spur_m && !spur_p) {
             // Writing out two reads.
-            keepAlignment(&brec_bd, rm_hit);
+            keepAlignment(&brec_bd);
             hash_good_pair_idx.insert(idx);
             hash_good_pair_idx.insert(pair_idx);
         } else {
@@ -489,7 +507,7 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
 
 
 
-        GMessage("brecname: %s; self_start: %d;  pair_start: %d;  currentstart: %d; insert_size: %d; pair_insert_size:%d; pair_idx:%d\n", brec.name(), self_start, pair_start, currentstart, insert_size, pair_insert_size, pair_idx);
+        // GMessage("brecname: %s; self_start: %d;  pair_start: %d;  currentstart: %d; insert_size: %d; pair_insert_size:%d; pair_idx:%d\n", brec.name(), self_start, pair_start, currentstart, insert_size, pair_insert_size, pair_idx);
 		if (currentstart<=pair_start) { // if pair_start is in a previous bundle I don't care about it
 			//GStr readname();
 			//GStr id(brec->name(), 16); // init id with readname
@@ -512,8 +530,8 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
 
             int* n_check=hashread[_id.chars()];
             while (n_check) {
-                GMessage("element in readlist \n");
-                GMessage("\tChecking repeat: %s;  %d\n", _id.chars(), *n_check);
+                // GMessage("element in readlist \n");
+                // GMessage("\tChecking repeat: %s;  %d\n", _id.chars(), *n_check);
 
                 _id+='*';
                 _id_p+='*';
@@ -530,8 +548,8 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
 			if(pair_start < self_start) { // if I've seen the pair already <- I might not have seen it yet because the pair starts at the same place
 				const int* np=hashread[_id_p.chars()];
                 if (np) {
-                    GMessage("\t\tn : %d\n\n", n);
-                    GMessage("\t\tnp: %d\n\n", *np);
+                    // GMessage("\t\tn : %d\n\n", n);
+                    // GMessage("\t\tnp: %d\n\n", *np);
 
                     readlist[*np]->pair_idx = n;
                     readlist[n]->pair_idx = *np;
@@ -550,8 +568,8 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
                 // GMessage("\t\tnp: %d\n\n", *np);                    
 
                 if (np) {
-                    GMessage("\t\tn : %d\n\n", n);
-                    GMessage("\t\tnp: %d\n\n", *np);
+                    // GMessage("\t\tn : %d\n\n", n);
+                    // GMessage("\t\tnp: %d\n\n", *np);
                     readlist[*np]->pair_idx = n;
                     readlist[n]->pair_idx = *np;
                     // hashread.Remove(_id.chars());
@@ -568,12 +586,12 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
 			}
 
 
-            GMessage("Adding read to hash: %s;  %d\n", _id.chars(), n);
+            // GMessage("Adding read to hash: %s;  %d\n", _id.chars(), n);
             hashread.Add(_id.chars(), n);
 
             const int* n_check_final=hashread[_id.chars()];
 
-            GMessage("Retrieving read from hash: %s;  %d\n", _id.chars(), *n_check_final);
+            // GMessage("Retrieving read from hash: %s;  %d\n", _id.chars(), *n_check_final);
 		}
 	} else {
 
@@ -598,7 +616,7 @@ void removeAlignment(GSamRecord* brec, robin_hdd_rm_hit& rm_hit) {
     ALN_COUNT_BAD++;
 }
 
-void keepAlignment(GSamRecord* brec, robin_hdd_rm_hit& rm_hit) {
+void keepAlignment(GSamRecord* brec) {
     // std::string key = get_global_removed_algns_key(brec);
     outfile_cleaned_tmp->write(brec);
     ALN_COUNT_GOOD++;
