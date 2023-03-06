@@ -33,7 +33,8 @@ void processOptionsClean(GArgs& args);
 void processOptionsAll(GArgs& args);
 void processOptionsNHUpdate(GArgs& args);
 
-
+void optionsJExtractThreshold(GArgs& args);
+void optionsMaxSplice(GArgs& args);
 void optionsModel(GArgs& args);
 void optionsRef(GArgs& args);
 void optionsOutput(GArgs& args);
@@ -43,6 +44,7 @@ void optionsScore(GArgs& args);
 CommandMode COMMAND_MODE = UNSET;
 GStr command_str;
 
+// input file names 
 GStr infname_model_name("");
 GStr infname_reffa("");
 GStr infname_bam("");
@@ -59,18 +61,28 @@ TInputRecord* irec=NULL;
 float threshold = 0.3;
 int aln_num_thr = 4;
 
-GStr outfname_multimapped;
-GStr outfname_spliced;
-GStr outfname_discard;
-GStr outfname_cleaned;
-GStr outfname_cleaned_tmp;
-
 GSamRecord* brec=NULL;
-GSamWriter* outfile_multimapped = NULL;
-GSamWriter* outfile_spliced = NULL;
-GSamWriter* outfile_discard = NULL;
+
+// output file names 
+GStr outfname_cleaned;
+GStr outfname_discard;
+
+GStr outfname_ns_multi_map;
+GStr outfname_s_uniq_map;
+GStr outfname_s_multi_map;
+GStr outfname_discard_unpair;
+GStr outfname_discard_spurious;
+
+// GSamWriter 
 GSamWriter* outfile_cleaned = NULL;
-GSamWriter* outfile_cleaned_tmp = NULL;
+GSamWriter* outfile_discard = NULL;
+
+GSamWriter* outfile_ns_multi_map = NULL;
+GSamWriter* outfile_s_uniq_map = NULL;
+GSamWriter* outfile_s_multi_map = NULL;
+GSamWriter* outfile_discard_unpair = NULL;
+GSamWriter* outfile_discard_spurious = NULL;
+
 FILE* joutf=NULL;
 
 int JUNC_COUNT = 0;
@@ -86,13 +98,14 @@ robin_hood::unordered_map<std::string, int>  CHRS;
 
 int STEP_COUNTER = 0;
 // j-extract parameters:
-int j_extract_threshold = 0;
+int g_j_extract_threshold = 0;
+int g_max_splice = 20000;
 GSamWriter* outfile_above_spliced = NULL;
 GSamWriter* outfile_below_spliced = NULL;
 FILE* joutf_above=NULL;
 FILE* joutf_below=NULL;
 
-// robin_hood::unordered_set<std::string>* rm_rd_set;
+bool g_is_single_end = false;
 
 int main(int argc, char* argv[]) {
     GMessage(
@@ -112,12 +125,15 @@ int main(int argc, char* argv[]) {
     in_records.setup(VERSION, argc, argv);
     processOptions(argc, argv);
 
-
-    outfname_cleaned_tmp = out_dir + "/TMP/cleaned_tmp.bam";
-    outfname_multimapped = out_dir + "/TMP/multimapped.bam";
-    outfname_spliced = out_dir + "/TMP/spliced.bam";
     outfname_cleaned = out_dir + "/cleaned.bam";
     outfname_discard = out_dir + "/discard.bam";
+
+    outfname_ns_multi_map = out_dir + "/TMP/nonsplice_multi_map.bam";
+    outfname_s_uniq_map = out_dir + "/TMP/nonsplice_uniq_map.bam";
+    outfname_s_multi_map = out_dir + "/TMP/splice_multi_map.bam";
+    outfname_discard_unpair = out_dir + "/discard_unpair.bam";
+    outfname_discard_spurious = out_dir + "/discard_spurious.bam";;
+
     
     GStr tmp_dir(out_dir + "/TMP");
     std::filesystem::create_directories(out_dir.chars());
@@ -127,38 +143,38 @@ int main(int argc, char* argv[]) {
 
     if (COMMAND_MODE == J_EXTRACT) {
         infname_juncbed = splamJExtract();
-    } else if (COMMAND_MODE == PREDICT) {
-        infname_scorebed = splamPredict();
-    } else if (COMMAND_MODE == CLEAN) {
-        infname_NH_tag = splamClean();
-        splamNHUpdate();
+    // } else if (COMMAND_MODE == PREDICT) {
+    //     infname_scorebed = splamPredict();
+    // } else if (COMMAND_MODE == CLEAN) {
+    //     infname_NH_tag = splamClean();
+    //     splamNHUpdate();
         
-        GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
-        GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
-        GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
-        GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
-        GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
+    //     GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
+    //     GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
+    //     GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
+    //     GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
+    //     GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
         
-    } else if (COMMAND_MODE == ALL) {
-        infname_juncbed = splamJExtract();
-        infname_scorebed = splamPredict();
-        infname_NH_tag = splamClean();
-        splamNHUpdate();
+    // } else if (COMMAND_MODE == ALL) {
+    //     infname_juncbed = splamJExtract();
+    //     infname_scorebed = splamPredict();
+    //     infname_NH_tag = splamClean();
+    //     splamNHUpdate();
 
-        // GStr outfname_cleaned = splamNHUpdate();
+    //     // GStr outfname_cleaned = splamNHUpdate();
         
-        GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
-        GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
-        GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
-        GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
-        GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
+    //     GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
+    //     GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
+    //     GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
+    //     GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
+    //     GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
     }
 
     return 0;
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;model=;junction=;threshold=;output=;score=;hvcVo:t:N:Q:m:j:r:s:");
+    GArgs args(argc, argv, "help;cite;verbose;version;single-end;model=;junction=;threshold=;output=;score=;max-splice=;hvcVSo:t:N:Q:m:j:r:s:M:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -181,6 +197,12 @@ void processOptions(int argc, char* argv[]) {
         fprintf(stdout,"%s\n", "Paper to SPLAM");
         exit(0);
     }
+
+    if (args.getOpt('S') || args.getOpt("single-end") ) {
+        g_is_single_end = true;
+        GMessage("g_is_single_end: %d\n", g_is_single_end);
+    }
+
 
     if (strcmp(command_str.chars(), "j-extract") == 0) {
         GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
@@ -228,6 +250,9 @@ void processOptions(int argc, char* argv[]) {
     GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
     GMessage(">> infname_bam       : %s\n", infname_bam.chars());
     GMessage(">> out_dir           : %s\n", out_dir.chars());
+    GMessage(">> g_is_single_end     : %d\n", g_is_single_end);
+    GMessage(">> extract_threshold : %d\n", g_j_extract_threshold);
+    GMessage(">> g_max_splice      : %d\n", g_max_splice);
 
     args.startNonOpt();
 
@@ -263,20 +288,8 @@ void processOptions(int argc, char* argv[]) {
 
 void processOptionsJExtract(GArgs& args) {
     optionsOutput(args);
-
-    // -t / --threshold
-    GStr s;
-    s = args.getOpt('t');
-    if (s.is_empty()) {
-        s = args.getOpt("threshold");
-        if (s.is_empty()) {
-            j_extract_threshold = 0;
-        } else {
-            j_extract_threshold = s.asInt();
-        }
-    } else {
-        j_extract_threshold = s.asInt();       
-    }
+    optionsMaxSplice(args);
+    optionsJExtractThreshold(args);
 }
 
 
@@ -299,6 +312,37 @@ void processOptionsAll(GArgs& args) {
     optionsModel(args);
     optionsRef(args);
     optionsOutput(args);
+}
+
+
+void optionsJExtractThreshold(GArgs& args) {
+    // -t / --threshold
+    GStr s;
+    s = args.getOpt('t');
+    if (s.is_empty()) {
+        s = args.getOpt("threshold");
+        if (s.is_empty()) {
+            g_j_extract_threshold = 0;
+        } else {
+            g_j_extract_threshold = s.asInt();
+        }
+    } else {
+        g_j_extract_threshold = s.asInt();       
+    }
+}
+
+
+void optionsMaxSplice(GArgs& args) {
+    // -M / --max-splice
+    GStr s;
+    s = args.getOpt('M');
+    if (s.is_empty()) {
+        s=args.getOpt("max-splice");
+        if (!s.is_empty()) {
+            // Use the default max-splice
+            g_max_splice = s.asInt();
+        }
+    }
 }
 
 

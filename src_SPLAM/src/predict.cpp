@@ -134,7 +134,6 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_rm_hit &doner_dimers, ro
     GStr acceptor_bed(bed_dir + "/acceptor.bed");
     GStr da_bed(bed_dir + "/d_a.bed");
 
-
     std::ofstream outfile_bed_donor(donor_bed);
     std::ofstream outfile_bed_acceptor(acceptor_bed);
     std::ofstream outfile_bed_da(da_bed);
