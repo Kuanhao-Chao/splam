@@ -90,7 +90,7 @@ class GSamRecord: public GSeg {
    GSamRecord(GSamRecord& r):GSeg(r.start, r.end), iflags(r.iflags), b_hdr(r.b_hdr),
 		   exons(r.exons), clipL(r.clipL), clipR(r.clipR), mapped_len(r.mapped_len)
 		   {
-            GMessage("@@ Inside 'GSamRecord' deep copy constructor!\n");
+            // GMessage("@@ Inside 'GSamRecord' deep copy constructor!\n");
 	      //makes a new copy of the bam1_t record etc.
 	      b=bam_dup1(r.b);
 	      novel=true; //will also free b when destroyed

@@ -63,7 +63,7 @@ void flushJuncs(FILE* f) {
 	// 	}
 	// 	std::cout << std::endl;
 	// }
-	// if (j_extract_threshold == 0) {
+	// if (g_j_extract_threshold == 0) {
 	// 	junctions.Clear();
 	// 	junctions.setCapacity(128);
 	// }
@@ -74,7 +74,7 @@ void flushJuncs(FILE* f1, FILE* f2) {
 	GMessage("Insidde ~flushJuncs ~ \n");
     for (int i=0;i<junctions.Count();i++) {
 		GMessage("\tjunctions[i].dupcount~: %d\n", junctions[i].dupcount);
-		if (junctions[i].dupcount >= j_extract_threshold) {
+		if (junctions[i].dupcount >= g_j_extract_threshold) {
     		junctions[i].write(f1);
 		} else {
     		junctions[i].write(f2);

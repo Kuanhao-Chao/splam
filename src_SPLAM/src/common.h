@@ -34,17 +34,27 @@ extern float threshold;
 
 extern GSamRecord* brec;
 
-extern GStr outfname_multimapped;
-extern GStr outfname_spliced;
-extern GStr outfname_discard;
-extern GStr outfname_cleaned;
-extern GStr outfname_cleaned_tmp;
 
-extern GSamWriter* outfile_multimapped;
-extern GSamWriter* outfile_spliced;
-extern GSamWriter* outfile_discard;
+// output file names 
+extern GStr outfname_cleaned;
+extern GStr outfname_discard;
+
+extern GStr outfname_ns_multi_map;
+extern GStr outfname_s_uniq_map;
+extern GStr outfname_s_multi_map;
+extern GStr outfname_discard_unpair;
+extern GStr outfname_discard_spurious;
+
+// GSamWriter 
 extern GSamWriter* outfile_cleaned;
-extern GSamWriter* outfile_cleaned_tmp;
+extern GSamWriter* outfile_discard;
+
+extern GSamWriter* outfile_ns_multi_map;
+extern GSamWriter* outfile_s_uniq_map;
+extern GSamWriter* outfile_s_multi_map;
+extern GSamWriter* outfile_discard_unpair;
+extern GSamWriter* outfile_discard_spurious;
+
 
 extern FILE* joutf;
 
@@ -61,7 +71,7 @@ extern int ALN_COUNT_NH_UPDATE;
 extern int STEP_COUNTER;
 
 // j-extract parameters.
-extern int j_extract_threshold;
+extern int g_j_extract_threshold;
 extern GSamWriter* outfile_above_spliced;
 extern GSamWriter* outfile_below_spliced;
 extern FILE* joutf_above;
@@ -70,5 +80,7 @@ extern FILE* joutf_below;
 // clean parameters
 // extern robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
 // extern robin_hood::unordered_set<std::string>* rm_rd_set;
+
+extern bool is_single_end;
 
 #endif /* TIEBRUSH_TMERGE_H_ */

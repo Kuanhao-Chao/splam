@@ -33,7 +33,7 @@ GStr splamClean() {
     GStr outfname_NH_tag = filterSpurJuncs(infname_scorebed);
 
     delete outfile_discard;
-    delete outfile_cleaned_tmp;
+    // delete outfile_cleaned_tmp;
 
     return outfname_NH_tag;
 }
@@ -74,7 +74,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
     if (COMMAND_MODE == CLEAN) {
         int num_samples=in_records.start();
         outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
-        outfile_cleaned_tmp = new GSamWriter(outfname_cleaned_tmp, in_records.header(), GSamFile_BAM);
+        // outfile_cleaned_tmp = new GSamWriter(outfname_cleaned_tmp, in_records.header(), GSamFile_BAM);
 
         BundleData* bundle = new BundleData();
 	    GList<CReadAln> readlist;
@@ -242,48 +242,48 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
 
 
     } else if (COMMAND_MODE == ALL) {
-        GSamReader bam_reader_spliced(outfname_spliced.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+        // GSamReader bam_reader_spliced(outfname_spliced.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
-        int counter = 0, prev_tid=-1;
-        GStr prev_refname;
-        std::vector<std::pair<float,uint64_t>> bsam(2048*1024,{0,1}); // number of samples. 1st - current average; 2nd - total number of values
-        int b_end=0, b_start=0;
-        progressbar bar(ALN_COUNT_SPLICED);
-        bar.set_opening_bracket_char("[INFO] SPLAM! Removing junctions with low scores \n\t[");
+        // int counter = 0, prev_tid=-1;
+        // GStr prev_refname;
+        // std::vector<std::pair<float,uint64_t>> bsam(2048*1024,{0,1}); // number of samples. 1st - current average; 2nd - total number of values
+        // int b_end=0, b_start=0;
+        // progressbar bar(ALN_COUNT_SPLICED);
+        // bar.set_opening_bracket_char("[INFO] SPLAM! Removing junctions with low scores \n\t[");
 
-        while ((brec = bam_reader_spliced.next())!=NULL) {
-            bar.update();
-            uint32_t dupcount=0;
-            int endpos=brec->end;
-            bool spur = false;
-            if (brec->exons.Count() > 1) {
-                for (int e=1; e<2; e++) {
-                    char strand = brec->spliceStrand();
-                    std::string jnew_sub = std::to_string(brec->exons[e-1].end) + "_" + std::to_string(brec->exons[e].start-1) + "_" + strand + "_" + brec->refName();
-                    if (rm_juncs.find(jnew_sub) != rm_juncs.end()) {
-                        spur = true;
-                        break;
-                    }
-                }
-            }
-            if (spur) {
-                removeAlignment(brec, rm_hit);
-            } else {
-                int nh_tag = brec->tag_int("NH", 1);
-                if (nh_tag == 1) {
-                    outfile_cleaned->write(brec);
-                } else {
-                    outfile_multimapped->write(brec);
-                    ALN_COUNT_NH_UPDATE++;
-                }
-                ALN_COUNT_GOOD++;
-            }
-        }
-        bam_reader_spliced.bclose();
-        delete outfile_multimapped;
+        // while ((brec = bam_reader_spliced.next())!=NULL) {
+        //     bar.update();
+        //     uint32_t dupcount=0;
+        //     int endpos=brec->end;
+        //     bool spur = false;
+        //     if (brec->exons.Count() > 1) {
+        //         for (int e=1; e<2; e++) {
+        //             char strand = brec->spliceStrand();
+        //             std::string jnew_sub = std::to_string(brec->exons[e-1].end) + "_" + std::to_string(brec->exons[e].start-1) + "_" + strand + "_" + brec->refName();
+        //             if (rm_juncs.find(jnew_sub) != rm_juncs.end()) {
+        //                 spur = true;
+        //                 break;
+        //             }
+        //         }
+        //     }
+        //     if (spur) {
+        //         removeAlignment(brec, rm_hit);
+        //     } else {
+        //         int nh_tag = brec->tag_int("NH", 1);
+        //         if (nh_tag == 1) {
+        //             outfile_cleaned->write(brec);
+        //         } else {
+        //             // outfile_multimapped->write(brec);
+        //             ALN_COUNT_NH_UPDATE++;
+        //         }
+        //         ALN_COUNT_GOOD++;
+        //     }
+        // }
+        // bam_reader_spliced.bclose();
+        // // delete outfile_multimapped;
 
-        GMessage("\n");
-        ALN_COUNT_GOOD += ALN_COUNT_NSPLICED;
+        // GMessage("\n");
+        // ALN_COUNT_GOOD += ALN_COUNT_NSPLICED;
     }
     GMessage("[INFO] %d spurious alignments were removed.\n", ALN_COUNT_BAD);
     GStr outfname_NH_tag = writenhHitFile(rm_hit);
@@ -592,7 +592,7 @@ void removeAlignment(GSamRecord* brec, robin_hdd_rm_hit& rm_hit) {
 
 void keepAlignment(GSamRecord* brec) {
     // std::string key = get_global_removed_algns_key(brec);
-    outfile_cleaned_tmp->write(brec);
+    // outfile_cleaned_tmp->write(brec);
     ALN_COUNT_GOOD++;
 }
 
