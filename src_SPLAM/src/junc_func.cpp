@@ -13,11 +13,10 @@ GArray<CJunc> junctions;
 void addJunction(GSamRecord& r, int dupcount, GStr ref) {
 	// char strand = '+';
 	// if (brec->revStrand()) strand = '-';
-	char strand = brec->spliceStrand();
+	char strand = r.spliceStrand();
 //	if (strand!='+' && strand!='-') return; // TODO: should we output .?
     
 	// GSamRecord *r_copy = new GSamRecord(r);
-
 	GSamRecord *r_copy = new GSamRecord(r);
 	for (int i=1; i<r.exons.Count(); i++) {
 		CJunc j(r.exons[i-1].end+1, r.exons[i].start-1, strand, ref,

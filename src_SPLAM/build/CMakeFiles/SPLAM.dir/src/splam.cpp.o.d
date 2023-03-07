@@ -421,6 +421,7 @@ CMakeFiles/SPLAM.dir/src/splam.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/deque \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/iomanip \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/extract.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/bundle.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GStr.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GBase.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/unistd.h \
@@ -436,24 +437,30 @@ CMakeFiles/SPLAM.dir/src/splam.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/stat.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_s_ifmt.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/sys/_types/_filesec_t.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/predict.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/faidx.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GList.hh \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GVec.hh \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/GSam.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/kstring.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_defs.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/kroundup.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/sam.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/inttypes.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include/inttypes.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/inttypes.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/xlocale/_inttypes.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_log.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/kstring.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/kroundup.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/clean.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GHashMap.hh \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/khashl.hh \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/xxhash.h \
   /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/clang/13.1.6/include/arm_neon.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/wyhash.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/predict.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/faidx.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/robin_hood/robin_hood.h \
+  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/clean.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/junc.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/common.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/var.h \
@@ -463,14 +470,7 @@ CMakeFiles/SPLAM.dir/src/splam.cpp.o: \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__node_handle \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/optional \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__tree \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GVec.hh \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/gclib/GList.hh \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/GSam.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/sam.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/hts_endian.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/cram.h \
   /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/include/htslib/htslib/khash.h \
-  /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/src/bundle.h \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/unordered_set \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/__hash_table \
   /Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include/c++/v1/cmath \

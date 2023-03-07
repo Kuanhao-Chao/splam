@@ -35,6 +35,7 @@ void processOptionsNHUpdate(GArgs& args);
 
 void optionsJExtractThreshold(GArgs& args);
 void optionsMaxSplice(GArgs& args);
+void optionsBundleGap(GArgs& args);
 void optionsModel(GArgs& args);
 void optionsRef(GArgs& args);
 void optionsOutput(GArgs& args);
@@ -100,6 +101,7 @@ int STEP_COUNTER = 0;
 // j-extract parameters:
 int g_j_extract_threshold = 0;
 int g_max_splice = 20000;
+int g_bundle_gap = 50;
 GSamWriter* outfile_above_spliced = NULL;
 GSamWriter* outfile_below_spliced = NULL;
 FILE* joutf_above=NULL;
@@ -129,7 +131,7 @@ int main(int argc, char* argv[]) {
     outfname_discard = out_dir + "/discard.bam";
 
     outfname_ns_multi_map = out_dir + "/TMP/nonsplice_multi_map.bam";
-    outfname_s_uniq_map = out_dir + "/TMP/nonsplice_uniq_map.bam";
+    outfname_s_uniq_map = out_dir + "/TMP/splice_uniq_map.bam";
     outfname_s_multi_map = out_dir + "/TMP/splice_multi_map.bam";
     outfname_discard_unpair = out_dir + "/discard_unpair.bam";
     outfname_discard_spurious = out_dir + "/discard_spurious.bam";;
@@ -143,8 +145,8 @@ int main(int argc, char* argv[]) {
 
     if (COMMAND_MODE == J_EXTRACT) {
         infname_juncbed = splamJExtract();
-    // } else if (COMMAND_MODE == PREDICT) {
-    //     infname_scorebed = splamPredict();
+    } else if (COMMAND_MODE == PREDICT) {
+        infname_scorebed = splamPredict();
     // } else if (COMMAND_MODE == CLEAN) {
     //     infname_NH_tag = splamClean();
     //     splamNHUpdate();
@@ -155,9 +157,9 @@ int main(int argc, char* argv[]) {
     //     GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
     //     GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
         
-    // } else if (COMMAND_MODE == ALL) {
-    //     infname_juncbed = splamJExtract();
-    //     infname_scorebed = splamPredict();
+    } else if (COMMAND_MODE == ALL) {
+        infname_juncbed = splamJExtract();
+        infname_scorebed = splamPredict();
     //     infname_NH_tag = splamClean();
     //     splamNHUpdate();
 
@@ -174,7 +176,7 @@ int main(int argc, char* argv[]) {
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;single-end;model=;junction=;threshold=;output=;score=;max-splice=;hvcVSo:t:N:Q:m:j:r:s:M:");
+    GArgs args(argc, argv, "help;cite;verbose;version;single-end;model=;junction=;threshold=;output=;score=;max-splice=;bundle-gap=;hvcVSo:t:N:Q:m:j:r:s:M:g:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -232,8 +234,7 @@ void processOptions(int argc, char* argv[]) {
      * Process arguments by COMMAND_MODE
     *********************************/
     if (COMMAND_MODE == J_EXTRACT) {
-        processOptionsJExtract(args);
-        
+        processOptionsJExtract(args);    
     } else if (COMMAND_MODE == PREDICT) {
         GMessage(">> Inside PREDICT:\n");
         processOptionsPredict(args);
@@ -253,6 +254,7 @@ void processOptions(int argc, char* argv[]) {
     GMessage(">> g_is_single_end     : %d\n", g_is_single_end);
     GMessage(">> extract_threshold : %d\n", g_j_extract_threshold);
     GMessage(">> g_max_splice      : %d\n", g_max_splice);
+    GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
 
     args.startNonOpt();
 
@@ -290,6 +292,7 @@ void processOptionsJExtract(GArgs& args) {
     optionsOutput(args);
     optionsMaxSplice(args);
     optionsJExtractThreshold(args);
+    optionsBundleGap(args);
 }
 
 
@@ -336,11 +339,29 @@ void optionsMaxSplice(GArgs& args) {
     // -M / --max-splice
     GStr s;
     s = args.getOpt('M');
-    if (s.is_empty()) {
+    if (!s.is_empty()) {
+        g_max_splice = s.asInt();
+    } else {
         s=args.getOpt("max-splice");
         if (!s.is_empty()) {
             // Use the default max-splice
             g_max_splice = s.asInt();
+        }
+    }
+}
+
+
+void optionsBundleGap(GArgs& args) {
+    // -g / --bundle-gap
+    GStr s;
+    s = args.getOpt('g');
+    if (!s.is_empty()) {
+        g_bundle_gap = s.asInt();
+    } else {
+        s=args.getOpt("bundle-gap");
+        if (!s.is_empty()) {
+            // Use the default max-splice
+            g_bundle_gap = s.asInt();
         }
     }
 }
