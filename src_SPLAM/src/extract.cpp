@@ -49,8 +49,12 @@ GStr splamJExtract() {
     outfile_ns_multi_map = new GSamWriter(outfname_ns_multi_map, in_records.header(), GSamFile_BAM);
     outfile_s_uniq_map = new GSamWriter(outfname_s_uniq_map, in_records.header(), GSamFile_BAM);
     outfile_s_multi_map = new GSamWriter(outfname_s_multi_map, in_records.header(), GSamFile_BAM);
+    outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
     outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
     outfile_discard_unpair = new GSamWriter(outfname_discard_unpair, in_records.header(), GSamFile_BAM);
+    outfile_discard_s_uniq_map= new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
+    outfile_discard_s_multi_map= new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);
+
 
 
     
@@ -354,12 +358,12 @@ GStr splamJExtract() {
 
 
 
-    delete outfile_cleaned;
+    // delete outfile_cleaned;
     
     delete outfile_ns_multi_map;
     delete outfile_s_uniq_map;
     delete outfile_s_multi_map;
-    delete outfile_discard;
+    // delete outfile_discard;
     delete outfile_discard_unpair;
 
     return outfname_junc_bed;
@@ -441,10 +445,12 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
             // a, b nonspliced, NH == 1
             outfile_cleaned->write(&brec_bd);
             outfile_cleaned->write(&brec_bd_p);
+            ALN_COUNT_GOOD+=2;
         } else if ( (!brec_bd.hasIntrons() && !brec_bd_p.hasIntrons()) && (brec_bd_tag>1 || brec_bd_p_tag>1)) {
             // a, b nonspliced, NH > 1
             outfile_ns_multi_map->write(&brec_bd);
             outfile_ns_multi_map->write(&brec_bd_p);
+            ALN_COUNT_GOOD+=2;
         } else if ( (brec_bd.hasIntrons() || brec_bd_p.hasIntrons()) && (brec_bd_tag==1 || brec_bd_p_tag==1)) {
             // a, b spliced, NH = 1
             outfile_s_uniq_map->write(&brec_bd);

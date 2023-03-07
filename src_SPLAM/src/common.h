@@ -42,8 +42,10 @@ extern GStr outfname_discard;
 extern GStr outfname_ns_multi_map;
 extern GStr outfname_s_uniq_map;
 extern GStr outfname_s_multi_map;
+extern GStr outfname_s_multi_map_tmp;
 extern GStr outfname_discard_unpair;
-extern GStr outfname_discard_spurious;
+extern GStr outfname_discard_s_uniq_map;
+extern GStr outfname_discard_s_multi_map;
 
 // GSamWriter 
 extern GSamWriter* outfile_cleaned;
@@ -52,8 +54,10 @@ extern GSamWriter* outfile_discard;
 extern GSamWriter* outfile_ns_multi_map;
 extern GSamWriter* outfile_s_uniq_map;
 extern GSamWriter* outfile_s_multi_map;
+extern GSamWriter* outfile_s_multi_map_tmp;
 extern GSamWriter* outfile_discard_unpair;
-extern GSamWriter* outfile_discard_spurious;
+extern GSamWriter* outfile_discard_s_uniq_map;
+extern GSamWriter* outfile_discard_s_multi_map;
 
 
 extern FILE* joutf;
