@@ -71,8 +71,10 @@ GStr outfname_discard;
 GStr outfname_ns_multi_map;
 GStr outfname_s_uniq_map;
 GStr outfname_s_multi_map;
+GStr outfname_s_multi_map_tmp;
 GStr outfname_discard_unpair;
-GStr outfname_discard_spurious;
+GStr outfname_discard_s_uniq_map;
+GStr outfname_discard_s_multi_map;
 
 // GSamWriter 
 GSamWriter* outfile_cleaned = NULL;
@@ -81,8 +83,10 @@ GSamWriter* outfile_discard = NULL;
 GSamWriter* outfile_ns_multi_map = NULL;
 GSamWriter* outfile_s_uniq_map = NULL;
 GSamWriter* outfile_s_multi_map = NULL;
+GSamWriter* outfile_s_multi_map_tmp = NULL;
 GSamWriter* outfile_discard_unpair = NULL;
-GSamWriter* outfile_discard_spurious = NULL;
+GSamWriter* outfile_discard_s_uniq_map = NULL;
+GSamWriter* outfile_discard_s_multi_map = NULL;
 
 FILE* joutf=NULL;
 
@@ -133,13 +137,16 @@ int main(int argc, char* argv[]) {
     outfname_ns_multi_map = out_dir + "/TMP/nonsplice_multi_map.bam";
     outfname_s_uniq_map = out_dir + "/TMP/splice_uniq_map.bam";
     outfname_s_multi_map = out_dir + "/TMP/splice_multi_map.bam";
-    outfname_discard_unpair = out_dir + "/discard_unpair.bam";
-    outfname_discard_spurious = out_dir + "/discard_spurious.bam";;
+    outfname_s_multi_map_tmp = out_dir + "/TMP/splice_multi_map_tmp.bam";
+    outfname_discard_unpair = out_dir + "/discard/discard_unpair.bam";
+    outfname_discard_s_uniq_map = out_dir + "/discard/discard_splice_uniq_map.bam";;
+    outfname_discard_s_multi_map = out_dir + "/discard/discard_splice_multi_map.bam";;
 
-    
     GStr tmp_dir(out_dir + "/TMP");
+    GStr discard_dir(out_dir + "/discard");
     std::filesystem::create_directories(out_dir.chars());
     std::filesystem::create_directories(tmp_dir.chars());
+    std::filesystem::create_directories(discard_dir.chars());
 
     create_CHRS();
 
@@ -160,16 +167,14 @@ int main(int argc, char* argv[]) {
     } else if (COMMAND_MODE == ALL) {
         infname_juncbed = splamJExtract();
         infname_scorebed = splamPredict();
-    //     infname_NH_tag = splamClean();
-    //     splamNHUpdate();
-
-    //     // GStr outfname_cleaned = splamNHUpdate();
+        infname_NH_tag = splamClean();
+        splamNHUpdate();
         
-    //     GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
-    //     GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
-    //     GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
-    //     GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
-    //     GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
+        GMessage("\n\n[INFO] Total number of alignments\t:\t%d\n", ALN_COUNT);
+        GMessage("[INFO]     spliced alignments\t\t:\t%d\n", ALN_COUNT_SPLICED);
+        GMessage("[INFO]     non-spliced alignments\t:\t%d\n", ALN_COUNT_NSPLICED);
+        GMessage("[INFO] Number of removed alignments\t:\t%d\n", ALN_COUNT_BAD);
+        GMessage("[INFO] Number of kept alignments\t:\t%d\n", ALN_COUNT_GOOD);
     }
 
     return 0;
@@ -285,6 +290,15 @@ void processOptions(int argc, char* argv[]) {
     //     }
     // } else if (COMMAND_MODE == CLEAN) {
     // }
+
+    // int num_samples=in_records.start();
+    // outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
+    // outfile_ns_multi_map = new GSamWriter(outfname_ns_multi_map, in_records.header(), GSamFile_BAM);
+    // outfile_s_uniq_map = new GSamWriter(outfname_s_uniq_map, in_records.header(), GSamFile_BAM);
+    // outfile_s_multi_map = new GSamWriter(outfname_s_multi_map, in_records.header(), GSamFile_BAM);
+    // outfile_discard = new GSamWriter(outfname_discard, in_records.header(), GSamFile_BAM);
+    // outfile_discard_unpair = new GSamWriter(outfname_discard_unpair, in_records.header(), GSamFile_BAM);
+
 }
 
 
