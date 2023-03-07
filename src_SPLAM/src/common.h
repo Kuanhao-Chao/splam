@@ -72,6 +72,8 @@ extern int STEP_COUNTER;
 
 // j-extract parameters.
 extern int g_j_extract_threshold;
+extern int g_max_splice;
+extern int g_bundle_gap;
 extern GSamWriter* outfile_above_spliced;
 extern GSamWriter* outfile_below_spliced;
 extern FILE* joutf_above;
@@ -81,6 +83,6 @@ extern FILE* joutf_below;
 // extern robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
 // extern robin_hood::unordered_set<std::string>* rm_rd_set;
 
-extern bool is_single_end;
+extern bool g_is_single_end;
 
 #endif /* TIEBRUSH_TMERGE_H_ */
