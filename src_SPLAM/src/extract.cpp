@@ -447,7 +447,6 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
             outfile_ns_multi_map->write(&brec_bd);
             outfile_ns_multi_map->write(&brec_bd_p);
             ALN_COUNT_NSPLICED_MULTI+=2;
-            ALN_COUNT_GOOD += 2;
         } else if ( (brec_bd.hasIntrons() || brec_bd_p.hasIntrons()) && (brec_bd_tag==1 || brec_bd_p_tag==1)) {
             // a, b spliced, NH = 1
             outfile_s_uniq_map->write(&brec_bd);
