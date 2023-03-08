@@ -261,7 +261,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                     brec = reader_s_uniq_map.next();
                     removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
                     uniq_next_main_aln = true;
-                    ALN_COUNT_NSPLICED_UNIQ_DISCARD+=2;
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD+=2;
                 } else {
                     uniq_brec_prev = new GSamRecord(*brec);
                     uniq_next_main_aln = false;
@@ -273,7 +273,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 if (spur) {
                     removeAlignment(outfile_discard_s_uniq_map, uniq_brec_prev, rm_hit, false);
                     removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
-                    ALN_COUNT_NSPLICED_UNIQ_DISCARD+=2;
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD+=2;
                     delete uniq_brec_prev;
                 } else {
                     keepAlignment(outfile_cleaned, uniq_brec_prev);
@@ -301,6 +301,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                     brec = reader_s_multi_map.next();
                     removeAlignment(outfile_discard_s_multi_map, brec, rm_hit, false);
                     multi_next_main_aln = true;
+                    ALN_COUNT_SPLICED_MULTI_DISCARD += 2;
                 } else {
                     multi_brec_prev = new GSamRecord(*brec);
                     multi_next_main_aln = false;
@@ -313,6 +314,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                     removeAlignment(outfile_discard_s_multi_map, multi_brec_prev, rm_hit, true);
                     removeAlignment(outfile_discard_s_multi_map, brec, rm_hit, false);
                     delete multi_brec_prev;
+                    ALN_COUNT_SPLICED_MULTI_DISCARD += 2;
                 } else {
                     keepAlignment(outfile_s_multi_map_tmp, multi_brec_prev);
                     keepAlignment(outfile_s_multi_map_tmp, brec);

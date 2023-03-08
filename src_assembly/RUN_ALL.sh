@@ -11,15 +11,15 @@ touch ./results/$MODEL.txt
 
 
 
-echo ./Step_1_stringtie_assembly.sh $SAMPLE BEFORE
-./Step_1_stringtie_assembly.sh $SAMPLE BEFORE
+#echo ./Step_1_stringtie_assembly.sh $SAMPLE BEFORE
+#./Step_1_stringtie_assembly.sh $SAMPLE BEFORE
 
 echo ./Step_1_stringtie_assembly.sh $SAMPLE AFTER
 ./Step_1_stringtie_assembly.sh $SAMPLE AFTER
 
 
-echo ./Step_2_gffcompare.sh $SAMPLE BEFORE HISAT2
-./Step_2_gffcompare.sh $SAMPLE BEFORE HISAT2
+#echo ./Step_2_gffcompare.sh $SAMPLE BEFORE HISAT2
+#./Step_2_gffcompare.sh $SAMPLE BEFORE HISAT2
 
 echo "./Step_2_gffcompare.sh $SAMPLE AFTER HISAT2"
 ./Step_2_gffcompare.sh $SAMPLE AFTER HISAT2

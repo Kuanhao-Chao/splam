@@ -95,6 +95,7 @@ GStr splamNHUpdate() {
                 // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
             outfile_cleaned->write(brec);   
+            ALN_COUNT_GOOD++;
         }
 
 
