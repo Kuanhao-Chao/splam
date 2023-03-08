@@ -37,7 +37,6 @@ extern GSamRecord* brec;
 
 // output file names 
 extern GStr outfname_cleaned;
-extern GStr outfname_discard;
 
 extern GStr outfname_ns_multi_map;
 extern GStr outfname_s_uniq_map;
@@ -49,7 +48,6 @@ extern GStr outfname_discard_s_multi_map;
 
 // GSamWriter 
 extern GSamWriter* outfile_cleaned;
-extern GSamWriter* outfile_discard;
 
 extern GSamWriter* outfile_ns_multi_map;
 extern GSamWriter* outfile_s_uniq_map;
@@ -62,15 +60,24 @@ extern GSamWriter* outfile_discard_s_multi_map;
 
 extern FILE* joutf;
 
-
-extern int JUNC_COUNT;
 extern int ALN_COUNT;
+extern int JUNC_COUNT;
+extern int JUNC_COUNT_GOOD;
+extern int JUNC_COUNT_BAD;
+extern int ALN_COUNT_UNPAIRED;
 extern int ALN_COUNT_SPLICED;
 extern int ALN_COUNT_NSPLICED;
+extern int ALN_COUNT_SPLICED_UNIQ;
+extern int ALN_COUNT_SPLICED_MULTI;
+extern int ALN_COUNT_SPLICED_UNIQ_DISCARD;
+extern int ALN_COUNT_SPLICED_MULTI_DISCARD;
+extern int ALN_COUNT_NSPLICED_UNIQ;
+extern int ALN_COUNT_NSPLICED_MULTI;
+extern int ALN_COUNT_NSPLICED_UNIQ_DISCARD;
+extern int ALN_COUNT_NSPLICED_MULTI_DISCARD;
 extern int ALN_COUNT_BAD;
 extern int ALN_COUNT_GOOD;
-extern int ALN_COUNT_NH_UPDATE;
-
+extern int ALN_COUNT_GOOD_CAL;
 
 extern int STEP_COUNTER;
 

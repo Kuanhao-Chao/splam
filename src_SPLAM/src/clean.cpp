@@ -37,7 +37,6 @@ GStr splamClean() {
     return outfname_NH_tag;
 }
 
-
 void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
     std::ifstream bed_f(inbedname);
     std::string line;
@@ -58,8 +57,12 @@ void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
             char* strand =junc[5].detach();
             std::string j = std::to_string(junc[1].asInt()) + "_" + std::to_string(junc[2].asInt()) + "_" + strand + "_" + chrname;
             rm_juncs.insert(j);
+            // JUNC_COUNT_BAD ++;
+        } else {
+            JUNC_COUNT_GOOD ++;
         }
     }
+    GMessage("bed_counter: %d\n", bed_counter);
 }
 
 GStr filterSpurJuncs(GStr outfname_junc_score) {
@@ -258,6 +261,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                     brec = reader_s_uniq_map.next();
                     removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
                     uniq_next_main_aln = true;
+                    ALN_COUNT_NSPLICED_UNIQ_DISCARD+=2;
                 } else {
                     uniq_brec_prev = new GSamRecord(*brec);
                     uniq_next_main_aln = false;
@@ -269,6 +273,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 if (spur) {
                     removeAlignment(outfile_discard_s_uniq_map, uniq_brec_prev, rm_hit, false);
                     removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
+                    ALN_COUNT_NSPLICED_UNIQ_DISCARD+=2;
                     delete uniq_brec_prev;
                 } else {
                     keepAlignment(outfile_cleaned, uniq_brec_prev);
@@ -363,7 +368,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
         // ALN_COUNT_GOOD += ALN_COUNT_NSPLICED;
     }
 
-    delete outfile_discard;
     delete outfile_s_multi_map_tmp;
     delete outfile_discard_s_uniq_map;
     delete outfile_discard_s_multi_map;
@@ -670,7 +674,6 @@ void removeAlignment(GSamWriter* outfile_target, GSamRecord* brec, robin_hdd_rm_
             rm_hit[kv]++;
         }
     }
-    ALN_COUNT_BAD++;
 }
 
 void keepAlignment(GSamWriter* outfile_target, GSamRecord* brec) {
