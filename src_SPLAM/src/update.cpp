@@ -79,7 +79,7 @@ GStr splamNHUpdate() {
 
         GSamReader reader_s_multi_map_tmp(outfname_s_multi_map_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
-        progressbar bar(ALN_COUNT_NH_UPDATE);
+        progressbar bar(1000);
         bar.set_opening_bracket_char("[INFO] SPLAM! Output the final clean BAM file \n\t[");
         // while ((irec=final_bam_records.next())!=NULL) {
         while ((brec=reader_s_multi_map_tmp.next())!=NULL) {
