@@ -18,9 +18,11 @@
 *****************************/
 GStr splamNHUpdate() {
     STEP_COUNTER += 1;
-    GMessage("\n###########################################\n");
-    GMessage("** Step %d: Updating NH tags in final clean BAM file\n", STEP_COUNTER);
-    GMessage("###########################################\n");
+    if (verbose) {
+        GMessage("\n###########################################\n");
+        GMessage("** Step %d: Updating NH tags in final clean BAM file\n", STEP_COUNTER);
+        GMessage("###########################################\n");
+    }
     robin_hdd_rm_hit rm_hit;
     readnhHitFile(rm_hit);
 
@@ -32,8 +34,6 @@ GStr splamNHUpdate() {
         //             << std::endl;
         // }
 
-
-    GMessage("rm_hit size: %d\n", rm_hit.size());
     if (COMMAND_MODE == CLEAN) {
         // outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
         // GSamReader bam_reader_nh_updater(outfname_cleaned_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
@@ -75,38 +75,39 @@ GStr splamNHUpdate() {
         // outfile_discard = new GSamWriter(outfname_discard, final_bam_records.header(), GSamFile_BAM);
 
         int bam_clean_counter=0;
-        GMessage("[INFO] Processing BAM file ...\n");
-
         GSamReader reader_s_multi_map_tmp(outfname_s_multi_map_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
-        progressbar bar(1000);
-        bar.set_opening_bracket_char("[INFO] SPLAM! Output the final clean BAM file \n\t[");
+        progressbar bar_s(ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
+        bar_s.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments \n\t[");
         // while ((irec=final_bam_records.next())!=NULL) {
         while ((brec=reader_s_multi_map_tmp.next())!=NULL) {
-            // bar.update();
-            // brec=irec->brec;
+            if (verbose) {
+                bar_s.update();
+            }
             std::string kv = brec->name();
             // GMessage("kv: %s\n", kv.c_str());
             if (rm_hit.find(kv) != rm_hit.end()) {
+                // GMessage("rm_hit[kv]: %d\n", rm_hit[kv]);
+                // GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
                 int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
-
-                // GMessage("Before update NH tag: %d\n", new_nh);
                 brec->add_int_tag("NH", new_nh);
                 // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
             outfile_cleaned->write(brec);   
             ALN_COUNT_GOOD++;
         }
+        GMessage("\n");
 
 
         GSamReader reader_ns_multi_map(outfname_ns_multi_map .chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
-        // progressbar bar(ALN_COUNT_NH_UPDATE);
-        bar.set_opening_bracket_char("[INFO] SPLAM! Output the final clean BAM file \n\t[");
+        progressbar bar_ns(ALN_COUNT_NSPLICED_MULTI);
+        bar_ns.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped nonspliced alignments \n\t[");
         // while ((irec=final_bam_records.next())!=NULL) {
         while ((brec=reader_ns_multi_map.next())!=NULL) {
-            // bar.update();
-            // brec=irec->brec;
+            if (verbose) {
+                bar_ns.update();
+            }
             std::string kv = brec->name();
             // GMessage("kv: %s\n", kv.c_str());
             if (rm_hit.find(kv) != rm_hit.end()) {
@@ -116,12 +117,15 @@ GStr splamNHUpdate() {
                 brec->add_int_tag("NH", new_nh);
                 // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
-            outfile_cleaned->write(brec);   
+            outfile_cleaned->write(brec); 
+            ALN_COUNT_GOOD++;  
         }
-
+        GMessage("\n");
         delete outfile_cleaned;
-        // final_bam_records.stop();
-        GMessage("\t\t%d alignments processed.\n", bam_clean_counter);
+
+        if (verbose) {
+            GMessage("[INFO] %d alignments processed.\n", ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_NSPLICED_MULTI);
+        }
     }
     return outfname_cleaned;
 }

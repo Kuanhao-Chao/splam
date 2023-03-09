@@ -52,19 +52,24 @@ class SPLAM(Module):
         if (len(W)+1) % 4 != 0:
             self.residual_blocks.append(Skip(L))
         self.last_cov = Conv1d(L, 3, 1)
-        self.flatten = Flatten()
-        self.drop_out = Dropout2d(0.2)
-        self.fc = Linear(2400, 1)
         self.softmax = Softmax(dim=1)
-        self.sigmoid = Sigmoid()
+        # self.flatten = Flatten()
+        # self.drop_out = Dropout2d(0.2)
+        # self.fc = Linear(2400, 1)
+        # self.softmax = Softmax(dim=1)
+        # self.sigmoid = Sigmoid()
 
     def forward(self, x):
         x, skip = self.skip1(self.conv1(x), 0)
         for m in self.residual_blocks:
             x, skip = m(x, skip)
+        #######################################
+        # predicting pb for every bp
+        #######################################
+        return self.softmax(self.last_cov(skip))
 
-        #######################################
-        # predicting splice / non-splice
-        #######################################
-        output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
-        return output
+        # #######################################
+        # # predicting splice / non-splice
+        # #######################################
+        # output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
+        # return output

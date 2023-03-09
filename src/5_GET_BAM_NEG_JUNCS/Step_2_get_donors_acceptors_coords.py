@@ -97,22 +97,76 @@ def main():
                 junc_name = eles[3]
                 score = eles[4]
                 strand = eles[5]
+                donor = 0
+                acceptor = 0
+
+
+
+
+            # lengths = eles[10].split(',')
+            # len_1 = int(lengths[0])
+            # len_2 = int(lengths[1])
+            # if (strand == "+"):
+            #     donor = int(eles[1]) + len_1
+            #     acceptor = int(eles[2]) - len_2
+            #     splice_junc_len = acceptor - donor
+            # elif (strand == "-"):
+            #     acceptor = int(eles[1]) + len_1
+            #     donor = int(eles[2]) - len_2
+            #     splice_junc_len = donor - acceptor
+
+            # flanking_size = QUATER_SEQ_LEN
+            # if splice_junc_len < QUATER_SEQ_LEN:
+            #     flanking_size = splice_junc_len
+
+            # if (strand == "+"):
+            #     donor_s = donor - QUATER_SEQ_LEN
+            #     donor_e = donor + flanking_size
+            #     acceptor_s = acceptor - flanking_size
+            #     acceptor_e = acceptor + QUATER_SEQ_LEN
+
+            # elif (strand == "-"):
+            #     donor_s = donor - flanking_size
+            #     donor_e = donor + QUATER_SEQ_LEN
+            #     acceptor_s = acceptor - QUATER_SEQ_LEN
+            #     acceptor_e = acceptor + flanking_size
+
+
+
+
+
 
                 lengths = eles[10].split(',')
                 len_1 = int(lengths[0])
                 len_2 = int(lengths[1])
+
+
                 if (strand == "+"):
                     donor = int(eles[1]) + len_1
                     acceptor = int(eles[2]) - len_2
                     splice_junc_len = acceptor - donor
+
                 elif (strand == "-"):
                     acceptor = int(eles[1]) + len_1
                     donor = int(eles[2]) - len_2
                     splice_junc_len = donor - acceptor
+                else:
+                    continue
+
+                if (splice_junc_len < 0 and strand == "+"):
+                    print("splice_junc_len: ", splice_junc_len)
+
+                    print("lengths: ", lengths)
+                    print("eles[1] : ", eles[1])
+                    print("eles[2] : ", eles[2])
+                    print("donor   : ", donor)
+                    print("acceptor: ", acceptor)
 
                 flanking_size = QUATER_SEQ_LEN
                 if splice_junc_len < QUATER_SEQ_LEN:
                     flanking_size = splice_junc_len
+                if (flanking_size < 0):
+                    print("flanking_size: ", flanking_size)
 
                 if (strand == "+"):
                     donor_s = donor - QUATER_SEQ_LEN

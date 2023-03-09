@@ -190,7 +190,6 @@ void flushBrec(GVec<GSamRecord*> &pbrecs, std::unordered_map<std::string, int> &
        if (!strcmp(pbrecs[i]->name(), "ERR188044.24337229")) {
            std::cout << pbrecs[i]->tag_int("NH", 0) << std::endl;
        }
-        outfile_cleaned->write(pbrecs[i]);
     }
 }
 

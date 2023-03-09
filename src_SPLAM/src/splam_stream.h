@@ -221,6 +221,5 @@ std::string python_script =
 "                junc_counter += 1\n"
 "    pbar.finish()\n"
 "    fw_junc_scores.close()\n"
-"    print(f'[Info] Expected #prediction: {len(test_loader)*BATCH_SIZE+0:03}')\n"
 "if __name__ == '__main__':\n"
 "    test_model()\n";

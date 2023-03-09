@@ -121,9 +121,6 @@ struct BundleData {
 	//  bool evalReadAln(GReadAlnData& alndata, char& strand);
 
 	void Clear() {
-		GMessage("Clear bundle!\n");
-		// readlist.Clear();
-		// junction.Clear();
 		start=0;
 		end=0;
 		status=BUNDLE_STATUS_CLEAR;

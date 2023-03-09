@@ -63,24 +63,24 @@ def create_datapoints(seq, strand):
     #######################################
     # predicting pb for every bp
     #######################################
-    # X0 = np.asarray(list(map(int, list(seq))))
-    # Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
-    # if strand == '+':
-    #     for t in range(1):        
-    #         Y0[t][jn_start] = 2
-    #         Y0[t][jn_end] = 1
-    # X, Y = one_hot_encode(X0, Y0)
-    # return X, Y
-
-    #######################################
-    # predicting splice / non-splice
-    #######################################
     X0 = np.asarray(list(map(int, list(seq))))
-    Y0 = 0
+    Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
     if strand == '+':
-        Y0 = 1
-    X = one_hot_encode_classifier(X0)
-    return X, Y0
+        for t in range(1):        
+            Y0[t][jn_start] = 2
+            Y0[t][jn_end] = 1
+    X, Y = one_hot_encode(X0, Y0)
+    return X, Y
+
+    # #######################################
+    # # predicting splice / non-splice
+    # #######################################
+    # X0 = np.asarray(list(map(int, list(seq))))
+    # Y0 = 0
+    # if strand == '+':
+    #     Y0 = 1
+    # X = one_hot_encode_classifier(X0)
+    # return X, Y0
 
 def get_cosine_schedule_with_warmup(
       optimizer: Optimizer,
@@ -181,7 +181,7 @@ def get_accuracy(y_prob, y_true):
 def model_fn(DNAs, labels, model, criterion):
     """Forward a batch through the model."""
     outs = model(DNAs)
-    outs = torch.flatten(outs)
+    # outs = torch.flatten(outs)
     # print("outs: ", outs.size())
     # print("outs: ", outs)
     # print("labels: ", labels.size())
@@ -190,10 +190,10 @@ def model_fn(DNAs, labels, model, criterion):
     # labels = labels.sum(axis=1)
     # print("labels: ", labels.size())
 
-    loss, accuracy = categorical_crossentropy_2d(labels, outs, criterion)
+    loss = categorical_crossentropy_2d(labels, outs, criterion)
     # print("loss    : ", loss)
     # print("accuracy: ", accuracy)
-    return loss, accuracy, outs
+    return loss, outs
 
 
 def weighted_binary_cross_entropy(output, target, weights=None):
@@ -208,13 +208,23 @@ def weighted_binary_cross_entropy(output, target, weights=None):
     return torch.neg(torch.mean(loss))
 
 def categorical_crossentropy_2d(y_true, y_pred, criterion):
-    # WEIGHT = 800
     # print("y_true: ", y_true)
     # print("y_pred: ", y_pred)
-    # weights = torch.FloatTensor([1.0, 4.0]) 
-    weights = torch.FloatTensor([1.0, 20.0]) 
+    
+    ########################################
+    # splice / nonsplice classifier
+    ########################################
+    # # weights = torch.FloatTensor([1.0, 4.0]) 
+    # weights = torch.FloatTensor([1.0, 20.0]) 
+    # return weighted_binary_cross_entropy(y_pred, y_true, weights), get_accuracy(y_pred, y_true)
+    
+    ########################################
+    # splice / nonsplice classifier
+    ########################################
+    # SEQ_WEIGHT = 1
+    # IMBALANCE_WEIGHT = 1
+    # WEIGHT = SEQ_WEIGHT * IMBALANCE_WEIGHT
 
-    return weighted_binary_cross_entropy(y_pred, y_true, weights), get_accuracy(y_pred, y_true)
     # prod = output[:,0]*target
     # return -prod[prod<0].sum()
     # print("y_true: ", y_true)
@@ -229,9 +239,16 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     # print("y_true[:, 2, :]: ", y_true[:, 2, :])
     # print("y_pred[:, 2, :]: ", y_pred[:, 2, :])
 
-    # return - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
-    #                     + WEIGHT*y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
-    #                     + WEIGHT*y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10))
+    # This is focal loss
+    # gamma = 2
+    # return - torch.mean(y_true[:, 0, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 0, :]), gamma ), torch.log(y_pred[:, 0, :]+1e-10) )
+    #                     + y_true[:, 1, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 1, :]), gamma ), torch.log(y_pred[:, 1, :]+1e-10) )
+    #                     + y_true[:, 2, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 2, :]), gamma ), torch.log(y_pred[:, 2, :]+1e-10) ))
+
+    # This is cross entropy loss
+    return - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
+                        + y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
+                        + y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10))
 
 
 # def create_datapoints(seq, strand):
@@ -338,10 +355,10 @@ def print_threshold_statistics(y_true, y_pred, threshold, TOTAL_TP, TOTAL_FN, TO
 
 def print_junc_statistics(D_YL, A_YL, D_YP, A_YP, threshold, TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN):
 
-    label_junc_idx = (D_YL[:, 150]==1) & (A_YL[:, 450]==1)
-    label_nonjunc_idx = (D_YL[:, 150]==0) & (A_YL[:, 450]==0)
-    predict_junc_idx = (D_YP[:, 150]>=threshold) & (A_YP[:, 450]>=threshold)
-    predict_nonjunc_idx = (D_YP[:, 150]<threshold) | (A_YP[:, 450]<threshold)
+    label_junc_idx = (D_YL[:, 200]==1) & (A_YL[:, 600]==1)
+    label_nonjunc_idx = (D_YL[:, 200]==0) & (A_YL[:, 600]==0)
+    predict_junc_idx = (D_YP[:, 200]>=threshold) & (A_YP[:, 600]>=threshold)
+    predict_nonjunc_idx = (D_YP[:, 200]<threshold) | (A_YP[:, 600]<threshold)
 
     idx_true = np.nonzero(label_junc_idx == True)[0]
     idx_pred = np.nonzero(predict_junc_idx == True)[0]

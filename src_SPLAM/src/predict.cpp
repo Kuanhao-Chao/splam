@@ -27,14 +27,14 @@ GStr splamPredict() {
      *         (3) checking the junctions. (GT-AG ratio)
     *********************************************/  
     STEP_COUNTER += 1;
-    GMessage("\n###########################################\n");
-    GMessage("## Step %d: getting coordinates of donors and acceptors\n", STEP_COUNTER);
-    GMessage("###########################################\n");
+
+    if (verbose) {
+        GMessage("\n###########################################\n");
+        GMessage("## Step %d: getting coordinates of donors and acceptors\n", STEP_COUNTER);
+        GMessage("###########################################\n");
+    }
 
     faidx_t * ref_faidx = fastaIndex();
-
-    GMessage("After creating `fastaIndex`.\n");
-
     robin_hdd_rm_hit doner_dimers;
     robin_hdd_rm_hit acceptor_dimers;
     GStr outfname_junc_fa = splamCreateFasta(infname_juncbed, doner_dimers, acceptor_dimers, ref_faidx);
@@ -50,7 +50,10 @@ GStr splamPredict() {
     //     std::cout << "\t" << i.first << ": " << i.second << std::endl;
     // }
 
-    std::cout << "[Info] Donor dimers: " << std::endl;
+    if (verbose) {
+        GMessage("[Info] Donor dimers: \n");
+    }
+
     int cnl_donor_ct=0, ncnl_donor_ct=0, cnl_acceptor_ct=0, ncnl_acceptor_ct = 0;
     for (auto i : doner_dimers) {
         if (std::strcmp(i.first.c_str(), "GT") == 0) {
@@ -60,10 +63,13 @@ GStr splamPredict() {
         }
         // std::cout << "\t" << i.first << ": " << i.second << std::endl;
     }
-    GMessage("\tCanonical donor\t\t: %d\n", cnl_donor_ct);
-    GMessage("\tNoncanonical donor\t: %d\n", ncnl_donor_ct);
 
-    std::cout << "[Info] Acceptor dimers: " << std::endl;
+    if (verbose) {
+        GMessage("\tCanonical donor\t\t: %d\n", cnl_donor_ct);
+        GMessage("\tNoncanonical donor\t: %d\n", ncnl_donor_ct);
+        GMessage("[Info] Acceptor dimers: \n");
+    }
+
     for (auto i : acceptor_dimers) {
         if (std::strcmp(i.first.c_str(), "AG") == 0) {
             cnl_acceptor_ct += i.second;
@@ -73,17 +79,22 @@ GStr splamPredict() {
         // std::cout << "\t" << i.first << ": " << i.second << std::endl;
     }
 
-    GMessage("\tCanonical acceptor\t: %d\n", cnl_acceptor_ct);
-    GMessage("\tNoncanonical donor\t: %d\n", ncnl_acceptor_ct);
-
+    if (verbose) {
+        GMessage("\tCanonical acceptor\t: %d\n", cnl_acceptor_ct);
+        GMessage("\tNoncanonical donor\t: %d\n", ncnl_acceptor_ct);
+    }
+    
 
     /*********************************************
      * Step 3: SPLAM model prediction
     *********************************************/
     STEP_COUNTER += 1;
-    GMessage("\n###########################################\n");
-    GMessage("## Step %d: SPLAM model prediction\n", STEP_COUNTER);
-    GMessage("###########################################\n");
+
+    if (verbose) {
+        GMessage("\n###########################################\n");
+        GMessage("## Step %d: SPLAM model prediction\n", STEP_COUNTER);
+        GMessage("###########################################\n");
+    }
     Py_Initialize();
     // GStr python_f = "./script/splam.py";
     GStr outfname_junc_score(out_dir + "/junction_score.bed");
@@ -102,23 +113,26 @@ faidx_t *fastaIndex() {
     FILE *ref_fa_f;
     if ((ref_fa_f = fopen(infname_reffa.chars(), "r"))) {
         fclose(ref_fa_f);
-        GMessage("[INFO] FASTA index \"%si\" has been created!\n", infname_reffa.chars());
+        if (verbose) {
+            GMessage("[INFO] FASTA index \"%si\" has been created!\n", infname_reffa.chars());
+        }
     } else {
         int res = fai_build(infname_reffa.chars());
-        GMessage("[INFO] Creating FASTA index \"%si\"\n", infname_reffa.chars());
+        if (verbose) {
+            GMessage("[INFO] Creating FASTA index \"%si\"\n", infname_reffa.chars());
+        }
     }
 
     faidx_t *ref_faidx = fai_load(infname_reffa.chars());
-    GMessage("[INFO] Loading FASTA file\n");
+    if (verbose) {
+        GMessage("[INFO] Loading FASTA file\n");
+    }
     return ref_faidx;
 }
 
 GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_rm_hit &doner_dimers, robin_hdd_rm_hit &acceptor_dimers, faidx_t *ref_faidx) {
     int SEQ_LEN = 800;
     int QUOTER_SEQ_LEN = SEQ_LEN/4;
-
-    GMessage("outfname_junc_bed: %s\n", outfname_junc_bed.chars());
-
     /*********************************************
     # For 'd_a.bed': 0-based, 1-based
     # For 'donor.bed': 0-based, 0-based
@@ -149,13 +163,13 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_rm_hit &doner_dimers, ro
     std::ifstream fr_junc(outfname_junc_bed);
     std::string line;
 
-    GMessage("ALN_COUNT_SPLICED: %d\n", ALN_COUNT_SPLICED);
-    progressbar bar(ALN_COUNT_SPLICED);
+    
+    progressbar bar(JUNC_COUNT);
     if (COMMAND_MODE == ALL) {
         bar.set_opening_bracket_char("[INFO] SPLAM! Writing junction BED file \n\t[");
     }
     while(getline(fr_junc, line)){
-        if (COMMAND_MODE == ALL) {
+        if (verbose && COMMAND_MODE == ALL) {
             bar.update();
         }
 
@@ -295,6 +309,8 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_rm_hit &doner_dimers, ro
             outfile_bed_da << chromosome + "\t" + std::to_string(acceptor) + "\t" + std::to_string(donor+1) + "\tJUNC\t" + std::to_string(num_alignment) + "\t" + strand + "\n";
         }
     }  
-    GMessage("\n");
+    if (verbose) {
+        GMessage("\n");
+    }
     return outfname_junc_fa;
 }
