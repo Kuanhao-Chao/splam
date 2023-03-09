@@ -209,7 +209,7 @@ int main(int argc, char* argv[]) {
 
     JUNC_COUNT_BAD = JUNC_COUNT - JUNC_COUNT_GOOD;
 
-    GMessage("\n\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
+    GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
     GMessage("               - paired alignments\t:%10d \n", ALN_COUNT - ALN_COUNT_UNPAIRED);
     GMessage("               - unpaired alignments\t:%10d \n", ALN_COUNT_UNPAIRED);
 
@@ -262,21 +262,20 @@ void processOptions(int argc, char* argv[]) {
 
 
     if (strcmp(command_str.chars(), "j-extract") == 0) {
-        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
         COMMAND_MODE = J_EXTRACT;
     } else if (strcmp(command_str.chars(), "predict") == 0) {
-        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
         COMMAND_MODE = PREDICT;
     } else if (strcmp(command_str.chars(), "clean") == 0) {
-        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
         COMMAND_MODE = CLEAN;
     } else if (strcmp(command_str.chars(), "all") == 0) {
-        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
         COMMAND_MODE = ALL;
     } else {
         usage();
         GERROR("\n[ERROR] The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
         exit(1);   
+    }
+    if (verbose) {
+        GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
     }
     
     verbose=(args.getOpt("verbose")!=NULL || args.getOpt('V')!=NULL);
@@ -299,17 +298,18 @@ void processOptions(int argc, char* argv[]) {
         processOptionsAll(args);
     }
 
-    GMessage(">>  command_str      : %s\n", command_str.chars());
-    GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
-    GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
-    GMessage(">> infname_scorebed  : %s\n", infname_scorebed.chars());
-    GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
-    GMessage(">> infname_bam       : %s\n", infname_bam.chars());
-    GMessage(">> out_dir           : %s\n", out_dir.chars());
-    GMessage(">> g_is_single_end     : %d\n", g_is_single_end);
-    GMessage(">> extract_threshold : %d\n", g_j_extract_threshold);
-    GMessage(">> g_max_splice      : %d\n", g_max_splice);
-    GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
+    // GMessage(">>  command_str      : %s\n", command_str.chars());
+    // GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
+    // GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
+    // GMessage(">> infname_scorebed  : %s\n", infname_scorebed.chars());
+    // GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
+    // GMessage(">> infname_bam       : %s\n", infname_bam.chars());
+    // GMessage(">> out_dir           : %s\n", out_dir.chars());
+    // GMessage(">> g_is_single_end     : %d\n", g_is_single_end);
+    // GMessage(">> extract_threshold : %d\n", g_j_extract_threshold);
+    // GMessage(">> g_max_splice      : %d\n", g_max_splice);
+    // GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
+    // GMessage(">> verbose           : %d\n", verbose);
 
     args.startNonOpt();
 
@@ -326,7 +326,6 @@ void processOptions(int argc, char* argv[]) {
     while ( (ifn=args.nextNonOpt())!=NULL) {
         //input alignment files
         std::string absolute_ifn = get_full_path(ifn);
-        std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
         in_records.addFile(absolute_ifn.c_str());
     }
     // } 

@@ -27,22 +27,20 @@ GStr splamClean() {
      * Step 4: SPLAM filtering out reads.
     *********************************************/
     STEP_COUNTER += 1;
-    GMessage("\n###########################################\n");
-    GMessage("## Step %d: SPLAM filtering out reads\n", STEP_COUNTER);
-    GMessage("###########################################\n\n");
-    GStr outfname_NH_tag = filterSpurJuncs(infname_scorebed);
 
-    GMessage("outfname_NH_tag: %s\n", outfname_NH_tag.chars());
-    GMessage("Done!\n");
+    if (verbose) {
+        GMessage("\n###########################################\n");
+        GMessage("## Step %d: SPLAM filtering out spurious alignments\n", STEP_COUNTER);
+        GMessage("###########################################\n");
+    }
+    GStr outfname_NH_tag = filterSpurJuncs(infname_scorebed);
     return outfname_NH_tag;
 }
 
 void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
     std::ifstream bed_f(inbedname);
     std::string line;
-    int bed_counter = 0;
     while (getline(bed_f, line)) {
-        bed_counter ++;
         GStr gline = line.c_str();
         GVec<GStr> junc;
         int cnt = 0;
@@ -62,7 +60,6 @@ void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
             JUNC_COUNT_GOOD ++;
         }
     }
-    GMessage("bed_counter: %d\n", bed_counter);
 }
 
 GStr filterSpurJuncs(GStr outfname_junc_score) {
@@ -251,8 +248,14 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
 
         bool uniq_next_main_aln = true;
         GSamRecord* uniq_brec_prev;
+
+        progressbar bar_uniq(ALN_COUNT_SPLICED_UNIQ);
+        bar_uniq.set_opening_bracket_char("[INFO] SPLAM! Filtering unique spliced alignments \n\t[");
         while ( (brec = reader_s_uniq_map.next())!=NULL ) {
             // GMessage("unique-mapped Algnment name: %s\n", brec->name());
+            if (verbose) {
+                bar_uniq.update();
+            }
             if (uniq_next_main_aln) {
                 // This is the first alignment.
                 bool spur = alignmentAssessment(brec, rm_juncs);
@@ -278,12 +281,14 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 } else {
                     keepAlignment(outfile_cleaned, uniq_brec_prev);
                     keepAlignment(outfile_cleaned, brec);
+                    ALN_COUNT_GOOD+=2;
                     delete uniq_brec_prev;
                 }
                 uniq_next_main_aln = true;
             }
         }
         reader_s_uniq_map.bclose();
+        if (verbose) GMessage("\n");
 
 
         // Processonmg multi-mapped reads
@@ -291,8 +296,15 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
 
         bool multi_next_main_aln = true;
         GSamRecord* multi_brec_prev;
+
+        progressbar bar_multi(ALN_COUNT_SPLICED_MULTI);
+        bar_multi.set_opening_bracket_char("[INFO] SPLAM! Filtering multi-mapped spliced alignments \n\t[");
         while ( (brec = reader_s_multi_map.next())!=NULL ) {
             // GMessage("multi-mapped Algnment name: %s\n", brec->name());
+
+            if (verbose) {
+                bar_multi.update();
+            }
             if (multi_next_main_aln) {
                 // This is the first alignment.
                 bool spur = alignmentAssessment(brec, rm_juncs);
@@ -324,6 +336,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             }
         }
         reader_s_multi_map.bclose();
+        if (verbose) GMessage("\n");
 
 
 
@@ -374,7 +387,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
     delete outfile_discard_s_uniq_map;
     delete outfile_discard_s_multi_map;
 
-    GMessage("[INFO] %d spurious alignments were removed.\n", ALN_COUNT_BAD);
+    if (verbose) GMessage("[INFO] %d spurious alignments were removed.\n", ALN_COUNT_BAD);
     GStr outfname_NH_tag = writenhHitFile(rm_hit);
     return outfname_NH_tag;
 }
@@ -681,7 +694,7 @@ void removeAlignment(GSamWriter* outfile_target, GSamRecord* brec, robin_hdd_rm_
 void keepAlignment(GSamWriter* outfile_target, GSamRecord* brec) {
     // std::string key = get_global_removed_algns_key(brec);
     outfile_target->write(brec);
-    ALN_COUNT_GOOD++;
+    // ALN_COUNT_GOOD++;
 }
 
 GStr writenhHitFile(robin_hdd_rm_hit& rm_hit) {

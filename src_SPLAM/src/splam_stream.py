@@ -266,6 +266,5 @@ def test_model():
 
     pbar.finish()
     fw_junc_scores.close()
-    print(f'[Info] Expected #prediction: {len(test_loader)*BATCH_SIZE+0:03}')
 if __name__ == '__main__':
     test_model()

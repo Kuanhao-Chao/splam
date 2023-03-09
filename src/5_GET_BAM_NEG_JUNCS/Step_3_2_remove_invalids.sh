@@ -1,7 +1,7 @@
 threshold=1
 SEQ_LEN=800
 
- ./BAM_junctions/${SEQ_LEN}bp/${threshold}_juncs/donor.bed
+./BAM_junctions/${SEQ_LEN}bp/${threshold}_juncs/donor.bed
 
 bedtools getfasta -s -fi ../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa -bed ./BAM_junctions/${SEQ_LEN}bp/${threshold}_juncs/donor.bed -fo ./BAM_junctions/${SEQ_LEN}bp/${threshold}_juncs/donor_seq.fa
 

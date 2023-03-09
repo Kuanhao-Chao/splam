@@ -15,19 +15,24 @@
 *****************************/
 GStr splamJExtract() {
     STEP_COUNTER += 1;
-    GMessage("###########################################\n");
-    GMessage("## Step %d: generating spliced junctions in BED\n", STEP_COUNTER);
-    GMessage("###########################################\n");
 
+    if (verbose) {
+        GMessage("###########################################\n");
+        GMessage("## Step %d: generating spliced junctions in BED\n", STEP_COUNTER);
+        GMessage("###########################################\n");
+    }
+    
     // This is normal workflow for writing out all junctions.
     // outfile_multimapped = new GSamWriter(outfname_multimapped, in_records.header(), GSamFile_BAM);
     
     GStr outfname_junc_bed = out_dir + "/junction.bed";
     // outfile_spliced = new GSamWriter(outfname_spliced, in_records.header(), GSamFile_BAM);
 
-    GMessage("[INFO] Extracting junctions ...\n");
-    GMessage("[INFO] Output directory\t\t: %s\n", out_dir.chars());
-    GMessage("[INFO] Output Junction file\t: %s\n", outfname_junc_bed.chars());
+    if (verbose) {
+        GMessage("[INFO] Extracting junctions ...\n");
+    }
+    // GMessage("[INFO] Output directory\t\t: %s\n", out_dir.chars());
+    // GMessage("[INFO] Output Junction file\t: %s\n", outfname_junc_bed.chars());
 
     /****************************
     * Creating junction bed files.
@@ -139,11 +144,6 @@ GStr splamJExtract() {
             if (readlist.Count()>0) {
                 // process reads in previous bundle
                 bundle->getReady(currentstart, currentend);
-
-                GMessage("\t>> bundle read count: %d\n", readlist.Count());
-                GMessage("\t>> bundle start     : %d\n", bundle->start);
-                GMessage("\t>> bundle end       : %d\n", bundle->end);
-
                 processBundle_jext(bundle, readlist, bundle_counter);
                 readlist.Clear();
             } else { 
@@ -328,14 +328,9 @@ GStr splamJExtract() {
     // //     }
     // // }
 
-
-
-
-
-
-
-
-    GMessage("\t\t%d alignments processed.\n", ALN_COUNT);
+    if (verbose) {
+        GMessage("[INFO] SPLAM! %d alignments processed.\n", ALN_COUNT);
+    }
     in_records.stop();
     flushJuncs(joutf);
     // if (g_j_extract_threshold > 0) {
@@ -349,8 +344,10 @@ GStr splamJExtract() {
     junctions.Clear();
     junctions.setCapacity(128);
     // delete outfile_spliced;
-    GMessage("[INFO] SPLAM! Total number of junctions: %d\n", JUNC_COUNT);	
-
+    if (verbose) {
+        GMessage("[INFO] SPLAM! Total number of junctions: %d\n", JUNC_COUNT);	
+    }
+    
 
 
     // delete outfile_cleaned;
@@ -366,7 +363,13 @@ GStr splamJExtract() {
 
 void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bundle_counter) {
     bundle_counter += 1;
-    GMessage("In bundle %d (%s)\n", bundle_counter, readlist[0]->brec.refName());
+
+    if (verbose) {
+        GMessage("\t* In bundle %d (%s)\n", bundle_counter, readlist[0]->brec.refName());
+        GMessage("\t\t>> bundle read count: %d\n", readlist.Count());
+        GMessage("\t\t>> bundle start     : %d\n", bundle->start);
+        GMessage("\t\t>> bundle end       : %d\n", bundle->end);
+    }
 
     robin_hdd_int hash_processed;
 
