@@ -221,7 +221,7 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     ########################################
     # splice / nonsplice classifier
     ########################################
-    # SEQ_WEIGHT = 1
+    SEQ_WEIGHT = 5
     # IMBALANCE_WEIGHT = 1
     # WEIGHT = SEQ_WEIGHT * IMBALANCE_WEIGHT
 
@@ -240,15 +240,15 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     # print("y_pred[:, 2, :]: ", y_pred[:, 2, :])
 
     # This is focal loss
-    # gamma = 2
-    # return - torch.mean(y_true[:, 0, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 0, :]), gamma ), torch.log(y_pred[:, 0, :]+1e-10) )
-    #                     + y_true[:, 1, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 1, :]), gamma ), torch.log(y_pred[:, 1, :]+1e-10) )
-    #                     + y_true[:, 2, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 2, :]), gamma ), torch.log(y_pred[:, 2, :]+1e-10) ))
+    gamma = 2
+    return - torch.mean(y_true[:, 0, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 0, :]), gamma ), torch.log(y_pred[:, 0, :]+1e-10) )
+                        + SEQ_WEIGHT * y_true[:, 1, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 1, :]), gamma ), torch.log(y_pred[:, 1, :]+1e-10) )
+                        + SEQ_WEIGHT * y_true[:, 2, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 2, :]), gamma ), torch.log(y_pred[:, 2, :]+1e-10) ))
 
-    # This is cross entropy loss
-    return - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
-                        + y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
-                        + y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10))
+    # # This is cross entropy loss
+    # return - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
+    #                     + y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
+    #                     + y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10))
 
 
 # def create_datapoints(seq, strand):
@@ -352,6 +352,16 @@ def print_threshold_statistics(y_true, y_pred, threshold, TOTAL_TP, TOTAL_FN, TO
     # print("precision: ", precision)
     # print("recall:    ", recall)
     return TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN, LCL_TOTAL_TP, LCL_TOTAL_FN, LCL_TOTAL_FP, LCL_TOTAL_TN
+
+
+def get_junc_scores(D_YL, A_YL, D_YP, A_YP):
+    junc_labels = np.minimum(D_YL[:, 200], A_YL[:, 600])
+    junc_scores = np.minimum(D_YP[:, 200], A_YP[:, 600])
+
+    # print("junc_labels: ", junc_labels)
+    # print("junc_scores: ", junc_scores)
+    return junc_labels, junc_scores
+
 
 def print_junc_statistics(D_YL, A_YL, D_YP, A_YP, threshold, TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN):
 
