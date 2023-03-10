@@ -64,8 +64,8 @@ class myDataset(Dataset):
                     # print(seq_name)
                 # if pidx > CONSTANT_SIZE:
                 #     break
-                # if pidx >= 2000:
-                #     break
+                if pidx >= 10000:
+                    break
         print("pidx: ", pidx)
 
         CONSTANT_SIZE = pidx

@@ -17,8 +17,8 @@ import platform
 
 warnings.filterwarnings("ignore")
 
-MODEL_VERSION = "SPLAM_v5/"
-
+MODEL_VERSION = "SPLAM_v6/"
+JUNC_THRESHOLD = 0.1
 def main():
     #############################
     # Global variable definition
@@ -41,9 +41,9 @@ def main():
     device = torch.device(device_str)
     print(f"\033[1m[Info]: Use {device} now!\033[0m")
 
-    MODEL = "./MODEL/"+MODEL_VERSION+"splam_21.pt"
+    MODEL = "./MODEL/"+MODEL_VERSION+"splam_24.pt"
     MODEL_OUTPUT_BASE = "../src_tools_evaluation/splam_result/"
-    os.makedirs(MODEL_OUTPUT_BASE)
+    os.makedirs(MODEL_OUTPUT_BASE, exist_ok=True)
     model = torch.load(MODEL)
 
     #############################
@@ -72,6 +72,33 @@ def main():
         LOG_OUTPUT_TEST_BASE = MODEL_OUTPUT_BASE + "/" + "LOG/"
         os.makedirs(LOG_OUTPUT_TEST_BASE, exist_ok=True)
 
+
+        ############################
+        # Log for testing
+        ############################
+        test_log_loss = LOG_OUTPUT_TEST_BASE + "test_loss.txt"
+        test_log_acc = LOG_OUTPUT_TEST_BASE + "test_accuracy.txt"
+
+        test_log_A_auprc = LOG_OUTPUT_TEST_BASE + "test_A_auprc.txt"
+        test_log_A_threshold_precision = LOG_OUTPUT_TEST_BASE + "test_A_threshold_precision.txt"
+        test_log_A_threshold_recall = LOG_OUTPUT_TEST_BASE + "test_A_threshold_recall.txt"
+        test_log_D_auprc = LOG_OUTPUT_TEST_BASE + "test_D_auprc.txt"
+        test_log_D_threshold_precision = LOG_OUTPUT_TEST_BASE + "test_D_threshold_precision.txt"
+        test_log_D_threshold_recall = LOG_OUTPUT_TEST_BASE + "test_D_threshold_recall.txt"
+        test_log_J_threshold_precision = LOG_OUTPUT_TEST_BASE + "test_J_threshold_precision.txt"
+        test_log_J_threshold_recall = LOG_OUTPUT_TEST_BASE + "test_J_threshold_recall.txt"
+
+        fw_test_log_loss = open(test_log_loss, 'w')
+        fw_test_log_acc = open(test_log_acc, 'w')
+
+        fw_test_log_A_auprc = open(test_log_A_auprc, 'w')
+        fw_test_log_A_threshold_precision = open(test_log_A_threshold_precision, 'w')
+        fw_test_log_A_threshold_recall = open(test_log_A_threshold_recall, 'w')
+        fw_test_log_D_auprc = open(test_log_D_auprc, 'w')
+        fw_test_log_D_threshold_precision = open(test_log_D_threshold_precision, 'w')
+        fw_test_log_D_threshold_recall = open(test_log_D_threshold_recall, 'w')
+        fw_test_log_J_threshold_precision = open(test_log_J_threshold_precision, 'w')
+        fw_test_log_J_threshold_recall = open(test_log_J_threshold_recall, 'w')
 
 
 
@@ -102,6 +129,10 @@ def main():
         #######################################
         # Important => setting model into evaluation mode
         #######################################   
+
+        All_Junction_YL = []
+        All_Junction_YP = []
+
         model.eval()
         for batch_idx, data in enumerate(test_loader):
             # print("batch_idx: ", batch_idx)
@@ -132,6 +163,11 @@ def main():
             A_YP = yp[is_expr, 1, :].to('cpu').detach().numpy()
             D_YL = labels[is_expr, 2, :].to('cpu').detach().numpy()
             D_YP = yp[is_expr, 2, :].to('cpu').detach().numpy()
+
+            junction_labels, junction_scores = get_junc_scores(D_YL, A_YL, D_YP, A_YP)   
+
+            All_Junction_YL.extend(junction_scores)
+            All_Junction_YP.extend(junction_labels)     
 
             J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = print_junc_statistics(D_YL, A_YL, D_YP, A_YP, JUNC_THRESHOLD, J_G_TP, J_G_FN, J_G_FP, J_G_TN)        
             A_accuracy, A_auprc = print_top_1_statistics(Acceptor_YL, Acceptor_YP)
@@ -169,10 +205,6 @@ def main():
                 J_Precision=f"{J_TP/(J_TP+J_FP+1e-6):.6f}",
                 J_Recall=f"{J_TP/(J_TP+J_FN+1e-6):.6f}"
             )
-            loss.backward()
-            optimizer.step()
-            scheduler.step()
-            optimizer.zero_grad()
 
             fw_test_log_loss.write(str(batch_loss)+ "\n")
             fw_test_log_A_auprc.write(str(A_auprc)+ "\n")
@@ -185,15 +217,31 @@ def main():
             fw_test_log_J_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1e-6):.6f}\n")
         pbar.close()
 
-        print(f'Epoch {epoch_idx+0:03}: | Loss: {epoch_loss/len(test_loader):.5f} | Donor top-k Acc: {epoch_donor_acc/len(test_loader):.3f} | Acceptor top-k Acc: {epoch_acceptor_acc/len(test_loader):.3f}')
+        print(f'Epoch {batch_idx+0:03}: | Loss: {epoch_loss/len(test_loader):.5f} | Donor top-k Acc: {epoch_donor_acc/len(test_loader):.3f} | Acceptor top-k Acc: {epoch_acceptor_acc/len(test_loader):.3f}')
         print(f'Junction Precision: {J_G_TP/(J_G_TP+J_G_FP):.5f} | Junction Recall: {J_G_TP/(J_G_TP+J_G_FN):.5f} | TP: {J_G_TP} | FN: {J_G_FN} | FP: {J_G_FP} | TN: {J_G_TN}')
         print(f'Donor Precision   : {D_G_TP/(D_G_TP+D_G_FP):.5f} | Donor Recall   : {D_G_TP/(D_G_TP+D_G_FN):.5f} | TP: {D_G_TP} | FN: {D_G_FN} | FP: {D_G_FP} | TN: {D_G_TN}')
         print(f'Acceptor Precision: {A_G_TP/(A_G_TP+A_G_FP):.5f} | Acceptor Recall: {A_G_TP/(A_G_TP+A_G_FN):.5f} | TP: {A_G_TP} | FN: {A_G_FN} | FP: {A_G_FP} | TN: {A_G_TN}')
-        print ("Learning rate: %.5f" % (get_lr(optimizer)))
         print("\n\n")
 
 
+        print("All_Junction_YP: ", len(All_Junction_YP))
+        print("All_Junction_YL: ", len(All_Junction_YL))
 
+        TYPE = "shuffle" if shuffle else "noshuffle"
+        with open(MODEL_OUTPUT_BASE + "/splam." + TYPE + ".pkl", 'wb') as f: 
+            pickle.dump(All_Junction_YP, f)
+            pickle.dump(All_Junction_YL, f)
+
+
+        ############################
+        # Plotting ROC / PR curves
+        ############################
+        # plot_roc_curve(All_Junction_YL, All_Junction_YP, "Acceptor")
+        # plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_roc_"+TYPE+".png", dpi=300)
+        # plt.close()
+        # plot_pr_curve(All_Junction_YL, All_Junction_YP, "Acceptor")
+        # plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_pr_"+TYPE+".png", dpi=300)
+        # plt.close()
 
 
 

@@ -68,7 +68,7 @@ splits=KFold(n_splits=k,shuffle=True,random_state=42)
 #############################
 # Creating directories
 #############################
-MODEL_VERSION = "SPLAM_v5/"
+MODEL_VERSION = "SPLAM_v6/"
 MODEL_OUTPUT_BASE = "./MODEL/"+MODEL_VERSION
 LOG_OUTPUT_BASE = MODEL_OUTPUT_BASE + "LOG/"
 LOG_OUTPUT_TRAIN_BASE = MODEL_OUTPUT_BASE + "LOG/TRAIN/"
@@ -439,10 +439,6 @@ def val_one_epoch(epoch_idx, val_loader):
             J_Precision=f"{J_TP/(J_TP+J_FP+1e-6):.6f}",
             J_Recall=f"{J_TP/(J_TP+J_FN+1e-6):.6f}"
         )
-        loss.backward()
-        optimizer.step()
-        scheduler.step()
-        optimizer.zero_grad()
 
         fw_val_log_loss.write(str(batch_loss)+ "\n")
         fw_val_log_A_auprc.write(str(A_auprc)+ "\n")
@@ -632,10 +628,6 @@ def test_one_epoch(epoch_idx, test_loader):
             J_Precision=f"{J_TP/(J_TP+J_FP+1e-6):.6f}",
             J_Recall=f"{J_TP/(J_TP+J_FN+1e-6):.6f}"
         )
-        loss.backward()
-        optimizer.step()
-        scheduler.step()
-        optimizer.zero_grad()
 
         fw_test_log_loss.write(str(batch_loss)+ "\n")
         fw_test_log_A_auprc.write(str(A_auprc)+ "\n")

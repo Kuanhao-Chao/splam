@@ -257,11 +257,12 @@ def test_model():
             pbar.next()            
             for idx in range(len(yps)):
                 junction_score = yps[idx]
+                junction_label = labels[idx]
                 chr, start, end, strand, aln_num = seqname[idx].split(';')
                 if strand == '+':
-                    fw_junc_scores.write(chr+ '\t'+ start + '\t' + end + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(junction_score) + '\\n')
+                    fw_junc_scores.write(chr+ '\t'+ start + '\t' + end + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(junction_score) + '\t' + str(junction_label) + '\\n')
                 elif strand == '-':
-                    fw_junc_scores.write(chr+ '\t'+ end + '\t' + start + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(junction_score) + '\\n')
+                    fw_junc_scores.write(chr+ '\t'+ end + '\t' + start + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(junction_score) + '\t' + str(junction_label) + '\\n')
                 junc_counter += 1
 
     pbar.finish()
