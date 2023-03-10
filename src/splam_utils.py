@@ -354,9 +354,15 @@ def print_threshold_statistics(y_true, y_pred, threshold, TOTAL_TP, TOTAL_FN, TO
     return TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN, LCL_TOTAL_TP, LCL_TOTAL_FN, LCL_TOTAL_FP, LCL_TOTAL_TN
 
 
-def get_junc_scores(D_YL, A_YL, D_YP, A_YP):
-    junc_labels = np.minimum(D_YL[:, 200], A_YL[:, 600])
-    junc_scores = np.minimum(D_YP[:, 200], A_YP[:, 600])
+def get_junc_scores(D_YL, A_YL, D_YP, A_YP, choice):
+    # print("D_YL: ", D_YP[:, 200])
+    # print("A_YL: ", A_YP[:, 600])
+    if choice == "min":
+        junc_labels = np.minimum(D_YL[:, 200], A_YL[:, 600])
+        junc_scores = np.minimum(D_YP[:, 200], A_YP[:, 600])
+    elif choice == "avg":
+        junc_labels = np.minimum(D_YL[:, 200], A_YL[:, 600])
+        junc_scores = np.mean([D_YP[:, 200], A_YP[:, 600]], axis=0)
 
     # print("junc_labels: ", junc_labels)
     # print("junc_scores: ", junc_scores)
