@@ -2,7 +2,7 @@ import os
 import matplotlib.pyplot as plt
 
 def main():
-    LOG_DIR = "./MODEL/SPLAM_v1/LOG/"
+    LOG_DIR = "./MODEL/SPLAM_v7/LOG/"
     OUT_DIR = LOG_DIR + "IMG/"
     os.makedirs(OUT_DIR, exist_ok=True)
 
