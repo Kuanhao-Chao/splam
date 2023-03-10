@@ -17,7 +17,7 @@ import platform
 
 warnings.filterwarnings("ignore")
 
-MODEL_VERSION = "SPLAM_v6/"
+MODEL_VERSION = "SPLAM_v7/"
 JUNC_THRESHOLD = 0.1
 def main():
     #############################
@@ -43,6 +43,9 @@ def main():
 
     MODEL = "./MODEL/"+MODEL_VERSION+"splam_24.pt"
     MODEL_OUTPUT_BASE = "../src_tools_evaluation/splam_result/"
+
+    print(">> Using model: ", MODEL)
+
     os.makedirs(MODEL_OUTPUT_BASE, exist_ok=True)
     model = torch.load(MODEL)
 
@@ -130,8 +133,11 @@ def main():
         # Important => setting model into evaluation mode
         #######################################   
 
-        All_Junction_YL = []
-        All_Junction_YP = []
+        All_Junction_YL_MIN = []
+        All_Junction_YP_MIN = []
+
+        All_Junction_YL_AVG = []
+        All_Junction_YP_AVG = []
 
         model.eval()
         for batch_idx, data in enumerate(test_loader):
@@ -164,10 +170,13 @@ def main():
             D_YL = labels[is_expr, 2, :].to('cpu').detach().numpy()
             D_YP = yp[is_expr, 2, :].to('cpu').detach().numpy()
 
-            junction_labels, junction_scores = get_junc_scores(D_YL, A_YL, D_YP, A_YP)   
+            junction_labels_min, junction_scores_min = get_junc_scores(D_YL, A_YL, D_YP, A_YP, "min")
+            junction_labels_avg, junction_scores_avg = get_junc_scores(D_YL, A_YL, D_YP, A_YP, "avg")
 
-            All_Junction_YL.extend(junction_scores)
-            All_Junction_YP.extend(junction_labels)     
+            All_Junction_YL_MIN.extend(junction_labels_min)
+            All_Junction_YP_MIN.extend(junction_scores_min)     
+            All_Junction_YL_AVG.extend(junction_labels_avg)
+            All_Junction_YP_AVG.extend(junction_scores_avg)     
 
             J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = print_junc_statistics(D_YL, A_YL, D_YP, A_YP, JUNC_THRESHOLD, J_G_TP, J_G_FN, J_G_FP, J_G_TN)        
             A_accuracy, A_auprc = print_top_1_statistics(Acceptor_YL, Acceptor_YP)
@@ -224,13 +233,17 @@ def main():
         print("\n\n")
 
 
-        print("All_Junction_YP: ", len(All_Junction_YP))
-        print("All_Junction_YL: ", len(All_Junction_YL))
+        print("All_Junction_YP_MIN: ", len(All_Junction_YP_MIN))
+        print("All_Junction_YL_MIN: ", len(All_Junction_YL_MIN))
+        print("All_Junction_YP_AVG: ", len(All_Junction_YP_AVG))
+        print("All_Junction_YL_AVG: ", len(All_Junction_YL_AVG))
 
         TYPE = "shuffle" if shuffle else "noshuffle"
         with open(MODEL_OUTPUT_BASE + "/splam." + TYPE + ".pkl", 'wb') as f: 
-            pickle.dump(All_Junction_YP, f)
-            pickle.dump(All_Junction_YL, f)
+            pickle.dump(All_Junction_YP_MIN, f)
+            pickle.dump(All_Junction_YL_MIN, f)
+            pickle.dump(All_Junction_YP_AVG, f)
+            pickle.dump(All_Junction_YL_AVG, f)
 
 
         ############################
@@ -327,21 +340,28 @@ def main():
         #     pickle.dump(All_Junction_YL, f)
 
 
-        # ############################
-        # # Plotting ROC / PR curves
-        # ############################
-        # plot_roc_curve(All_Junction_YL, All_Junction_YP, "Acceptor")
-        # plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_roc_"+TYPE+".png", dpi=300)
-        # plt.close()
-        # plot_pr_curve(All_Junction_YL, All_Junction_YP, "Acceptor")
-        # plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_pr_"+TYPE+".png", dpi=300)
-        # plt.close()
+        ############################
+        # Plotting ROC / PR curves
+        ############################
+        plot_roc_curve(All_Junction_YL_MIN, All_Junction_YP_MIN, "Acceptor")
+        plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_roc_"+TYPE+"_MIN.png", dpi=300)
+        plt.close()
+        plot_pr_curve(All_Junction_YL_MIN, All_Junction_YP_MIN, "Acceptor")
+        plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_pr_"+TYPE+"_MIN.png", dpi=300)
+        plt.close()
 
-        # print(f'Epoch {0+0:03}: | Loss: {epoch_loss/len(test_loader):.5f} | Acc: {epoch_acc/len(test_loader):.3f}')
-        # print(f'Expected #prediction: {len(test_loader)*BATCH_SIZE+0:03}')
-        # print(f'Junction Precision  : {J_G_TP/(J_G_TP+J_G_FP):.5f} | Junction Recall: {J_G_TP/(J_G_TP+J_G_FN):.5f} | TP: {J_G_TP} | FN: {J_G_FN} | FP: {J_G_FP} | TN: {J_G_TN}')
-        # print("")
-        # print("\n\n")
+        plot_roc_curve(All_Junction_YL_AVG, All_Junction_YP_AVG, "Acceptor")
+        plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_roc_"+TYPE+"_AVG.png", dpi=300)
+        plt.close()
+        plot_pr_curve(All_Junction_YL_AVG, All_Junction_YP_AVG, "Acceptor")
+        plt.savefig(MODEL_OUTPUT_BASE+"output_800bp_pr_"+TYPE+"_AVG.png", dpi=300)
+        plt.close()
+
+        print(f'Epoch {0+0:03}: | Loss: {epoch_loss/len(test_loader):.5f} | Acc: {epoch_acc/len(test_loader):.3f}')
+        print(f'Expected #prediction: {len(test_loader)*BATCH_SIZE+0:03}')
+        print(f'Junction Precision  : {J_G_TP/(J_G_TP+J_G_FP):.5f} | Junction Recall: {J_G_TP/(J_G_TP+J_G_FN):.5f} | TP: {J_G_TP} | FN: {J_G_FN} | FP: {J_G_FP} | TN: {J_G_TN}')
+        print("")
+        print("\n\n")
 
 
 def plot_pr_curve(true_y, y_prob, label):
