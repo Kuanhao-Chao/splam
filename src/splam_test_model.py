@@ -19,6 +19,25 @@ warnings.filterwarnings("ignore")
 
 MODEL_VERSION = "SPLAM_v7/"
 JUNC_THRESHOLD = 0.1
+
+def parse_junction(name):
+    # print("name: ", name)
+    res = name.split(":")
+    strand = name[-2]
+    chr_name = res[0]
+    if strand == "+":
+        start = int(res[1].split("-")[0])+200
+        end = int(res[2].split("-")[1].split('(')[0])-200
+    elif strand == "-":
+        start = int(res[2].split("-")[0])+200
+        end = int(res[1].split("-")[1].split('(')[0])-200
+    # print("start: ", start)
+    # print("end  : ", end)
+    return (chr_name, start, end, strand)
+
+
+
+
 def main():
     #############################
     # Global variable definition
@@ -64,6 +83,8 @@ def main():
 
     BATCH_SIZE = 100
     for shuffle in [True, False]:
+        junc_counter = 0
+        TYPE = "shuffle" if shuffle else "noshuffle"
         print("########################################")
         print(" Model: ", model)
         print("########################################")
@@ -79,6 +100,7 @@ def main():
         ############################
         # Log for testing
         ############################
+        OUT_SCORE = LOG_OUTPUT_TEST_BASE + TYPE + "_junction_score.bed"
         test_log_loss = LOG_OUTPUT_TEST_BASE + "test_loss.txt"
         test_log_acc = LOG_OUTPUT_TEST_BASE + "test_accuracy.txt"
 
@@ -103,8 +125,7 @@ def main():
         fw_test_log_J_threshold_precision = open(test_log_J_threshold_precision, 'w')
         fw_test_log_J_threshold_recall = open(test_log_J_threshold_recall, 'w')
 
-
-
+        fw_junc_scores = open(OUT_SCORE, 'w')
 
         epoch_loss = 0
         epoch_acc = 0
@@ -139,12 +160,24 @@ def main():
         All_Junction_YL_AVG = []
         All_Junction_YP_AVG = []
 
+        SPLAM_Donor_YL = []
+        SPLAM_Donor_YP = []
+        SPLAM_Acceptor_YL = []
+        SPLAM_Acceptor_YP = []
+        SPLAM_junc_name = []
+
         model.eval()
         for batch_idx, data in enumerate(test_loader):
             # print("batch_idx: ", batch_idx)
             # DNAs:  torch.Size([40, 800, 4])
             # labels:  torch.Size([40, 1, 800, 3])
             DNAs, labels, chr = data 
+
+            # print("chr: ", chr)
+
+            junc_name = map(parse_junction, chr)
+            junc_name = list(junc_name)
+            # print(chr.splt(":"))
             DNAs = DNAs.to(torch.float32).to(device)
             labels = labels.to(torch.float32).to(device)
 
@@ -172,6 +205,15 @@ def main():
 
             junction_labels_min, junction_scores_min = get_junc_scores(D_YL, A_YL, D_YP, A_YP, "min")
             junction_labels_avg, junction_scores_avg = get_junc_scores(D_YL, A_YL, D_YP, A_YP, "avg")
+            donor_labels, donor_scores, acceptor_labels, acceptor_scores = get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP)
+
+
+            SPLAM_Donor_YL = np.concatenate((SPLAM_Donor_YL, donor_labels), axis=None)
+            SPLAM_Donor_YP = np.concatenate((SPLAM_Donor_YP, donor_scores), axis=None)
+            SPLAM_Acceptor_YL = np.concatenate((SPLAM_Acceptor_YL, acceptor_labels), axis=None)
+            SPLAM_Acceptor_YP = np.concatenate((SPLAM_Acceptor_YP, acceptor_scores), axis=None)
+            SPLAM_junc_name.extend(junc_name)
+
 
             All_Junction_YL_MIN.extend(junction_labels_min)
             All_Junction_YP_MIN.extend(junction_scores_min)     
@@ -188,6 +230,15 @@ def main():
             epoch_loss += loss.item()
             epoch_donor_acc += D_accuracy
             epoch_acceptor_acc += A_accuracy
+
+            for idx in range(len(junc_name)):
+                chr_name, start, end, strand = junc_name[idx]
+                if strand == '+':
+                    fw_junc_scores.write(chr_name+ '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(donor_labels[idx]) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
+                elif strand == '-':
+                    fw_junc_scores.write(chr_name+ '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(donor_labels[idx]) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
+                junc_counter += 1
+
 
             pbar.update(1)
             pbar.set_postfix(
@@ -224,7 +275,10 @@ def main():
             fw_test_log_D_threshold_recall.write(f"{D_TP/(D_TP+D_FN+1e-6):.6f}\n")
             fw_test_log_J_threshold_precision.write(f"{J_TP/(J_TP+J_FP+1e-6):.6f}\n")
             fw_test_log_J_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1e-6):.6f}\n")
+
+
         pbar.close()
+        fw_junc_scores.close()
 
         print(f'Epoch {batch_idx+0:03}: | Loss: {epoch_loss/len(test_loader):.5f} | Donor top-k Acc: {epoch_donor_acc/len(test_loader):.3f} | Acceptor top-k Acc: {epoch_acceptor_acc/len(test_loader):.3f}')
         print(f'Junction Precision: {J_G_TP/(J_G_TP+J_G_FP):.5f} | Junction Recall: {J_G_TP/(J_G_TP+J_G_FN):.5f} | TP: {J_G_TP} | FN: {J_G_FN} | FP: {J_G_FP} | TN: {J_G_TN}')
@@ -238,12 +292,23 @@ def main():
         print("All_Junction_YP_AVG: ", len(All_Junction_YP_AVG))
         print("All_Junction_YL_AVG: ", len(All_Junction_YL_AVG))
 
-        TYPE = "shuffle" if shuffle else "noshuffle"
+        print("Donor_YL   : ", len(SPLAM_Donor_YL))
+        print("Donor_YP   : ", len(SPLAM_Donor_YP))
+        print("Acceptor_YL: ", len(SPLAM_Acceptor_YL))
+        print("Acceptor_YP: ", len(SPLAM_Acceptor_YP))
+
         with open(MODEL_OUTPUT_BASE + "/splam." + TYPE + ".pkl", 'wb') as f: 
             pickle.dump(All_Junction_YP_MIN, f)
             pickle.dump(All_Junction_YL_MIN, f)
             pickle.dump(All_Junction_YP_AVG, f)
             pickle.dump(All_Junction_YL_AVG, f)
+
+        with open(MODEL_OUTPUT_BASE + "/splam.da." + TYPE + ".pkl", 'wb') as f: 
+            pickle.dump(SPLAM_Donor_YL, f)
+            pickle.dump(SPLAM_Donor_YP, f)
+            pickle.dump(SPLAM_Acceptor_YL, f)
+            pickle.dump(SPLAM_Acceptor_YP, f)
+            pickle.dump(SPLAM_junc_name, f)
 
 
         ############################

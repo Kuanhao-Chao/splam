@@ -275,7 +275,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 // GMessage("spur:%d\n", spur);
                 if (spur) {
                     removeAlignment(outfile_discard_s_uniq_map, uniq_brec_prev, rm_hit, false);
-                    removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
+                    removeAlignmenta(outfile_discard_s_uniq_map, brec, rm_hit, false);
                     ALN_COUNT_SPLICED_UNIQ_DISCARD+=2;
                     delete uniq_brec_prev;
                 } else {
