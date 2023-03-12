@@ -354,6 +354,12 @@ def print_threshold_statistics(y_true, y_pred, threshold, TOTAL_TP, TOTAL_FN, TO
     return TOTAL_TP, TOTAL_FN, TOTAL_FP, TOTAL_TN, LCL_TOTAL_TP, LCL_TOTAL_FN, LCL_TOTAL_FP, LCL_TOTAL_TN
 
 
+def get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP):
+    # print("D_YL[:, 200]: ", D_YL[:, 200], "  ", len(D_YL[:, 200]))
+    # print("D_YP[:, 200]: ", D_YP[:, 200], "  ", len(D_YP[:, 200]))
+
+    return D_YL[:, 200], D_YP[:, 200], A_YL[:, 600], A_YP[:, 600]
+
 def get_junc_scores(D_YL, A_YL, D_YP, A_YP, choice):
     # print("D_YL: ", D_YP[:, 200])
     # print("A_YL: ", A_YP[:, 600])

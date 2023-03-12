@@ -6,8 +6,9 @@ import numpy as np
 import matplotlib.pyplot as pl
 import os
 
+MODEL_VERSION = "SPLAM_v7"
 device = torch.device("cpu")
-model = torch.load("./MODEL/SPLAM_v1/splam_24.pt")
+model = torch.load("./MODEL/"+MODEL_VERSION+"/splam_24.pt")
 model.to("cpu")
 print("model: ", model)
 
@@ -15,4 +16,4 @@ print("model: ", model)
 example_input = torch.rand(1, 4, 800, device="cpu")
 model_traced = torch.jit.trace(model, example_input)
 
-model_traced.save("./MODEL/SPLAM_v1/splam_24_scripted.pt")
+model_traced.save("./MODEL/"+MODEL_VERSION+"/splam_24_scripted.pt")

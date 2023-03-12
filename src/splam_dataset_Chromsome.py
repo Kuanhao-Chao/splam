@@ -15,6 +15,7 @@ def split_seq_name(seq):
 
 class myDataset(Dataset):
     def __init__(self, type, segment_len=800, shuffle=True):
+        print("!!shuffle: ", shuffle)
         self.segment_len = segment_len
         self.data = []
         pos_f = ""
@@ -263,6 +264,7 @@ def get_eval_dataloader(batch_size, TARGET, n_workers, shuffle):
     #######################################
     # predicting splice / non-splice
     #######################################
+    print("get_eval_dataloader shuffle: ", shuffle)
     testset = myDataset("eval", int(SEQ_LEN), shuffle)
     test_loader = DataLoader(
         testset,

@@ -46,18 +46,6 @@ GStr splamJExtract() {
         if (joutf==NULL) GError("Error creating file %s\n", outfname_junc_bed.chars());
     }
 
-
-
-    // outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
-    // outfile_ns_multi_map = new GSamWriter(outfname_ns_multi_map, in_records.header(), GSamFile_BAM);
-    // outfile_s_uniq_map = new GSamWriter(outfname_s_uniq_map, in_records.header(), GSamFile_BAM);
-    // outfile_s_multi_map = new GSamWriter(outfname_s_multi_map, in_records.header(), GSamFile_BAM);
-    // outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
-    // outfile_discard_unpair = new GSamWriter(outfname_discard_unpair, in_records.header(), GSamFile_BAM);
-    // outfile_discard_s_uniq_map= new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
-    // outfile_discard_s_multi_map= new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);
-
-    
     BundleData* bundle = new BundleData();
 	GList<CReadAln> readlist;
 
