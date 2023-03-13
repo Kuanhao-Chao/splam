@@ -126,6 +126,9 @@ GSamWriter* outfile_below_spliced = NULL;
 FILE* joutf_above=NULL;
 FILE* joutf_below=NULL;
 
+// clean parameters:
+bool g_paired_removal = false;
+
 bool g_is_single_end = false;
 
 int main(int argc, char* argv[]) {
@@ -231,7 +234,7 @@ int main(int argc, char* argv[]) {
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;single-end;model=;junction=;threshold=;output=;score=;max-splice=;bundle-gap=;hvcVSo:t:N:Q:m:j:r:s:M:g:");
+    GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;model=;junction=;threshold=;output=;score=;max-splice=;bundle-gap=;hvcVSPo:t:N:Q:m:j:r:s:M:g:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -260,6 +263,10 @@ void processOptions(int argc, char* argv[]) {
         GMessage("g_is_single_end: %d\n", g_is_single_end);
     }
 
+    if (args.getOpt('P') || args.getOpt("paired-removal") ) {
+        g_paired_removal = true;
+        GMessage("g_paired_removal: %d\n", g_paired_removal);
+    }
 
     if (strcmp(command_str.chars(), "j-extract") == 0) {
         COMMAND_MODE = J_EXTRACT;
@@ -298,18 +305,19 @@ void processOptions(int argc, char* argv[]) {
         processOptionsAll(args);
     }
 
-    // GMessage(">>  command_str      : %s\n", command_str.chars());
-    // GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
-    // GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
-    // GMessage(">> infname_scorebed  : %s\n", infname_scorebed.chars());
-    // GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
-    // GMessage(">> infname_bam       : %s\n", infname_bam.chars());
-    // GMessage(">> out_dir           : %s\n", out_dir.chars());
-    // GMessage(">> g_is_single_end     : %d\n", g_is_single_end);
-    // GMessage(">> extract_threshold : %d\n", g_j_extract_threshold);
-    // GMessage(">> g_max_splice      : %d\n", g_max_splice);
-    // GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
-    // GMessage(">> verbose           : %d\n", verbose);
+    GMessage(">>  command_str      : %s\n", command_str.chars());
+    GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
+    GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
+    GMessage(">> infname_scorebed  : %s\n", infname_scorebed.chars());
+    GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
+    GMessage(">> infname_bam       : %s\n", infname_bam.chars());
+    GMessage(">> out_dir           : %s\n", out_dir.chars());
+    GMessage(">> g_is_single_end   : %d\n", g_is_single_end);
+    GMessage(">> g_paired_removal  : %d\n", g_paired_removal);
+    GMessage(">> extract_threshold : %d\n", g_j_extract_threshold);
+    GMessage(">> g_max_splice      : %d\n", g_max_splice);
+    GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
+    GMessage(">> verbose           : %d\n", verbose);
 
     args.startNonOpt();
 
