@@ -4,7 +4,7 @@ import json
 import torch
 
 def chr_name_convert():
-    f_chrs = open("../Refseq_2_UCSU_chromosome_names.tsv", "r")
+    f_chrs = open("../../Dataset/Refseq_2_UCSU_chromosome_names.tsv", "r")
     lines = f_chrs.read().splitlines()
     chrs = {}
     for line in lines:
@@ -15,15 +15,17 @@ def chr_name_convert():
 
 def main():
 
-    chrs = chr_name_convert()    
+    # chrs = chr_name_convert()    
+    
     # mapping_f = open("../../Dataset/mapping.json")
     # mapping = json.load(mapping_f)
     # mapping_f.close()
     # print(mapping)
     JUNC_COUNTER = 0
-    os.mkdir("./REF_junctions/")
+    os.makedirs("./REF_junctions/", exist_ok=True)
     fw = open("./REF_junctions/ref_d_a.bed", 'w')
-    with open("../../Dataset/GRCh38_latest_genomic.gff", 'r') as f:
+    # with open("../../Dataset/GRCh38_latest_genomic.gff", 'r') as f:
+    with open("../../Dataset/MANE.GRCh38.v1.0.ensembl_genomic.gff", 'r') as f:
         lists = f.read().splitlines() 
         transcript_id = ""
         prev_transcript_id = ""
@@ -54,10 +56,10 @@ def main():
                     strand = line[6]
                     exon_start = int(line[3])
                     exon_end = int(line[4])
-                    # print("chr: ", chr)
-                    # print("strand: ", strand)
-                    # print("exon_start: ", exon_start)
-                    # print("exon_end: ", exon_end)
+                    # print("\tchr: ", chr)
+                    # print("\tstrand: ", strand)
+                    # print("\texon_start: ", exon_start)
+                    # print("\texon_end: ", exon_end)
 
                     print("transcript_id: ", transcript_id)
                     # print("gene_id: ", gene_id)
@@ -78,12 +80,12 @@ def main():
                         starts = starts[1:]
                         ends = ends[:-1]
 
-                        if (prev_chr in chrs.keys()):
-                            for idx in range(len(starts)):
-                                JUNC_COUNTER += 1
-                                # print(chr + "\t" + str(ends[idx]) + "\t" + str(starts[idx]) + "\t" + "JUNC"+str(JUNC_COUNTER) + "\t1\t" + strand + "\n")
-                                # fw.write(chr + "\t" + str(ends[idx]) + "\t" + str(starts[idx]) + "\t" + "JUNC" + "\t1\t" + strand + "\n")
-                                fw.write(chrs[prev_chr] + "\t" + str(ends[idx]) + "\t" + str(starts[idx]) + "\t" + "JUNC" + "\t1\t" + prev_strand + "\n")
+                        # if (prev_chr in chrs.keys()):
+                        for idx in range(len(starts)):
+                            JUNC_COUNTER += 1
+                            # print(chr + "\t" + str(ends[idx]) + "\t" + str(starts[idx]) + "\t" + "JUNC"+str(JUNC_COUNTER) + "\t1\t" + strand + "\n")
+                            # fw.write(chr + "\t" + str(ends[idx]) + "\t" + str(starts[idx]) + "\t" + "JUNC" + "\t1\t" + strand + "\n")
+                            fw.write(prev_chr + "\t" + str(ends[idx]) + "\t" + str(starts[idx]) + "\t" + "JUNC" + "\t1\t" + prev_strand + "\n")
                             
                         starts.clear()
                         ends.clear()

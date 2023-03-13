@@ -45,7 +45,7 @@ chrs = get_hg38_chrom_size()
 # SAMPLE_NUM = 1261186
 SEQ_LENGTH="800"
 QUATER_SEQ_LEN = int(SEQ_LENGTH) // 4
-EACH_JUNC_PER_CHROM = 5000
+EACH_JUNC_PER_CHROM = 10000
 MIN_JUNC = 400
 THRESHOLD = "100"
 hg38_ref = "../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa"
@@ -62,14 +62,11 @@ def task(description, sequence):
     print("description: ", description)
     idx = 0
     while True:
-        # if description == "chr13":
-        #     print("idx: ", idx)
         if idx >= EACH_JUNC_PER_CHROM:
             break
         if idx % 1000 == 0:
             print("\t", idx)
         select_num = random.randint(0, len(sequence)-10000)
-        # print("\tselect_num: ", select_num)
         # Finding the 'GT'
         donor_idx = 0
         acceptor_idx = 0
@@ -90,8 +87,6 @@ def task(description, sequence):
             continue
 
         while not((select_num+donor_idx+acceptor_idx) < len(sequence) and sequence[select_num+donor_idx+acceptor_idx-2] == "A" and sequence[select_num+donor_idx+acceptor_idx-1] == "G" and acceptor_idx > MIN_JUNC):
-            # if description == "chr13":
-            #     print("acceptor_idx: ", acceptor_idx)
             acceptor_idx += 1
             if select_num+donor_idx+acceptor_idx >= chrs[description]:
                 no_acceptor = True
