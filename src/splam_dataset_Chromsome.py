@@ -63,10 +63,15 @@ class myDataset(Dataset):
                 if pidx %10000 == 0:
                     print("pidx: ", pidx)
                     # print(seq_name)
+                if type == "train":
+                    if pidx >= 300000:
+                        break
+                elif type == "test":
+                    if pidx >= 30000:
+                        break
                 # if pidx > CONSTANT_SIZE:
                 #     break
-                # if pidx >= 10000:
-                #     break
+
         print("pidx: ", pidx)
 
         CONSTANT_SIZE = pidx

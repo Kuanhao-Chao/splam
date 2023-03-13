@@ -68,7 +68,7 @@ splits=KFold(n_splits=k,shuffle=True,random_state=42)
 #############################
 # Creating directories
 #############################
-MODEL_VERSION = "SPLAM_v7/"
+MODEL_VERSION = "SPLAM_v8/"
 MODEL_OUTPUT_BASE = "./MODEL/"+MODEL_VERSION
 LOG_OUTPUT_BASE = MODEL_OUTPUT_BASE + "LOG/"
 LOG_OUTPUT_TRAIN_BASE = MODEL_OUTPUT_BASE + "LOG/TRAIN/"
