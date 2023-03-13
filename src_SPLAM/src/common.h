@@ -91,6 +91,7 @@ extern FILE* joutf_above;
 extern FILE* joutf_below;
 
 // clean parameters
+extern bool g_paired_removal;
 // extern robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
 // extern robin_hood::unordered_set<std::string>* rm_rd_set;
 

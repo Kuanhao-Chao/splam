@@ -42,7 +42,6 @@ def get_hg38_chrom_size():
 
 chrs = get_hg38_chrom_size()
 
-# SAMPLE_NUM = 1261186
 SEQ_LENGTH="800"
 QUATER_SEQ_LEN = int(SEQ_LENGTH) // 4
 EACH_JUNC_PER_CHROM = 10000

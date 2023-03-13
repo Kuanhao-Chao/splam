@@ -14,13 +14,6 @@ def chr_name_convert():
 
 
 def main():
-
-    # chrs = chr_name_convert()    
-    
-    # mapping_f = open("../../Dataset/mapping.json")
-    # mapping = json.load(mapping_f)
-    # mapping_f.close()
-    # print(mapping)
     JUNC_COUNTER = 0
     os.makedirs("./REF_junctions/", exist_ok=True)
     fw = open("./REF_junctions/ref_d_a.bed", 'w')
@@ -46,12 +39,7 @@ def main():
 
                 match = re.search(r"transcript_id=\w+", line[8])
                 if match is not None:
-                    # print(match.group()[14:])
                     transcript_id = match.group()[14:]
-                # transcript_id = features[0][15:-1]
-                # print("transcript_id: ", transcript_id)
-                # gene_id = features[1][10:-1]
-                # gene_name = features[2][12:-1]
                     chr = line[0]
                     strand = line[6]
                     exon_start = int(line[3])

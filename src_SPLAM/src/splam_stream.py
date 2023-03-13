@@ -87,29 +87,30 @@ class SpliceNN(Module):
         output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
         return output
 
-
-
-
-
-
+def get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP):
+    return D_YL[:, 200], D_YP[:, 200], A_YL[:, 600], A_YP[:, 600]
            
-def one_hot_encode_classifier(Xd):
-    return IN_MAP[Xd.astype('int8')]
-
+def one_hot_encode(Xd, Yd):
+    return IN_MAP[Xd.astype('int8')], [OUT_MAP[Yd[t].astype('int8')] for t in range(1)]
       
 def create_datapoints(seq, strand):
+    # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
     seq = seq.upper().replace('A', '1').replace('C', '2')
-    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0').replace('K', '0').replace('R', '0').replace('Y', '0').replace('M', '0')
+    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0').replace('K', '0').replace('R', '0')
     jn_start = JUNC_START
     jn_end = JUNC_END
 
+    #######################################
+    # predicting pb for every bp
+    #######################################
     X0 = np.asarray(list(map(int, list(seq))))
-    Y0 = 0
+    Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
     if strand == '+':
-        Y0 = 1
-    X = one_hot_encode_classifier(X0)
-    return X, Y0
-
+        for t in range(1):        
+            Y0[t][jn_start] = 2
+            Y0[t][jn_end] = 1
+    X, Y = one_hot_encode(X0, Y0)
+    return X, Y
 
 def get_cosine_schedule_with_warmup(
       optimizer: Optimizer,
@@ -140,23 +141,15 @@ def get_accuracy(y_prob, y_true):
 
 def model_fn(DNAs, labels, model, criterion):
     outs = model(DNAs)
-    outs = torch.flatten(outs)
-    loss, accuracy = categorical_crossentropy_2d(labels, outs, criterion)
-    return loss, accuracy, outs
-
-
-def weighted_binary_cross_entropy(output, target, weights=None):    
-    if weights is not None:
-        assert len(weights) == 2
-        loss = weights[1] * (target * torch.log(output+1e-10)) + weights[0] * ((1 - target) * torch.log(1 - output+1e-10))
-    else:
-        loss = target * torch.log(output+1e-10) + (1 - target) * torch.log(1 - output+1e-10)
-    return torch.neg(torch.mean(loss))
-
+    loss = categorical_crossentropy_2d(labels, outs, criterion)
+    return loss, outs
 
 def categorical_crossentropy_2d(y_true, y_pred, criterion):
-    weights = torch.FloatTensor([1.0, 1.0]) 
-    return weighted_binary_cross_entropy(y_pred, y_true, weights), get_accuracy(y_pred, y_true)
+    SEQ_WEIGHT = 5
+    gamma = 2
+    return - torch.mean(y_true[:, 0, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 0, :]), gamma ), torch.log(y_pred[:, 0, :]+1e-10) )
+                        + SEQ_WEIGHT * y_true[:, 1, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 1, :]), gamma ), torch.log(y_pred[:, 1, :]+1e-10) )
+                        + SEQ_WEIGHT * y_true[:, 2, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 2, :]), gamma ), torch.log(y_pred[:, 2, :]+1e-10) ))
 
 
 def split_seq_name(seq):
@@ -182,9 +175,11 @@ class myDataset(Dataset):
                         continue
                     X, Y = create_datapoints(seq, '+')
                     X = torch.Tensor(np.array(X))
+                    Y = torch.Tensor(np.array(Y)[0])
                     if X.size()[0] != 800:
-                        print('The length of input variable is not 800 (', seq_name, ')')
+                        print('seq_name: ', seq_name)
                         print(X.size())
+                        print(Y.size())
                     self.data.append([X, Y, seq_name])
                 pidx += 1
                 if pidx %10000 == 0:
@@ -229,10 +224,8 @@ def test_model():
     N_WORKERS = None
     device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
     print(f'[Info] Loading model ...',flush = True)
-    # model = torch.load(MODEL_PATH)
     model = torch.jit.load(MODEL_PATH)
     model = model.to('mps')
-
 
     print(f'[Info] Done loading model',flush = True)
     print(f'[Info] Loading data ...',flush = True)
@@ -240,32 +233,40 @@ def test_model():
     print(f'[Info] Done loading data ...',flush = True)
 
     criterion = torch.nn.BCELoss()
-
     fw_junc_scores = open(OUT_SCORE, 'w')
+
     model.eval()
     junc_counter = 0    
     pbar = Bar('[Info] SPLAM! ', max=len(test_loader))
     with torch.no_grad():
         for batch_idx, data in enumerate(test_loader):
+            # print('batch_idx: ', batch_idx)
+            # DNAs:  torch.Size([40, 800, 4])
+            # labels:  torch.Size([40, 1, 800, 3])
             DNAs, labels, seqname = data 
             DNAs = DNAs.to(torch.float32).to(device)
             labels = labels.to(torch.float32).to(device)
+
             DNAs = torch.permute(DNAs, (0, 2, 1))
-            loss, accuracy, yps = model_fn(DNAs, labels, model, criterion)
-            labels = labels.to('cpu').detach().numpy()
-            yps = yps.to('cpu').detach().numpy()
-            pbar.next()            
-            for idx in range(len(yps)):
-                junction_score = yps[idx]
-                junction_label = labels[idx]
+            labels = torch.permute(labels, (0, 2, 1))
+            loss, yp = model_fn(DNAs, labels, model, criterion)
+            is_expr = (labels.sum(axis=(1,2)) >= 1)
+            A_YL = labels[is_expr, 1, :].to('cpu').detach().numpy()
+            A_YP = yp[is_expr, 1, :].to('cpu').detach().numpy()
+            D_YL = labels[is_expr, 2, :].to('cpu').detach().numpy()
+            D_YP = yp[is_expr, 2, :].to('cpu').detach().numpy()
+
+            donor_labels, donor_scores, acceptor_labels, acceptor_scores = get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP)
+            for idx in range(len(yp)):
                 chr, start, end, strand, aln_num = seqname[idx].split(';')
                 if strand == '+':
-                    fw_junc_scores.write(chr+ '\t'+ start + '\t' + end + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(junction_score) + '\t' + str(junction_label) + '\\n')
+                    fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\\n')
                 elif strand == '-':
-                    fw_junc_scores.write(chr+ '\t'+ end + '\t' + start + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(junction_score) + '\t' + str(junction_label) + '\\n')
+                    fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\\n')
                 junc_counter += 1
 
     pbar.finish()
     fw_junc_scores.close()
+
 if __name__ == '__main__':
     test_model()
