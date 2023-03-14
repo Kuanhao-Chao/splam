@@ -36,8 +36,6 @@ def parse_junction(name):
     return (chr_name, start, end, strand)
 
 
-
-
 def main():
     #############################
     # Global variable definition

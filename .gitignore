@@ -26,7 +26,6 @@ src_SPLAM/SPLAM/include/htslib/
 src_intron_matcher/build/include/htslib
 src/Experiment_SpliceAI/INPUTS/
 src/Experiment_SpliceAI/models/
-src_tools_evaluation/
 __pycache__/
 src_SPLAM/SPLAM/test/
 src_SPLAM/SPLAM/test_chr9/
@@ -47,3 +46,7 @@ src_SPLAM/build/all_test/
 src_SPLAM/build/clean_test/
 src/5_GET_BAM_NEG_JUNCS/BAM_junctions/
 src/6_GET_BAM_NEG_OPP_STRAND_JUNCS/BAM_junctions/
+*.pkl
+*.pt
+*.bed
+*.fa
