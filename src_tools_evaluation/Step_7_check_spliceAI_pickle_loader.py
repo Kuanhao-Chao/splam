@@ -34,8 +34,8 @@ def main():
 
     SUBSET = 10000
 
-    # for TYPE in ["N", "noN"]:
-    for TYPE in ["noN"]:
+    for TYPE in ["N", "noN"]:
+    # for TYPE in ["noN"]:
         ###################################
         # Checking spliceai pkl file (pos)
         ###################################

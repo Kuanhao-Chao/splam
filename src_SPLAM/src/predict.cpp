@@ -38,13 +38,11 @@ GStr splamPredict() {
     robin_hdd_rm_hit doner_dimers;
     robin_hdd_rm_hit acceptor_dimers;
     GStr outfname_junc_fa = splamCreateFasta(infname_juncbed, doner_dimers, acceptor_dimers, ref_faidx);
-
-
+    
     // std::cout << ">> Donor dimers: " << std::endl;
     // for (auto i : doner_dimers) {
     //     std::cout << "\t" << i.first << ": " << i.second << std::endl;
     // }
-
     // std::cout << ">> Acceptor dimers: " << std::endl;
     // for (auto i : acceptor_dimers) {
     //     std::cout << "\t" << i.first << ": " << i.second << std::endl;
