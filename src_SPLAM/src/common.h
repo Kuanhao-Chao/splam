@@ -82,7 +82,6 @@ extern int ALN_COUNT_GOOD_CAL;
 extern int STEP_COUNTER;
 
 // j-extract parameters.
-extern int g_j_extract_threshold;
 extern int g_max_splice;
 extern int g_bundle_gap;
 extern GSamWriter* outfile_above_spliced;

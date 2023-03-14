@@ -367,55 +367,86 @@ def main():
         print("spliceai_noN_a_pred_prob : ", len(spliceai_noN_a_pred_prob))
         print("spliceai_noN_a_label_prob: ", len(spliceai_noN_a_label_prob))
 
-    with open("./splam_result/splam.shuffle.pkl",'rb') as f:
-        splam_j_shuffle_pred_prob_min = pickle.load(f)
-        splam_j_shuffle_label_prob_min = pickle.load(f)
-        
-        splam_j_shuffle_pred_prob_avg = pickle.load(f)
-        splam_j_shuffle_label_prob_avg = pickle.load(f)
 
-        print("splam_j_shuffle_pred_prob_min : ", splam_j_shuffle_pred_prob_min)
-        print("splam_j_shuffle_label_prob_min: ", splam_j_shuffle_label_prob_min)
 
-        print("splam_j_shuffle_pred_prob_min : ", len(splam_j_shuffle_pred_prob_min))
-        print("splam_j_shuffle_label_prob_min: ", len(splam_j_shuffle_label_prob_min))
 
-    with open("./splam_result/splam.noshuffle.pkl",'rb') as f:
-        splam_j_noshuffle_pred_prob_min = pickle.load(f)
-        splam_j_noshuffle_label_prob_min = pickle.load(f)
+    with open("./splam_result/splam.da.noshuffle.pkl",'rb') as f:
+        splam_noS_d_label_prob = pickle.load(f)
+        splam_noS_d_pred_prob = pickle.load(f)
+        splam_noS_a_label_prob = pickle.load(f)
+        splam_noS_a_pred_prob = pickle.load(f)
+        splam_noS_junc_name = pickle.load(f)
 
-        splam_j_noshuffle_pred_prob_avg = pickle.load(f)
-        splam_j_noshuffle_label_prob_avg = pickle.load(f)
+        print("splam_noS_d_label_prob : ", splam_noS_d_label_prob)
+        print("splam_noS_d_pred_prob: ", splam_noS_d_pred_prob)
+        print("splam_noS_a_label_prob : ", splam_noS_a_label_prob)
+        print("splam_noS_a_pred_prob: ", splam_noS_a_pred_prob)
+        print("splam_noS_junc_name  : ", splam_noS_junc_name)
+    
+    splam_noS_d_label_prob = np.array(splam_noS_d_label_prob)
+    splam_noS_d_pred_prob = np.array(splam_noS_d_pred_prob)
+    splam_noS_a_label_prob = np.array(splam_noS_a_label_prob)
+    splam_noS_a_pred_prob = np.array(splam_noS_a_pred_prob)
+    splam_noS_junc_name = np.array(splam_noS_junc_name)
 
-        print("splam_j_noshuffle_pred_prob_min : ", splam_j_noshuffle_pred_prob_min)
-        print("splam_j_noshuffle_label_prob_min: ", splam_j_noshuffle_label_prob_min)
+    with open("./splam_result/splam.da.shuffle.pkl",'rb') as f:
+        splam_S_d_label_prob = pickle.load(f)
+        splam_S_d_pred_prob = pickle.load(f)
+        splam_S_a_label_prob = pickle.load(f)
+        splam_S_a_pred_prob = pickle.load(f)
+        splam_S_junc_name = pickle.load(f)
 
-        print("splam_j_noshuffle_pred_prob_min : ", len(splam_j_noshuffle_pred_prob_min))
-        print("splam_j_noshuffle_label_prob_min: ", len(splam_j_noshuffle_label_prob_min))
+        print("splam_S_d_label_prob : ", splam_S_d_label_prob)
+        print("splam_S_d_pred_prob: ", splam_S_d_pred_prob)
+        print("splam_S_a_label_prob : ", splam_S_a_label_prob)
+        print("splam_S_a_pred_prob: ", splam_S_a_pred_prob)
+        print("splam_S_junc_name  : ", splam_S_junc_name)
 
-    # with open("./spliceai_result/splam.nobatch.0.100.pkl",'rb') as f:
-    #     splam_j_nobatch_pred_prob = pickle.load(f)
-    #     splam_j_nobatch_label_prob = pickle.load(f)
-    #     print("splam_j_nobatch_pred_prob : ", splam_j_nobatch_pred_prob)
-    #     print("splam_j_nobatch_label_prob: ", splam_j_nobatch_label_prob)
-    #     print("splam_j_nobatch_pred_prob : ", len(splam_j_nobatch_pred_prob))
-    #     print("splam_j_nobatch_label_prob: ", len(splam_j_nobatch_label_prob))
+    splam_S_d_label_prob = np.array(splam_S_d_label_prob)
+    splam_S_d_pred_prob = np.array(splam_S_d_pred_prob)
+    splam_S_a_label_prob = np.array(splam_S_a_label_prob)
+    splam_S_a_pred_prob = np.array(splam_S_a_pred_prob)
+    splam_S_junc_name = np.array(splam_S_junc_name)
 
-    splam_j_shuffle_label_prob_min = np.array(splam_j_shuffle_label_prob_min)
-    splam_j_shuffle_pred_prob_min = np.array(splam_j_shuffle_pred_prob_min)
-    splam_j_noshuffle_label_prob_min = np.array(splam_j_noshuffle_label_prob_min)
-    splam_j_noshuffle_pred_prob_min = np.array(splam_j_noshuffle_pred_prob_min)
 
-    splam_j_shuffle_label_prob_avg = np.array(splam_j_shuffle_label_prob_avg)
-    splam_j_shuffle_pred_prob_avg = np.array(splam_j_shuffle_pred_prob_avg)
-    splam_j_noshuffle_label_prob_avg = np.array(splam_j_noshuffle_label_prob_avg)
-    splam_j_noshuffle_pred_prob_avg = np.array(splam_j_noshuffle_pred_prob_avg)
+
+
+
+    # with open("./splam_result/splam.shuffle.pkl",'rb') as f:
+    #     splam_j_shuffle_pred_prob_min = pickle.load(f)
+    #     splam_j_shuffle_label_prob_min = pickle.load(f)
+    #     splam_j_shuffle_pred_prob_avg = pickle.load(f)
+    #     splam_j_shuffle_label_prob_avg = pickle.load(f)
+    #     print("splam_j_shuffle_pred_prob_min : ", splam_j_shuffle_pred_prob_min)
+    #     print("splam_j_shuffle_label_prob_min: ", splam_j_shuffle_label_prob_min)
+    #     print("splam_j_shuffle_pred_prob_min : ", len(splam_j_shuffle_pred_prob_min))
+    #     print("splam_j_shuffle_label_prob_min: ", len(splam_j_shuffle_label_prob_min))
+
+    # with open("./splam_result/splam.noshuffle.pkl",'rb') as f:
+    #     splam_j_noshuffle_pred_prob_min = pickle.load(f)
+    #     splam_j_noshuffle_label_prob_min = pickle.load(f)
+    #     splam_j_noshuffle_pred_prob_avg = pickle.load(f)
+    #     splam_j_noshuffle_label_prob_avg = pickle.load(f)
+    #     print("splam_j_noshuffle_pred_prob_min : ", splam_j_noshuffle_pred_prob_min)
+    #     print("splam_j_noshuffle_label_prob_min: ", splam_j_noshuffle_label_prob_min)
+    #     print("splam_j_noshuffle_pred_prob_min : ", len(splam_j_noshuffle_pred_prob_min))
+    #     print("splam_j_noshuffle_label_prob_min: ", len(splam_j_noshuffle_label_prob_min))
+
+    # splam_j_shuffle_label_prob_min = np.array(splam_j_shuffle_label_prob_min)
+    # splam_j_shuffle_pred_prob_min = np.array(splam_j_shuffle_pred_prob_min)
+    # splam_j_noshuffle_label_prob_min = np.array(splam_j_noshuffle_label_prob_min)
+    # splam_j_noshuffle_pred_prob_min = np.array(splam_j_noshuffle_pred_prob_min)
+
+    # splam_j_shuffle_label_prob_avg = np.array(splam_j_shuffle_label_prob_avg)
+    # splam_j_shuffle_pred_prob_avg = np.array(splam_j_shuffle_pred_prob_avg)
+    # splam_j_noshuffle_label_prob_avg = np.array(splam_j_noshuffle_label_prob_avg)
+    # splam_j_noshuffle_pred_prob_avg = np.array(splam_j_noshuffle_pred_prob_avg)
 
     # splam_j_nobatch_label_prob = np.array(splam_j_nobatch_label_prob)
     # splam_j_nobatch_pred_prob = np.array(splam_j_nobatch_pred_prob)
 
-    print("splam_j_noshuffle_label_prob_min: ", splam_j_noshuffle_label_prob_min)
-    print("splam_j_noshuffle_pred_prob_min: ", splam_j_noshuffle_pred_prob_min)
+    # print("splam_j_noshuffle_label_prob_min: ", splam_j_noshuffle_label_prob_min)
+    # print("splam_j_noshuffle_pred_prob_min: ", splam_j_noshuffle_pred_prob_min)
     
 
     
@@ -424,11 +455,15 @@ def main():
     ###################################
     plot_thresholds(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "splcieai")
     plot_thresholds(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "splcieai_N")
-    plot_thresholds_J(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_shuffle")
-    plot_thresholds_J(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_noshuffle")
 
-    plot_thresholds_J(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_shuffle_avg")
-    plot_thresholds_J(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_noshuffle_avg")
+    plot_thresholds(splam_noS_a_label_prob, splam_noS_a_pred_prob, splam_noS_d_pred_prob, "splam_noshuffle")
+    plot_thresholds(splam_S_a_label_prob, splam_S_a_pred_prob, splam_S_d_pred_prob, "splam_shuffle")
+
+    # plot_thresholds_J(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_shuffle")
+    # plot_thresholds_J(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_noshuffle")
+
+    # plot_thresholds_J(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_shuffle_avg")
+    # plot_thresholds_J(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_noshuffle_avg")
     # plot_thresholds_J(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_nobatch")
 
     
@@ -441,8 +476,11 @@ def main():
     plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "min")
     # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
 
-    plot_pr_curve(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_junc_shuffle", "sklean")
-    plot_pr_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_junc_noshuffle", "sklean")
+    plot_pr_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "min")
+    plot_pr_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "min")
+
+    # plot_pr_curve(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_junc_shuffle", "sklean")
+    # plot_pr_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_junc_noshuffle", "sklean")
     # plot_pr_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "sklean")
     plt.savefig("./IMG/junction/junc_pr_min.png")
     plt.close()
@@ -456,8 +494,11 @@ def main():
     plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "avg")
     # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
 
-    plot_pr_curve(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_junc_shuffle", "sklean")
-    plot_pr_curve(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_junc_noshuffle", "sklean")
+    plot_pr_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "avg")
+    plot_pr_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "avg")
+
+    # plot_pr_curve(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_junc_shuffle", "sklean")
+    # plot_pr_curve(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_junc_noshuffle", "sklean")
     # plot_pr_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "sklean")
     plt.savefig("./IMG/junction/junc_pr_avg.png")
     plt.close()
@@ -473,8 +514,11 @@ def main():
     plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "min")
     # plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
 
-    plot_roc_curve(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_junc_shuffle", "self")
-    plot_roc_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_junc_noshuffle", "self")
+    plot_roc_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "min")
+    plot_roc_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "min")
+
+    # plot_roc_curve(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_junc_shuffle", "self")
+    # plot_roc_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_junc_noshuffle", "self")
     # plot_roc_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "self")
     plt.savefig("./IMG/junction/junc_roc_min.png")
     plt.close()
@@ -491,8 +535,11 @@ def main():
     plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "avg")
     # plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
 
-    plot_roc_curve(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_junc_shuffle", "self")
-    plot_roc_curve(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_junc_noshuffle", "self")
+    plot_roc_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "avg")
+    plot_roc_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "avg")
+
+    # plot_roc_curve(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_junc_shuffle", "self")
+    # plot_roc_curve(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_junc_noshuffle", "self")
     # plot_roc_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "self")
     plt.savefig("./IMG/junction/junc_roc_avg.png")
     plt.close()

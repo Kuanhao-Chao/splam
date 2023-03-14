@@ -33,7 +33,6 @@ void processOptionsClean(GArgs& args);
 void processOptionsAll(GArgs& args);
 void processOptionsNHUpdate(GArgs& args);
 
-void optionsJExtractThreshold(GArgs& args);
 void optionsMaxSplice(GArgs& args);
 void optionsBundleGap(GArgs& args);
 void optionsModel(GArgs& args);
@@ -118,7 +117,6 @@ robin_hood::unordered_map<std::string, int>  CHRS;
 int STEP_COUNTER = 0;
 
 // j-extract parameters:
-int g_j_extract_threshold = 0;
 int g_max_splice = 20000;
 int g_bundle_gap = 50;
 GSamWriter* outfile_above_spliced = NULL;
@@ -161,14 +159,13 @@ int main(int argc, char* argv[]) {
     GStr tmp_dir(out_dir + "/TMP");
     GStr discard_dir(out_dir + "/discard");
     std::filesystem::create_directories(out_dir.chars());
-    std::filesystem::create_directories(tmp_dir.chars());
-    std::filesystem::create_directories(discard_dir.chars());
-
     create_CHRS();
     
     // Start reading the files
     int num_samples=in_records.start();
     if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+        std::filesystem::create_directories(tmp_dir.chars());
+        std::filesystem::create_directories(discard_dir.chars());
         // The only two modes that need to write out files.
         outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
         outfile_ns_multi_map = new GSamWriter(outfname_ns_multi_map, in_records.header(), GSamFile_BAM);
@@ -183,14 +180,12 @@ int main(int argc, char* argv[]) {
 
     if (COMMAND_MODE == J_EXTRACT) {
         infname_juncbed = splamJExtract();
-        GMessage("\n\n[INFO] Total number of junctions\t:%d\n", JUNC_COUNT);
-
+        GMessage("\n[INFO] Total number of junctions\t:%d\n", JUNC_COUNT);
     } else if (COMMAND_MODE == PREDICT) {
         infname_scorebed = splamPredict();
     // } else if (COMMAND_MODE == CLEAN) {
     //     infname_NH_tag = splamClean();
     //     splamNHUpdate();
-        
     //     GMessage("\n\n[INFO] Total number of alignments\t:%d\n", ALN_COUNT);
     //     GMessage("[INFO]     spliced alignments\t\t:%d\n", ALN_COUNT_SPLICED);
     //     GMessage("[INFO]     non-spliced alignments\t:%d\n", ALN_COUNT_NSPLICED);
@@ -204,37 +199,39 @@ int main(int argc, char* argv[]) {
         splamNHUpdate();
     }
 
-    ALN_COUNT_SPLICED = ALN_COUNT_SPLICED_UNIQ + ALN_COUNT_SPLICED_MULTI;
-    ALN_COUNT_NSPLICED = ALN_COUNT_NSPLICED_UNIQ + ALN_COUNT_NSPLICED_MULTI;
+    if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+        ALN_COUNT_SPLICED = ALN_COUNT_SPLICED_UNIQ + ALN_COUNT_SPLICED_MULTI;
+        ALN_COUNT_NSPLICED = ALN_COUNT_NSPLICED_UNIQ + ALN_COUNT_NSPLICED_MULTI;
 
-    ALN_COUNT_BAD = ALN_COUNT_UNPAIRED + ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_NSPLICED_UNIQ_DISCARD + ALN_COUNT_NSPLICED_MULTI_DISCARD;
-    ALN_COUNT_GOOD_CAL = ALN_COUNT - ALN_COUNT_BAD;
+        ALN_COUNT_BAD = ALN_COUNT_UNPAIRED + ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_NSPLICED_UNIQ_DISCARD + ALN_COUNT_NSPLICED_MULTI_DISCARD;
+        ALN_COUNT_GOOD_CAL = ALN_COUNT - ALN_COUNT_BAD;
 
-    JUNC_COUNT_BAD = JUNC_COUNT - JUNC_COUNT_GOOD;
+        JUNC_COUNT_BAD = JUNC_COUNT - JUNC_COUNT_GOOD;
 
-    GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
-    GMessage("               - paired alignments\t:%10d \n", ALN_COUNT - ALN_COUNT_UNPAIRED);
-    GMessage("               - unpaired alignments\t:%10d \n", ALN_COUNT_UNPAIRED);
+        GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
+        GMessage("               - paired alignments\t:%10d \n", ALN_COUNT - ALN_COUNT_UNPAIRED);
+        GMessage("               - unpaired alignments\t:%10d \n", ALN_COUNT_UNPAIRED);
 
 
-    GMessage("           spliced alignments\t\t:%10d \n", ALN_COUNT_SPLICED);
-    GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ-ALN_COUNT_SPLICED_UNIQ_DISCARD, ALN_COUNT_SPLICED_UNIQ_DISCARD);
-    GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
-    
-    GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
-    GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_UNIQ, ALN_COUNT_NSPLICED_UNIQ-ALN_COUNT_NSPLICED_UNIQ_DISCARD, ALN_COUNT_NSPLICED_UNIQ_DISCARD);
-    GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_MULTI, ALN_COUNT_NSPLICED_MULTI-ALN_COUNT_NSPLICED_MULTI_DISCARD, ALN_COUNT_NSPLICED_MULTI_DISCARD);
+        GMessage("           spliced alignments\t\t:%10d \n", ALN_COUNT_SPLICED);
+        GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ-ALN_COUNT_SPLICED_UNIQ_DISCARD, ALN_COUNT_SPLICED_UNIQ_DISCARD);
+        GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
+        
+        GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
+        GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_UNIQ, ALN_COUNT_NSPLICED_UNIQ-ALN_COUNT_NSPLICED_UNIQ_DISCARD, ALN_COUNT_NSPLICED_UNIQ_DISCARD);
+        GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_MULTI, ALN_COUNT_NSPLICED_MULTI-ALN_COUNT_NSPLICED_MULTI_DISCARD, ALN_COUNT_NSPLICED_MULTI_DISCARD);
 
-    GMessage("\n[INFO] Number of junctions\t\t:%10d   (good: %d / bad: %d )\n", JUNC_COUNT, JUNC_COUNT_GOOD, JUNC_COUNT_BAD);
-    GMessage("\n[INFO] Number of removed alignments\t:%10d \n", ALN_COUNT_BAD);
-    GMessage("[INFO] Number of kept alignments\t:%10d \n", ALN_COUNT_GOOD);
+        GMessage("\n[INFO] Number of junctions\t\t:%10d   (good: %d / bad: %d )\n", JUNC_COUNT, JUNC_COUNT_GOOD, JUNC_COUNT_BAD);
+        GMessage("\n[INFO] Number of removed alignments\t:%10d \n", ALN_COUNT_BAD);
+        GMessage("[INFO] Number of kept alignments\t:%10d \n", ALN_COUNT_GOOD);
 
-    if (ALN_COUNT_GOOD_CAL != ALN_COUNT_GOOD) GMessage("Num of cleaned alignments do not agree with each other. Calculated: %d; iter: %d\n", ALN_COUNT_GOOD_CAL, ALN_COUNT_GOOD);
+        if (ALN_COUNT_GOOD_CAL != ALN_COUNT_GOOD) GMessage("Num of cleaned alignments do not agree with each other. Calculated: %d; iter: %d\n", ALN_COUNT_GOOD_CAL, ALN_COUNT_GOOD);
+    }
     return 0;
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;model=;junction=;threshold=;output=;score=;max-splice=;bundle-gap=;hvcVSPo:t:N:Q:m:j:r:s:M:g:");
+    GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;model=;junction=;output=;score=;max-splice=;bundle-gap=;hvcVSPo:N:Q:m:j:r:s:M:g:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -314,7 +311,6 @@ void processOptions(int argc, char* argv[]) {
     GMessage(">> out_dir           : %s\n", out_dir.chars());
     GMessage(">> g_is_single_end   : %d\n", g_is_single_end);
     GMessage(">> g_paired_removal  : %d\n", g_paired_removal);
-    GMessage(">> extract_threshold : %d\n", g_j_extract_threshold);
     GMessage(">> g_max_splice      : %d\n", g_max_splice);
     GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
     GMessage(">> verbose           : %d\n", verbose);
@@ -361,7 +357,6 @@ void processOptions(int argc, char* argv[]) {
 void processOptionsJExtract(GArgs& args) {
     optionsOutput(args);
     optionsMaxSplice(args);
-    optionsJExtractThreshold(args);
     optionsBundleGap(args);
 }
 
@@ -385,23 +380,6 @@ void processOptionsAll(GArgs& args) {
     optionsModel(args);
     optionsRef(args);
     optionsOutput(args);
-}
-
-
-void optionsJExtractThreshold(GArgs& args) {
-    // -t / --threshold
-    GStr s;
-    s = args.getOpt('t');
-    if (s.is_empty()) {
-        s = args.getOpt("threshold");
-        if (s.is_empty()) {
-            g_j_extract_threshold = 0;
-        } else {
-            g_j_extract_threshold = s.asInt();
-        }
-    } else {
-        g_j_extract_threshold = s.asInt();       
-    }
 }
 
 
