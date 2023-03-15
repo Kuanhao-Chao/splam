@@ -4,6 +4,7 @@ import numpy as np
 import os
 from util import *
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve, PrecisionRecallDisplay
+from sklearn import svm
 
 def plot_pr_curve(true_y, y_prob, label, option):
     """
@@ -11,7 +12,7 @@ def plot_pr_curve(true_y, y_prob, label, option):
     """
     # precision, recall, thresholds = precision_recall_curve_self(true_y, y_prob, label, option)
     precision, recall, thresholds = precision_recall_curve(true_y, y_prob)
-    plt.plot(recall, precision)
+    plt.plot(recall, precision, label=label)
     # , label=label, marker='o')
     plt.legend()
     plt.xlabel('Recall')
@@ -473,7 +474,60 @@ def main():
     # plot_thresholds_J(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_noshuffle_avg")
     # plot_thresholds_J(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_nobatch")
 
-    
+
+    ###################################
+    # PR of junction (svm)
+    ###################################
+    spliceai_noN_X = list(zip(spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob))
+    # print(spliceai_noN_X)
+    spliceai_clf = svm.SVC(probability=True, kernel='linear', C=10)
+    spliceai_clf.fit(spliceai_noN_X, spliceai_noN_d_label_prob)
+    spliceai_noN_res = spliceai_clf.predict_proba(spliceai_noN_X)[:,1]   
+
+    support_vectors = spliceai_clf.support_vectors_
+    plt.scatter(spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob)
+    plt.scatter(support_vectors[:,0], support_vectors[:,1], color='red')
+    plt.title('SpliceAI Linearly separable data with support vectors')
+    plt.xlabel('Donor score')
+    plt.ylabel('Acceptor score')
+    plt.savefig("./IMG/junction/junc_pr_svm_spliceai_support_vectors.png")
+    plt.close()
+
+
+
+    splam_noS_X = list(zip(splam_noS_d_pred_prob, splam_noS_a_pred_prob))
+    # print(splam_noS_X)
+    splam_clf = svm.SVC(probability=True,kernel='linear', C=10)
+    splam_clf.fit(splam_noS_X, splam_noS_d_label_prob)
+    splam_noS_res = splam_clf.predict_proba(splam_noS_X)[:,1]   
+
+    support_vectors = splam_clf.support_vectors_
+    plt.scatter(splam_noS_d_pred_prob, splam_noS_a_pred_prob)
+    plt.scatter(support_vectors[:,0], support_vectors[:,1], color='red')
+    plt.title('SPLAM Linearly separable data with support vectors')
+    plt.xlabel('Donor score')
+    plt.ylabel('Acceptor score')
+    plt.savefig("./IMG/junction/junc_pr_svm_splam_support_vectors.png")
+    plt.close()
+
+
+    plot_pr_curve(spliceai_noN_d_label_prob, spliceai_noN_res, "spliceai_junc_sklearn_SVM", "sklearn")
+
+    plot_pr_curve(splam_noS_d_label_prob, splam_noS_res, "splam_junc_sklearn_SVM", "sklearn")
+
+    # plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_self", "self")
+
+    # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "min")
+    # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
+    # plot_pr_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "min")
+
+    # plot_pr_curve(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_junc_shuffle", "sklean")
+    # plot_pr_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_junc_noshuffle", "sklean")
+    # plot_pr_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "sklean")
+    plt.savefig("./IMG/junction/junc_pr_svm.png")
+    plt.close()
+
+
     ###################################
     # PR of junction (min)
     ###################################
@@ -492,9 +546,9 @@ def main():
     plt.savefig("./IMG/junction/junc_pr_min.png")
     plt.close()
 
-    ###################################
-    # PR of junction (avg)
-    ###################################
+    # ###################################
+    # # PR of junction (avg)
+    # ###################################
     plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "avg")
     # plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_self", "self")
 
@@ -512,46 +566,41 @@ def main():
     
 
 
+
+
+
+
+
     ###################################
-    # ROC of junction
+    # ROC of junction (svm)
+    ###################################
+    plot_roc_curve(spliceai_noN_d_label_prob, spliceai_noN_res, "spliceai_junc_sklearn_SVM", "sklearn")
+
+    plot_roc_curve(splam_noS_d_label_prob, splam_noS_res, "splam_junc_sklearn_SVM", "sklearn")
+
+    plt.savefig("./IMG/junction/junc_roc_svm.png")
+    plt.close()
+
+
+    ###################################
+    # ROC of junction (min)
     ###################################
     plot_roc_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "min")
-    # plot_roc_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_self", "self")
-
-    # plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "min")
-    # plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
 
     plot_roc_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "min")
-    # plot_roc_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "min")
 
-    # plot_roc_curve(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_junc_shuffle", "self")
-    # plot_roc_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_junc_noshuffle", "self")
-    # plot_roc_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "self")
     plt.savefig("./IMG/junction/junc_roc_min.png")
     plt.close()
-    # print("spliceai_noN_d_label_prob: ", spliceai_noN_d_label_prob)
-    # print("spliceai_noN_d_pred_prob: ", spliceai_noN_d_pred_prob)
-
 
     ################################### 
-    # ROC of junction
+    # ROC of junction (avg)
     ###################################
     plot_roc_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "avg")
-    # plot_roc_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_self", "self")
-
-    # plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "avg")
-    # plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
 
     plot_roc_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "avg")
-    # plot_roc_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "avg")
 
-    # plot_roc_curve(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_junc_shuffle", "self")
-    # plot_roc_curve(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_junc_noshuffle", "self")
-    # plot_roc_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "self")
     plt.savefig("./IMG/junction/junc_roc_avg.png")
     plt.close()
-    # print("spliceai_noN_d_label_prob: ", spliceai_noN_d_label_prob)
-    # print("spliceai_noN_d_pred_prob: ", spliceai_noN_d_pred_prob)
 
 
     # ###################################

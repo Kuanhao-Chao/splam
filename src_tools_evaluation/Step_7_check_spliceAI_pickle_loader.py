@@ -38,7 +38,7 @@ def main():
     splam_j_label_prob = []
 
 
-    SUBSET = 2200
+    SUBSET = 10000
 
     # for TYPE in ["N", "noN"]:
     for TYPE in ["noN"]:
