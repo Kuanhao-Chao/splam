@@ -202,6 +202,7 @@ GStr splamJExtract() {
         }
         // GMessage("\t\tBefore Hash map size: %d\n", read_hashmap.size());
         while ((irec=in_records.next())!=NULL) {
+            ALN_COUNT += 1;
             brec=irec->brec;
             int endpos=brec->end;
             if (brec->refId()!=prev_tid || (int)brec->start>b_end) {
@@ -225,13 +226,15 @@ GStr splamJExtract() {
 
                 if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
                     int new_nh = brec->tag_int("NH", 0);
-                    if (new_nh == 1) {
+                    if (new_nh <= 1) {
                         outfile_s_uniq_map->write(brec);
+                        ALN_COUNT_SPLICED_UNIQ += 1;
                     } else if (new_nh > 1) {
                         outfile_s_multi_map->write(brec);
-                    } else {
-                        GMessage("\t\t brec->name(): %s !!!\n", brec->name());
-                        GMessage("\t\t NH tag is zero !!!: %d\n", new_nh);
+                        ALN_COUNT_SPLICED_MULTI += 1;
+                    // } else {
+                    //     GMessage("\t\t brec->name(): %s !!!\n", brec->name());
+                    //     GMessage("\t\t NH tag is zero !!!: %d\n", new_nh);
                     }
                 }
             } else {
@@ -240,16 +243,17 @@ GStr splamJExtract() {
                 // if (brec->isUnmapped()) continue;
                 if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
                     int new_nh = brec->tag_int("NH", 0);
-                    if (new_nh == 1) {
+                    if (new_nh <= 1) {
                         outfile_cleaned->write(brec);
-                    } else if (new_nh > 0){
+                        ALN_COUNT_NSPLICED_UNIQ += 1;
+                    } else if (new_nh > 1){
                         outfile_ns_multi_map->write(brec);
-                    } else {
-                        // outfile_multimapped->write(brec);
-                        // ALN_COUNT_NH_UPDATE++;
-                        GMessage("\t\t brec->name(): %s !!!\n", brec->name());
-                        GMessage("\t\t NH tag is zero !!!: %d\n", new_nh);
+                        ALN_COUNT_NSPLICED_MULTI += 1;
+                    // } else {
+                    //     GMessage("\t\t brec->name(): %s !!!\n", brec->name());
+                    //     GMessage("\t\t NH tag is zero !!!: %d\n", new_nh);
                     }
+                    ALN_COUNT_GOOD += 1;
                 }
             }
             // if (ALN_COUNT % 1000000 == 0) {

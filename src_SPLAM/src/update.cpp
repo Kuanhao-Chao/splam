@@ -88,13 +88,12 @@ GStr splamNHUpdate() {
             // GMessage("kv: %s\n", kv.c_str());
             if (rm_hit.find(kv) != rm_hit.end()) {
                 // GMessage("rm_hit[kv]: %d\n", rm_hit[kv]);
-                // GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
+                GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
                 int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
                 brec->add_int_tag("NH", new_nh);
-                // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
+                GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
             outfile_cleaned->write(brec);   
-            ALN_COUNT_GOOD++;
         }
         GMessage("\n");
 
@@ -113,12 +112,11 @@ GStr splamNHUpdate() {
             if (rm_hit.find(kv) != rm_hit.end()) {
                 int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
 
-                // GMessage("Before update NH tag: %d\n", new_nh);
+                GMessage("Before update NH tag: %d\n", new_nh);
                 brec->add_int_tag("NH", new_nh);
-                // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
+                GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
             outfile_cleaned->write(brec); 
-            ALN_COUNT_GOOD++;  
         }
         GMessage("\n");
         delete outfile_cleaned;

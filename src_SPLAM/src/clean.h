@@ -17,6 +17,7 @@ void processBundle(BundleData* bundle, GList<CReadAln>& readlist, robin_hdd_stri
 void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, BundleData& bdata, GHash<int>& hashread, CReadAln* alndata);
 void noMoreBundles();
 void removeAlignment(GSamWriter* outfile_target, GSamRecord* brec, robin_hdd_rm_hit& rm_hit, bool add_hit);
+void removeAlignment_se(GSamWriter* outfile_target, GSamRecord* brec, robin_hdd_rm_hit& rm_hit);
 void keepAlignment(GSamWriter* outfile_target, GSamRecord* brec);
 GStr writenhHitFile(robin_hdd_rm_hit& rm_hit);
 bool alignmentAssessment(GSamRecord* brec, robin_hdd_string &rm_juncs);
