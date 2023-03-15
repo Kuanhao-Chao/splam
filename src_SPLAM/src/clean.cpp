@@ -349,7 +349,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             /*********************************************
              * Cleaning up alignments by individuals.
             *********************************************/
-            // Processonmg uniquely mapped reads
+            // Processing uniquely mapped reads
             GSamReader reader_s_uniq_map(outfname_s_uniq_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
             progressbar bar_uniq(ALN_COUNT_SPLICED_UNIQ);
             bar_uniq.set_opening_bracket_char("[INFO] SPLAM! Filtering unique spliced alignments \n\t[");
@@ -369,7 +369,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             reader_s_uniq_map.bclose();
             if (verbose) GMessage("\n");
 
-            // Processonmg multi-mapped reads
+            // Processing multi-mapped reads
             GSamReader reader_s_multi_map(outfname_s_multi_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
             progressbar bar_multi(ALN_COUNT_SPLICED_MULTI);
             bar_multi.set_opening_bracket_char("[INFO] SPLAM! Filtering multi-mapped spliced alignments \n\t[");
