@@ -49,7 +49,7 @@ def plot_min_linear_plot(label_d, score_d, label_a, score_a, filename):
     fig.savefig(filename)
     
 
-threshold = 0.1
+threshold = 0.01
 
 def main():
     #####################################
