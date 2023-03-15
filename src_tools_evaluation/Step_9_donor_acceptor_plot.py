@@ -16,8 +16,9 @@ def plot_scatter_plot(label_d, score_d, label_a, score_a, filename):
     ax.set_xlabel("Donor score")
     ax.set_ylabel("Acceptor score")
 
+
     junc_legend = ax.scatter(score_d[junc_prob], score_a[junc_prob], s = 1)
-    non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 1)
+    non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 1)    
     ax.legend([junc_legend, non_junc_legend], ['Junction', 'Non Junction'])
 
     fig.savefig(filename)
@@ -159,7 +160,7 @@ def main():
     #     print("splam_S_a_pred_prob: ", splam_S_a_pred_prob)
 
     
-    with open("./splam_result/splam.da.noshuffle.pkl",'rb') as f:
+    with open("./splam_result/splam.da.noshuffle.merged.pkl",'rb') as f:
         splam_noS_d_label_prob = pickle.load(f)
         splam_noS_d_pred_prob = pickle.load(f)
         
@@ -278,6 +279,10 @@ def main():
         ax.set_ylabel("Acceptor score")
 
         # junc_legend = 
+
+        ax.hlines(y=threshold, xmin=0, xmax=1, linewidth=1, color='r', linestyles="dashed")
+        ax.vlines(x=threshold, ymin=0, ymax=1, linewidth=1, color='r', linestyles="dashed")
+
 
         splcieai_TP__splam_TP = ax.scatter(d_score[spliceai_TP__splam_TP_idices], a_score[spliceai_TP__splam_TP_idices], s = 0, color="pink")
         splcieai_TP__splam_TP_len = len(d_score[spliceai_TP__splam_TP_idices])

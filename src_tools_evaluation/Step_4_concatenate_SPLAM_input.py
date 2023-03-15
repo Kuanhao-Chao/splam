@@ -7,8 +7,10 @@ def main():
 
     print("QUATER_SEQ_LEN: ", QUATER_SEQ_LEN)
 
-    output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/neg_1/"]
-    
+    # output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/neg_1/"]
+
+    output_files = ["./dataset/pos_refseq_protein_isoforms/"]
+
     for output_file in output_files:
         print("output_file: ", output_file)
         fw = open(output_file+"splam/splam.juncs.seq.fa", "w")
@@ -53,8 +55,9 @@ def main():
                 # print("x: ", len(x))
 
                 x = x.upper()
-                if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
-                    continue
+                # if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
+                #     print(chr_name)
+                #     continue
 
                 fw.write(lines_d[idx-1]+"_"+lines_a[idx-1][1:] + "\n")
 

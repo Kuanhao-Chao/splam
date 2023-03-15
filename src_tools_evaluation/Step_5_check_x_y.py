@@ -2,7 +2,9 @@ import sys
 
 def main():
     # output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/neg_1/"]
-    output_files = ["./dataset/pos/", "./dataset/neg_1/"]
+    # output_files = ["./dataset/pos/", "./dataset/neg_1/"]
+    output_files = ["./dataset/pos_refseq_protein_isoforms/"]
+
     target = "splam"
     for output_file in output_files:
         for target in ["spliceai/spliceai.noN", "spliceai/spliceai.N", "splam/splam"]:
