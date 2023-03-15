@@ -229,7 +229,7 @@ def test_model():
 
     print(f'[Info] Done loading model',flush = True)
     print(f'[Info] Loading data ...',flush = True)
-    test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, JUNC_FA, True, str(0))
+    test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, JUNC_FA, False, str(0))
     print(f'[Info] Done loading data ...',flush = True)
 
     criterion = torch.nn.BCELoss()
@@ -262,7 +262,7 @@ def test_model():
                 if strand == '+':
                     fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\\n')
                 elif strand == '-':
-                    fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\\n')
+                    fw_junc_scores.write(chr + '\t'+ str(end) + '\t' + str(start) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\\n')
                 junc_counter += 1
 
     pbar.finish()

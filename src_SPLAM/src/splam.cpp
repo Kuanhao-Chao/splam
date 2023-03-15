@@ -200,32 +200,50 @@ int main(int argc, char* argv[]) {
     }
 
     if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+
         ALN_COUNT_SPLICED = ALN_COUNT_SPLICED_UNIQ + ALN_COUNT_SPLICED_MULTI;
         ALN_COUNT_NSPLICED = ALN_COUNT_NSPLICED_UNIQ + ALN_COUNT_NSPLICED_MULTI;
+        if (g_paired_removal) {
+            ALN_COUNT_BAD = ALN_COUNT_UNPAIRED + ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_NSPLICED_UNIQ_DISCARD + ALN_COUNT_NSPLICED_MULTI_DISCARD;
+            ALN_COUNT_GOOD_CAL = ALN_COUNT - ALN_COUNT_BAD;
 
-        ALN_COUNT_BAD = ALN_COUNT_UNPAIRED + ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_NSPLICED_UNIQ_DISCARD + ALN_COUNT_NSPLICED_MULTI_DISCARD;
-        ALN_COUNT_GOOD_CAL = ALN_COUNT - ALN_COUNT_BAD;
-
-        JUNC_COUNT_BAD = JUNC_COUNT - JUNC_COUNT_GOOD;
-
-        GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
-        GMessage("               - paired alignments\t:%10d \n", ALN_COUNT - ALN_COUNT_UNPAIRED);
-        GMessage("               - unpaired alignments\t:%10d \n", ALN_COUNT_UNPAIRED);
+            GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
+            GMessage("               - paired alignments\t:%10d \n", ALN_COUNT - ALN_COUNT_UNPAIRED);
+            GMessage("               - unpaired alignments\t:%10d \n", ALN_COUNT_UNPAIRED);
 
 
-        GMessage("           spliced alignments\t\t:%10d \n", ALN_COUNT_SPLICED);
-        GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ-ALN_COUNT_SPLICED_UNIQ_DISCARD, ALN_COUNT_SPLICED_UNIQ_DISCARD);
-        GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
-        
-        GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
-        GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_UNIQ, ALN_COUNT_NSPLICED_UNIQ-ALN_COUNT_NSPLICED_UNIQ_DISCARD, ALN_COUNT_NSPLICED_UNIQ_DISCARD);
-        GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_MULTI, ALN_COUNT_NSPLICED_MULTI-ALN_COUNT_NSPLICED_MULTI_DISCARD, ALN_COUNT_NSPLICED_MULTI_DISCARD);
+            GMessage("           spliced alignments\t\t:%10d \n", ALN_COUNT_SPLICED);
+            GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ-ALN_COUNT_SPLICED_UNIQ_DISCARD, ALN_COUNT_SPLICED_UNIQ_DISCARD);
+            GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
+            
+            GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
+            GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_UNIQ, ALN_COUNT_NSPLICED_UNIQ-ALN_COUNT_NSPLICED_UNIQ_DISCARD, ALN_COUNT_NSPLICED_UNIQ_DISCARD);
+            GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_MULTI, ALN_COUNT_NSPLICED_MULTI-ALN_COUNT_NSPLICED_MULTI_DISCARD, ALN_COUNT_NSPLICED_MULTI_DISCARD);
 
-        GMessage("\n[INFO] Number of junctions\t\t:%10d   (good: %d / bad: %d )\n", JUNC_COUNT, JUNC_COUNT_GOOD, JUNC_COUNT_BAD);
-        GMessage("\n[INFO] Number of removed alignments\t:%10d \n", ALN_COUNT_BAD);
-        GMessage("[INFO] Number of kept alignments\t:%10d \n", ALN_COUNT_GOOD);
+            GMessage("\n[INFO] Number of junctions\t\t:%10d   (good: %d / bad: %d / unstranded: %d)\n", JUNC_COUNT, JUNC_COUNT_GOOD, JUNC_COUNT_BAD, JUNC_COUNT-JUNC_COUNT_GOOD-JUNC_COUNT_BAD);
+            GMessage("\n[INFO] Number of removed alignments\t:%10d \n", ALN_COUNT_BAD);
+            GMessage("[INFO] Number of kept alignments\t:%10d \n", ALN_COUNT_GOOD);
 
-        if (ALN_COUNT_GOOD_CAL != ALN_COUNT_GOOD) GMessage("Num of cleaned alignments do not agree with each other. Calculated: %d; iter: %d\n", ALN_COUNT_GOOD_CAL, ALN_COUNT_GOOD);
+            if (ALN_COUNT_GOOD_CAL != ALN_COUNT_GOOD) GMessage("Num of cleaned alignments do not agree with each other. Calculated: %d; iter: %d\n", ALN_COUNT_GOOD_CAL, ALN_COUNT_GOOD);
+        } else {
+            ALN_COUNT_BAD = ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_NSPLICED_UNIQ_DISCARD + ALN_COUNT_NSPLICED_MULTI_DISCARD;
+            ALN_COUNT_GOOD_CAL = ALN_COUNT - ALN_COUNT_BAD;
+            GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
+            GMessage("           spliced alignments\t\t:%10d \n", ALN_COUNT_SPLICED);
+            GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ-ALN_COUNT_SPLICED_UNIQ_DISCARD, ALN_COUNT_SPLICED_UNIQ_DISCARD);
+            GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
+            
+            GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
+            GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_UNIQ, ALN_COUNT_NSPLICED_UNIQ-ALN_COUNT_NSPLICED_UNIQ_DISCARD, ALN_COUNT_NSPLICED_UNIQ_DISCARD);
+            GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_MULTI, ALN_COUNT_NSPLICED_MULTI-ALN_COUNT_NSPLICED_MULTI_DISCARD, ALN_COUNT_NSPLICED_MULTI_DISCARD);
+
+            GMessage("\n[INFO] Number of junctions\t\t:%10d   (good: %d / bad: %d / unstranded: %d)\n", JUNC_COUNT, JUNC_COUNT_GOOD, JUNC_COUNT_BAD, JUNC_COUNT-JUNC_COUNT_GOOD-JUNC_COUNT_BAD);
+            GMessage("\n[INFO] Number of removed alignments\t:%10d \n", ALN_COUNT_BAD);
+            GMessage("[INFO] Number of kept alignments\t:%10d \n", ALN_COUNT_GOOD);
+
+            if (ALN_COUNT_GOOD_CAL != ALN_COUNT_GOOD) GMessage("Num of cleaned alignments do not agree with each other. Calculated: %d; iter: %d\n", ALN_COUNT_GOOD_CAL, ALN_COUNT_GOOD);
+        }
+
     }
     return 0;
 }
