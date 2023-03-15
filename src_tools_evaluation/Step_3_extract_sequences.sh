@@ -1,7 +1,9 @@
 SAMPLE=$1
 # TARGET="NEG_noncan_junctions"
 
-for OUTPUTFILE in "./dataset/pos" "./dataset/neg_can" "./dataset/neg_noncan" "./dataset/neg_1"
+# for OUTPUTFILE in "./dataset/pos" "./dataset/neg_can" "./dataset/neg_noncan" "./dataset/neg_1"
+for OUTPUTFILE in "./dataset/pos_refseq_protein_isoforms"
+
 do  
     for TARGET in "splam" "spliceai"
     do  

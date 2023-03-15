@@ -20,28 +20,37 @@ def main():
     SEQ_LEN = 800
     THRESHOLD = 100
 
-    pos_junc_f = '../src/2_GET_REF_JUNCS/BAM_REF_Intersection/'+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
-    neg_can_junc_f = '../src/3_GET_CANONICAL_NEG_JUNCS/NEG_can_junctions/'+str(SEQ_LEN)+"bp/d_a.bed"
-    neg_noncan_junc_f = '../src/4_GET_NONCANONICAL_NEG_JUNCS/NEG_noncan_junctions/'+str(SEQ_LEN)+"bp/d_a.bed"
-    # neg_1_junc_f = '../src/5_GET_BAM_NEG_JUNCS/BAM_junctions/'+str(SEQ_LEN)+"bp/1_juncs/d_a.bed"
-    neg_1_junc_f = '../src/6_GET_BAM_NEG_OPP_STRAND_JUNCS/BAM_junctions/'+str(SEQ_LEN)+"bp/1_juncs/d_a.bed"
+    # pos_junc_f = '../src/2_GET_REF_JUNCS/BAM_REF_Intersection/'+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
+    # neg_can_junc_f = '../src/3_GET_CANONICAL_NEG_JUNCS/NEG_can_junctions/'+str(SEQ_LEN)+"bp/d_a.bed"
+    # neg_noncan_junc_f = '../src/4_GET_NONCANONICAL_NEG_JUNCS/NEG_noncan_junctions/'+str(SEQ_LEN)+"bp/d_a.bed"
+    # # neg_1_junc_f = '../src/5_GET_BAM_NEG_JUNCS/BAM_junctions/'+str(SEQ_LEN)+"bp/1_juncs/d_a.bed"
+    # neg_1_junc_f = '../src/6_GET_BAM_NEG_OPP_STRAND_JUNCS/BAM_junctions/'+str(SEQ_LEN)+"bp/1_juncs/d_a.bed"
     
+    pos_refseq_protein_isoforms_junc_f = '../src/7_GET_REF_JUNCS_REFSEQ/REF_junctions/'+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
+
+
     # junc_fs = [pos_junc_f, neg_can_junc_f, neg_noncan_junc_f, neg_1_junc_f]
-    junc_fs = [pos_junc_f, neg_can_junc_f, neg_noncan_junc_f, neg_1_junc_f]
+    # junc_fs = [pos_junc_f, neg_can_junc_f, neg_noncan_junc_f, neg_1_junc_f]
+
+    junc_fs = [pos_refseq_protein_isoforms_junc_f]
 
     output_dir = "./dataset/"
-    output_files = [output_dir+"pos/", output_dir+"neg_can/", output_dir+"neg_noncan/", output_dir+"neg_1/"]
+    # output_files = [output_dir+"pos/", output_dir+"neg_can/", output_dir+"neg_noncan/", output_dir+"neg_1/"]
+
+    output_files = [output_dir+"pos_refseq_protein_isoforms/"]
+
     for output_file in output_files:
         os.makedirs(output_file, exist_ok=True)
 
     # Testing [5000, 2500, 2750] samples
     # nums = [1000, 500, 550, 1000]
-    nums = [10000, 1000, 1000, 10000]
+    # nums = [10000, 1000, 1000, 10000]
+    nums = [10000]
 
     COUNTER = 0
     global_df = pd.DataFrame(columns = [0, 1, 2, 3, 4, 5])
 
-    for junc_fidx in range(0, 4, 1):
+    for junc_fidx in range(0, len(junc_fs), 1):
         print("junc_fidx: ", junc_fidx)
         junc_f = junc_fs[junc_fidx]
         print("output_file     : ", output_file)

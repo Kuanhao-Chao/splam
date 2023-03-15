@@ -44,13 +44,20 @@ def main(argv):
 
     all_lines = []
     
-    if output_file != "pos" and output_file != "neg_can" and output_file != "neg_noncan" and output_file != "neg_1":
+    if output_file != "pos" and output_file != "neg_can" and output_file != "neg_noncan" and output_file != "neg_1" and output_file != "pos_refseq_protein_isoforms":
         exit()
+
+    label = '.'
+    if output_file == "pos" or output_file == "pos_refseq_protein_isoforms":
+        label = '+'
+    if output_file == "neg_can" or output_file == "neg_noncan" or output_file == "neg_1":
+        label = '-'
 
     da_faf = "./dataset/"+output_file+"/spliceai/spliceai."+TYPE+".juncs.seq.fa"
     print(">> da_faf\t\t: ", da_faf)
+    print(">> pkl file\t\t: ", "./spliceai_result/spliceai."+TYPE+"."+output_file+".pkl")
     with open(da_faf, "r") as f:
-        print("Processing ", da_faf)
+        print("Processing : ", da_faf)
         lines = f.read().splitlines()
         all_lines = lines
     print("all_lines  : ", len(all_lines))
@@ -96,7 +103,7 @@ def main(argv):
         elif pidx % 2 == 1:
             seq = all_lines[pidx]
 
-            X, Y = create_datapoints(seq, '-')
+            X, Y = create_datapoints(seq, label)
             
             X = X[None, :]
             Y = np.array(Y)

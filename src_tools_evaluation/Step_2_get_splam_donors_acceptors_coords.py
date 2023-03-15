@@ -21,7 +21,9 @@ def main():
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     #################################
-    output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/neg_1/"]
+    # output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/neg_1/"]
+    output_files = ["./dataset/pos_refseq_protein_isoforms/"]
+
     splam_dir = "splam/"
     for output_file in output_files:
         fw_donor = open(output_file + splam_dir + "splam.juncs.donor.bed", "w")
