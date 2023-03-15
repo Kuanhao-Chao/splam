@@ -63,7 +63,7 @@ print("######################################################\n")
 # k-fold validation setup
 #############################
 k=10
-splits=KFold(n_splits=k,shuffle=True,random_state=42)
+# splits=KFold(n_splits=k,shuffle=True,random_state=42)
 
 #############################
 # Creating directories

@@ -110,15 +110,14 @@ GStr splamJExtract() {
                 }
 
                 if (pos == 0) {
-                    // This is an unmapped read
+                    // This is an unmapped read => do nothing for now
                 } else if (pos<prev_pos) {
                     GMessage("[ERROR] %s\nread %s (start %d) found at position %d on %s when prev_pos=%d\n",
                     brec->name(), brec->start,  pos, refseqName, prev_pos);
                     exit(-1);
                 }
                 prev_pos=pos;
-                nh=brec->tag_int("NH", 0);
-                if (nh==0) nh=1;
+                nh=brec->tag_int("NH", 1);
                 hi=brec->tag_int("HI", 0);
                 if (!chr_changed && currentend>0 && pos>currentend+g_bundle_gap) {
                     new_bundle=true;

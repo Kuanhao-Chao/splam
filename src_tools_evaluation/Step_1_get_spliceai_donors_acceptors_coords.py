@@ -61,6 +61,7 @@ def main():
         os.makedirs(output_files[junc_fidx]+"spliceai/", exist_ok=True)
 
         junc_df = pd.read_csv(junc_f, delimiter="\t", header=None)
+        # Selecting junctions only on chr1 and chr9 (testing dataset).
         junc_df = junc_df.loc[((junc_df[0] == "chr1") | (junc_df[0] == "chr9"))]
         junc_df = junc_df.loc[junc_df[1] > 0]
         junc_df = junc_df.sample(n=nums[junc_fidx]).reset_index(drop=True)
