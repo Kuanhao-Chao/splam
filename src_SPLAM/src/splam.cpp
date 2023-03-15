@@ -117,8 +117,8 @@ robin_hood::unordered_map<std::string, int>  CHRS;
 int STEP_COUNTER = 0;
 
 // j-extract parameters:
-int g_max_splice = 20000;
-int g_bundle_gap = 50;
+int g_max_splice = 100000;
+int g_bundle_gap = 100;
 GSamWriter* outfile_above_spliced = NULL;
 GSamWriter* outfile_below_spliced = NULL;
 FILE* joutf_above=NULL;
@@ -217,8 +217,8 @@ int main(int argc, char* argv[]) {
             GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
             
             GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
-            GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_UNIQ, ALN_COUNT_NSPLICED_UNIQ-ALN_COUNT_NSPLICED_UNIQ_DISCARD, ALN_COUNT_NSPLICED_UNIQ_DISCARD);
-            GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_MULTI, ALN_COUNT_NSPLICED_MULTI-ALN_COUNT_NSPLICED_MULTI_DISCARD, ALN_COUNT_NSPLICED_MULTI_DISCARD);
+            GMessage("               - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ);
+            GMessage("               - multi-mapped\t\t:%10d\n", ALN_COUNT_NSPLICED_MULTI);
 
             GMessage("\n[INFO] Number of junctions\t\t:%10d   (good: %d / bad: %d / unstranded: %d)\n", JUNC_COUNT, JUNC_COUNT_GOOD, JUNC_COUNT_BAD, JUNC_COUNT-JUNC_COUNT_GOOD-JUNC_COUNT_BAD);
             GMessage("\n[INFO] Number of removed alignments\t:%10d \n", ALN_COUNT_BAD);
@@ -234,8 +234,8 @@ int main(int argc, char* argv[]) {
             GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
             
             GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
-            GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_UNIQ, ALN_COUNT_NSPLICED_UNIQ-ALN_COUNT_NSPLICED_UNIQ_DISCARD, ALN_COUNT_NSPLICED_UNIQ_DISCARD);
-            GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_NSPLICED_MULTI, ALN_COUNT_NSPLICED_MULTI-ALN_COUNT_NSPLICED_MULTI_DISCARD, ALN_COUNT_NSPLICED_MULTI_DISCARD);
+            GMessage("               - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ);
+            GMessage("               - multi-mapped\t\t:%10d\n", ALN_COUNT_NSPLICED_MULTI);
 
             GMessage("\n[INFO] Number of junctions\t\t:%10d   (good: %d / bad: %d / unstranded: %d)\n", JUNC_COUNT, JUNC_COUNT_GOOD, JUNC_COUNT_BAD, JUNC_COUNT-JUNC_COUNT_GOOD-JUNC_COUNT_BAD);
             GMessage("\n[INFO] Number of removed alignments\t:%10d \n", ALN_COUNT_BAD);
