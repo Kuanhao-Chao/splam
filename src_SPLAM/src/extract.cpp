@@ -120,7 +120,7 @@ GStr splamJExtract() {
                 nh=brec->tag_int("NH", 0);
                 if (nh==0) nh=1;
                 hi=brec->tag_int("HI", 0);
-                if (!chr_changed && currentend>0 && pos>currentend+g_max_splice) {
+                if (!chr_changed && currentend>0 && pos>currentend+g_bundle_gap) {
                     new_bundle=true;
                 }
             } else { //no more alignments
@@ -170,7 +170,7 @@ GStr splamJExtract() {
                 int insert_size = brec->insertSize();
                 int mate_end = brec->mate_start() + insert_size;
                 
-                if (mate_end > (int)brec->end && insert_size <= g_max_splice) {
+                if (mate_end > (int)brec->end) {
                     fragment_end = mate_end;
                 } else {
                     fragment_end = (int)brec->end;
@@ -222,8 +222,6 @@ GStr splamJExtract() {
             if (joutf && brec->exons.Count()>1) {
                 // Spliced reads
                 addJunction(*brec, accYC, prev_refname);
-                // outfile_spliced->write(brec);
-
                 if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
                     int new_nh = brec->tag_int("NH", 0);
                     if (new_nh <= 1) {
@@ -309,7 +307,7 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
             // Spliced reads
             int accYC = 0;
             accYC = brec_bd.tag_int("YC", 1);
-            // GMessage("Add junction!\n");
+            // GMessage("Add junction: %d!\n", accYC);
             addJunction(brec_bd, accYC, brec_bd.refName());
             // outfile_spliced->write(brec);
             ALN_COUNT_SPLICED++;
@@ -372,6 +370,7 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
                 outfile_ns_multi_map->write(&brec_bd);
                 outfile_ns_multi_map->write(&brec_bd_p);
                 ALN_COUNT_NSPLICED_MULTI+=2;
+                ALN_COUNT_GOOD += 2;
             } else if ( (brec_bd.hasIntrons() || brec_bd_p.hasIntrons()) && (brec_bd_tag==1 || brec_bd_p_tag==1)) {
                 // a, b spliced, NH = 1
                 outfile_s_uniq_map->write(&brec_bd);

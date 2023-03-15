@@ -85,13 +85,16 @@ GStr splamNHUpdate() {
                 bar_s.update();
             }
             std::string kv = brec->name();
+            if (!g_paired_removal) {
+                kv = kv + "_" + std::to_string(brec->pairOrder());
+            }
             // GMessage("kv: %s\n", kv.c_str());
             if (rm_hit.find(kv) != rm_hit.end()) {
                 // GMessage("rm_hit[kv]: %d\n", rm_hit[kv]);
-                GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
+                // GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
                 int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
                 brec->add_int_tag("NH", new_nh);
-                GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
+                // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
             outfile_cleaned->write(brec);   
         }
@@ -108,13 +111,16 @@ GStr splamNHUpdate() {
                 bar_ns.update();
             }
             std::string kv = brec->name();
+            if (!g_paired_removal) {
+                kv = kv + "_" + std::to_string(brec->pairOrder());
+            }
             // GMessage("kv: %s\n", kv.c_str());
             if (rm_hit.find(kv) != rm_hit.end()) {
                 int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
 
-                GMessage("Before update NH tag: %d\n", new_nh);
+                // GMessage("Before update NH tag: %d\n", new_nh);
                 brec->add_int_tag("NH", new_nh);
-                GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
+                // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
             outfile_cleaned->write(brec); 
         }
@@ -139,6 +145,7 @@ void readnhHitFile(robin_hdd_rm_hit& rm_hit) {
         std::stringstream ss(line);
         ss >> read_id;
         ss >> hits;
+        // GMessage("read_id: %s\n", read_id.c_str());
         rm_hit[read_id] = hits;
     }   
 }

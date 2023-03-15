@@ -52,24 +52,20 @@ void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
         }
         double donor_score = junc[6].asDouble();
         double acceptor_score = junc[7].asDouble();
-        GMessage("donor_score   : %f\n", donor_score);
-        GMessage("acceptor_score: %f\n\n", acceptor_score);
-
         if (donor_score <= threshold && acceptor_score <= threshold) {
             char* chrname =junc[0].detach();
             char* strand =junc[5].detach();
             std::string j = std::to_string(junc[1].asInt()) + "_" + std::to_string(junc[2].asInt()) + "_" + strand + "_" + chrname;
-            GMessage("j: %s\n", j.c_str());
             rm_juncs.insert(j);
             JUNC_COUNT_BAD ++;
         } else {
             JUNC_COUNT_GOOD ++;
         }
     }
-    for (auto ele : rm_juncs) {
-        GMessage("rm_juncs : %s\n", ele.c_str());
-        // GMessage("ele.second : %d\n", ele.second);
-    }
+    // for (auto ele : rm_juncs) {
+    //     GMessage("rm_juncs : %s\n", ele.c_str());
+    //     // GMessage("ele.second : %d\n", ele.second);
+    // }
 }
 
 GStr filterSpurJuncs(GStr outfname_junc_score) {
@@ -391,64 +387,12 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 }
             }
             reader_s_multi_map.bclose();
-
-
-            for (auto ele : rm_hit) {
-                GMessage("ele.first : %s\n", ele.first.c_str());
-                GMessage("ele.second: %d\n\n", ele.second);
-            }
-
+            // for (auto ele : rm_hit) {
+            //     GMessage("ele.first : %s\n", ele.first.c_str());
+            //     GMessage("ele.second: %d\n\n", ele.second);
+            // }
             if (verbose) GMessage("\n");
         }
-
-
-
-
-
-
-
-
-
-        // int counter = 0, prev_tid=-1;
-        // GStr prev_refname;
-        // std::vector<std::pair<float,uint64_t>> bsam(2048*1024,{0,1}); // number of samples. 1st - current average; 2nd - total number of values
-        // int b_end=0, b_start=0;
-        // progressbar bar(ALN_COUNT_SPLICED);
-        // bar.set_opening_bracket_char("[INFO] SPLAM! Removing junctions with low scores \n\t[");
-
-        // while ((brec = bam_reader_spliced.next())!=NULL) {
-        //     bar.update();
-        //     uint32_t dupcount=0;
-        //     int endpos=brec->end;
-        //     bool spur = false;
-        //     if (brec->exons.Count() > 1) {
-        //         for (int e=1; e<2; e++) {
-        //             char strand = brec->spliceStrand();
-        //             std::string jnew_sub = std::to_string(brec->exons[e-1].end) + "_" + std::to_string(brec->exons[e].start-1) + "_" + strand + "_" + brec->refName();
-        //             if (rm_juncs.find(jnew_sub) != rm_juncs.end()) {
-        //                 spur = true;
-        //                 break;
-        //             }
-        //         }
-        //     }
-        //     if (spur) {
-        //         removeAlignment(brec, rm_hit);
-        //     } else {
-        //         int nh_tag = brec->tag_int("NH", 1);
-        //         if (nh_tag == 1) {
-        //             outfile_cleaned->write(brec);
-        //         } else {
-        //             // outfile_multimapped->write(brec);
-        //             ALN_COUNT_NH_UPDATE++;
-        //         }
-        //         ALN_COUNT_GOOD++;
-        //     }
-        // }
-        // bam_reader_spliced.bclose();
-        // // delete outfile_multimapped;
-
-        // GMessage("\n");
-        // ALN_COUNT_GOOD += ALN_COUNT_NSPLICED;
     }
 
     delete outfile_s_multi_map_tmp;
@@ -588,7 +532,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
 void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, BundleData& bdata, GHash<int>& hashread, CReadAln* alndata) { // some false positives should be eliminated here in order to break the bundle
 
 	GSamRecord& brec=(alndata->brec);			   // bam record
-	// GList<CReadAln>& readlist = bdata.readlist;    // list of reads gathered so far
     static GStr _id("", 256); //to prevent repeated reallocation for each parsed read
     static GStr _id_p("", 256); //to prevent repeated reallocation for each parsed read
 	
@@ -771,7 +714,6 @@ void removeAlignment_se(GSamWriter* outfile_target, GSamRecord* brec, robin_hdd_
 }
 
 void keepAlignment(GSamWriter* outfile_target, GSamRecord* brec) {
-    // std::string key = get_global_removed_algns_key(brec);
     outfile_target->write(brec);
     ALN_COUNT_GOOD++;
 }
@@ -795,10 +737,8 @@ bool alignmentAssessment(GSamRecord* brec, robin_hdd_string &rm_juncs) {
         for (int e=1; e<brec->exons.Count(); e++) {
             char strand = brec->spliceStrand();
     // GMessage("\tIntron %d - %d\n", brec->exons[e-1].end, brec->exons[e].start-1);
-
             std::string jnew_sub = std::to_string(brec->exons[e-1].end) + "_" + std::to_string(brec->exons[e].start-1) + "_" + strand + "_" + brec->refName();
             if (rm_juncs.find(jnew_sub) != rm_juncs.end()) {
-                GMessage("Found %s\n", jnew_sub.c_str());
                 spur = true;
                 return spur;
             }
@@ -806,25 +746,6 @@ bool alignmentAssessment(GSamRecord* brec, robin_hdd_string &rm_juncs) {
     }
     return spur;
 }
-
-// std::string get_global_removed_algns_key(GSamRecord* brec) {
-//     std::string brec_name = brec->name();
-//     int brec_start = brec->start;
-//     int brec_mate_start = brec->mate_start();
-//     int pair = brec->pairOrder();
-
-
-//     // GMessage("~ brec->refName()     : %s\n", brec->refName());
-//     // GMessage("~ brec->mate_refName(): %s\n", brec->mate_refName());
-//     // GMessage("~ brec->mapped_len    : %d\n", brec->mapped_len);
-//     // brec->mate_refName();
-//     // brec->mapped_len;
-
-//     std::string key = brec_name + "_" + std::to_string(brec_start) + "_" + std::to_string(brec_mate_start) + "_" + std::to_string(pair);
-//     // bam1_t* brec->b;
-//     // GMessage("key: %s\n", key.c_str());
-//     return key;
-// }
 
 std::string get_global_removed_mate_algns_key(GSamRecord* brec) {
     std::string brec_name = brec->name();

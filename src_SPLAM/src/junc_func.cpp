@@ -19,18 +19,20 @@ void addJunction(GSamRecord& r, int dupcount, GStr ref) {
 	// GSamRecord *r_copy = new GSamRecord(r);
 	GSamRecord *r_copy = new GSamRecord(r);
 	for (int i=1; i<r.exons.Count(); i++) {
-		CJunc j(r.exons[i-1].end+1, r.exons[i].start-1, strand, ref,
-				dupcount);
-		int ei;
-		int res=junctions.AddIfNew(j, &ei);
-		if (res==-1) {
-			//existing junction => update junc count
-			junctions[ei].add(j);
-		} else {
-			// new junction 
+		if (r.exons[i].start-1 - r.exons[i-1].end+1 + 1 <= g_max_splice) {
+			CJunc j(r.exons[i-1].end+1, r.exons[i].start-1, strand, ref,
+					dupcount);
+			int ei;
+			int res=junctions.AddIfNew(j, &ei);
+			if (res==-1) {
+				//existing junction => update junc count
+				junctions[ei].add(j);
+			} else {
+				// new junction 
+			}
+			// Adding read into the read_ls
+			junctions[ei].add_read(j, r_copy);
 		}
-		// Adding read into the read_ls
-		junctions[ei].add_read(j, r_copy);
 	}
 }
 
