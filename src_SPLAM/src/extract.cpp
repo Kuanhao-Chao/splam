@@ -74,6 +74,11 @@ GStr splamJExtract() {
             int gseq_id=lastref_id;  //current chr id
             bool new_bundle=false;
             //delete brec;
+
+
+            /***********************************
+             * (1) Assessing the current alignment. See if it's good
+            ************************************/
             if ((irec=in_records.next())!=NULL) {
                 ALN_COUNT ++;
                 brec=irec->brec;
@@ -115,8 +120,9 @@ GStr splamJExtract() {
                     GMessage("[ERROR] %s\nread %s (start %d) found at position %d on %s when prev_pos=%d\n",
                     brec->name(), brec->start,  pos, refseqName, prev_pos);
                     exit(-1);
+                } else {
+                    prev_pos=pos;
                 }
-                prev_pos=pos;
                 nh=brec->tag_int("NH", 1);
                 hi=brec->tag_int("HI", 0);
                 if (!chr_changed && currentend>0 && pos>currentend+g_bundle_gap) {
@@ -127,8 +133,9 @@ GStr splamJExtract() {
                 new_bundle=true; //fake a new start (end of last bundle)
             }
 
+
             /***********************************
-             * Process the bundle!
+             * (2) Process the bundle!
             ************************************/
             if (new_bundle || chr_changed) {
                 hashread.Clear();
@@ -183,6 +190,12 @@ GStr splamJExtract() {
                 currentend=fragment_end;
             } //adjusted currentend and checked for overlapping reference transcripts
 
+
+            GMessage("current boundaries: %d - %d\n", currentstart, currentend);
+
+            /***********************************
+             * (3) Process the alignment!
+            ************************************/
             // GMessage("brec->refName(): %s\n", brec->refName());
             CReadAln* alndata = new CReadAln(brec);
             processRead_jext(currentstart, currentend, readlist, *bundle, hashread, alndata);
