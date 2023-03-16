@@ -7,12 +7,12 @@ from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc
 
 def main():
 
-    SUBSET = 10000
+    SUBSET = 9900
 
 
     # TARGETS = ["pos", "pos_refseq_protein_isoforms", "neg_1"]
     TARGETS = ["pos_refseq_protein_isoforms", "neg_1"]
-    
+
     a_label = []
     d_label = []    
     a_pred = []

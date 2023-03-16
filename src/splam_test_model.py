@@ -80,7 +80,8 @@ def main():
 
     BATCH_SIZE = 100
 
-    TARGETS = ["pos", "pos_refseq_protein_isoforms", "neg_1"]
+    # TARGETS = ["pos", "pos_refseq_protein_isoforms", "neg_1"]
+    TARGETS = ["pos_refseq_protein_alternative_only"]
     # for shuffle in [True, False]:
     for shuffle in [False]:
         junc_counter = 0

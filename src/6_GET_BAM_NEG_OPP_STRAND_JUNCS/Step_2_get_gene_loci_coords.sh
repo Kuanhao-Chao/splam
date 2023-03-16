@@ -14,6 +14,6 @@ bedtools intersect -v -a ./BAM_junctions/gencode.v43.chr_patch_hapl_scaff.annota
 
 bedtools intersect -wa -wb -a ./BAM_junctions/gencode.v43.chr_patch_hapl_scaff.annotation.merge.pos.only.bed -b BAM_junctions/junctions_1.bed -sorted -filenames > ./BAM_junctions/neg_hits.bed
 
-bedtools intersect -wa -wb -a ./BAM_junctions/gencode.v43.chr_patch_hapl_scaff.annotation.merge.pos.only.bed -b BAM_junctions/junctions_1.bed > ./BAM_junctions/neg_hits.bed
+# bedtools intersect -wa -wb -a ./BAM_junctions/gencode.v43.chr_patch_hapl_scaff.annotation.merge.pos.only.bed -b BAM_junctions/junctions_1.bed -sorted -filenames > ./BAM_junctions/neg_hits.bed
 
-bedtools intersect -wa -wb -a ./BAM_junctions/gencode.v43.chr_patch_hapl_scaff.annotation.merge.neg.only.bed -b BAM_junctions/junctions_1.bed > ./BAM_junctions/pos_hits.bed
+bedtools intersect -wa -wb -a ./BAM_junctions/gencode.v43.chr_patch_hapl_scaff.annotation.merge.neg.only.bed -b BAM_junctions/junctions_1.bed -sorted -filenames > ./BAM_junctions/pos_hits.bed

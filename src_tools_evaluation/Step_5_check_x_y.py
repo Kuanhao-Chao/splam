@@ -3,7 +3,7 @@ import sys
 def main():
     # output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/neg_1/"]
     # output_files = ["./dataset/pos/", "./dataset/neg_1/"]
-    output_files = ["./dataset/pos_refseq_protein_isoforms/"]
+    output_files = ["./dataset/pos_refseq_protein_alternative_only/"]
 
     target = "splam"
     for output_file in output_files:

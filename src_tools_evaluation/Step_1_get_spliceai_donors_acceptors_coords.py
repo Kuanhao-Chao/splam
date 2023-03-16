@@ -25,19 +25,22 @@ def main():
     # neg_noncan_junc_f = '../src/4_GET_NONCANONICAL_NEG_JUNCS/NEG_noncan_junctions/'+str(SEQ_LEN)+"bp/d_a.bed"
     # # neg_1_junc_f = '../src/5_GET_BAM_NEG_JUNCS/BAM_junctions/'+str(SEQ_LEN)+"bp/1_juncs/d_a.bed"
     # neg_1_junc_f = '../src/6_GET_BAM_NEG_OPP_STRAND_JUNCS/BAM_junctions/'+str(SEQ_LEN)+"bp/1_juncs/d_a.bed"
-    
-    pos_refseq_protein_isoforms_junc_f = '../src/7_GET_REF_JUNCS_REFSEQ/REF_junctions/'+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
+
+    # neg_5_junc_f = '../src/8_GET_BAM_NEG_OPP_STRAND_JUNCS_HARD/BAM_junctions/'+str(SEQ_LEN)+"bp/20_juncs/d_a.bed"
+
+    # pos_refseq_protein_isoforms_junc_f = '../src/7_GET_REF_JUNCS_REFSEQ/REF_junctions/'+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
+    pos_refseq_protein_alternative_only_junc_f = '../src/9_GET_REF_JUNCS_REFSEQ_NO_CANONICAL/REF_junctions/'+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
 
 
     # junc_fs = [pos_junc_f, neg_can_junc_f, neg_noncan_junc_f, neg_1_junc_f]
     # junc_fs = [pos_junc_f, neg_can_junc_f, neg_noncan_junc_f, neg_1_junc_f]
 
-    junc_fs = [pos_refseq_protein_isoforms_junc_f]
+    junc_fs = [pos_refseq_protein_alternative_only_junc_f]
 
     output_dir = "./dataset/"
     # output_files = [output_dir+"pos/", output_dir+"neg_can/", output_dir+"neg_noncan/", output_dir+"neg_1/"]
 
-    output_files = [output_dir+"pos_refseq_protein_isoforms/"]
+    output_files = [output_dir+"pos_refseq_protein_alternative_only/"]
 
     for output_file in output_files:
         os.makedirs(output_file, exist_ok=True)
