@@ -38,9 +38,12 @@ def main():
     splam_j_label_prob = []
 
 
-    SUBSET = 9900
-    TARGETS = ["pos_refseq_protein_isoforms", "neg_1"]
+    # SUBSET = 9900
+    # TARGETS = ["pos_refseq_protein_isoforms", "neg_1"]
     # pos_refseq_protein_alternative_only
+
+    TARGETS = ["pos", "neg_1", "neg_5"]
+    SUBSETS = [2000, 5000, 5000]
 
     # for TYPE in ["N", "noN"]:
     for TYPE in ["noN"]:
@@ -49,7 +52,10 @@ def main():
         a_pred = []
         d_pred = []     
         junc_name = []
-        for target in TARGETS:
+
+        for idx in range(len(TARGETS)):
+            target = TARGETS[idx]
+            SUBSET = SUBSETS[idx]
             ###################################
             # Checking spliceai pkl file (pos)
             ###################################

@@ -11,15 +11,18 @@ def main():
 
 
     # TARGETS = ["pos", "pos_refseq_protein_isoforms", "neg_1"]
-    TARGETS = ["pos_refseq_protein_isoforms", "neg_1"]
-
+    # TARGETS = ["pos_refseq_protein_isoforms", "neg_1"]
+    TARGETS = ["pos", "neg_1", "neg_5"]
+    SUBSETS = [2000, 5000, 5000]
     a_label = []
     d_label = []    
     a_pred = []
     d_pred = []     
     junc_name = []
 
-    for target in TARGETS:
+    for idx in range(len(TARGETS)):
+        target = TARGETS[idx]
+        SUBSET = SUBSETS[idx]
         with open("./splam_result/splam.da.noshuffle."+target+".pkl",'rb') as f:
             print(">> Processing ", target)
             splam_noS_d_label_prob = pickle.load(f)[:SUBSET]
@@ -42,6 +45,7 @@ def main():
             # print("splam_noS_junc_name    : ", splam_noS_junc_name)
 
             print("\tsplam_noS_d_label_prob : ", len(splam_noS_d_label_prob))
+            print("\tsplam_noS_d_label_prob : ", splam_noS_d_label_prob)
             print("\tsplam_noS_d_pred_prob  : ", len(splam_noS_d_pred_prob))
 
             print("\tsplam_noS_a_label_prob : ", len(splam_noS_a_label_prob))

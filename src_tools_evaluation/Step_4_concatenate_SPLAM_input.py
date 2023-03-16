@@ -7,7 +7,7 @@ def main():
 
     print("QUATER_SEQ_LEN: ", QUATER_SEQ_LEN)
 
-    # output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/neg_1/"]
+    # output_files = ["./dataset/pos/", "./dataset/neg_1/", "./dataset/neg_5/"]
 
     output_files = ["./dataset/pos_refseq_protein_alternative_only/"]
 
