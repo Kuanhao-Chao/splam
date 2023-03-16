@@ -38,160 +38,77 @@ def main():
     splam_j_label_prob = []
 
 
-    SUBSET = 10000
+    SUBSET = 9900
+    TARGETS = ["pos_refseq_protein_isoforms", "neg_1"]
+    # pos_refseq_protein_alternative_only
 
     # for TYPE in ["N", "noN"]:
     for TYPE in ["noN"]:
-        ###################################
-        # Checking spliceai pkl file (pos)
-        ###################################
-        # with open("./spliceai_result_pos_only/spliceai."+TYPE+".pkl",'rb') as f:
-        #     print("Results of './spliceai_result_pos_only/spliceai."+TYPE+".pkl'")
-        #     d_pred_pos_prob = pickle.load(f)
-        #     d_label_pos_prob = pickle.load(f)
-        #     d_pred_pos_prob = d_pred_pos_prob[:SUBSET]
-        #     d_label_pos_prob = np.array(d_label_pos_prob)
-        #     d_label_pos_prob[:SUBSET] = 1
-        #     d_label_pos_prob = d_label_pos_prob[:SUBSET]
+        a_label = []
+        d_label = []    
+        a_pred = []
+        d_pred = []     
+        junc_name = []
+        for target in TARGETS:
+            ###################################
+            # Checking spliceai pkl file (pos)
+            ###################################
+            with open("./spliceai_result/spliceai."+TYPE+"."+target+".pkl",'rb') as f:
+                print("Results of './spliceai_result/spliceai."+TYPE+"."+target+".pkl'")
+                d_pred_lcl = pickle.load(f)
+                d_label_lcl = pickle.load(f)
+                d_label_lcl = np.array(d_label_lcl)
+                d_pred_lcl = d_pred_lcl[:SUBSET]
+                d_label_lcl = d_label_lcl[:SUBSET]
 
-        #     a_pred_pos_prob = pickle.load(f)
-        #     a_label_pos_prob = pickle.load(f)
-        #     a_pred_pos_prob = a_pred_pos_prob[:SUBSET]
-        #     a_label_pos_prob = np.array(a_label_pos_prob)
-        #     a_label_pos_prob[:SUBSET] = 1
-        #     a_label_pos_prob = a_label_pos_prob[:SUBSET]
+                # d_label_neg[:1000] = 1
+                a_pred_lcl = pickle.load(f)
+                a_label_lcl = pickle.load(f)
+                a_label_lcl = np.array(a_label_lcl)
+                a_pred_lcl = a_pred_lcl[:SUBSET]
+                a_label_lcl = a_label_lcl[:SUBSET]
+                junc_name_lcl = pickle.load(f)
+                junc_name_lcl = junc_name_lcl[:SUBSET]
+                
+                if target == "pos" or target == "pos_refseq_protein_isoforms" or target == "pos_refseq_protein_alternative_only":
+                    d_label_lcl = np.ones(SUBSET)
+                    a_label_lcl = np.ones(SUBSET)
 
+                # print("\td_pred_pos : ", len(d_pred_pos))
+                print("\td_label_lcl: ", len(d_label_lcl))
+                # print("\td_pred_neg: ", d_pred_neg)
+                print("\td_label_lcl: ", d_label_lcl)
+                # print("\ta_pred_pos : ", len(a_pred_pos))
+                print("\ta_label_lcl: ", len(a_label_lcl))
+                print("\ta_label_lcl: ", a_label_lcl)
+                # print("\tjunc_name_pos: ", len(junc_name_pos))
+                # print("\tjunc_name_pos: ", junc_name_pos)
+                # print("\ta_pred_neg: ", a_pred_neg)
+                # print("\ta_label_neg: ", a_label_neg)
+                # print("")
 
-        #     print("\td_pred_pos_prob : ", len(d_pred_pos_prob))
-        #     print("\td_label_pos_prob: ", len(d_label_pos_prob))
-        #     # print("\td_pred_pos_prob: ", d_pred_pos_prob)
-        #     # print("\td_label_pos_prob: ", d_label_pos_prob)
-        #     print("\ta_pred_pos_prob : ", len(a_pred_pos_prob))
-        #     print("\ta_label_pos_prob: ", len(a_label_pos_prob))
-        #     # print("\ta_pred_pos_prob: ", a_pred_pos_prob)
-        #     # print("\ta_label_pos_prob: ", a_label_pos_prob)
-        #     # print("")
-        
-        ###################################
-        # Checking spliceai pkl file (pos)
-        ###################################
-        with open("./spliceai_result/spliceai."+TYPE+".pos.pkl",'rb') as f:
-            print("Results of './spliceai_result/spliceai."+TYPE+".pos.pkl'")
-            d_pred_pos = pickle.load(f)
-            d_label_pos = pickle.load(f)
-            d_label_pos = np.array(d_label_pos)
-            d_pred_pos = d_pred_pos[:SUBSET]
-            d_label_pos = d_label_pos[:SUBSET]
-            # d_label_neg[:1000] = 1
-            a_pred_pos = pickle.load(f)
-            a_label_pos = pickle.load(f)
-            a_label_pos = np.array(a_label_pos)
-            a_pred_pos = a_pred_pos[:SUBSET]
-            a_label_pos = a_label_pos[:SUBSET]
-            junc_name_pos= pickle.load(f)
-            junc_name_pos = junc_name_pos[:SUBSET]
+            a_label = np.concatenate((a_label, a_label_lcl), axis=None)        
+            d_label = np.concatenate((d_label, d_label_lcl), axis=None)        
 
-            # print("\td_pred_pos : ", len(d_pred_pos))
-            # print("\td_label_pos: ", len(d_label_pos))
-            # # print("\td_pred_neg: ", d_pred_neg)
-            # # print("\td_label_neg: ", d_label_neg)
-            # print("\ta_pred_pos : ", len(a_pred_pos))
-            # print("\ta_label_pos: ", len(a_label_pos))
-            # print("\tjunc_name_pos: ", len(junc_name_pos))
-            # print("\tjunc_name_pos: ", junc_name_pos)
-            # print("\ta_pred_neg: ", a_pred_neg)
-            # print("\ta_label_neg: ", a_label_neg)
-            # print("")
+            a_pred = np.concatenate((a_pred, a_pred_lcl), axis=None)        
+            d_pred = np.concatenate((d_pred, d_pred_lcl), axis=None)        
 
-        ###################################
-        # Checking spliceai pkl file (pos)
-        ###################################
-        with open("./spliceai_result/spliceai."+TYPE+".pos_refseq_protein_isoforms.pkl",'rb') as f:
-            print("Results of './spliceai_result/spliceai."+TYPE+".pos_refseq_protein_isoforms.pkl'")
-            d_pred_pos_refseq_protein_isoforms = pickle.load(f)
-            d_label_pos_refseq_protein_isoforms = pickle.load(f)
-            d_label_pos_refseq_protein_isoforms = np.array(d_label_pos_refseq_protein_isoforms)
-            d_pred_pos_refseq_protein_isoforms = d_pred_pos_refseq_protein_isoforms[:SUBSET]
-            d_label_pos_refseq_protein_isoforms = d_label_pos_refseq_protein_isoforms[:SUBSET]
-            # d_label_neg[:1000] = 1
-            a_pred_pos_refseq_protein_isoforms = pickle.load(f)
-            a_label_pos_refseq_protein_isoforms = pickle.load(f)
-            a_label_pos_refseq_protein_isoforms = np.array(a_label_pos_refseq_protein_isoforms)
-            a_pred_pos_refseq_protein_isoforms = a_pred_pos_refseq_protein_isoforms[:SUBSET]
-            a_label_pos_refseq_protein_isoforms = a_label_pos_refseq_protein_isoforms[:SUBSET]
-            junc_name_pos_refseq_protein_isoforms = pickle.load(f)
-            junc_name_pos_refseq_protein_isoforms = junc_name_pos_refseq_protein_isoforms[:SUBSET]
-            d_label_pos_refseq_protein_isoforms = np.ones(SUBSET)
-            a_label_pos_refseq_protein_isoforms = np.ones(SUBSET)
+            junc_name = (junc_name + junc_name_lcl)
 
-            # print("\td_pred_pos : ", len(d_pred_pos))
-            print("\td_label_pos_refseq_protein_isoforms: ", len(d_label_pos_refseq_protein_isoforms))
-            # print("\td_pred_neg: ", d_pred_neg)
-            print("\td_label_pos_refseq_protein_isoforms: ", d_label_pos_refseq_protein_isoforms)
-            # print("\ta_pred_pos : ", len(a_pred_pos))
-            print("\ta_label_pos_refseq_protein_isoforms: ", len(a_label_pos_refseq_protein_isoforms))
-            print("\ta_label_pos_refseq_protein_isoforms: ", a_label_pos_refseq_protein_isoforms)
-            # print("\tjunc_name_pos: ", len(junc_name_pos))
-            # print("\tjunc_name_pos: ", junc_name_pos)
-            # print("\ta_pred_neg: ", a_pred_neg)
-            # print("\ta_label_neg: ", a_label_neg)
-            # print("")
+            print("\td_pred : ", len(d_pred))
+            print("\td_label: ", len(d_label))
 
-        ###################################
-        # Checking spliceai pkl file (neg)
-        ###################################
-        with open("./spliceai_result/spliceai."+TYPE+".neg_1.pkl",'rb') as f:
-            print("Results of './spliceai_result/spliceai."+TYPE+".pkl'")
-            d_pred_neg = pickle.load(f)
-            d_label_neg = pickle.load(f)
-            d_label_neg = np.array(d_label_neg)
-            d_pred_neg = d_pred_neg[:SUBSET]
-            d_label_neg = d_label_neg[:SUBSET]
-            # d_label_neg[:1000] = 1
-            a_pred_neg = pickle.load(f)
-            a_label_neg = pickle.load(f)
-            a_label_neg = np.array(a_label_neg)
-            a_pred_neg = a_pred_neg[:SUBSET]
-            a_label_neg = a_label_neg[:SUBSET]
-            junc_name_neg = pickle.load(f)
-            junc_name_neg = junc_name_neg[:SUBSET]
-            # a_label_neg[:1000] = 1
+            print("\td_pred: ", d_pred)
+            print("\td_label: ", d_label)
 
+            print("\ta_pred : ", len(a_pred))
+            print("\ta_label: ", len(a_label))
 
-            # print("\td_pred_neg : ", len(d_pred_neg))
-            # print("\td_label_neg: ", len(d_label_neg))
-            # # print("\td_pred_neg: ", d_pred_neg)
-            # # print("\td_label_neg: ", d_label_neg)
-            # print("\ta_pred_neg : ", len(a_pred_neg))
-            # print("\ta_label_neg: ", len(a_label_neg))
-            # print("\tjunc_name_neg: ", len(junc_name_neg))
-            # print("\tjunc_name_neg: ", junc_name_neg)
-            # print("\ta_pred_neg: ", a_pred_neg)
-            # print("\ta_label_neg: ", a_label_neg)
-            # print("")
-
-        a_label = np.concatenate((a_label_pos_refseq_protein_isoforms, a_label_neg), axis=None)        
-        d_label = np.concatenate((d_label_pos_refseq_protein_isoforms, d_label_neg), axis=None)        
-
-        a_pred = np.concatenate((a_pred_pos_refseq_protein_isoforms, a_pred_neg), axis=None)        
-        d_pred = np.concatenate((d_pred_pos_refseq_protein_isoforms, d_pred_neg), axis=None)        
-
-        junc_name = (junc_name_pos_refseq_protein_isoforms + junc_name_neg)
-
-        print("\td_pred : ", len(d_pred))
-        print("\td_label: ", len(d_label))
-
-        print("\td_pred: ", d_pred)
-        print("\td_label: ", d_label)
-
-        print("\ta_pred : ", len(a_pred))
-        print("\ta_label: ", len(a_label))
-
-        print("\ta_pred: ", a_pred)
-        print("\ta_label: ", a_label)
-        print("\n\tjunc_name: ", len(junc_name))
-        # print("\tjunc_name: ", junc_name)
-        print("")
+            print("\ta_pred: ", a_pred)
+            print("\ta_label: ", a_label)
+            print("\n\tjunc_name: ", len(junc_name))
+            # print("\tjunc_name: ", junc_name)
+            print("")
 
 
         ###################################

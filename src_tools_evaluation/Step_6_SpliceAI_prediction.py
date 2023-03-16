@@ -44,13 +44,13 @@ def main(argv):
 
     all_lines = []
     
-    if output_file != "pos" and output_file != "neg_can" and output_file != "neg_noncan" and output_file != "neg_1" and output_file != "pos_refseq_protein_isoforms":
+    if output_file != "pos" and output_file != "neg_can" and output_file != "neg_noncan" and output_file != "neg_1" and output_file != "neg_20" and output_file != "neg_5" and output_file != "pos_refseq_protein_isoforms" and output_file != "pos_refseq_protein_alternative_only":
         exit()
 
     label = '.'
-    if output_file == "pos" or output_file == "pos_refseq_protein_isoforms":
+    if output_file == "pos" or output_file == "pos_refseq_protein_isoforms" or output_file == "pos_refseq_protein_alternative_only":
         label = '+'
-    if output_file == "neg_can" or output_file == "neg_noncan" or output_file == "neg_1":
+    if output_file == "neg_can" or output_file == "neg_noncan" or output_file == "neg_1" or output_file == "neg_20" or output_file == "neg_5":
         label = '-'
 
     da_faf = "./dataset/"+output_file+"/spliceai/spliceai."+TYPE+".juncs.seq.fa"
