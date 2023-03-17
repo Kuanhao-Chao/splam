@@ -7,8 +7,8 @@ def main():
 
     print("QUATER_SEQ_LEN: ", QUATER_SEQ_LEN)
 
-    # output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/neg_1/"]
-    output_files = ["./dataset/pos_refseq_protein_alternative_only/"]
+    # output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/outlier_test/"]
+    output_files = ["./dataset/outlier_test/"]
 
     for output_file in output_files:
         print(">> output_file")
