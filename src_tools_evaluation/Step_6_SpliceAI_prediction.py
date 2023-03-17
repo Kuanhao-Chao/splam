@@ -29,7 +29,7 @@ def main(argv):
 
     TYPE = argv[1]
     output_file = argv[2]
-    # output_files = "neg_1"
+    # output_files = "outlier_test"
     # paths = ('./models/spliceai{}.h5'.format(x) for x in range(1, 2))
     # models = [load_model(resource_filename('spliceai', x)) for x in paths]
     path = './models/spliceai1.h5'
@@ -39,18 +39,18 @@ def main(argv):
 
     os.makedirs("./spliceai_result/", exist_ok=True)
     # output_files = ["pos/", "neg_can/", "neg_noncan/"]
-    # output_files = ["neg_1"]
+    # output_files = ["outlier_test"]
     # ["pos/", 
 
     all_lines = []
     
-    if output_file != "pos" and output_file != "neg_can" and output_file != "neg_noncan" and output_file != "neg_1" and output_file != "neg_20" and output_file != "neg_5" and output_file != "pos_refseq_protein_isoforms" and output_file != "pos_refseq_protein_alternative_only":
+    if output_file != "pos" and output_file != "neg_can" and output_file != "neg_noncan" and output_file != "outlier_test" and output_file != "neg_20" and output_file != "neg_5" and output_file != "pos_refseq_protein_isoforms" and output_file != "pos_refseq_protein_alternative_only":
         exit()
 
     label = '.'
     if output_file == "pos" or output_file == "pos_refseq_protein_isoforms" or output_file == "pos_refseq_protein_alternative_only":
         label = '+'
-    if output_file == "neg_can" or output_file == "neg_noncan" or output_file == "neg_1" or output_file == "neg_20" or output_file == "neg_5":
+    if output_file == "neg_can" or output_file == "neg_noncan" or output_file == "outlier_test" or output_file == "neg_20" or output_file == "neg_5":
         label = '-'
 
     da_faf = "./dataset/"+output_file+"/spliceai/spliceai."+TYPE+".juncs.seq.fa"
@@ -121,6 +121,7 @@ def main(argv):
 
             donor_p = Y_pred[0][200-1][2]
             acceptor_p = Y_pred[0][len(Y_pred)-200-1][1]
+            print("(chr, start, end, strand): ", (chr, start, end, strand))
             print("donor_p    : ", donor_p)
             print("acceptor_p : ", acceptor_p)
 

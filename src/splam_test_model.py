@@ -17,7 +17,8 @@ import platform
 
 warnings.filterwarnings("ignore")
 
-MODEL_VERSION = "SPLAM_v7/"
+# MODEL_VERSION = "SPLAM_v7/"
+MODEL_VERSION = "SPLAM_v8/"
 JUNC_THRESHOLD = 0.1
 
 def parse_junction(name):
@@ -80,8 +81,8 @@ def main():
 
     BATCH_SIZE = 100
 
-    # TARGETS = ["pos", "pos_refseq_protein_isoforms", "neg_1"]
-    TARGETS = ["pos_refseq_protein_alternative_only"]
+    # TARGETS = ["pos", "pos_refseq_protein_isoforms", "pos_refseq_protein_alternative_only", "neg_1", "neg_5"]
+    TARGETS = ["neg_1"]
     # for shuffle in [True, False]:
     for shuffle in [False]:
         junc_counter = 0

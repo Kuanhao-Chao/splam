@@ -439,3 +439,20 @@ def get_eval_dataloader(batch_size, TARGET, n_workers, shuffle, eval_select):
     print("[INFO] Loading dataset (shuffle: " + str(shuffle) + "): ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
     torch.save(test_loader, "../src_tools_evaluation/splam_result/splam_dataloader.pt")
     return test_loader
+
+# def get_input_dataloader(batch_size, TARGET, n_workers, shuffle, eval_select):
+#     #######################################
+#     # predicting splice / non-splice
+#     #######################################
+#     print("get_eval_dataloader shuffle: ", shuffle)
+#     testset = myDataset("eval", int(SEQ_LEN), shuffle, eval_select)
+#     test_loader = DataLoader(
+#         testset,
+#         batch_size = batch_size,
+#         shuffle = shuffle,
+#         drop_last = False,
+#         pin_memory = True,
+#     )
+#     print("[INFO] Loading dataset (shuffle: " + str(shuffle) + "): ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+#     torch.save(test_loader, "../src_tools_evaluation/splam_result/splam_dataloader.pt")
+#     return test_loader

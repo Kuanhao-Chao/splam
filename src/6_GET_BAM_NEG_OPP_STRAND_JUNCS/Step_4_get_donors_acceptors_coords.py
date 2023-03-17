@@ -13,7 +13,8 @@ def get_hg38_chrom_size():
 
 def main():
     chrs = get_hg38_chrom_size()
-    D_A_POSITIONS=set()
+    # D_A_POSITIONS=set()
+    JUNC_POSITIONS = set()
 
     THRESHOLD = "1"
     SEQ_LEN = "800"
@@ -29,8 +30,11 @@ def main():
         lines = f.read().splitlines()
         for line in lines:
             eles = line.split("\t")
-            D_A_POSITIONS.add((eles[0], eles[1]))
-            D_A_POSITIONS.add((eles[0], eles[2]))
+            JUNC_POSITIONS.add((eles[0], eles[1], eles[2], eles[5]))
+            # D_A_POSITIONS.add((eles[0], eles[1]))
+            # D_A_POSITIONS.add((eles[0], eles[2]))
+
+
 
     #################################
     # Adding all reference-supported splice sites into the 
@@ -41,10 +45,11 @@ def main():
         lines = f.read().splitlines()
         for line in lines:
             eles = line.split("\t")
-            D_A_POSITIONS.add((eles[0], eles[1]))
-            D_A_POSITIONS.add((eles[0], eles[2]))
+            JUNC_POSITIONS.add((eles[0], eles[1], eles[2], eles[5]))
+            # D_A_POSITIONS.add((eles[0], eles[1]))
+            # D_A_POSITIONS.add((eles[0], eles[2]))
 
-    print("D_A_POSITIONS: ", len(D_A_POSITIONS))
+    print("JUNC_POSITIONS: ", len(JUNC_POSITIONS))
     
     #################################
     # For 'd_a.bed': 0-based, 1-based
@@ -59,34 +64,7 @@ def main():
     fw_da = open(d_a_bed, "w")
     JUNCS = set()
 
-    # Equally distribute the 1-alignment-supported junctions.
-    # CHRS = ["1",
-    #         "2",
-    #         "3",
-    #         "4",
-    #         "5",
-    #         "6",
-    #         "7",
-    #         "8",
-    #         "9",
-    #         "10",
-    #         "11",
-    #         "12",
-    #         "13",
-    #         "14",
-    #         "15",
-    #         "16",
-    #         "17",
-    #         "18",
-    #         "19",
-    #         "20",
-    #         "21",
-    #         "22",
-    #         "X",
-    #         "Y"]
     
-    # for CHR in CHRS:
-    # with open("./BAM_junctions/chr"+CHR+"_junctions_"+THRESHOLD+".bed", "r") as f:
     print("./BAM_junctions/junctions_"+THRESHOLD+"_cleaned.bed")
     with open("./BAM_junctions/junctions_"+THRESHOLD+"_cleaned.bed", "r") as f:
         lines = f.read().splitlines()
@@ -102,40 +80,8 @@ def main():
             donor = 0
             acceptor = 0
 
-
-
-
-        # lengths = eles[10].split(',')
-        # len_1 = int(lengths[0])
-        # len_2 = int(lengths[1])
-        # if (strand == "+"):
-        #     donor = int(eles[1]) + len_1
-        #     acceptor = int(eles[2]) - len_2
-        #     splice_junc_len = acceptor - donor
-        # elif (strand == "-"):
-        #     acceptor = int(eles[1]) + len_1
-        #     donor = int(eles[2]) - len_2
-        #     splice_junc_len = donor - acceptor
-
-        # flanking_size = QUATER_SEQ_LEN
-        # if splice_junc_len < QUATER_SEQ_LEN:
-        #     flanking_size = splice_junc_len
-
-        # if (strand == "+"):
-        #     donor_s = donor - QUATER_SEQ_LEN
-        #     donor_e = donor + flanking_size
-        #     acceptor_s = acceptor - flanking_size
-        #     acceptor_e = acceptor + QUATER_SEQ_LEN
-
-        # elif (strand == "-"):
-        #     donor_s = donor - flanking_size
-        #     donor_e = donor + QUATER_SEQ_LEN
-        #     acceptor_s = acceptor - QUATER_SEQ_LEN
-        #     acceptor_e = acceptor + flanking_size
-
-
-
-
+            if (eles[0], eles[1], eles[2], eles[5]) in JUNC_POSITIONS:
+                continue
 
 
             lengths = eles[10].split(',')
@@ -192,40 +138,41 @@ def main():
                 continue
             else:                
                 JUNCS.add(new_junc)
-                #################################
-                # Check if the junction is in the 'D_A_POSITIONS' 
-                #################################
-                in_da_set = False
-                for d in range(donor_s, donor_e):
-                    if in_da_set: break
-                    if (chr, d) in D_A_POSITIONS:
-                        in_da_set = True
-                for a in range(acceptor_s, acceptor_e):
-                    if in_da_set: break
-                    if (chr, a) in D_A_POSITIONS:
-                        in_da_set = True
+                # #################################
+                # # Check if the junction is in the 'D_A_POSITIONS' 
+                # #################################
+                # in_da_set = False                
+                # for d in range(donor_s, donor_e):
+                #     if in_da_set: break
+                #     if (chr, d) in D_A_POSITIONS:
+                #         in_da_set = True
+                # for a in range(acceptor_s, acceptor_e):
+                #     if in_da_set: break
+                #     if (chr, a) in D_A_POSITIONS:
+                #         in_da_set = True
                 
-                # if (chr, donor) in D_A_POSITIONS:
-                #     in_da_set = True
-                # if (chr, acceptor) in D_A_POSITIONS:
-                #     in_da_set = True
+                # # if (chr, donor) in D_A_POSITIONS:
+                # #     in_da_set = True
+                # # if (chr, acceptor) in D_A_POSITIONS:
+                # #     in_da_set = True
 
-                # print("in_da_set: ", in_da_set)
-                # D_A_POSITIONS.add((chr, donor_s))
-                # D_A_POSITIONS.add((chr, donor_e))
-                # D_A_POSITIONS.add((chr, acceptor_s))
-                # D_A_POSITIONS.add((chr, acceptor_e))
-                if not in_da_set:
-                    counter += 1
-                    fw_donor.write(chr + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + junc_name+"_donor" + "\t" + score + "\t" + strand + "\n")
-                    fw_acceptor.write(chr + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + score + "\t" + strand + "\n")
+                # # print("in_da_set: ", in_da_set)
+                # # D_A_POSITIONS.add((chr, donor_s))
+                # # D_A_POSITIONS.add((chr, donor_e))
+                # # D_A_POSITIONS.add((chr, acceptor_s))
+                # # D_A_POSITIONS.add((chr, acceptor_e))
+                # if not in_da_set:
 
-                    if (strand == "+"):
-                        fw_da.write(chr + "\t" + str(donor) + "\t" + str(acceptor+1) + "\tJUNC\t" + score + "\t" + strand + "\n")
-                    elif (strand == "-"):
-                        fw_da.write(chr + "\t" + str(acceptor) + "\t" + str(donor+1) + "\tJUNC\t" + score + "\t" + strand + "\n")
+                counter += 1
+                fw_donor.write(chr + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + junc_name+"_donor" + "\t" + score + "\t" + strand + "\n")
+                fw_acceptor.write(chr + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + score + "\t" + strand + "\n")
 
-    print("D_A_POSITIONS After: ", len(D_A_POSITIONS))
+                if (strand == "+"):
+                    fw_da.write(chr + "\t" + str(donor) + "\t" + str(acceptor+1) + "\tJUNC\t" + score + "\t" + strand + "\n")
+                elif (strand == "-"):
+                    fw_da.write(chr + "\t" + str(acceptor) + "\t" + str(donor+1) + "\tJUNC\t" + score + "\t" + strand + "\n")
+
+    print("D_A_POSITIONS After: ", len(JUNC_POSITIONS))
 
     fw_donor.close()
     fw_acceptor.close()

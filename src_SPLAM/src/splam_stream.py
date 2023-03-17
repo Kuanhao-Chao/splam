@@ -259,6 +259,7 @@ def test_model():
             donor_labels, donor_scores, acceptor_labels, acceptor_scores = get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP)
             for idx in range(len(yp)):
                 chr, start, end, strand, aln_num = seqname[idx].split(';')
+                # print('seqname[idx]')
                 if strand == '+':
                     fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\\n')
                 elif strand == '-':
