@@ -15,7 +15,7 @@ from SPLAM import *
 #############################
 # Global variable definition
 #############################
-EPOCH_NUM = 25
+EPOCH_NUM = 15
 BATCH_SIZE = 100
 N_WORKERS = 1
 L = 64
@@ -68,7 +68,7 @@ k=10
 #############################
 # Creating directories
 #############################
-MODEL_VERSION = "SPLAM_v8/"
+MODEL_VERSION = "SPLAM_v9/"
 MODEL_OUTPUT_BASE = "./MODEL/"+MODEL_VERSION
 LOG_OUTPUT_BASE = MODEL_OUTPUT_BASE + "LOG/"
 LOG_OUTPUT_TRAIN_BASE = MODEL_OUTPUT_BASE + "LOG/TRAIN/"
