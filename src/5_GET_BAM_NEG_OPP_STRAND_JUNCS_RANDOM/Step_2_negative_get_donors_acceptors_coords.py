@@ -16,7 +16,7 @@ from concurrent.futures import ThreadPoolExecutor
 
 SEQ_LENGTH="800"
 QUATER_SEQ_LEN = int(SEQ_LENGTH) // 4
-EACH_JUNC_PER_LOCUS = 100
+EACH_JUNC_PER_LOCUS = 500
 MIN_JUNC = 200
 MAX_JUNC = 20000
 
