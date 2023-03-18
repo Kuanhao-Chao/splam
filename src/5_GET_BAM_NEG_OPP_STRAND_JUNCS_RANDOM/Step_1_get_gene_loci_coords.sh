@@ -14,6 +14,10 @@ bedtools intersect -v -a ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.me
 
 bedtools intersect -v -a ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.neg.bed -b ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.pos.bed > ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.neg.only.bed
 
+cat ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.pos.only.bed ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.neg.only.bed > ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.merge.bed
+
+bedtools sort -i ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.merge.bed > ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.merge.sort.bed
+
 # bedtools intersect -wa -wb -a ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.pos.only.bed -b NEG_rev_junctions/junctions_5_2.bed -sorted -filenames > ./NEG_rev_junctions/neg_hits.bed
 
 # bedtools intersect -wa -wb -a ./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.neg.only.bed -b NEG_rev_junctions/junctions_5_2.bed -sorted -filenames > ./NEG_rev_junctions/pos_hits.bed
