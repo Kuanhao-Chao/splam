@@ -1,9 +1,9 @@
-THRESHOLD=5
+THRESHOLD="random"
 SEQ_LEN = "800"
 HALF_SEQ_LEN = int(SEQ_LEN) // 2
 QUATER_SEQ_LEN = int(SEQ_LEN) // 4
 def main():
-    # fw = open("../INPUTS/"+SEQ_LEN+"bp/input_neg_"+str(THRESHOLD)+".fa", "w")
+    fw = open("../INPUTS/"+SEQ_LEN+"bp/input_neg_"+str(THRESHOLD)+".fa", "w")
     fr_donor = open("./NEG_rev_junctions/"+SEQ_LEN+"bp/donor/donor_seq.fa", "r")
     fr_acceptor = open("./NEG_rev_junctions/"+SEQ_LEN+"bp/acceptor/acceptor_seq.fa", "r")
 
@@ -43,8 +43,8 @@ def main():
             if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
                 continue
 
-            # fw.write(chr_name)
-            # fw.write(x + "\n")
+            fw.write(chr_name)
+            fw.write(x + "\n")
 
             donor_dimer = x[QUATER_SEQ_LEN:QUATER_SEQ_LEN+2]
             acceptor_dimer = x[QUATER_SEQ_LEN*3-2:QUATER_SEQ_LEN*3]
@@ -79,6 +79,6 @@ def main():
         print("Donor   : ", key, " (", value, ")")
     for key, value in acceptors.items():
         print("Acceptor: ", key, " (", value, ")")
-    # fw.close()
+    fw.close()
 if __name__ == "__main__":
     main()
