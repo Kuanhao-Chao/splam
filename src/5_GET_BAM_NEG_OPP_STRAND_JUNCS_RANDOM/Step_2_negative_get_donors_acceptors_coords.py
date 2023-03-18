@@ -4,57 +4,33 @@ import os
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
-targets = {
-    "chr1": 248956422,
-    "chr2": 242193529,
-    "chr3": 198295559,
-    "chr4": 190214555,
-    "chr5": 181538259,
-    "chr6": 170805979,
-    "chr7": 159345973,
-    "chr8": 145138636,
-    "chr9": 138394717,
-    "chr10": 133797422,
-    "chr11": 135086622,
-    "chr12": 133275309,
-    "chr13": 114364328,
-    "chr14": 107043718,
-    "chr15": 101991189,
-    "chr16": 90338345,
-    "chr17": 83257441,
-    "chr18": 80373285,
-    "chr19": 58617616,
-    "chr20": 64444167,
-    "chr21": 46709983,
-    "chr22": 50818468,
-    "chrX": 156040895,
-    "chrY": 57227415
-}
-
-
-
-def get_hg38_chrom_size():
-    f_chrs = open("../hg38_chrom_size.tsv", "r")
-    lines = f_chrs.read().splitlines()
-    chrs = {}
-    for line in lines:
-        eles = line.split("\t")
-        chrs[eles[0]] = int(eles[1])
-    return chrs
-
-chrs = get_hg38_chrom_size()
+# def get_hg38_chrom_size():
+#     f_chrs = open("../hg38_chrom_size.tsv", "r")
+#     lines = f_chrs.read().splitlines()
+#     chrs = {}
+#     for line in lines:
+#         eles = line.split("\t")
+#         chrs[eles[0]] = int(eles[1])
+#     return chrs
+# chrs = get_hg38_chrom_size()
 
 SEQ_LENGTH="800"
 QUATER_SEQ_LEN = int(SEQ_LENGTH) // 4
-EACH_JUNC_PER_LOCUS = 1000
-MIN_JUNC = 300
+EACH_JUNC_PER_LOCUS = 100
+MIN_JUNC = 200
+MAX_JUNC = 20000
+
 THRESHOLD = "100"
 hg38_ref = "../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa"
-os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/", exist_ok=True)
 output_bed = "./NEG_rev_junctions/"+SEQ_LENGTH+"bp/neg_junctions.bed"
 output_file = "../INPUTS/"+SEQ_LENGTH+"bp/input_can_neg.fa"
 D_A_POSITIONS = set()
+
 os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/", exist_ok=True)
+os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/", exist_ok=True)
+os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/d_a/", exist_ok=True)
+os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/donor/", exist_ok=True)
+os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/acceptor/", exist_ok=True)
 
 
 fw_donor = open("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/donor/donor.bed", "w")
@@ -63,6 +39,7 @@ fw_da = open("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/d_a/d_a.bed", "w")
 
 def task(chromosome, sequence, start, end ,strand):
     idx = 0
+    JUNC_BASE = 0
     while True:
         idx += 1
         # print("Current idx: ", idx)
@@ -71,20 +48,25 @@ def task(chromosome, sequence, start, end ,strand):
         # if idx % 1000 == 0:
         #     print("\t", idx)
         base_num = random.randint(start, end)
-        acceptor_skip_idx = random.randint(0, 3)
-        # Finding the 'GT'
-        donor_idx = 0
-        acceptor_idx = MIN_JUNC
+        # acceptor_skip_idx = random.randint(0, 30)
+
+        JUNC_BASE = random.randint(MIN_JUNC, MAX_JUNC)
         
-        no_donor = False
-        no_acceptor = False
+        ################################
+        # Finding the first and second dimers
+        ################################
+        donor_idx = 0
+        acceptor_idx = JUNC_BASE
+        
+        has_donor = False
+        has_acceptor = False
 
         donor_1 = ""
         donor_2 = ""
         acceptor_1 = ""
         acceptor_1 = ""
 
-        strand_target = "."
+        strand_select = "."
         if strand == "+":
             strand_select = "-"
         elif strand == "-":
@@ -105,72 +87,113 @@ def task(chromosome, sequence, start, end ,strand):
             acceptor_2 = "G"
 
         
-        while not((base_num+donor_idx+1) < end and sequence[base_num+donor_idx] == donor_1 and sequence[base_num+donor_idx+1] == donor_2):
-            # if chromosome == "chr13":
-            #     print("donor_idx: ", donor_idx)
-            donor_idx += 1
+        ################################
+        # Finding the first dimer
+        ################################
+        while True:
+            # (1) condition to break => Found the first dimer
+            if (sequence[base_num+donor_idx] == donor_1 and sequence[base_num+donor_idx+1] == donor_2):
+                has_donor = True
+                break
+
+            # (2) condition to break => donor is out of range.
             if base_num+donor_idx+1 >= end:
-                no_donor = True
+                has_donor = True
                 print("\tBreak because of out of range.")
                 break
-            if donor_idx > 10000:
-                no_donor = True
-                print("\tBreak because of try too many times ~ donor_idx")
-                break
-        if no_donor:
+
+            # (3) condition to break => Trying too many times.
+            # if donor_idx > 10000:
+            #     has_donor = True
+            #     print("\tBreak because of try too many times ~ donor_idx")
+            #     break
+            donor_idx += 1
+        if not has_donor:
             continue
         
-        # print("Find donor dimers!")
+        ################################
+        # Finding the second dimer
+        ################################
+        while True:
+            # (1) condition to break => Found the second dimer
+            if (sequence[base_num+donor_idx+acceptor_idx-2] == acceptor_1 and sequence[base_num+donor_idx+acceptor_idx-1] == acceptor_2):
+                has_acceptor = True
+                break
 
-
-        while not(base_num+donor_idx+acceptor_idx <= end and sequence[base_num+donor_idx+acceptor_idx-2] == acceptor_1 and sequence[base_num+donor_idx+acceptor_idx-1] == acceptor_2 and acceptor_skip_idx > acceptor_skip_idx):
-            acceptor_idx += 1
+            # (2) condition to break => acceptor is out of range.
             if base_num+donor_idx+acceptor_idx > end:
-                no_acceptor = True
+                has_acceptor = False
                 break
-            if acceptor_idx > 100000:
-                no_donor = True
-                break
-        if no_acceptor:
+            acceptor_idx += 1
+
+        if not has_acceptor:
             continue
 
-        donor_s = base_num+donor_idx-QUATER_SEQ_LEN
-        donor_e = base_num+donor_idx+QUATER_SEQ_LEN
-        acceptor_s = base_num+donor_idx+acceptor_idx-QUATER_SEQ_LEN
-        acceptor_e = base_num+donor_idx+acceptor_idx+QUATER_SEQ_LEN
+        if has_donor and has_acceptor:
 
 
-        ######################################################
-        # Check if the donors and acceptors are in range.
-        ######################################################
-        if acceptor_s >= end:
-            continue
-        
-        print("Donor: ", donor_s, "-", donor_e, " ;  Acceptor: ", acceptor_s, "-", acceptor_e)
-        ######################################################
-        # Make sure there are no donors or acceptors inside the sequences.
-        ######################################################
-        # in_da_set = False
-        # for d in range(donor_s, donor_e):
-        #     if (chromosome, d) in D_A_POSITIONS:
-        #         in_da_set = True
-        # for a in range(acceptor_s, acceptor_e):
-        #     if (chromosome, a) in D_A_POSITIONS:
-        #         in_da_set = True
-        # if in_da_set:
-        #     continue
 
-        # D_A_POSITIONS.add((chromosome, base_num+donor_idx))
-        # D_A_POSITIONS.add((chromosome, base_num+donor_idx+acceptor_idx))
+            # print("donor_1   : ", sequence[base_num+donor_idx])
+            # print("donor_2   : ", sequence[base_num+donor_idx+1])
+            # print("acceptor_1: ", sequence[base_num+donor_idx+acceptor_idx-2])
+            # print("acceptor_2: ", sequence[base_num+donor_idx+acceptor_idx-1])
 
-        fw_da.write(chromosome + "\t" + str(base_num+donor_idx) + "\t" + str(base_num+donor_idx+acceptor_idx+1) + "\t" + "JUNC_donor\t1\t"+strand_select+"\n")
-        fw_donor.write(chromosome + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + "JUNC_donor\t1\t+\n")
-        fw_acceptor.write(chromosome + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + "JUNC_donor\t1\t"+strand_select+"\n")
-    
-    
-    
-    
-    
+
+            splice_junc_len = acceptor_idx + 1
+
+
+            flanking_size = QUATER_SEQ_LEN
+            if splice_junc_len < QUATER_SEQ_LEN:
+                flanking_size = splice_junc_len
+
+            donor = base_num+donor_idx
+            acceptor = base_num+donor_idx+acceptor_idx
+            if (strand_select == "+"):
+                donor_s = donor - QUATER_SEQ_LEN
+                donor_e = donor + flanking_size
+                acceptor_s = acceptor - flanking_size
+                acceptor_e = acceptor + QUATER_SEQ_LEN
+
+            elif (strand_select == "-"):
+                donor_s = donor - flanking_size
+                donor_e = donor + QUATER_SEQ_LEN
+                acceptor_s = acceptor - QUATER_SEQ_LEN
+                acceptor_e = acceptor + flanking_size
+
+            ######################################################
+            # Check if the donors and acceptors are in range.
+            ######################################################
+            if acceptor_s >= end:
+                continue
+            
+            # print("Donor: ", donor_s, "-", donor_e, " ;  Acceptor: ", acceptor_s, "-", acceptor_e, " strand: ", strand_select)
+            ######################################################
+            # Make sure there are no donors or acceptors inside the sequences.
+            ######################################################
+            # in_da_set = False
+            # for d in range(donor_s, donor_e):
+            #     if (chromosome, d) in D_A_POSITIONS:
+            #         in_da_set = True
+            # for a in range(acceptor_s, acceptor_e):
+            #     if (chromosome, a) in D_A_POSITIONS:
+            #         in_da_set = True
+            # if in_da_set:
+            #     continue
+
+            # D_A_POSITIONS.add((chromosome, base_num+donor_idx))
+            # D_A_POSITIONS.add((chromosome, base_num+donor_idx+acceptor_idx))
+
+            fw_da.write(chromosome + "\t" + str(base_num+donor_idx) + "\t" + str(base_num+donor_idx+acceptor_idx+1) + "\t" + "JUNC_donor\t1\t"+strand_select+"\n")
+            
+
+            if (strand_select == "+"):
+                fw_donor.write(chromosome + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + "JUNC_donor\t1\t"+strand_select+"\n")
+                fw_acceptor.write(chromosome + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + "JUNC_donor\t1\t"+strand_select+"\n")
+
+            elif (strand_select == "-"):
+                fw_acceptor.write(chromosome + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + "JUNC_donor\t1\t"+strand_select+"\n")
+                fw_donor.write(chromosome + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + "JUNC_donor\t1\t"+strand_select+"\n")
+
 
 
 def main():
@@ -205,7 +228,7 @@ def main():
 
         record_dict = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
 
-        with open("../6_GET_BAM_NEG_OPP_STRAND_JUNCS/BAM_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.pos.only.bed") as f:
+        with open("./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.merge.sort.bed") as f:
             lines = f.read().splitlines()
             for line in lines:
                 eles = line.split("\t")
@@ -215,8 +238,6 @@ def main():
                 start = int(eles[1])
                 end = int(eles[2])
                 strand = eles[3]
-
-
                 record = record_dict[chr]
 
                 # Extract individual parts of the FASTA record
