@@ -9,7 +9,8 @@ def main():
 
     # output_files = ["./dataset/pos/", "./dataset/outlier_test/", "./dataset/neg_5/"]
 
-    output_files = ["./dataset/outlier_test/"]
+    output_dir = "./dataset/"
+    output_files = [output_dir+"pos/", output_dir+"neg_1/", output_dir+"neg_1_random/"]
 
     for output_file in output_files:
         print("output_file: ", output_file)

@@ -44,18 +44,21 @@ def main(argv):
 
     all_lines = []
     
-    if output_file != "pos" and output_file != "neg_can" and output_file != "neg_noncan" and output_file != "outlier_test" and output_file != "neg_20" and output_file != "neg_5" and output_file != "pos_refseq_protein_isoforms" and output_file != "pos_refseq_protein_alternative_only":
-        exit()
+    # if output_file != "pos" and output_file != "neg_can" and output_file != "neg_noncan" and output_file != "outlier_test" and output_file != "neg_20" and output_file != "neg_5" and output_file != "pos_refseq_protein_isoforms" and output_file != "pos_refseq_protein_alternative_only":
+    #     exit()
 
     label = '.'
     if output_file == "pos" or output_file == "pos_refseq_protein_isoforms" or output_file == "pos_refseq_protein_alternative_only":
         label = '+'
-    if output_file == "neg_can" or output_file == "neg_noncan" or output_file == "outlier_test" or output_file == "neg_20" or output_file == "neg_5":
+
+    if output_file == "neg_can" or output_file == "neg_noncan" or output_file == "outlier_test" or output_file == "neg_20" or output_file == "neg_5" or output_file == "neg_1" or output_file == "neg_1_random":
         label = '-'
 
+    # print(">> label\t\t: ", label)
     da_faf = "./dataset/"+output_file+"/spliceai/spliceai."+TYPE+".juncs.seq.fa"
     print(">> da_faf\t\t: ", da_faf)
     print(">> pkl file\t\t: ", "./spliceai_result/spliceai."+TYPE+"."+output_file+".pkl")
+    
     with open(da_faf, "r") as f:
         print("Processing : ", da_faf)
         lines = f.read().splitlines()
@@ -116,8 +119,8 @@ def main(argv):
             # del model
             gc.collect()
             COUNTER += 1
-            # print("X.shape     : ", X.shape)
-            # print("Y_pred.shape: ", Y_pred.shape)
+            print("X.shape     : ", X.shape)
+            print("Y_pred.shape: ", Y_pred.shape)
 
             donor_p = Y_pred[0][200-1][2]
             acceptor_p = Y_pred[0][len(Y_pred)-200-1][1]
