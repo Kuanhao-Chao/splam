@@ -51,7 +51,7 @@ def main(argv):
     if output_file == "pos" or output_file == "pos_refseq_protein_all" or output_file == "pos_refseq_protein_alts":
         label = '+'
 
-    if output_file == "neg_can" or output_file == "neg_noncan" or output_file == "outlier_test" or output_file == "neg_20" or output_file == "neg_5" or output_file == "neg_1" or output_file == "neg_1_random":
+    if output_file == "neg_can" or output_file == "neg_noncan" or output_file == "outlier_test" or output_file == "neg_20" or output_file == "neg_5" or output_file == "neg_1" or output_file == "neg_random":
         label = '-'
 
     # print(">> label\t\t: ", label)

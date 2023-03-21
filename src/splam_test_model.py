@@ -18,7 +18,7 @@ import platform
 warnings.filterwarnings("ignore")
 
 # MODEL_VERSION = "SPLAM_v7/"
-MODEL_VERSION = "SPLAM_v8/"
+MODEL_VERSION = "SPLAM_v10/"
 JUNC_THRESHOLD = 0.1
 
 def parse_junction(name):
@@ -59,7 +59,7 @@ def main():
     device = torch.device(device_str)
     print(f"\033[1m[Info]: Use {device} now!\033[0m")
 
-    MODEL = "./MODEL/"+MODEL_VERSION+"splam_24.pt"
+    MODEL = "./MODEL/"+MODEL_VERSION+"splam_14.pt"
     MODEL_OUTPUT_BASE = "../src_tools_evaluation/splam_result/"
 
     print(">> Using model: ", MODEL)
@@ -82,7 +82,8 @@ def main():
     BATCH_SIZE = 100
 
     # TARGETS = ["pos", "pos_refseq_protein_isoforms", "pos_refseq_protein_alternative_only", "neg_1", "neg_5"]
-    TARGETS = ["neg_1"]
+    TARGETS = ["pos", "pos_refseq_protein_alts", "neg_1", "neg_random"]
+    # TARGETS = ["neg_1_random"]
     # for shuffle in [True, False]:
     for shuffle in [False]:
         junc_counter = 0

@@ -39,9 +39,13 @@ def main():
 
 
     # SUBSET = 9900
-    TARGETS = ["pos_refseq_protein_alternative_only", "neg_1"]
+    # TARGETS = ["pos_refseq_protein_alts", "neg_1"]
+    TARGETS = ["pos", "neg_1"]
     # TARGETS = ["pos", "neg_1", "neg_5"]
     # SUBSETS = [2000, 5000, 5000]
+    # SUBSETS = [9900, 9900]
+    # SUBSETS = [500, 8000]
+
     SUBSETS = [9000, 9000]
 
     # for TYPE in ["N", "noN"]:
@@ -75,7 +79,7 @@ def main():
                 junc_name_lcl = pickle.load(f)
                 junc_name_lcl = junc_name_lcl[:SUBSET]
                 
-                if target == "pos" or target == "pos_refseq_protein_isoforms" or target == "pos_refseq_protein_alternative_only":
+                if target == "pos" or target == "pos_refseq_protein_all" or target == "pos_refseq_protein_alts":
                     d_label_lcl = np.ones(SUBSET)
                     a_label_lcl = np.ones(SUBSET)
 
