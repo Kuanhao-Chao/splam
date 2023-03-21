@@ -461,18 +461,18 @@ def main():
     ###################################
     # Threshold plots
     ###################################
-    plot_thresholds(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "splcieai")
-    # plot_thresholds(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "splcieai_N")
+    # plot_thresholds(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "splcieai")
+    # # plot_thresholds(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "splcieai_N")
 
-    plot_thresholds(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_noshuffle")
-    # plot_thresholds(splam_S_a_label_prob, splam_S_a_pred_prob, splam_S_d_pred_prob, "splam_shuffle")
+    # plot_thresholds(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_noshuffle")
+    # # plot_thresholds(splam_S_a_label_prob, splam_S_a_pred_prob, splam_S_d_pred_prob, "splam_shuffle")
 
-    # plot_thresholds_J(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_shuffle")
-    # plot_thresholds_J(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_noshuffle")
+    # # plot_thresholds_J(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_shuffle")
+    # # plot_thresholds_J(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_noshuffle")
 
-    # plot_thresholds_J(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_shuffle_avg")
-    # plot_thresholds_J(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_noshuffle_avg")
-    # plot_thresholds_J(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_nobatch")
+    # # plot_thresholds_J(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_shuffle_avg")
+    # # plot_thresholds_J(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_noshuffle_avg")
+    # # plot_thresholds_J(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_nobatch")
 
 
     ###################################

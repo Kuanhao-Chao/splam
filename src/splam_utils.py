@@ -221,7 +221,7 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     ########################################
     # splice / nonsplice classifier
     ########################################
-    SEQ_WEIGHT = 8
+    SEQ_WEIGHT = 4
     # IMBALANCE_WEIGHT = 1
     # WEIGHT = SEQ_WEIGHT * IMBALANCE_WEIGHT
 

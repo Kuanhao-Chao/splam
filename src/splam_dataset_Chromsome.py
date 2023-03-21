@@ -30,14 +30,15 @@ class myDataset(Dataset):
             neg_random_f = "./INPUTS/"+SEQ_LEN+"bp/input_neg_random/"+type+"_neg_random.shuffle.fa"
         elif type == "eval":
             pos_f = "../src_tools_evaluation/dataset/pos/splam/splam.juncs.seq.fa"
-            pos_refseq_protein_isoforms_f = "../src_tools_evaluation/dataset/pos_refseq_protein_isoforms/splam/splam.juncs.seq.fa"
-            pos_refseq_protein_alternative_only_f = "../src_tools_evaluation/dataset/pos_refseq_protein_alternative_only/splam/splam.juncs.seq.fa"
+            pos_refseq_protein_all_f = "../src_tools_evaluation/dataset/pos_refseq_protein_all/splam/splam.juncs.seq.fa"
+            pos_refseq_protein_alts_f = "../src_tools_evaluation/dataset/pos_refseq_protein_alts/splam/splam.juncs.seq.fa"
 
             neg_1_f = "../src_tools_evaluation/dataset/neg_1/splam/splam.juncs.seq.fa"
-            neg_5_f = "../src_tools_evaluation/dataset/neg_5/splam/splam.juncs.seq.fa"
-            neg_20_f = "../src_tools_evaluation/dataset/neg_20/splam/splam.juncs.seq.fa"
-            neg_noncan_f = "../src_tools_evaluation/dataset/neg_noncan/splam/splam.juncs.seq.fa"
-            neg_can_f = "../src_tools_evaluation/dataset/neg_can/splam/splam.juncs.seq.fa"
+            neg_random_f = "../src_tools_evaluation/dataset/neg_random/splam/splam.juncs.seq.fa"
+            # neg_5_f = "../src_tools_evaluation/dataset/neg_5/splam/splam.juncs.seq.fa"
+            # neg_20_f = "../src_tools_evaluation/dataset/neg_20/splam/splam.juncs.seq.fa"
+            # neg_noncan_f = "../src_tools_evaluation/dataset/neg_noncan/splam/splam.juncs.seq.fa"
+            # neg_can_f = "../src_tools_evaluation/dataset/neg_can/splam/splam.juncs.seq.fa"
 
         CONSTANT_SIZE = 0
         CONSTANT_SIZE_NEG = 0
@@ -86,7 +87,7 @@ class myDataset(Dataset):
 
             CONSTANT_SIZE = pidx
             # CONSTANT_SIZE_NEG = math.ceil(CONSTANT_SIZE*2/3)
-            CONSTANT_SIZE_NEG = CONSTANT_SIZE*4
+            CONSTANT_SIZE_NEG = CONSTANT_SIZE*2
             print("\033[1m[INFO] CONSTANT_SIZE     : ", CONSTANT_SIZE, "\033[0m")
             print("\033[1m[INFO] CONSTANT_SIZE_NEG : ", CONSTANT_SIZE_NEG, "\033[0m")
 
@@ -162,45 +163,41 @@ class myDataset(Dataset):
                             break
             print("nridx: ", nridx)
 
+        if type == "eval" and eval_select=="pos_refseq_protein_alts":
+            #################################
+            ## Processing 'POSITIVE_REFSEQ_PROTEIN_ISOFORMS' samples
+            #################################
+            pp_alts_idx = 0
+            with open(pos_refseq_protein_alts_f, "r") as f:
+                print("Processing ", pos_refseq_protein_alts_f)
+                lines = f.read().splitlines()
+                seq_name = ""
+                seq = ""
+                for line in lines:
+                    # print(line)
+                    if pp_alts_idx % 2 == 0:
+                        seq_name = split_seq_name(line)
+                    elif pp_alts_idx % 2 == 1:
+                        seq = line
+                        # print(seq)
+                        X, Y = create_datapoints(seq, '+')
+                        X = torch.Tensor(np.array(X))
+                        Y = torch.Tensor(np.array(Y)[0])
+                        # print("X.size(): ", X)
+                        # print("Y.size(): ", Y)
+                        if X.size()[0] != 800:
+                            print("seq_name: ", seq_name)
+                            print(X.size())
+                            print(Y.size())
+                        self.data.append([X, Y, seq_name])
+                    pp_alts_idx += 1
+                    if pp_alts_idx %10000 == 0:
+                        print("pidx: ", pp_alts_idx)
+                        # print(seq_name)
+            print("pp_alts_idx: ", pp_alts_idx)
 
 
 
-        # if type == "eval" and eval_select=="pos_refseq_protein_isoforms":
-        #     #################################
-        #     ## Processing 'POSITIVE_REFSEQ_PROTEIN_ISOFORMS' samples
-        #     #################################
-        #     pp_iso_idx = 0
-        #     with open(pos_refseq_protein_isoforms_f, "r") as f:
-        #         print("Processing ", pos_refseq_protein_isoforms_f)
-        #         lines = f.read().splitlines()
-        #         seq_name = ""
-        #         seq = ""
-        #         for line in lines:
-        #             # print(line)
-        #             if pp_iso_idx % 2 == 0:
-        #                 seq_name = split_seq_name(line)
-        #             elif pp_iso_idx % 2 == 1:
-        #                 seq = line
-        #                 # print(seq)
-        #                 X, Y = create_datapoints(seq, '+')
-        #                 X = torch.Tensor(np.array(X))
-        #                 Y = torch.Tensor(np.array(Y)[0])
-        #                 # print("X.size(): ", X)
-        #                 # print("Y.size(): ", Y)
-        #                 if X.size()[0] != 800:
-        #                     print("seq_name: ", seq_name)
-        #                     print(X.size())
-        #                     print(Y.size())
-        #                 self.data.append([X, Y, seq_name])
-        #             pp_iso_idx += 1
-        #             if pp_iso_idx %10000 == 0:
-        #                 print("pidx: ", pp_iso_idx)
-        #                 # print(seq_name)
-        #             if type == "train" or type == "test":
-        #                 if pp_iso_idx >= CONSTANT_SIZE_NEG:
-        #                     break
-
-        #     print("pp_iso_idx: ", pp_iso_idx)
 
         # if type == "eval" and eval_select=="pos_refseq_protein_alternative_only":
         #     #################################
@@ -400,7 +397,7 @@ class myDataset(Dataset):
         return feature, label, seq_name
 
 
-def save_dataloader(batch_size, TARGET, n_workers):
+def get_dataloader(batch_size, TARGET, n_workers):
     """Generate dataloader"""
     trainset_origin = myDataset("train", int(SEQ_LEN))
     trainset, valset = torch.utils.data.random_split(trainset_origin, [0.9, 0.1])
@@ -429,22 +426,23 @@ def save_dataloader(batch_size, TARGET, n_workers):
     #######################################
     # predicting splice / non-splice
     #######################################
-    torch.save(train_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
-    torch.save(val_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/val.pt")
-    torch.save(test_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
-
-
-def get_dataloader(batch_size, TARGET, n_workers):
-    #######################################
-    # predicting splice / non-splice
-    #######################################
-    print("[INFO] Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"train.pt")
-    train_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"train.pt")
-    print("[INFO] Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"val.pt")
-    val_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"val.pt")
-    print("[INFO] Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
-    test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"test.pt")
     return train_loader, val_loader, test_loader
+    # torch.save(train_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
+    # torch.save(val_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/val.pt")
+    # torch.save(test_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+
+
+# def get_dataloader(batch_size, TARGET, n_workers):
+#     #######################################
+#     # predicting splice / non-splice
+#     #######################################
+#     print("[INFO] Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"train.pt")
+#     train_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"train.pt")
+#     print("[INFO] Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"val.pt")
+#     val_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"val.pt")
+#     print("[INFO] Loading dataset: ", "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")
+#     test_loader = torch.load("./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"test.pt")
+#     return train_loader, val_loader, test_loader
 
 
 def get_test_dataloader(batch_size, TARGET, n_workers, shuffle):

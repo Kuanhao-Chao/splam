@@ -68,7 +68,7 @@ k=10
 #############################
 # Creating directories
 #############################
-MODEL_VERSION = "SPLAM_v9/"
+MODEL_VERSION = "SPLAM_v10/"
 MODEL_OUTPUT_BASE = "./MODEL/"+MODEL_VERSION
 LOG_OUTPUT_BASE = MODEL_OUTPUT_BASE + "LOG/"
 LOG_OUTPUT_TRAIN_BASE = MODEL_OUTPUT_BASE + "LOG/TRAIN/"
@@ -82,7 +82,7 @@ os.makedirs(LOG_OUTPUT_TEST_BASE, exist_ok=True)
 #############################
 # Training Data initialization
 #############################
-save_dataloader(BATCH_SIZE, MODEL_VERSION, N_WORKERS)
+# save_dataloader(BATCH_SIZE, MODEL_VERSION, N_WORKERS)
 train_loader, val_loader, test_loader = get_dataloader(BATCH_SIZE, MODEL_VERSION, N_WORKERS)
 train_iterator = iter(train_loader)
 valid_iterator = iter(val_loader)
