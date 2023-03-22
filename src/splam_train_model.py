@@ -68,7 +68,7 @@ k=10
 #############################
 # Creating directories
 #############################
-MODEL_VERSION = "SPLAM_v10/"
+MODEL_VERSION = "SPLAM_v9/"
 MODEL_OUTPUT_BASE = "./MODEL/"+MODEL_VERSION
 LOG_OUTPUT_BASE = MODEL_OUTPUT_BASE + "LOG/"
 LOG_OUTPUT_TRAIN_BASE = MODEL_OUTPUT_BASE + "LOG/TRAIN/"
