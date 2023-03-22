@@ -8,7 +8,7 @@ from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc
 def main():
 
 
-
+    # SUBSET = 9900
     # TARGETS = ["pos_refseq_protein_alts", "neg_1"]
     TARGETS = ["pos", "neg_1"]
     # TARGETS = ["pos", "neg_1", "neg_5"]
