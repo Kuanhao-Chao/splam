@@ -310,34 +310,36 @@ def main():
     # splam_j_nobatch_pred_prob = []
     # splam_j_nobatch_label_prob = []
 
+    
+    with open("./spliceai_result/spliceai.N.merged.pkl",'rb') as f:
+        spliceai_N_d_pred_prob = pickle.load(f)
+        spliceai_N_d_label_prob = pickle.load(f)
+        spliceai_N_a_pred_prob = pickle.load(f)
+        spliceai_N_a_label_prob = pickle.load(f)
 
-    # with open("./spliceai_result/spliceai.N.merged.pkl",'rb') as f:
-    #     spliceai_N_d_pred_prob = pickle.load(f)
-    #     spliceai_N_d_label_prob = pickle.load(f)
-    #     spliceai_N_a_pred_prob = pickle.load(f)
-    #     spliceai_N_a_label_prob = pickle.load(f)
+        # spliceai_N_d_pred_prob = [x.numpy() for x in spliceai_N_d_pred_prob]
+        # spliceai_N_a_pred_prob = [x.numpy() for x in spliceai_N_a_pred_prob]
+        spliceai_N_d_pred_prob = np.array(spliceai_N_d_pred_prob)
+        spliceai_N_a_pred_prob = np.array(spliceai_N_a_pred_prob)
+        spliceai_N_d_label_prob = np.array(spliceai_N_d_label_prob)
+        spliceai_N_a_label_prob = np.array(spliceai_N_a_label_prob)
+        # spliceai_N_d_label_prob[:1000] = 1
+        # spliceai_N_a_label_prob[:1000] = 1
 
-    #     # spliceai_N_d_pred_prob = [x.numpy() for x in spliceai_N_d_pred_prob]
-    #     # spliceai_N_a_pred_prob = [x.numpy() for x in spliceai_N_a_pred_prob]
-    #     spliceai_N_d_pred_prob = np.array(spliceai_N_d_pred_prob)
-    #     spliceai_N_a_pred_prob = np.array(spliceai_N_a_pred_prob)
-    #     spliceai_N_d_label_prob = np.array(spliceai_N_d_label_prob)
-    #     spliceai_N_a_label_prob = np.array(spliceai_N_a_label_prob)
-    #     # spliceai_N_d_label_prob[:1000] = 1
-    #     # spliceai_N_a_label_prob[:1000] = 1
 
-    #     # spliceai_noN_d_label_prob = [float(i) for i in spliceai_noN_d_label_prob]
-    #     # spliceai_noN_a_label_prob = [float(i) for i in spliceai_noN_a_label_prob]
+        # spliceai_N_d_label_prob = [float(i) for i in spliceai_N_d_label_prob]
+        # spliceai_N_a_label_prob = [float(i) for i in spliceai_N_a_label_prob]
 
-    #     print("spliceai_N_d_pred_prob : ", spliceai_N_d_pred_prob)
-    #     print("spliceai_N_d_label_prob: ", spliceai_N_d_label_prob)
-    #     print("spliceai_N_a_pred_prob : ", spliceai_N_a_pred_prob)
-    #     print("spliceai_N_a_label_prob: ", spliceai_N_a_label_prob)
+        print("spliceai_N_d_pred_prob : ", spliceai_N_d_pred_prob)
+        print("spliceai_N_d_label_prob: ", spliceai_N_d_label_prob)
+        print("spliceai_N_a_pred_prob : ", spliceai_N_a_pred_prob)
+        print("spliceai_N_a_label_prob: ", spliceai_N_a_label_prob)
 
-    #     print("spliceai_N_d_pred_prob : ", len(spliceai_N_d_pred_prob))
-    #     print("spliceai_N_d_label_prob: ", len(spliceai_N_d_label_prob))
-    #     print("spliceai_N_a_pred_prob : ", len(spliceai_N_a_pred_prob))
-    #     print("spliceai_N_a_label_prob: ", len(spliceai_N_a_label_prob))
+        print("spliceai_N_d_pred_prob : ", len(spliceai_N_d_pred_prob))
+        print("spliceai_N_d_label_prob: ", len(spliceai_N_d_label_prob))
+        print("spliceai_N_a_pred_prob : ", len(spliceai_N_a_pred_prob))
+        print("spliceai_N_a_label_prob: ", len(spliceai_N_a_label_prob))
+
 
     with open("./spliceai_result/spliceai.noN.merged.pkl",'rb') as f:
         spliceai_noN_d_pred_prob = pickle.load(f)
@@ -475,62 +477,63 @@ def main():
     # # plot_thresholds_J(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_nobatch")
 
 
-    ###################################
-    # PR of junction (svm)
-    ###################################
-    spliceai_noN_X = list(zip(spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob))
-    # print(spliceai_noN_X)
-    spliceai_clf = svm.SVC(probability=True, kernel='linear', C=10)
-    spliceai_clf.fit(spliceai_noN_X, spliceai_noN_d_label_prob)
-    spliceai_noN_res = spliceai_clf.predict_proba(spliceai_noN_X)[:,1]   
+    # ###################################
+    # # PR of junction (svm)
+    # ###################################
+    # spliceai_noN_X = list(zip(spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob))
+    # # print(spliceai_noN_X)
+    # spliceai_clf = svm.SVC(probability=True, kernel='linear', C=10)
+    # spliceai_clf.fit(spliceai_noN_X, spliceai_noN_d_label_prob)
+    # spliceai_noN_res = spliceai_clf.predict_proba(spliceai_noN_X)[:,1]   
 
-    support_vectors = spliceai_clf.support_vectors_
-    plt.scatter(spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob)
-    plt.scatter(support_vectors[:,0], support_vectors[:,1], color='red')
-    plt.title('SpliceAI Linearly separable data with support vectors')
-    plt.xlabel('Donor score')
-    plt.ylabel('Acceptor score')
-    plt.savefig("./IMG/junction/junc_pr_svm_spliceai_support_vectors.png")
-    plt.close()
-
-
-
-    splam_noS_X = list(zip(splam_noS_d_pred_prob, splam_noS_a_pred_prob))
-    # print(splam_noS_X)
-    splam_clf = svm.SVC(probability=True,kernel='linear', C=10)
-    splam_clf.fit(splam_noS_X, splam_noS_d_label_prob)
-    splam_noS_res = splam_clf.predict_proba(splam_noS_X)[:,1]   
-
-    support_vectors = splam_clf.support_vectors_
-    plt.scatter(splam_noS_d_pred_prob, splam_noS_a_pred_prob)
-    plt.scatter(support_vectors[:,0], support_vectors[:,1], color='red')
-    plt.title('SPLAM Linearly separable data with support vectors')
-    plt.xlabel('Donor score')
-    plt.ylabel('Acceptor score')
-    plt.savefig("./IMG/junction/junc_pr_svm_splam_support_vectors.png")
-    plt.close()
+    # support_vectors = spliceai_clf.support_vectors_
+    # plt.scatter(spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob)
+    # plt.scatter(support_vectors[:,0], support_vectors[:,1], color='red')
+    # plt.title('SpliceAI Linearly separable data with support vectors')
+    # plt.xlabel('Donor score')
+    # plt.ylabel('Acceptor score')
+    # plt.savefig("./IMG/junction/junc_pr_svm_spliceai_support_vectors.png")
+    # plt.close()
 
 
-    plot_pr_curve(spliceai_noN_d_label_prob, spliceai_noN_res, "spliceai_junc_sklearn_SVM", "sklearn")
 
-    plot_pr_curve(splam_noS_d_label_prob, splam_noS_res, "splam_junc_sklearn_SVM", "sklearn")
+    # splam_noS_X = list(zip(splam_noS_d_pred_prob, splam_noS_a_pred_prob))
+    # # print(splam_noS_X)
+    # splam_clf = svm.SVC(probability=True,kernel='linear', C=10)
+    # splam_clf.fit(splam_noS_X, splam_noS_d_label_prob)
+    # splam_noS_res = splam_clf.predict_proba(splam_noS_X)[:,1]   
 
-    # plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_self", "self")
+    # support_vectors = splam_clf.support_vectors_
+    # plt.scatter(splam_noS_d_pred_prob, splam_noS_a_pred_prob)
+    # plt.scatter(support_vectors[:,0], support_vectors[:,1], color='red')
+    # plt.title('SPLAM Linearly separable data with support vectors')
+    # plt.xlabel('Donor score')
+    # plt.ylabel('Acceptor score')
+    # plt.savefig("./IMG/junction/junc_pr_svm_splam_support_vectors.png")
+    # plt.close()
 
-    # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "min")
-    # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
-    # plot_pr_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "min")
 
-    # plot_pr_curve(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_junc_shuffle", "sklean")
-    # plot_pr_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_junc_noshuffle", "sklean")
-    # plot_pr_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "sklean")
-    plt.savefig("./IMG/junction/junc_pr_svm.png")
-    plt.close()
+    # plot_pr_curve(spliceai_noN_d_label_prob, spliceai_noN_res, "spliceai_junc_sklearn_SVM", "sklearn")
+
+    # plot_pr_curve(splam_noS_d_label_prob, splam_noS_res, "splam_junc_sklearn_SVM", "sklearn")
+
+    # # plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_self", "self")
+
+    # # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "min")
+    # # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
+    # # plot_pr_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "min")
+
+    # # plot_pr_curve(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_junc_shuffle", "sklean")
+    # # plot_pr_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_junc_noshuffle", "sklean")
+    # # plot_pr_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "sklean")
+    # plt.savefig("./IMG/junction/junc_pr_svm.png")
+    # plt.close()
 
 
     ###################################
     # PR of junction (min)
     ###################################
+    plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_junc_N_sklearn", "sklearn", "min")
     plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "min")
     # plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_self", "self")
 
@@ -549,6 +552,7 @@ def main():
     # ###################################
     # # PR of junction (avg)
     # ###################################
+    plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_junc_N_sklearn", "sklearn", "avg")
     plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "avg")
     # plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_self", "self")
 
@@ -574,17 +578,18 @@ def main():
     ###################################
     # ROC of junction (svm)
     ###################################
-    plot_roc_curve(spliceai_noN_d_label_prob, spliceai_noN_res, "spliceai_junc_sklearn_SVM", "sklearn")
+    # plot_roc_curve(spliceai_noN_d_label_prob, spliceai_noN_res, "spliceai_junc_sklearn_SVM", "sklearn")
 
-    plot_roc_curve(splam_noS_d_label_prob, splam_noS_res, "splam_junc_sklearn_SVM", "sklearn")
+    # plot_roc_curve(splam_noS_d_label_prob, splam_noS_res, "splam_junc_sklearn_SVM", "sklearn")
 
-    plt.savefig("./IMG/junction/junc_roc_svm.png")
-    plt.close()
+    # plt.savefig("./IMG/junction/junc_roc_svm.png")
+    # plt.close()
 
 
     ###################################
     # ROC of junction (min)
     ###################################
+    plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_junc_N_sklearn", "sklearn", "min")
     plot_roc_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "min")
 
     plot_roc_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "min")
@@ -595,6 +600,7 @@ def main():
     ################################### 
     # ROC of junction (avg)
     ###################################
+    plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_junc_N_sklearn", "sklearn", "avg")
     plot_roc_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "avg")
 
     plot_roc_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "avg")
