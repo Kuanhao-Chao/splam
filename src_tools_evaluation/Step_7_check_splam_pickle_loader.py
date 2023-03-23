@@ -9,14 +9,16 @@ def main():
 
 
     # SUBSET = 9900
-    # TARGETS = ["pos_refseq_protein_alts", "neg_1"]
-    TARGETS = ["pos", "neg_1"]
+    TARGETS = ["pos_refseq_protein_alts", "neg_1"]
+    # , "neg_random"]
+    # TARGETS = ["pos", "neg_1"]
     # TARGETS = ["pos", "neg_1", "neg_5"]
     # SUBSETS = [2000, 5000, 5000]
     # SUBSETS = [9900, 9900]
     # SUBSETS = [500, 8000]
 
     SUBSETS = [9000, 9000]
+            #    , 9000]
 
     a_label = []
     d_label = []    
