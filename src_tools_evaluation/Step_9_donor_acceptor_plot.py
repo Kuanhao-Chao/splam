@@ -320,7 +320,7 @@ def main():
                         ["main", "TPFN", "FPTN", "FPFN"],
                     ],
                     empty_sentinel="BLANK",
-                    width_ratios=[3, 1.5, 1.5, 1.5],
+                    width_ratios=[3, 1.9, 1.9, 1.9],
                 )
                 # identify_axes(axes, fontsize=36)
                 

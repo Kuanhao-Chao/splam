@@ -3,7 +3,7 @@ import pickle
 import numpy as np
 import os
 from util import *
-from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve, PrecisionRecallDisplay
+from sklearn.metrics import auc, accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve, PrecisionRecallDisplay
 from sklearn import svm
 
 def plot_pr_curve(true_y, y_prob, label, option):
@@ -24,9 +24,13 @@ def plot_pr_curve_J(true_y, y_prob_d, y_prob_a, label, option, choice):
     """
     # precision, recall, thresholds = precision_recall_curve_J_level_self(true_y, y_prob_d, y_prob_a, label, option)
     precision, recall, thresholds = precision_recall_curve_J_level_self(true_y, y_prob_d, y_prob_a, label, option, choice)
-    plt.plot(recall, precision, label=label)
+    auc_precision_recall = auc(recall, precision)
+    print("auc_precision_recall: ", auc_precision_recall)
+    plt.plot(recall, precision, label=label + "  ${\\bf  (" + str('%.4f' % auc_precision_recall) + ")}$")
+    # plt.plot(recall, precision, label=f"{label:<50}{'%10.4f' % auc_precision_recall:>1}")
+
     # , marker='o')
-    plt.legend()
+    plt.legend(fontsize=8)
     plt.xlabel('Recall')
     plt.ylabel('Precision')
 
@@ -36,7 +40,8 @@ def plot_roc_curve(true_y, y_prob, label, option):
     """
     fpr, tpr, thresholds = roc_curve(true_y, y_prob)
     # fpr, tpr, thresholds = ROC_curve_self(true_y, y_prob, label, option)
-    plt.plot(fpr, tpr, label=label)
+    auc_roc = auc(fpr, tpr)
+    plt.plot(fpr, tpr, label=label + ": "+str(auc_roc))
     # , marker='o' )
     plt.legend()
     plt.xlabel('False Positive Rate')
@@ -46,10 +51,13 @@ def plot_roc_curve_J(true_y, y_prob_d, y_prob_a, label, option, choice):
     """
     plots the roc curve based of the probabilities
     """
-    precision, recall, thresholds = roc_curve_J_level_self(true_y, y_prob_d, y_prob_a, label, option, choice)
-    plt.plot(precision, recall, label=label)
+    fpr, tpr, thresholds = roc_curve_J_level_self(true_y, y_prob_d, y_prob_a, label, option, choice)
+    auc_roc = auc(fpr, tpr)
+    print("auc_roc: ", auc_roc)
+    plt.plot(fpr, tpr, label=r""+label + "  ${\\bf  (" + str('%.4f' % auc_roc) + ")}$")
+            #  "$\textbf{(}$" + str('%.4f' % auc_roc) + ")}")
     # , marker='o')
-    plt.legend()
+    plt.legend(fontsize=8)
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
 
@@ -513,7 +521,7 @@ def main():
     # plt.close()
 
 
-    # plot_pr_curve(spliceai_noN_d_label_prob, spliceai_noN_res, "spliceai_junc_sklearn_SVM", "sklearn")
+    # plot_pr_curve(spliceai_noN_d_label_prob, spliceai_noN_res, "SpliceAI_SVM", "sklearn")
 
     # plot_pr_curve(splam_noS_d_label_prob, splam_noS_res, "splam_junc_sklearn_SVM", "sklearn")
 
@@ -524,7 +532,7 @@ def main():
     # # plot_pr_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "min")
 
     # # plot_pr_curve(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_junc_shuffle", "sklean")
-    # # plot_pr_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_junc_noshuffle", "sklean")
+    # # plot_pr_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "SPLAM", "sklean")
     # # plot_pr_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "sklean")
     # plt.savefig("./IMG/junction/junc_pr_svm.png")
     # plt.close()
@@ -533,39 +541,27 @@ def main():
     ###################################
     # PR of junction (min)
     ###################################
-    plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_junc_N_sklearn", "sklearn", "min")
-    plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "min")
-    # plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_self", "self")
+    fig, ax = plt.subplots()
+    plot_pr_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "SPLAM", "sklearn", "min")
+    plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "SpliceAI with 10k flanking sequence", "sklearn", "min")
+    plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "SpliceAI with 10k N", "sklearn", "min")
 
-    # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "min")
-    # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
-
-    plot_pr_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "min")
-    # plot_pr_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "min")
-
-    # plot_pr_curve(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_junc_shuffle", "sklean")
-    # plot_pr_curve(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_junc_noshuffle", "sklean")
-    # plot_pr_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "sklean")
-    plt.savefig("./IMG/junction/junc_pr_min.png")
+    ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
+    ax.plot([1, 0], [0, 1], transform=ax.transAxes, linestyle='dashed')
+    plt.savefig("./IMG/junction/junc_pr_min.png", bbox_inches='tight', dpi=300)
     plt.close()
 
     # ###################################
     # # PR of junction (avg)
     # ###################################
-    plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_junc_N_sklearn", "sklearn", "avg")
-    plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "avg")
-    # plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_self", "self")
+    fig, ax = plt.subplots()
+    plot_pr_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "SPLAM", "sklearn", "avg")
+    plot_pr_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "SpliceAI with 10k flanking sequence", "sklearn", "avg")
+    plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "SpliceAI with 10k N", "sklearn", "avg")
 
-    # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_sklearn", "sklearn", "avg")
-    # plot_pr_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_N_junc_self", "self")
-
-    plot_pr_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "avg")
-    # plot_pr_curve_J(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_pred_prob, "splam_junc_shuffle", "sklearn", "avg")
-
-    # plot_pr_curve(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_junc_shuffle", "sklean")
-    # plot_pr_curve(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_junc_noshuffle", "sklean")
-    # plot_pr_curve(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_junc_nobatch", "sklean")
-    plt.savefig("./IMG/junction/junc_pr_avg.png")
+    ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
+    ax.plot([1, 0], [0, 1], transform=ax.transAxes, linestyle='dashed')
+    plt.savefig("./IMG/junction/junc_pr_avg.png", bbox_inches='tight', dpi=300)
     plt.close()
     
 
@@ -578,7 +574,7 @@ def main():
     ###################################
     # ROC of junction (svm)
     ###################################
-    # plot_roc_curve(spliceai_noN_d_label_prob, spliceai_noN_res, "spliceai_junc_sklearn_SVM", "sklearn")
+    # plot_roc_curve(spliceai_noN_d_label_prob, spliceai_noN_res, "SpliceAI_SVM", "sklearn")
 
     # plot_roc_curve(splam_noS_d_label_prob, splam_noS_res, "splam_junc_sklearn_SVM", "sklearn")
 
@@ -589,23 +585,27 @@ def main():
     ###################################
     # ROC of junction (min)
     ###################################
-    plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_junc_N_sklearn", "sklearn", "min")
-    plot_roc_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "min")
+    fig, ax = plt.subplots()
+    plot_roc_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "SPLAM", "sklearn", "min")
+    plot_roc_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "SpliceAI with 10k flanking sequence", "sklearn", "min")
+    plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "SpliceAI with 10k N", "sklearn", "min")
 
-    plot_roc_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "min")
-
-    plt.savefig("./IMG/junction/junc_roc_min.png")
+    ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
+    ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='dashed')
+    plt.savefig("./IMG/junction/junc_roc_min.png", bbox_inches='tight', dpi=300)
     plt.close()
 
     ################################### 
     # ROC of junction (avg)
     ###################################
-    plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "spliceai_junc_N_sklearn", "sklearn", "avg")
-    plot_roc_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "spliceai_junc_sklearn", "sklearn", "avg")
+    fig, ax = plt.subplots()
+    plot_roc_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "SPLAM", "sklearn", "avg")
+    plot_roc_curve_J(spliceai_noN_d_label_prob, spliceai_noN_d_pred_prob, spliceai_noN_a_pred_prob, "SpliceAI with 10k flanking sequence", "sklearn", "avg")
+    plot_roc_curve_J(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_pred_prob, "SpliceAI with 10k N", "sklearn", "avg")
 
-    plot_roc_curve_J(splam_noS_d_label_prob, splam_noS_d_pred_prob, splam_noS_a_pred_prob, "splam_junc_noshuffle", "sklearn", "avg")
-
-    plt.savefig("./IMG/junction/junc_roc_avg.png")
+    ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
+    ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='dashed')
+    plt.savefig("./IMG/junction/junc_roc_avg.png", bbox_inches='tight', dpi=300)
     plt.close()
 
 

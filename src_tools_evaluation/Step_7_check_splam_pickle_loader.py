@@ -17,7 +17,7 @@ def main():
     # SUBSETS = [9900, 9900]
     # SUBSETS = [500, 8000]
 
-    SUBSETS = [9000, 9000]
+    SUBSETS = [1000, 8000]
             #    , 9000]
 
     a_label = []
