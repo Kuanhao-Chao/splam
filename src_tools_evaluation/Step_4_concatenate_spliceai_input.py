@@ -9,7 +9,7 @@ def main():
 
     # output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/outlier_test/"]
     output_dir = "./dataset/"
-    output_files = [output_dir+"pos_refseq_protein_all/", output_dir+"pos_refseq_protein_alts/"]
+    output_files = [output_dir+"pos/", output_dir+"pos_refseq_protein_alts/", output_dir+"neg_1/", output_dir+"neg_random/"]
 
     for output_file in output_files:
         print(">> output_file")
@@ -39,9 +39,9 @@ def main():
                     else:
                         x = 'N'*(5000) + seq[5000:-5000] + 'N'*(5000)
                     x = x.upper()
-                    if x[QUATER_SEQ_LEN + 5000] == "N" or x[QUATER_SEQ_LEN+1 + 5000] == "N" or x[len(x) - QUATER_SEQ_LEN-5000-2] == "N" or x[len(x) - QUATER_SEQ_LEN-5000-1] == "N":
-                    # or x[QUATER_SEQ_LEN*3-1 + 5000] == "N" or x[QUATER_SEQ_LEN*3 + 5000] == "N":
-                        continue
+                    # if x[QUATER_SEQ_LEN + 5000] == "N" or x[QUATER_SEQ_LEN+1 + 5000] == "N" or x[len(x) - QUATER_SEQ_LEN-5000-2] == "N" or x[len(x) - QUATER_SEQ_LEN-5000-1] == "N":
+                    # # or x[QUATER_SEQ_LEN*3-1 + 5000] == "N" or x[QUATER_SEQ_LEN*3 + 5000] == "N":
+                    #     continue
                     
                     eles = lines[idx-1].split(":")
                     chr = eles[0]

@@ -17,8 +17,8 @@ def plot_scatter_plot(label_d, score_d, label_a, score_a, filename):
     ax.set_ylabel("Acceptor score")
 
 
-    junc_legend = ax.scatter(score_d[junc_prob], score_a[junc_prob], s = 1)
-    non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 1)    
+    junc_legend = ax.scatter(score_d[junc_prob], score_a[junc_prob], s = 0.3)
+    non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 0.3)    
     ax.legend([junc_legend, non_junc_legend], ['Junction', 'Non Junction'])
 
     fig.savefig(filename)
@@ -40,16 +40,36 @@ def plot_min_linear_plot(label_d, score_d, label_a, score_a, filename):
 
     ar = np.arange(10) # just as an example array
     junc_legend = ax.plot(junction_score[junc_prob], np.zeros_like(junction_score[junc_prob]) + 0.)
-                        #   , s = 1)
+                        #   , s = 0.3)
     non_junc_legend = ax.plot(junction_score[non_junc_prob], np.zeros_like(junction_score[non_junc_prob]) + 0.)
-                            #   , s = 1)
-    # junc_legend = ax.scatter(score_d[junc_prob], score_a[junc_prob], s = 1)
-    # non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 1)
+                            #   , s = 0.3)
+    # junc_legend = ax.scatter(score_d[junc_prob], score_a[junc_prob], s = 0.3)
+    # non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 0.3)
     ax.legend([junc_legend, non_junc_legend], ['Junction', 'Non Junction'])
     fig.savefig(filename)
     
 
 THRESHOLDS = [0.1, 0.01]
+
+
+
+# # Helper function used for visualization in the following examples
+# def identify_axes(ax_dict, fontsize=48):
+#     """
+#     Helper to identify the Axes in the examples below.
+
+#     Draws the label in a large font in the center of the Axes.
+
+#     Parameters
+#     ----------
+#     ax_dict : dict[str, Axes]
+#         Mapping between the title / label and the Axes.
+#     fontsize : int, optional
+#         How big the label should be.
+#     """
+#     kw = dict(ha="center", va="center", fontsize=fontsize, color="darkgrey")
+#     for k, ax in ax_dict.items():
+#         ax.text(0.5, 0.5, k, transform=ax.transAxes, **kw)
 
 def main():
 
@@ -277,6 +297,7 @@ def main():
 
 
 
+            plt.rcParams['font.size'] = 4
             for TOOL in ["spliceai", "splam"]:
                 if TOOL == "spliceai":
                     d_score = spliceai_d_pred_prob
@@ -284,59 +305,122 @@ def main():
                 elif TOOL == "splam":
                     d_score = splam_noS_d_pred_prob
                     a_score = splam_noS_a_pred_prob
-                fig, ax = plt.subplots()
-                ax.set_title(TOOL + " score")
-                ax.set_xlabel("Donor score")
-                ax.set_ylabel("Acceptor score")
+
+                # fig, axes = plt.subplot_mosaic(
+                #     [
+                #         ["main", "TPFN", "FPFN"],
+                #         ["main", "FPTN", "BLANK"],
+                #     ],
+                #     empty_sentinel="BLANK",
+                #     width_ratios=[3, 1.3, 1.3],
+                # )
+
+                fig, axes = plt.subplot_mosaic(
+                    [
+                        ["main", "TPFN", "FPTN", "FPFN"],
+                    ],
+                    empty_sentinel="BLANK",
+                    width_ratios=[3, 1.5, 1.5, 1.5],
+                )
+                # identify_axes(axes, fontsize=36)
+                
+                plt.subplots_adjust(wspace=0.4, hspace=-0.5)
 
                 # junc_legend = 
+                for axis in axes:
+                    axes[axis].hlines(y=threshold, xmin=0, xmax=1, linewidth=1, color='r', linestyles="dashed")
+                    axes[axis].vlines(x=threshold, ymin=0, ymax=1, linewidth=1, color='r', linestyles="dashed")
+                    axes[axis].set_xlabel("Donor score", labelpad=1.5)
+                    axes[axis].set_ylabel("Acceptor score", labelpad=1.5)
 
-                ax.hlines(y=threshold, xmin=0, xmax=1, linewidth=1, color='r', linestyles="dashed")
-                ax.vlines(x=threshold, ymin=0, ymax=1, linewidth=1, color='r', linestyles="dashed")
+                    if axis == "main":
+                        title = "All"
+                    elif axis == "TPFN":
+                        title = "TP and FN"
+                    elif axis == "FPTN":
+                        title = "FP and TN"
+                    elif axis == "FPFN":
+                        title = "FP and FN"
+                    axes[axis].set_title(title)
 
 
-                splcieai_TP__splam_TP = ax.scatter(d_score[spliceai_TP__splam_TP_idices], a_score[spliceai_TP__splam_TP_idices], s = 0, color="pink")
-                splcieai_TP__splam_TP_len = len(d_score[spliceai_TP__splam_TP_idices])
+                spliceai_TP__splam_TP = axes["main"].scatter(d_score[spliceai_TP__splam_TP_idices], a_score[spliceai_TP__splam_TP_idices], s = 0, color="pink")
+                spliceai_TP__splam_TP_len = len(d_score[spliceai_TP__splam_TP_idices])
 
-                splcieai_TP__splam_FN = ax.scatter(d_score[spliceai_TP__splam_FN_idices], a_score[spliceai_TP__splam_FN_idices], s = 6, color="blue")
-                splcieai_TP__splam_FN_len = len(d_score[spliceai_TP__splam_FN_idices])
+                spliceai_TP__splam_FN = axes["main"].scatter(d_score[spliceai_TP__splam_FN_idices], a_score[spliceai_TP__splam_FN_idices], s = 0.3, color="#13E8EC")
+                spliceai_TP__splam_FN_len = len(d_score[spliceai_TP__splam_FN_idices])
 
-                splcieai_FN__splam_TP = ax.scatter(d_score[spliceai_FN__splam_TP_idices], a_score[spliceai_FN__splam_TP_idices], s = 6, color="red")
+                spliceai_FN__splam_TP = axes["main"].scatter(d_score[spliceai_FN__splam_TP_idices], a_score[spliceai_FN__splam_TP_idices], s = 0.3, color="#EC1713")
                 spliceai_FN__splam_TP_len = len(d_score[spliceai_FN__splam_TP_idices])
 
-                splcieai_FN__splam_FN = ax.scatter(d_score[spliceai_FN__splam_FN_idices], a_score[spliceai_FN__splam_FN_idices], s = 6, color="green")
+                spliceai_FN__splam_FN = axes["main"].scatter(d_score[spliceai_FN__splam_FN_idices], a_score[spliceai_FN__splam_FN_idices], s = 0.3, color="#118F14")
                 spliceai_FN__splam_FN_len = len(d_score[spliceai_FN__splam_FN_idices])
 
 
-                splcieai_TN__splam_TN = ax.scatter(d_score[spliceai_TN__splam_TN_idices], a_score[spliceai_TN__splam_TN_idices], s = 0, color="gray")
-                splcieai_TN__splam_TN_len = len(d_score[spliceai_TN__splam_TN_idices])
+                spliceai_TN__splam_TN = axes["main"].scatter(d_score[spliceai_TN__splam_TN_idices], a_score[spliceai_TN__splam_TN_idices], s = 0, color="gray")
+                spliceai_TN__splam_TN_len = len(d_score[spliceai_TN__splam_TN_idices])
 
-                splcieai_TN__splam_FP = ax.scatter(d_score[spliceai_TN__splam_FP_idices], a_score[spliceai_TN__splam_FP_idices], s = 6, color="orange")
+                spliceai_TN__splam_FP = axes["main"].scatter(d_score[spliceai_TN__splam_FP_idices], a_score[spliceai_TN__splam_FP_idices], s = 0.3, color="#FFA300")
                 spliceai_TN__splam_FP_len = len(d_score[spliceai_TN__splam_FP_idices])
 
-                splcieai_FP__splam_TN = ax.scatter(d_score[spliceai_FP__splam_TN_idices], a_score[spliceai_FP__splam_TN_idices], s = 6, color="cyan")
+                spliceai_FP__splam_TN = axes["main"].scatter(d_score[spliceai_FP__splam_TN_idices], a_score[spliceai_FP__splam_TN_idices], s = 0.3, color="#005CFF")
                 spliceai_FP__splam_TN_len = len(d_score[spliceai_FP__splam_TN_idices])
 
-                splcieai_FP__splam_FP = ax.scatter(d_score[spliceai_FP__splam_FP_idices], a_score[spliceai_FP__splam_FP_idices], s = 6, color="purple")
+                spliceai_FP__splam_FP = axes["main"].scatter(d_score[spliceai_FP__splam_FP_idices], a_score[spliceai_FP__splam_FP_idices], s = 0.3, color="#8F118C")
                 spliceai_FP__splam_FP_len = len(d_score[spliceai_FP__splam_FP_idices])
 
-                # non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 1)
-                lgd = ax.legend([splcieai_TP__splam_TP, splcieai_TP__splam_FN, splcieai_FN__splam_TP, splcieai_FN__splam_FN, splcieai_TN__splam_TN, splcieai_TN__splam_FP, splcieai_FP__splam_TN, splcieai_FP__splam_FP], ["splcieai_TP__splam_TP ("+str(splcieai_TP__splam_TP_len)+")", "splcieai_TP__splam_FN ("+str(splcieai_TP__splam_FN_len)+")", "splcieai_FN__splam_TP ("+str(spliceai_FN__splam_TP_len)+")", "splcieai_FN__splam_FN ("+str(spliceai_FN__splam_FN_len)+")", "splcieai_TN__splam_TN ("+str(splcieai_TN__splam_TN_len)+")", "splcieai_TN__splam_FP ("+str(spliceai_TN__splam_FP_len)+")", "splcieai_FP__splam_TN ("+str(spliceai_FP__splam_TN_len)+")", "splcieai_FP__splam_FP ("+str(spliceai_FP__splam_FP_len)+")"], loc='center left', bbox_to_anchor=(1, 0.5))
+
+                spliceai_TP__splam_FN = axes["TPFN"].scatter(d_score[spliceai_TP__splam_FN_idices], a_score[spliceai_TP__splam_FN_idices], s = 0.3, color="#13E8EC")
+                spliceai_TP__splam_FN_len = len(d_score[spliceai_TP__splam_FN_idices])
+                spliceai_FN__splam_TP = axes["TPFN"].scatter(d_score[spliceai_FN__splam_TP_idices], a_score[spliceai_FN__splam_TP_idices], s = 0.3, color="#EC1713")
+                spliceai_FN__splam_TP_len = len(d_score[spliceai_FN__splam_TP_idices])
+
+                spliceai_TN__splam_FP = axes["FPTN"].scatter(d_score[spliceai_TN__splam_FP_idices], a_score[spliceai_TN__splam_FP_idices], s = 0.3, color="#FFA300")
+                spliceai_TN__splam_FP_len = len(d_score[spliceai_TN__splam_FP_idices])
+                spliceai_FP__splam_TN = axes["FPTN"].scatter(d_score[spliceai_FP__splam_TN_idices], a_score[spliceai_FP__splam_TN_idices], s = 0.3, color="#005CFF")
+                spliceai_FP__splam_TN_len = len(d_score[spliceai_FP__splam_TN_idices])
+
+                spliceai_FP__splam_FP = axes["FPFN"].scatter(d_score[spliceai_FP__splam_FP_idices], a_score[spliceai_FP__splam_FP_idices], s = 0.3, color="#8F118C")
+                spliceai_FP__splam_FP_len = len(d_score[spliceai_FP__splam_FP_idices])
+                spliceai_FN__splam_FN = axes["FPFN"].scatter(d_score[spliceai_FN__splam_FN_idices], a_score[spliceai_FN__splam_FN_idices], s = 0.3, color="#118F14")
+                spliceai_FN__splam_FN_len = len(d_score[spliceai_FN__splam_FN_idices])
+
+
+                # non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 0.3)
+                # lgd = fig.legend([spliceai_TP__splam_TP, spliceai_TP__splam_FN, spliceai_FN__splam_TP, spliceai_FN__splam_FN, spliceai_TN__splam_TN, spliceai_TN__splam_FP, spliceai_FP__splam_TN, spliceai_FP__splam_FP], ["spliceai_TP__splam_TP ("+str(spliceai_TP__splam_TP_len)+")", "spliceai_TP__splam_FN ("+str(spliceai_TP__splam_FN_len)+")", "spliceai_FN__splam_TP ("+str(spliceai_FN__splam_TP_len)+")", "spliceai_FN__splam_FN ("+str(spliceai_FN__splam_FN_len)+")", "spliceai_TN__splam_TN ("+str(spliceai_TN__splam_TN_len)+")", "spliceai_TN__splam_FP ("+str(spliceai_TN__splam_FP_len)+")", "spliceai_FP__splam_TN ("+str(spliceai_FP__splam_TN_len)+")", "spliceai_FP__splam_FP ("+str(spliceai_FP__splam_FP_len)+")"], loc='lower right', bbox_to_anchor=(0.9, 0.27))
+
+                lgd = fig.legend([spliceai_TP__splam_FN, spliceai_FN__splam_TP, spliceai_TN__splam_FP, spliceai_FP__splam_TN, spliceai_FN__splam_FN, spliceai_FP__splam_FP], ["spliceai_TP__splam_FN ("+str(spliceai_TP__splam_FN_len)+")", "spliceai_FN__splam_TP ("+str(spliceai_FN__splam_TP_len)+")", "spliceai_TN__splam_FP ("+str(spliceai_TN__splam_FP_len)+")", "spliceai_FP__splam_TN ("+str(spliceai_FP__splam_TN_len)+")", "spliceai_FN__splam_FN ("+str(spliceai_FN__splam_FN_len)+")", "spliceai_FP__splam_FP ("+str(spliceai_FP__splam_FP_len)+")"], loc='lower right', bbox_to_anchor=(0.9, 0.29), ncol=3)
+
+
+                # lgd = ax.legend([spliceai_TP__splam_TP, spliceai_TP__splam_FN, spliceai_FN__splam_TP], ["spliceai_TP__splam_TP ("+str(spliceai_TP__splam_TP_len)+")", "spliceai_TP__splam_FN ("+str(spliceai_TP__splam_FN_len)+")", "spliceai_FN__splam_TP ("+str(spliceai_FN__splam_TP_len)+")"], loc='center left', bbox_to_anchor=(1, 0.5))
+
+                # lgd = ax.legend([spliceai_FN__splam_FN, spliceai_FP__splam_FP], ["spliceai_FN__splam_FN ("+str(spliceai_FN__splam_FN_len)+")", "spliceai_FP__splam_FP ("+str(spliceai_FP__splam_FP_len)+")"], loc='center left', bbox_to_anchor=(1, 0.5))
+
+                # lgd = axes.legend([spliceai_TN__splam_FP, spliceai_FP__splam_TN], ["spliceai_TN__splam_FP ("+str(spliceai_TN__splam_FP_len)+")", "spliceai_FP__splam_TN ("+str(spliceai_FP__splam_TN_len)+")"], loc='center left', bbox_to_anchor=(1, 0.5))
+
                 plt.xlim([0, 1])
                 plt.ylim([0, 1])
-                ax.set_aspect('equal', adjustable='box')
+                axes["main"].set_aspect('equal', adjustable='box')
+                axes["TPFN"].set_aspect('equal', adjustable='box')
+                axes["FPTN"].set_aspect('equal', adjustable='box')
+                axes["FPFN"].set_aspect('equal', adjustable='box')
+
+                # handles, labels = .get_legend_handles_labels()
+                # fig.legend(handles, labels, loc='lower center')
                 plt.savefig(target_figure_root + TOOL + "_" + str(threshold) + ".png", dpi=300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+                # fig.legend(labels, loc='lower right', bbox_to_anchor=(1,-0.1), ncol=len(labels), bbox_transform=fig.transFigure)
+                # plt.savefig(target_figure_root + TOOL + "_" + str(threshold) + ".png", dpi=300, bbox_inches='tight')
                 plt.close()
 
 
-            # splcieai_TP__splam_FN = ax.scatter(splam_noS_d_pred_prob[spliceai_TP__splam_FN_idices], splam_noS_a_pred_prob[spliceai_TP__splam_FN_idices], s = 5, color="blue")
-            # splcieai_FN__splam_TP = ax.scatter(splam_noS_d_pred_prob[spliceai_FN__splam_TP_idices], splam_noS_a_pred_prob[spliceai_FN__splam_TP_idices], s = 5, color="red")
-            # splcieai_FN__splam_FN = ax.scatter(splam_noS_d_pred_prob[spliceai_FN__splam_FN_idices], splam_noS_a_pred_prob[spliceai_FN__splam_FN_idices], s = 5, color="green")
-            # splcieai_TN__splam_FP = ax.scatter(splam_noS_d_pred_prob[spliceai_TN__splam_FP_idices], splam_noS_a_pred_prob[spliceai_TN__splam_FP_idices], s = 5, color="orange")
-            # splcieai_FP__splam_TN = ax.scatter(splam_noS_d_pred_prob[spliceai_FP__splam_TN_idices], splam_noS_a_pred_prob[spliceai_FP__splam_TN_idices], s = 5, color="cyan")
-            # splcieai_FP__splam_FP = ax.scatter(splam_noS_d_pred_prob[spliceai_FP__splam_FP_idices], splam_noS_a_pred_prob[spliceai_FP__splam_FP_idices], s = 5, color="purple")
-            # # non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 1)
-            # ax.legend([splcieai_TP__splam_FN, splcieai_FN__splam_TP, splcieai_FN__splam_FN, splcieai_TN__splam_FP, splcieai_FP__splam_TN, splcieai_FP__splam_FP], ["splcieai_TP__splam_FN", "splcieai_FN__splam_TP", "splcieai_FN__splam_FN", "splcieai_TN__splam_FP", "splcieai_FP__splam_TN", "splcieai_FP__splam_FP"])
+            # spliceai_TP__splam_FN = ax.scatter(splam_noS_d_pred_prob[spliceai_TP__splam_FN_idices], splam_noS_a_pred_prob[spliceai_TP__splam_FN_idices], s = 5, color="blue")
+            # spliceai_FN__splam_TP = ax.scatter(splam_noS_d_pred_prob[spliceai_FN__splam_TP_idices], splam_noS_a_pred_prob[spliceai_FN__splam_TP_idices], s = 5, color="red")
+            # spliceai_FN__splam_FN = ax.scatter(splam_noS_d_pred_prob[spliceai_FN__splam_FN_idices], splam_noS_a_pred_prob[spliceai_FN__splam_FN_idices], s = 5, color="green")
+            # spliceai_TN__splam_FP = ax.scatter(splam_noS_d_pred_prob[spliceai_TN__splam_FP_idices], splam_noS_a_pred_prob[spliceai_TN__splam_FP_idices], s = 5, color="orange")
+            # spliceai_FP__splam_TN = ax.scatter(splam_noS_d_pred_prob[spliceai_FP__splam_TN_idices], splam_noS_a_pred_prob[spliceai_FP__splam_TN_idices], s = 5, color="cyan")
+            # spliceai_FP__splam_FP = ax.scatter(splam_noS_d_pred_prob[spliceai_FP__splam_FP_idices], splam_noS_a_pred_prob[spliceai_FP__splam_FP_idices], s = 5, color="purple")
+            # # non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 0.3)
+            # ax.legend([spliceai_TP__splam_FN, spliceai_FN__splam_TP, spliceai_FN__splam_FN, spliceai_TN__splam_FP, spliceai_FP__splam_TN, spliceai_FP__splam_FP], ["spliceai_TP__splam_FN", "spliceai_FN__splam_TP", "spliceai_FN__splam_FN", "spliceai_TN__splam_FP", "spliceai_FP__splam_TN", "spliceai_FP__splam_FP"])
             # plt.xlim([0, 1])
             # plt.ylim([0, 1])
             # plt.show()
