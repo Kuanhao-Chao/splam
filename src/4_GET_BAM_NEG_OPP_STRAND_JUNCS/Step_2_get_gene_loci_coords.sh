@@ -14,6 +14,4 @@ bedtools intersect -v -a ./BAM_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.
 
 bedtools intersect -wa -wb -a ./BAM_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.pos.only.bed -b BAM_junctions/junctions_1.bed -sorted -filenames > ./BAM_junctions/neg_hits.bed
 
-# bedtools intersect -wa -wb -a ./BAM_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.pos.only.bed -b BAM_junctions/junctions_1.bed -sorted -filenames > ./BAM_junctions/neg_hits.bed
-
 bedtools intersect -wa -wb -a ./BAM_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.neg.only.bed -b BAM_junctions/junctions_1.bed -sorted -filenames > ./BAM_junctions/pos_hits.bed
