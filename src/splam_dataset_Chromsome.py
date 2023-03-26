@@ -87,7 +87,7 @@ class myDataset(Dataset):
 
             CONSTANT_SIZE = pidx
             # CONSTANT_SIZE_NEG = math.ceil(CONSTANT_SIZE*2/3)
-            CONSTANT_SIZE_NEG = CONSTANT_SIZE*2
+            CONSTANT_SIZE_NEG = CONSTANT_SIZE*3
             print("\033[1m[INFO] CONSTANT_SIZE     : ", CONSTANT_SIZE, "\033[0m")
             print("\033[1m[INFO] CONSTANT_SIZE_NEG : ", CONSTANT_SIZE_NEG, "\033[0m")
 
@@ -399,8 +399,9 @@ class myDataset(Dataset):
 
 def get_dataloader(batch_size, TARGET, n_workers):
     """Generate dataloader"""
-    trainset_origin = myDataset("train", int(SEQ_LEN))
-    trainset, valset = torch.utils.data.random_split(trainset_origin, [0.9, 0.1])
+    # trainset_origin = myDataset("train", int(SEQ_LEN))
+    # trainset, valset = torch.utils.data.random_split(trainset_origin, [0.9, 0.1])
+    trainset = myDataset("train", int(SEQ_LEN))
     testset = myDataset("test", int(SEQ_LEN))
     train_loader = DataLoader(
         trainset,
@@ -409,13 +410,13 @@ def get_dataloader(batch_size, TARGET, n_workers):
         drop_last=False,
         pin_memory=True,
     )
-    val_loader = DataLoader(
-        valset,
-        batch_size=batch_size,
-        shuffle=True,
-        drop_last=False,
-        pin_memory=True,
-    )
+    # val_loader = DataLoader(
+    #     valset,
+    #     batch_size=batch_size,
+    #     shuffle=True,
+    #     drop_last=False,
+    #     pin_memory=True,
+    # )
     test_loader = DataLoader(
         testset,
         batch_size = batch_size,
@@ -426,7 +427,7 @@ def get_dataloader(batch_size, TARGET, n_workers):
     #######################################
     # predicting splice / non-splice
     #######################################
-    return train_loader, val_loader, test_loader
+    return train_loader, test_loader
     # torch.save(train_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/train.pt")
     # torch.save(val_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/val.pt")
     # torch.save(test_loader, "./INPUTS/"+SEQ_LEN+"bp/"+TARGET+"/test.pt")

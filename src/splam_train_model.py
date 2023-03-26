@@ -68,7 +68,7 @@ k=10
 #############################
 # Creating directories
 #############################
-MODEL_VERSION = "SPLAM_v9/"
+MODEL_VERSION = "SPLAM_v11/"
 MODEL_OUTPUT_BASE = "./MODEL/"+MODEL_VERSION
 LOG_OUTPUT_BASE = MODEL_OUTPUT_BASE + "LOG/"
 LOG_OUTPUT_TRAIN_BASE = MODEL_OUTPUT_BASE + "LOG/TRAIN/"
@@ -83,13 +83,14 @@ os.makedirs(LOG_OUTPUT_TEST_BASE, exist_ok=True)
 # Training Data initialization
 #############################
 # save_dataloader(BATCH_SIZE, MODEL_VERSION, N_WORKERS)
-train_loader, val_loader, test_loader = get_dataloader(BATCH_SIZE, MODEL_VERSION, N_WORKERS)
+# train_loader, val_loader, test_loader = get_dataloader(BATCH_SIZE, MODEL_VERSION, N_WORKERS)
+train_loader, test_loader = get_dataloader(BATCH_SIZE, MODEL_VERSION, N_WORKERS)
 train_iterator = iter(train_loader)
-valid_iterator = iter(val_loader)
+# valid_iterator = iter(val_loader)
 test_iterator = iter(test_loader)
 print(f"\033[1m[Info]: Finish loading data!\033[0m",flush = True)
 print("train_iterator: ", len(train_loader))
-print("valid_iterator: ", len(val_loader))
+# print("valid_iterator: ", len(val_loader))
 print("valid_iterator: ", len(test_loader))
 
 
@@ -306,43 +307,6 @@ def train_one_epoch(epoch_idx, train_loader):
     print(f'Acceptor Precision: {A_G_TP/(A_G_TP+A_G_FP):.5f} | Acceptor Recall: {A_G_TP/(A_G_TP+A_G_FN):.5f} | TP: {A_G_TP} | FN: {A_G_FN} | FP: {A_G_FP} | TN: {A_G_TN}')
     print ("Learning rate: %.5f" % (get_lr(optimizer)))
     print("\n\n")
-        
-    #     #######################################
-    #     # predicting splice / non-splice
-    #     #######################################    
-    #     batch_loss = loss.item()
-    #     batch_acc = accuracy
-    #     epoch_loss += loss.item()
-    #     epoch_acc += accuracy
-    #     labels = labels.to("cpu")
-    #     yp = yp.to("cpu")
-    #     J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = junc_statistics(labels, yp, JUNC_THRESHOLD, J_G_TP, J_G_FN, J_G_FP, J_G_TN)        
-    #     pbar.update(1)
-    #     pbar.set_postfix(
-    #         batch_id=batch_idx,
-    #         idx_train=len(train_loader)*BATCH_SIZE,
-    #         loss=f"{batch_loss:.6f}",
-    #         accuracy=f"{batch_acc:.6f}",
-    #         J_Precision=f"{J_TP/(J_TP+J_FP+1e-6):.6f}",
-    #         J_Recall=f"{J_TP/(J_TP+J_FN+1e-6):.6f}"
-    #     )
-    #     optimizer.zero_grad()
-    #     loss.backward()
-    #     optimizer.step()
-    #     scheduler.step()
-    #     fw_train_log_loss.write(str(batch_loss)+ "\n")
-    #     fw_train_log_acc.write(str(batch_acc)+ "\n")
-    #     fw_train_log_lr.write(str(get_lr(optimizer))+ "\n")
-    #     fw_train_log_J_threshold_precision.write(f"{J_TP/(J_TP+J_FP+1e-6):.6f}\n")
-    #     fw_train_log_J_threshold_recall.write(f"{J_TP/(J_TP+J_FN+1e-6):.6f}\n")
-    # pbar.close()
-    # print(f'Epoch {epoch_idx+0:03}: | Loss: {epoch_loss/len(train_loader):.5f} | Acc: {epoch_acc/len(train_loader):.3f}')
-    # print(f'Junction Precision: {J_G_TP/(J_G_TP+J_G_FP):.5f} | Junction Recall: {J_G_TP/(J_G_TP+J_G_FN):.5f} | TP: {J_G_TP} | FN: {J_G_FN} | FP: {J_G_FP} | TN: {J_G_TN}')
-    # print ("Learning rate: %.5f" % (get_lr(optimizer)))
-    # print("\n\n")
-
-
-
 
 
 def val_one_epoch(epoch_idx, val_loader):
@@ -392,7 +356,6 @@ def val_one_epoch(epoch_idx, val_loader):
         is_expr = (labels.sum(axis=(1,2)) >= 1)
         # print("is_expr: ", is_expr)
 
-        # Acceptor_YL = labels[is_expr, 1, :].flatten().to('cpu').detach().numpy()
         Acceptor_YL = labels[is_expr, 1, :].flatten().to('cpu').detach().numpy()
         Acceptor_YP = yp[is_expr, 1, :].flatten().to('cpu').detach().numpy()
         Donor_YL = labels[is_expr, 2, :].flatten().to('cpu').detach().numpy()
@@ -726,7 +689,7 @@ def main():
     #############################
     for epoch_num in range(EPOCH_NUM):
         train_one_epoch(epoch_num, train_loader)
-        val_one_epoch(epoch_num, val_loader)
+        # val_one_epoch(epoch_num, val_loader)
         test_one_epoch(epoch_num, test_loader)
         torch.save(model, MODEL_OUTPUT_BASE+'splam_'+str(epoch_num)+'.pt')
 

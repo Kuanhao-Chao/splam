@@ -1,7 +1,6 @@
 import os
 
 def main():
-    # print("Hello world!")
     files = ["./BAM_junctions/neg_hits.bed", "./BAM_junctions/pos_hits.bed"]
     ofile = "./BAM_junctions/junctions_1_cleaned.bed"
     fw = open(ofile, "w")

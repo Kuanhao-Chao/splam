@@ -13,7 +13,6 @@ def get_hg38_chrom_size():
 
 def main():
     chrs = get_hg38_chrom_size()
-    # D_A_POSITIONS=set()
     JUNC_POSITIONS = set()
 
     THRESHOLD = "1"
@@ -31,9 +30,6 @@ def main():
         for line in lines:
             eles = line.split("\t")
             JUNC_POSITIONS.add((eles[0], eles[1], eles[2], eles[5]))
-            # D_A_POSITIONS.add((eles[0], eles[1]))
-            # D_A_POSITIONS.add((eles[0], eles[2]))
-
 
 
     #################################
@@ -41,13 +37,12 @@ def main():
     # 'D_A_POSITIONS' dictionary.
     #   I need to avoid these splice sites.
     #################################
-    with open("../2_GET_REF_JUNCS/REF_junctions/ref_d_a.sort.bed", "r") as f:
+    with open("../2_GET_REF_JUNCS_REFSEQ/REF_junctions/ref_d_a.sort.bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             eles = line.split("\t")
             JUNC_POSITIONS.add((eles[0], eles[1], eles[2], eles[5]))
-            # D_A_POSITIONS.add((eles[0], eles[1]))
-            # D_A_POSITIONS.add((eles[0], eles[2]))
+
 
     print("JUNC_POSITIONS: ", len(JUNC_POSITIONS))
     
@@ -70,7 +65,6 @@ def main():
         lines = f.read().splitlines()
         counter = 0
         for line in lines:
-            # if counter >= 6000: break
             eles = line.split("\t")
 
             chr = eles[0]
@@ -138,30 +132,6 @@ def main():
                 continue
             else:                
                 JUNCS.add(new_junc)
-                # #################################
-                # # Check if the junction is in the 'D_A_POSITIONS' 
-                # #################################
-                # in_da_set = False                
-                # for d in range(donor_s, donor_e):
-                #     if in_da_set: break
-                #     if (chr, d) in D_A_POSITIONS:
-                #         in_da_set = True
-                # for a in range(acceptor_s, acceptor_e):
-                #     if in_da_set: break
-                #     if (chr, a) in D_A_POSITIONS:
-                #         in_da_set = True
-                
-                # # if (chr, donor) in D_A_POSITIONS:
-                # #     in_da_set = True
-                # # if (chr, acceptor) in D_A_POSITIONS:
-                # #     in_da_set = True
-
-                # # print("in_da_set: ", in_da_set)
-                # # D_A_POSITIONS.add((chr, donor_s))
-                # # D_A_POSITIONS.add((chr, donor_e))
-                # # D_A_POSITIONS.add((chr, acceptor_s))
-                # # D_A_POSITIONS.add((chr, acceptor_e))
-                # if not in_da_set:
 
                 counter += 1
                 fw_donor.write(chr + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + junc_name+"_donor" + "\t" + score + "\t" + strand + "\n")

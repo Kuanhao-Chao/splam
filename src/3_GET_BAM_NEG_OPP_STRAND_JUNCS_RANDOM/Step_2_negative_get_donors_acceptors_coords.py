@@ -4,16 +4,6 @@ import os
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
-# def get_hg38_chrom_size():
-#     f_chrs = open("../hg38_chrom_size.tsv", "r")
-#     lines = f_chrs.read().splitlines()
-#     chrs = {}
-#     for line in lines:
-#         eles = line.split("\t")
-#         chrs[eles[0]] = int(eles[1])
-#     return chrs
-# chrs = get_hg38_chrom_size()
-
 SEQ_LENGTH="800"
 QUATER_SEQ_LEN = int(SEQ_LENGTH) // 4
 EACH_JUNC_PER_LOCUS = 500
@@ -24,7 +14,6 @@ THRESHOLD = "100"
 hg38_ref = "../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa"
 output_bed = "./NEG_rev_junctions/"+SEQ_LENGTH+"bp/neg_junctions.bed"
 output_file = "../INPUTS/"+SEQ_LENGTH+"bp/input_can_neg.fa"
-D_A_POSITIONS = set()
 
 os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/", exist_ok=True)
 os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/", exist_ok=True)
@@ -42,14 +31,9 @@ def task(chromosome, sequence, start, end ,strand):
     JUNC_BASE = 0
     while True:
         idx += 1
-        # print("Current idx: ", idx)
         if idx > EACH_JUNC_PER_LOCUS:
             break
-        # if idx % 1000 == 0:
-        #     print("\t", idx)
         base_num = random.randint(start, end)
-        # acceptor_skip_idx = random.randint(0, 30)
-
         JUNC_BASE = random.randint(MIN_JUNC, MAX_JUNC)
         
         ################################
@@ -166,23 +150,6 @@ def task(chromosome, sequence, start, end ,strand):
             if acceptor_s >= end:
                 continue
             
-            # print("Donor: ", donor_s, "-", donor_e, " ;  Acceptor: ", acceptor_s, "-", acceptor_e, " strand: ", strand_select)
-            ######################################################
-            # Make sure there are no donors or acceptors inside the sequences.
-            ######################################################
-            # in_da_set = False
-            # for d in range(donor_s, donor_e):
-            #     if (chromosome, d) in D_A_POSITIONS:
-            #         in_da_set = True
-            # for a in range(acceptor_s, acceptor_e):
-            #     if (chromosome, a) in D_A_POSITIONS:
-            #         in_da_set = True
-            # if in_da_set:
-            #     continue
-
-            # D_A_POSITIONS.add((chromosome, base_num+donor_idx))
-            # D_A_POSITIONS.add((chromosome, base_num+donor_idx+acceptor_idx))
-
             fw_da.write(chromosome + "\t" + str(base_num+donor_idx) + "\t" + str(base_num+donor_idx+acceptor_idx+1) + "\t" + "JUNC_donor\t1\t"+strand_select+"\n")
             
 
@@ -197,29 +164,6 @@ def task(chromosome, sequence, start, end ,strand):
 
 
 def main():
-    # with open("../1_GET_BAM_JUNCS/BAM_junctions/"+SEQ_LENGTH+"bp/"+str(THRESHOLD)+"_juncs/d_a.bed", "r") as f:
-    #     lines = f.read().splitlines()
-    #     for line in lines:
-    #         # print(line)
-    #         eles = line.split("\t")
-    #         # print("eles[0], eles[1]: ", eles[0], eles[1], eles[2])
-    #         # Adding donor into the set.
-    #         D_A_POSITIONS.add((eles[0], eles[1]))
-    #         # Adding acceptor into the set.
-    #         D_A_POSITIONS.add((eles[0], eles[2]))
-
-    # with open("../2_GET_REF_JUNCS/REF_junctions/ref_d_a.sort.bed", "r") as f:
-    #     lines = f.read().splitlines()
-    #     for line in lines:
-    #         # print(line)
-    #         eles = line.split("\t")
-    #         # print("eles[0], eles[1]: ", eles[0], eles[1], eles[2])
-    #         # Adding donor into the set.
-    #         D_A_POSITIONS.add((eles[0], eles[1]))
-    #         # Adding acceptor into the set.
-    #         D_A_POSITIONS.add((eles[0], eles[2]))
-
-    # print("D_A_POSITIONS size: ", len(D_A_POSITIONS))
 
     with open(hg38_ref, 'r') as handle:
         Path("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/donor/").mkdir(parents=True, exist_ok=True)
