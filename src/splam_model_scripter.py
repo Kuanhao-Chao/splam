@@ -9,6 +9,13 @@ import os
 MODEL_VERSION = "SPLAM_v10"
 device = torch.device("cpu")
 model = torch.load("./MODEL/"+MODEL_VERSION+"/splam_14.pt")
+
+# for parameter in model.parameters():
+#     print(parameter.shape)
+
+pytorch_total_params = sum(dict((p.data_ptr(), p.numel()) for p in model.parameters()).values())
+print("pytorch_total_params: ", pytorch_total_params)
+
 model.to("cpu")
 print("model: ", model)
 
