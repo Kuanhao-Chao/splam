@@ -29,15 +29,16 @@ def main(argv):
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     #################################
-    os.makedirs("../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/", exist_ok=True)
-    fw_donor = open("../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor.bed", "w")
-    fw_acceptor = open("../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor.bed", "w")
+    os.makedirs(argv[0]+"/juncs/", exist_ok=True)
+    fw_donor = open(argv[0]+"/juncs/donor.bed", "w")
+    fw_acceptor = open(argv[0]+"/juncs/acceptor.bed", "w")
     
-    d_a_bed = "../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/d_a.bed"
+    d_a_bed = argv[0]+"/juncs/d_a.bed"
     fw_da = open(d_a_bed, "w")
     JUNCS = set()
 
-    with open("../Dataset/"+argv[0]+"/"+argv[0]+".bed", "r") as f:
+    with open(argv[0]+"/junction.bed", "r") as f:
+    # with open("../Dataset/"+argv[0]+"/"+argv[0]+".bed", "r") as f:
         lines = f.read().splitlines()
         for line in lines:
             eles = line.split("\t")

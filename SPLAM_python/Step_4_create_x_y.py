@@ -5,10 +5,10 @@ def main(argv):
     SEQ_LEN="800"
     HALF_SEQ_LEN = int(SEQ_LEN)//2
     QUATER_SEQ_LEN = int(SEQ_LEN)//4
-    os.makedirs("../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/", exist_ok=True)
-    fw = open("../results/"+SEQ_LEN+"bp/"+argv[0]+"/INPUTS/input.fa", "w")
-    fr_donor = open("../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/donor_seq.fa", "r")
-    fr_acceptor = open("../results/"+SEQ_LEN+"bp/"+argv[0]+"/juncs/acceptor_seq.fa", "r")
+    os.makedirs(argv[0]+"/INPUTS/", exist_ok=True)
+    fw = open(argv[0]+"/INPUTS/input.fa", "w")
+    fr_donor = open(argv[0]+"/juncs/donor_seq.fa", "r")
+    fr_acceptor = open(argv[0]+"/juncs/acceptor_seq.fa", "r")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()
@@ -64,7 +64,7 @@ def main(argv):
             #     acceptor_s = acceptor - QUOTER_SEQ_LEN
             #     acceptor_e = acceptor + flanking_size
 
-            fw.write(chromosome + ";" + str(donor_pos) +";"+ str(acceptor_pos) + ";" + d_strand + "\n")
+            fw.write(chromosome + ";" + str(donor_pos) +";"+ str(acceptor_pos) + ";" + d_strand + ";1\n")
         else:
             seq_d = lines_d[idx]
             seq_a = lines_a[idx]
