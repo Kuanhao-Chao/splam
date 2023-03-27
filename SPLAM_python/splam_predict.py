@@ -1,16 +1,3 @@
-"""All the utility function for SPLAM!
-
-    File name: prediction.py
-    Author: Kuan-Hao Chao
-    Email: kh.chao@cs.jhu.edu
-    Date created: 12/20/2022
-    Date last modified: 01/14/2023
-    Python Version: 3.8
-"""
-
-import os, sys
-sys.path.append(os.path.dirname(os.path.realpath(__file__)))
-
 import torch
 from torch.nn import Module, BatchNorm1d, LeakyReLU, Conv1d, ModuleList, Softmax, Sigmoid, Flatten, Dropout2d, Linear
 from torch.optim.lr_scheduler import LambdaLR
@@ -24,7 +11,7 @@ import numpy as np
 import warnings
 from progress.bar import Bar
 
-warnings.filterwarnings("ignore")
+warnings.filterwarnings('ignore')
 
 parser = argparse.ArgumentParser(description='SPLAM! splice junction prediction.')
 parser.add_argument('-f', metavar='<junction.fa>', required=True, help='the junction FASTA file in SPLAM! format')
@@ -97,38 +84,33 @@ class SpliceNN(Module):
         x, skip = self.skip1(self.conv1(x), 0)
         for m in self.residual_blocks:
             x, skip = m(x, skip)
-        #######################################
-        # predicting splice / non-splice
-        #######################################
         output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
         return output
 
-
-
-
-
-
+def get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP):
+    return D_YL[:, 200], D_YP[:, 200], A_YL[:, 600], A_YP[:, 600]
            
-def one_hot_encode_classifier(Xd):
-    return IN_MAP[Xd.astype('int8')]
-
+def one_hot_encode(Xd, Yd):
+    return IN_MAP[Xd.astype('int8')], [OUT_MAP[Yd[t].astype('int8')] for t in range(1)]
       
 def create_datapoints(seq, strand):
+    # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
     seq = seq.upper().replace('A', '1').replace('C', '2')
-    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0').replace('K', '0').replace('R', '0').replace('Y', '0').replace('M', '0')
+    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0').replace('K', '0').replace('R', '0')
     jn_start = JUNC_START
     jn_end = JUNC_END
 
     #######################################
-    # predicting splice / non-splice
+    # predicting pb for every bp
     #######################################
     X0 = np.asarray(list(map(int, list(seq))))
-    Y0 = 0
+    Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
     if strand == '+':
-        Y0 = 1
-    X = one_hot_encode_classifier(X0)
-    return X, Y0
-
+        for t in range(1):        
+            Y0[t][jn_start] = 2
+            Y0[t][jn_end] = 1
+    X, Y = one_hot_encode(X0, Y0)
+    return X, Y
 
 def get_cosine_schedule_with_warmup(
       optimizer: Optimizer,
@@ -158,71 +140,50 @@ def get_accuracy(y_prob, y_true):
 
 
 def model_fn(DNAs, labels, model, criterion):
-    """Forward a batch through the model."""
     outs = model(DNAs)
-    outs = torch.flatten(outs)
-    loss, accuracy = categorical_crossentropy_2d(labels, outs, criterion)
-    return loss, accuracy, outs
-
-
-def weighted_binary_cross_entropy(output, target, weights=None):    
-    if weights is not None:
-        assert len(weights) == 2
-        loss = weights[1] * (target * torch.log(output+1e-10)) + \
-               weights[0] * ((1 - target) * torch.log(1 - output+1e-10))
-    else:
-        loss = target * torch.log(output+1e-10) + (1 - target) * torch.log(1 - output+1e-10)
-    return torch.neg(torch.mean(loss))
-
+    loss = categorical_crossentropy_2d(labels, outs, criterion)
+    return loss, outs
 
 def categorical_crossentropy_2d(y_true, y_pred, criterion):
-    weights = torch.FloatTensor([1.0, 1.0]) 
-    return weighted_binary_cross_entropy(y_pred, y_true, weights), get_accuracy(y_pred, y_true)
-
-
-
-
-
-
-
-
-
-
-
+    SEQ_WEIGHT = 5
+    gamma = 2
+    return - torch.mean(y_true[:, 0, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 0, :]), gamma ), torch.log(y_pred[:, 0, :]+1e-10) )
+                        + SEQ_WEIGHT * y_true[:, 1, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 1, :]), gamma ), torch.log(y_pred[:, 1, :]+1e-10) )
+                        + SEQ_WEIGHT * y_true[:, 2, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 2, :]), gamma ), torch.log(y_pred[:, 2, :]+1e-10) ))
 
 
 def split_seq_name(seq):
     return seq[1:]
 
 class myDataset(Dataset):
-    """myDataset for SPLAM!
-    """
     def __init__(self, type, of, shuffle, segment_len=800):
         self.segment_len = segment_len
         self.data = []
         self.indices = []
         pidx = 0
-        with open(of, "r") as f:
+        with open(of, 'r') as f:
             lines = f.read().splitlines()
-            seq_name = ""
-            seq = ""
+            seq_name = ''
+            seq = ''
             for line in lines:
                 if pidx % 2 == 0:
                     seq_name = split_seq_name(line)
                 elif pidx % 2 == 1:
                     seq = line
-                    if seq[0] == ">":
+                    if seq[0] == '>':
                         seq_name = line
                         continue
                     X, Y = create_datapoints(seq, '+')
                     X = torch.Tensor(np.array(X))
+                    Y = torch.Tensor(np.array(Y)[0])
                     if X.size()[0] != 800:
-                        print("The length of input variable 'X' is not 800 (", seq_name, ")")
+                        print('seq_name: ', seq_name)
                         print(X.size())
+                        print(Y.size())
                     self.data.append([X, Y, seq_name])
                 pidx += 1
                 if pidx %10000 == 0:
-                    print("pidx: ", pidx)
+                    print('\t', pidx, ' junctions loaded.')
 
         index_shuf = list(range(len(self.data)))
         if shuffle:
@@ -230,7 +191,7 @@ class myDataset(Dataset):
         list_shuf = [self.data[i] for i in index_shuf]
         self.data = list_shuf 
         self.indices = index_shuf
-        print("pidx: ", pidx)
+        print('\t', pidx, ' junctions loaded.')
 
     def __len__(self):
         return len(self.data)
@@ -243,7 +204,7 @@ class myDataset(Dataset):
         return feature, label, seq_name
 
 def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
-    testset = myDataset("test", output_file, shuffle, SEQ_LEN)
+    testset = myDataset('test', output_file, shuffle, SEQ_LEN)
     test_loader = DataLoader(
         testset,
         batch_size = batch_size,
@@ -259,61 +220,54 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
 
 
 def test_model():
-    #############################
-    # Global variable definition
-    #############################
     BATCH_SIZE = 100
     N_WORKERS = None
+    device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
+    print(f'[Info] Loading model ...',flush = True)
+    model = torch.jit.load(MODEL_PATH)
+    model = model.to('mps')
 
-    device = torch.device("cuda" if torch.cuda.is_available() else "mps")
-    model = torch.load(MODEL_PATH)
-
-    #############################
-    # Model Initialization
-    #############################
-    print(f"[Info]: Finish loading model!",flush = True)
-    print(f"[Info]: SPLAM! prediction",flush = True)
-    # print("SPLAM! model: ", model)
-
-    #############################
-    # Training Data initialization
-    #############################
-    # "./test_chr9/fasta/junction.fa"
-    test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, JUNC_FA, True, str(0))
-
-    # MODEL_OUTPUT_BASE = "../test_chr9/OUTPUT/"
-    # TARGET_OUTPUT_BASE = MODEL_OUTPUT_BASE + "/"
+    print(f'[Info] Done loading model',flush = True)
+    print(f'[Info] Loading data ...',flush = True)
+    test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, JUNC_FA, False, str(0))
+    print(f'[Info] Done loading data ...',flush = True)
 
     criterion = torch.nn.BCELoss()
-
     fw_junc_scores = open(OUT_SCORE, 'w')
+
     model.eval()
     junc_counter = 0    
-    pbar = Bar('SPLAM! prediction', max=len(test_loader))
+    pbar = Bar('[Info] SPLAM! ', max=len(test_loader))
     with torch.no_grad():
         for batch_idx, data in enumerate(test_loader):
+            # print('batch_idx: ', batch_idx)
+            # DNAs:  torch.Size([40, 800, 4])
+            # labels:  torch.Size([40, 1, 800, 3])
             DNAs, labels, seqname = data 
             DNAs = DNAs.to(torch.float32).to(device)
             labels = labels.to(torch.float32).to(device)
+
             DNAs = torch.permute(DNAs, (0, 2, 1))
-            loss, accuracy, yps = model_fn(DNAs, labels, model, criterion)
-            labels = labels.to("cpu").detach().numpy()
-            yps = yps.to("cpu").detach().numpy()
-            pbar.next()            
-            for idx in range(len(yps)):
-                junction_score = yps[idx]
-                chr, start, end, strand = seqname[idx].split(";")
-                if strand == "+":
-                    fw_junc_scores.write(chr+ "\t"+ start + "\t" + end + "\tJUNC_" + str(junc_counter) + "\t0\t"+ strand+ "\t" + str(junction_score) + "\n")
-                elif strand == "-":
-                    fw_junc_scores.write(chr+ "\t"+ end + "\t" + start + "\tJUNC_" + str(junc_counter) + "\t0\t"+ strand+ "\t" + str(junction_score) + "\n")
+            labels = torch.permute(labels, (0, 2, 1))
+            loss, yp = model_fn(DNAs, labels, model, criterion)
+            is_expr = (labels.sum(axis=(1,2)) >= 1)
+            A_YL = labels[is_expr, 1, :].to('cpu').detach().numpy()
+            A_YP = yp[is_expr, 1, :].to('cpu').detach().numpy()
+            D_YL = labels[is_expr, 2, :].to('cpu').detach().numpy()
+            D_YP = yp[is_expr, 2, :].to('cpu').detach().numpy()
+
+            donor_labels, donor_scores, acceptor_labels, acceptor_scores = get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP)
+            for idx in range(len(yp)):
+                chr, start, end, strand, aln_num = seqname[idx].split(';')
+                # print('seqname[idx]')
+                if strand == '+':
+                    fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
+                elif strand == '-':
+                    fw_junc_scores.write(chr + '\t'+ str(end) + '\t' + str(start) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
                 junc_counter += 1
 
     pbar.finish()
     fw_junc_scores.close()
-    print(f'Expected #prediction: {len(test_loader)*BATCH_SIZE+0:03}')
-    print("\n\n")
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     test_model()
