@@ -4,7 +4,7 @@ def main():
     # output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/outlier_test/"]
     # output_files = ["./dataset/pos/", "./dataset/outlier_test/"]
     output_dir = "./dataset/"
-    output_files = [output_dir+"pos_refseq_protein_all/", output_dir+"pos_refseq_protein_alts/"]
+    output_files = [output_dir+"pos/", output_dir+"pos_MANE/", output_dir+"pos_ALTS/"]
 
     target = "splam"
     for output_file in output_files:

@@ -53,3 +53,4 @@ src/6_GET_BAM_NEG_OPP_STRAND_JUNCS/BAM_junctions/
 src_reimplementation_keras_pytorch/MODEL/*
 src_reimplementation_keras_pytorch/keras-transformer/*
 paper
+src_tools_evaluation/spliceai_result/

@@ -6,7 +6,7 @@ def main():
     QUATER_SEQ_LEN = int(SEQ_LEN) // 4
     THRESHOLD = "100"
     os.makedirs("../INPUTS/"+SEQ_LEN+"bp/", exist_ok=True)
-    fw = open("../INPUTS/"+SEQ_LEN+"bp/input_pos.fa", "w")
+    fw = open("../INPUTS/"+SEQ_LEN+"bp/input_pos_MANE.fa", "w")
     fr_donor = open("./BAM_REF_Intersection/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/donor_seq.fa", "r")
     fr_acceptor = open("./BAM_REF_Intersection/"+SEQ_LEN+"bp/"+THRESHOLD+"_juncs/acceptor_seq.fa", "r")
 
@@ -45,9 +45,6 @@ def main():
                 x = seq_d + (HALF_SEQ_LEN - len_d) * 'N' + (HALF_SEQ_LEN - len_a) * 'N' + seq_a
                 # y = (250, 750)
             
-            # print("x: ", len(x))
-            # print("x: ", len(x))
-
             x = x.upper()
             if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
                 continue

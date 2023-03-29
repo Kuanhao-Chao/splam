@@ -20,16 +20,15 @@ def main():
     print(ref_juncs)
     
     # Calling merge() function
-    os.makedirs('./REF_junctions/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/', exist_ok=True)
-    d_a_out = './REF_junctions/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/d_a.bed'
-    d_out = './REF_junctions/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/donor.bed'
-    a_out = './REF_junctions/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/acceptor.bed'
+    os.makedirs('./BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/', exist_ok=True)
+    d_a_out = './BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/d_a.bed'
+    d_out = './BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/donor.bed'
+    a_out = './BAM_REF_Intersection/'+SEQ_LEN+"bp/"+THRESHOLD+'_juncs/acceptor.bed'
 
     # intersect_df = pd.merge(ref_juncs, bam_juncs, how ='inner', on =[0, 1, 2, 5])
     # print("intersect_df: ", intersect_df)
     # out_df = intersect_df[[0, 1, 2, "3_x", "4_x", 5]]
     ref_juncs = ref_juncs.rename(columns={0:"chr",1:"start", 2:"end", 3:"junc", 4:"score", 5:"strand"})
-    # print("out_df: ", out_df)
 
     ref_juncs.to_csv(d_a_out, sep="\t", index=False, header=None)
     chrs = get_hg38_chrom_size()

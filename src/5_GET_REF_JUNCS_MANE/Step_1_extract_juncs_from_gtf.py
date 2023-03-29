@@ -3,21 +3,10 @@ import re
 import json 
 import torch
 
-def chr_name_convert():
-    f_chrs = open("../../Dataset/Refseq_2_UCSU_chromosome_names.tsv", "r")
-    lines = f_chrs.read().splitlines()
-    chrs = {}
-    for line in lines:
-        eles = line.split("\t")
-        chrs[eles[0]] = eles[1]
-    return chrs
-
-
 def main():
     JUNC_COUNTER = 0
     os.makedirs("./REF_junctions/", exist_ok=True)
     fw = open("./REF_junctions/ref_d_a.bed", 'w')
-    # with open("../../Dataset/GRCh38_latest_genomic.gff", 'r') as f:
     with open("../../Dataset/MANE.GRCh38.v1.0.ensembl_genomic.gff", 'r') as f:
         lists = f.read().splitlines() 
         transcript_id = ""
