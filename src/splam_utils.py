@@ -239,16 +239,16 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     # print("y_true[:, 2, :]: ", y_true[:, 2, :])
     # print("y_pred[:, 2, :]: ", y_pred[:, 2, :])
 
-    # This is focal loss
-    gamma = 2
-    return - torch.mean(y_true[:, 0, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 0, :]), gamma ), torch.log(y_pred[:, 0, :]+1e-10) )
-                        + SEQ_WEIGHT * y_true[:, 1, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 1, :]), gamma ), torch.log(y_pred[:, 1, :]+1e-10) )
-                        + SEQ_WEIGHT * y_true[:, 2, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 2, :]), gamma ), torch.log(y_pred[:, 2, :]+1e-10) ))
+    # # This is focal loss
+    # gamma = 2
+    # return - torch.mean(y_true[:, 0, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 0, :]), gamma ), torch.log(y_pred[:, 0, :]+1e-10) )
+    #                     + SEQ_WEIGHT * y_true[:, 1, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 1, :]), gamma ), torch.log(y_pred[:, 1, :]+1e-10) )
+    #                     + SEQ_WEIGHT * y_true[:, 2, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 2, :]), gamma ), torch.log(y_pred[:, 2, :]+1e-10) ))
 
-    # # This is cross entropy loss
-    # return - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
-    #                     + y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
-    #                     + y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10))
+    # This is cross entropy loss
+    return - torch.mean(y_true[:, 0, :]*torch.log(y_pred[:, 0, :]+1e-10)
+                        + y_true[:, 1, :]*torch.log(y_pred[:, 1, :]+1e-10)
+                        + y_true[:, 2, :]*torch.log(y_pred[:, 2, :]+1e-10))
 
 
 # def create_datapoints(seq, strand):
