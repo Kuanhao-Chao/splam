@@ -21,12 +21,11 @@ def main():
     THRESHOLD = 100
 
 
-    pos_junc_f = '../src/2_GET_REF_JUNCS/BAM_REF_Intersection/'+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
-    
-    pos_refseq_protein_all_f = "../src/7_GET_REF_JUNCS_REFSEQ/REF_junctions/"+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
-    pos_refseq_protein_alts_f = "../src/9_GET_REF_JUNCS_REFSEQ_NO_CANONICAL/REF_junctions/"+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
+    pos_junc_f = '../src/2_GET_REF_JUNCS_REFSEQ/BAM_REF_Intersection/'+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
 
-    # pos_junc_f = '../src/2_GET_REF_JUNCS/BAM_REF_Intersection/'+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
+    pos_MANE_f = "../src/5_GET_REF_JUNCS_MANE/BAM_REF_Intersection/"+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
+    pos_ALTS_f = "../src/6_GET_REF_JUNCS_REFSEQ_ALTS/BAM_REF_Intersection/"+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
+
 
     # neg_can_junc_f = '../src/3_GET_CANONICAL_NEG_JUNCS/NEG_can_junctions/'+str(SEQ_LEN)+"bp/d_a.bed"
     # neg_noncan_junc_f = '../src/4_GET_NONCANONICAL_NEG_JUNCS/NEG_noncan_junctions/'+str(SEQ_LEN)+"bp/d_a.bed"
@@ -42,19 +41,16 @@ def main():
 
     # junc_fs = [pos_junc_f, neg_1_junc_f, neg_junc_random_f]
 
-    junc_fs = [pos_junc_f, pos_refseq_protein_alts_f, neg_1_junc_f, neg_junc_random_f]
+    junc_fs = [pos_junc_f, pos_MANE_f, pos_ALTS_f]
 
     output_dir = "./dataset/"
-    output_files = [output_dir+"pos/", output_dir+"pos_refseq_protein_alts/", output_dir+"neg_1/", output_dir+"neg_random/"]
+    output_files = [output_dir+"pos/", output_dir+"pos_MANE/", output_dir+"pos_ALTS/"]
 
 
     for output_file in output_files:
         os.makedirs(output_file, exist_ok=True)
 
-    # Testing [5000, 2500, 2750] samples
-    # nums = [1000, 500, 550, 1000]
-    # nums = [10000, 1000, 1000, 10000]
-    nums = [25946, 21597, 90000, 90000]
+    nums = [38065, 25946, 12119]
 
     COUNTER = 0
     global_df = pd.DataFrame(columns = [0, 1, 2, 3, 4, 5])

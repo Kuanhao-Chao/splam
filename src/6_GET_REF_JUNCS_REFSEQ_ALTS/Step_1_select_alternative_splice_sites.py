@@ -22,17 +22,18 @@ def main():
     # fw = open("./REF_junctions/ref_d_a.bed", 'w')
     # chrs = chr_name_convert()
 
-    MANE_juncs = pd.read_csv('../2_GET_REF_JUNCS/REF_junctions/ref_d_a.sort.bed', sep="\t", header=None)
+    MANE_juncs = pd.read_csv('../5_GET_REF_JUNCS_MANE/BAM_REF_Intersection/800bp/100_juncs/d_a.bed', sep="\t", header=None)
 
-    refseq_juncs = pd.read_csv('../7_GET_REF_JUNCS_REFSEQ/REF_junctions/ref_d_a.sort.bed', sep="\t", header=None)
+    refseq_juncs = pd.read_csv('../2_GET_REF_JUNCS_REFSEQ/BAM_REF_Intersection/800bp/100_juncs/d_a.bed', sep="\t", header=None)
 
     print(MANE_juncs)
     print(refseq_juncs)
 
     intersect_df = pd.merge(refseq_juncs, MANE_juncs, how ='left', on =[0, 1, 2, 5])
-    print(intersect_df)
 
     intersect_df = intersect_df[intersect_df.isnull().any(axis=1)]
+
+    print(intersect_df)
 
     # intersect_df=intersect_df.dropna()
     intersect_df = intersect_df.drop(['3_y', '4_y'], axis=1)
