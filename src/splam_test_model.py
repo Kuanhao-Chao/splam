@@ -18,7 +18,7 @@ import platform
 warnings.filterwarnings("ignore")
 
 # MODEL_VERSION = "SPLAM_v7/"
-MODEL_VERSION = "SPLAM_v10/"
+MODEL_VERSION = "SPLAM_v12/"
 JUNC_THRESHOLD = 0.1
 
 def parse_junction(name):
@@ -82,9 +82,12 @@ def main():
     BATCH_SIZE = 100
 
     # TARGETS = ["pos", "pos_refseq_protein_isoforms", "pos_refseq_protein_alternative_only", "neg_1", "neg_5"]
-    TARGETS = ["pos", "pos_refseq_protein_alts", "neg_1", "neg_random"]
+    TARGETS = ["pos", "pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
     # TARGETS = ["neg_1_random"]
     # for shuffle in [True, False]:
+
+
+
     for shuffle in [False]:
         junc_counter = 0
         TYPE = "shuffle" if shuffle else "noshuffle"
@@ -93,6 +96,18 @@ def main():
         print("########################################")
 
         for target in TARGETS:
+
+            os.makedirs(MODEL_OUTPUT_BASE+target, exist_ok=True)
+            d_score_tsv_f = MODEL_OUTPUT_BASE+target+"/splam_all_seq.score.d."+TYPE+"."+target+".tsv"
+            a_score_tsv_f = MODEL_OUTPUT_BASE+target+"/splam_all_seq.score.a."+TYPE+"."+target+".tsv"
+            n_score_tsv_f = MODEL_OUTPUT_BASE+target+"/splam_all_seq.score.n."+TYPE+"."+target+".tsv"
+            name_tsv_f = MODEL_OUTPUT_BASE+target+"/splam_all_seq.name."+TYPE+"."+target+".tsv"
+
+            d_score_fw = open(d_score_tsv_f, "a")
+            a_score_fw = open(a_score_tsv_f, "a") 
+            n_score_fw = open(n_score_tsv_f, "a") 
+            name_fw = open(name_tsv_f, "a") 
+
             test_loader = get_eval_dataloader(BATCH_SIZE, MODEL_VERSION, N_WORKERS, shuffle, target)
 
             # test_iterator = iter(test_loader)
@@ -208,6 +223,13 @@ def main():
                 D_YL = labels[is_expr, 2, :].to('cpu').detach().numpy()
                 D_YP = yp[is_expr, 2, :].to('cpu').detach().numpy()
 
+
+                np.savetxt(a_score_fw, A_YP, delimiter=" ")
+                np.savetxt(d_score_fw, D_YP, delimiter=" ")
+                # np.savetxt(n_score_fw, n_scores.reshape((1,len(n_scores))), delimiter=" ")
+
+
+
                 junction_labels_min, junction_scores_min = get_junc_scores(D_YL, A_YL, D_YP, A_YP, "min")
                 junction_labels_avg, junction_scores_avg = get_junc_scores(D_YL, A_YL, D_YP, A_YP, "avg")
                 donor_labels, donor_scores, acceptor_labels, acceptor_scores = get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP)
@@ -316,6 +338,11 @@ def main():
                 pickle.dump(SPLAM_junc_name, f)
 
 
+
+            d_score_fw.close()
+            a_score_fw.close()
+            n_score_fw.close()
+            name_fw.close()
             ############################
             # Plotting ROC / PR curves
             ############################
