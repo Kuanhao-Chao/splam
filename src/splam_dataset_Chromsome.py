@@ -30,8 +30,8 @@ class myDataset(Dataset):
             neg_random_f = "./INPUTS/"+SEQ_LEN+"bp/input_neg_random/"+type+"_neg_random.shuffle.fa"
         elif type == "eval":
             pos_f = "../src_tools_evaluation/dataset/pos/splam/splam.juncs.seq.fa"
-            pos_refseq_protein_all_f = "../src_tools_evaluation/dataset/pos_refseq_protein_all/splam/splam.juncs.seq.fa"
-            pos_refseq_protein_alts_f = "../src_tools_evaluation/dataset/pos_refseq_protein_alts/splam/splam.juncs.seq.fa"
+            pos_MANE_f = "../src_tools_evaluation/dataset/pos_MANE/splam/splam.juncs.seq.fa"
+            pos_ALTS_f = "../src_tools_evaluation/dataset/pos_ALTS/splam/splam.juncs.seq.fa"
 
             neg_1_f = "../src_tools_evaluation/dataset/neg_1/splam/splam.juncs.seq.fa"
             neg_random_f = "../src_tools_evaluation/dataset/neg_random/splam/splam.juncs.seq.fa"
@@ -163,13 +163,13 @@ class myDataset(Dataset):
                             break
             print("nridx: ", nridx)
 
-        if type == "eval" and eval_select=="pos_refseq_protein_alts":
+        if type == "eval" and eval_select=="pos_ALTS":
             #################################
             ## Processing 'POSITIVE_REFSEQ_PROTEIN_ISOFORMS' samples
             #################################
             pp_alts_idx = 0
-            with open(pos_refseq_protein_alts_f, "r") as f:
-                print("Processing ", pos_refseq_protein_alts_f)
+            with open(pos_ALTS_f, "r") as f:
+                print("Processing ", pos_ALTS_f)
                 lines = f.read().splitlines()
                 seq_name = ""
                 seq = ""
@@ -194,8 +194,43 @@ class myDataset(Dataset):
                     if pp_alts_idx %10000 == 0:
                         print("pidx: ", pp_alts_idx)
                         # print(seq_name)
+                    if pp_alts_idx >= 20000:
+                        break
             print("pp_alts_idx: ", pp_alts_idx)
 
+        if type == "eval" and eval_select=="pos_MANE":
+            #################################
+            ## Processing 'POSITIVE_REFSEQ_PROTEIN_ISOFORMS' samples
+            #################################
+            pp_MANE_idx = 0
+            with open(pos_MANE_f, "r") as f:
+                print("Processing ", pos_MANE_f)
+                lines = f.read().splitlines()
+                seq_name = ""
+                seq = ""
+                for line in lines:
+                    # print(line)
+                    if pp_MANE_idx % 2 == 0:
+                        seq_name = split_seq_name(line)
+                    elif pp_MANE_idx % 2 == 1:
+                        seq = line
+                        # print(seq)
+                        X, Y = create_datapoints(seq, '+')
+                        X = torch.Tensor(np.array(X))
+                        Y = torch.Tensor(np.array(Y)[0])
+                        # print("X.size(): ", X)
+                        # print("Y.size(): ", Y)
+                        if X.size()[0] != 800:
+                            print("seq_name: ", seq_name)
+                            print(X.size())
+                            print(Y.size())
+                        self.data.append([X, Y, seq_name])
+                    pp_MANE_idx += 1
+                    if pp_MANE_idx %10000 == 0:
+                        print("pidx: ", pp_MANE_idx)
+                    if pp_MANE_idx >= 20000:
+                        break
+            print("pp_MANE_idx: ", pp_MANE_idx)
 
 
 
