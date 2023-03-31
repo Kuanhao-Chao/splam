@@ -75,7 +75,7 @@ MODEL_VERSION = "SPLAM_v10/"
 N_WORKERS = 1
 shuffle=True
 target = "pos"
-device="mps"
+device="cpu"
 criterion = nn.BCELoss()
 # TARGETS = ["pos", "pos_refseq_protein_alts", "neg_1", "neg_random"]
 
@@ -124,57 +124,68 @@ for batch_idx, data in enumerate(test_loader):
     # print(chr.splt(":"))
     DNAs = DNAs.to(torch.float32).to(device)
     labels = labels.to(torch.float32).to(device)
+    print("DNAs: ", DNAs[0].shape)
+    plt.figure(figsize=(10,2))
+    plt.plot(DNAs[0])
+    # plt.show()
+    plt.savefig("./DNA_plot.png", dpi=300)
+    break
+    
 
-    DNAs = torch.permute(DNAs, (0, 2, 1))
-    labels = torch.permute(labels, (0, 2, 1))
-    loss, yp = model_fn(DNAs, labels, model, criterion)
 
-    #######################################
-    # predicting all bp.
-    #######################################    
-    is_expr = (labels.sum(axis=(1,2)) >= 1)
-    # print("is_expr: ", is_expr)
 
+
+
+    # DNAs = torch.permute(DNAs, (0, 2, 1))
+    # labels = torch.permute(labels, (0, 2, 1))
+    # loss, yp = model_fn(DNAs, labels, model, criterion)
+
+    # #######################################
+    # # predicting all bp.
+    # #######################################    
+    # is_expr = (labels.sum(axis=(1,2)) >= 1)
+    # # print("is_expr: ", is_expr)
+
+    # # Acceptor_YL = labels[is_expr, 1, :].flatten().to('cpu').detach().numpy()
     # Acceptor_YL = labels[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-    Acceptor_YL = labels[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-    Acceptor_YP = yp[is_expr, 1, :].flatten().to('cpu').detach().numpy()
-    Donor_YL = labels[is_expr, 2, :].flatten().to('cpu').detach().numpy()
-    Donor_YP = yp[is_expr, 2, :].flatten().to('cpu').detach().numpy()
+    # Acceptor_YP = yp[is_expr, 1, :].flatten().to('cpu').detach().numpy()
+    # Donor_YL = labels[is_expr, 2, :].flatten().to('cpu').detach().numpy()
+    # Donor_YP = yp[is_expr, 2, :].flatten().to('cpu').detach().numpy()
 
-    A_YL = labels[is_expr, 1, :].to('cpu').detach().numpy()
-    A_YP = yp[is_expr, 1, :].to('cpu').detach().numpy()
-    D_YL = labels[is_expr, 2, :].to('cpu').detach().numpy()
-    D_YP = yp[is_expr, 2, :].to('cpu').detach().numpy()
-    print("A_YP: ", A_YP)
+    # A_YL = labels[is_expr, 1, :].to('cpu').detach().numpy()
+    # A_YP = yp[is_expr, 1, :].to('cpu').detach().numpy()
+    # D_YL = labels[is_expr, 2, :].to('cpu').detach().numpy()
+    # D_YP = yp[is_expr, 2, :].to('cpu').detach().numpy()
+    # print("A_YP: ", A_YP)
 
-    # data = np.expand_dims(i,0)
-    # pred = model.predict(data)[0][0]
-    # if  pred > 0.5:
-    heatmap = grad_cam(layer_name,DNAs)
-    print(f"Model prediction = sick ({A_YP}), True label = {1}")
-    plt.figure(figsize=(30,4))
-    plt.imshow(np.expand_dims(heatmap,axis=2),cmap='Reds', aspect="auto", interpolation='nearest',extent=[0,300,DNAs.min(),DNAs.max()], alpha=0.5)
-    plt.plot(i,'k')
-    plt.colorbar()
-    plt.show()
-    cnt +=1
-
-
-
-    # pred = model.predict(np.expand_dims(j,axis=0))[0][0]
-
-
-    # if  pred > 0.5: 
-    #     exp = explainer.explain_instance(np.expand_dims(j,axis=0), wrapped_mod.predict, num_features=300)
-    #     explanations = exp.as_list()
-    #     heatmap = np.zeros([1,300])
-    #     for k in explanations:
-    #         if k[1] > 0:
-    #             heatmap[0,int(k[0].split("-")[-1])] = k[1]
-    #     print(f"Model prediction = sick ({pred}), True label = {label[int(y_test[cnt])]}")
-    #     plt.figure(figsize=(30,4))
-    #     plt.imshow(np.expand_dims(heatmap,axis=2),cmap='Reds', aspect="auto", interpolation='nearest',extent=[0,300,j.min(),j.max()], alpha=0.5)
-    #     plt.plot(j,'k', label="V_d")
-    #     plt.colorbar()
-    #     plt.show()
+    # # data = np.expand_dims(i,0)
+    # # pred = model.predict(data)[0][0]
+    # # if  pred > 0.5:
+    # heatmap = grad_cam(layer_name,DNAs)
+    # print(f"Model prediction = sick ({A_YP}), True label = {1}")
+    # plt.figure(figsize=(30,4))
+    # plt.imshow(np.expand_dims(heatmap,axis=2),cmap='Reds', aspect="auto", interpolation='nearest',extent=[0,300,DNAs.min(),DNAs.max()], alpha=0.5)
+    # plt.plot(i,'k')
+    # plt.colorbar()
+    # plt.show()
     # cnt +=1
+
+
+
+    # # pred = model.predict(np.expand_dims(j,axis=0))[0][0]
+
+
+    # # if  pred > 0.5: 
+    # #     exp = explainer.explain_instance(np.expand_dims(j,axis=0), wrapped_mod.predict, num_features=300)
+    # #     explanations = exp.as_list()
+    # #     heatmap = np.zeros([1,300])
+    # #     for k in explanations:
+    # #         if k[1] > 0:
+    # #             heatmap[0,int(k[0].split("-")[-1])] = k[1]
+    # #     print(f"Model prediction = sick ({pred}), True label = {label[int(y_test[cnt])]}")
+    # #     plt.figure(figsize=(30,4))
+    # #     plt.imshow(np.expand_dims(heatmap,axis=2),cmap='Reds', aspect="auto", interpolation='nearest',extent=[0,300,j.min(),j.max()], alpha=0.5)
+    # #     plt.plot(j,'k', label="V_d")
+    # #     plt.colorbar()
+    # #     plt.show()
+    # # cnt +=1

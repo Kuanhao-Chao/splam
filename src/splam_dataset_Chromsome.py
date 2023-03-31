@@ -40,7 +40,7 @@ class myDataset(Dataset):
             # neg_noncan_f = "../src_tools_evaluation/dataset/neg_noncan/splam/splam.juncs.seq.fa"
             # neg_can_f = "../src_tools_evaluation/dataset/neg_can/splam/splam.juncs.seq.fa"
 
-        CONSTANT_SIZE = 0
+        CONSTANT_SIZE = 200
         CONSTANT_SIZE_NEG = 0
         #################################
         ## Processing 'POSITIVE' samples
@@ -80,8 +80,8 @@ class myDataset(Dataset):
                     elif type == "test":
                         if pidx >= 3000:
                             break
-                    # if pidx > CONSTANT_SIZE:
-                    #     break
+                    if pidx > CONSTANT_SIZE:
+                        break
 
             print("pidx: ", pidx)
 
