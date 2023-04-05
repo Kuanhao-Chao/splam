@@ -193,57 +193,65 @@ if __name__ == '__main__':
         # plt.savefig("./DNA_plot.png", dpi=300)
         break
         
-
-    print("DNAs: ", DNAs[0].shape)
+    print("DNAs: ", DNAs.shape)
 
     last_conv_layer = get_last_conv_layer(model)
     print("last_conv_layer: ", last_conv_layer)
 
     print("grads: ", grads)
 
-    # Step 5: Pass the preprocessed image through the model and get the output
-    yp = model(DNAs)
-    loss = categorical_crossentropy_2d(labels, yp, criterion)
-    # yp[:, yp.argmax()].backward()
-    loss.backward()
-        # retain_graph=True)
-    print("loss: ", loss)
-    print("yp: ", yp)
-    print("yp: ", yp.shape)
+    # # Step 5: Pass the preprocessed image through the model and get the output
+    # yp = model(DNAs)
+    # loss = categorical_crossentropy_2d(labels, yp, criterion)
+    # # yp[:, yp.argmax()].backward()
+    # loss.backward()
+    #     # retain_graph=True)
+    # print("loss: ", loss)
+    # print("yp: ", yp)
+    # print("yp: ", yp.shape)
 
-    print("grads: ", grads)
-    print("grads: ", grads.shape)
-    print("grads: ", len(grads))
+    # print("grads: ", grads)
+    # print("grads: ", grads.shape)
+    # print("grads: ", len(grads))
 
-    # print(last_conv_layer.weight)
-    print("last_conv_layer.weight.shape: ", last_conv_layer.weight.shape)
-
-
-    print("last_conv_layer.weight.grad.shape: ", last_conv_layer.weight.grad.shape)
-
-    # cam_weights = (grads * last_conv_layer.weight).sum(dim=1, keepdim=True)
-
-    # print("cam_weights: ", cam_weights)
-    # print("cam_weights: ", cam_weights.shape)
+    # # print(last_conv_layer.weight)
+    # print("last_conv_layer.weight.shape: ", last_conv_layer.weight.shape)
 
 
-    # alpha_k = torch.mean(grads, dim=(0), keepdim=True)
-    # print("alpha_k: ", alpha_k)
-    # print("alpha_k: ", alpha_k.shape)
+    # print("last_conv_layer.weight.grad.shape: ", last_conv_layer.weight.grad.shape)
 
-    grads_output_tmp = grads * model(DNAs)
 
-    grads_output = torch.mean(grads_output_tmp, dim=(0,1))
-    # , keepdim=True)
 
-    print("grads_output: ", grads_output)
-    print("grads_output: ", grads_output.shape)
 
-    print("model(DNAs).shape: ", grads_output.shape)
-    # print("model(DNAs).shape: ", grads_output[0][0].shape)
 
-    plt.plot([*range(800)], grads_output.detach().numpy())
-    plt.show()
+
+
+    # feature_maps = last_conv_layer.forward(DNAs)
+    # print("feature_maps: ", feature_maps)
+
+    # # cam_weights = (grads * last_conv_layer.weight).sum(dim=1, keepdim=True)
+
+    # # print("cam_weights: ", cam_weights)
+    # # print("cam_weights: ", cam_weights.shape)
+
+
+    # # alpha_k = torch.mean(grads, dim=(0), keepdim=True)
+    # # print("alpha_k: ", alpha_k)
+    # # print("alpha_k: ", alpha_k.shape)
+
+    # grads_output_tmp = grads * model(DNAs)
+
+    # grads_output = torch.mean(grads_output_tmp, dim=(0,1))
+    # # , keepdim=True)
+
+    # print("grads_output: ", grads_output)
+    # print("grads_output: ", grads_output.shape)
+
+    # print("model(DNAs).shape: ", grads_output.shape)
+    # # print("model(DNAs).shape: ", grads_output[0][0].shape)
+
+    # plt.plot([*range(800)], grads_output.detach().numpy())
+    # plt.show()
 
 
     # last_conv_layer.weight = torch.permute(last_conv_layer.weight, (0, 2, 1))
