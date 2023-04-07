@@ -82,7 +82,8 @@ def main():
     BATCH_SIZE = 100
 
     # TARGETS = ["pos", "pos_refseq_protein_isoforms", "pos_refseq_protein_alternative_only", "neg_1", "neg_5"]
-    TARGETS = ["pos", "pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
+    # TARGETS = ["pos", "pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
+    TARGETS = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
     # TARGETS = ["neg_1_random"]
     # for shuffle in [True, False]:
 

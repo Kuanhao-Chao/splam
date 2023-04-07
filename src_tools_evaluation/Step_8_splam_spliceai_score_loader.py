@@ -54,10 +54,12 @@ def print_topl_statistics(y_true, y_pred):
 
 def main(argv):
 
-
+    SUBSET = 400
     os.makedirs("score_plts", exist_ok=True)
-    TYPE = argv[1]
-    output_file = argv[2]
+    SPLAM_TYPE = argv[1]
+    SPLICEAI_TYPE = argv[2]
+
+    output_file = argv[3]
     # output_files = "outlier_test"
     # paths = ('./models/splam{}.h5'.format(x) for x in range(1, 2))
     # models = [load_model(resource_filename('splam', x)) for x in paths]
@@ -71,14 +73,14 @@ def main(argv):
         label = '-'
 
     # print(">> label\t\t: ", label)
-    da_faf = "./dataset/"+output_file+"/splam/splam."+TYPE+".juncs.seq.fa"
+    da_faf = "./dataset/"+output_file+"/splam/splam."+SPLAM_TYPE+".juncs.seq.fa"
 
 
-    d_score_tsv_f = "./splam_result/"+output_file+"/splam_all_seq.score.d."+TYPE+"."+output_file+".tsv"
-    a_score_tsv_f = "./splam_result/"+output_file+"/splam_all_seq.score.a."+TYPE+"."+output_file+".tsv"
-    n_score_tsv_f = "./splam_result/"+output_file+"/splam_all_seq.score.n."+TYPE+"."+output_file+".tsv"
+    d_score_tsv_f = "./splam_result/"+output_file+"/splam_all_seq.score.d."+SPLAM_TYPE+"."+output_file+".tsv"
+    a_score_tsv_f = "./splam_result/"+output_file+"/splam_all_seq.score.a."+SPLAM_TYPE+"."+output_file+".tsv"
+    n_score_tsv_f = "./splam_result/"+output_file+"/splam_all_seq.score.n."+SPLAM_TYPE+"."+output_file+".tsv"
 
-    name_tsv_f = "./splam_result/"+output_file+"/splam_all_seq.name."+TYPE+"."+output_file+".tsv"
+    name_tsv_f = "./splam_result/"+output_file+"/splam_all_seq.name."+SPLAM_TYPE+"."+output_file+".tsv"
 
     d_score_fw = open(d_score_tsv_f, "r") 
     a_score_fw = open(a_score_tsv_f, "r") 
@@ -99,7 +101,7 @@ def main(argv):
     acceptor_l_concat = []
     
     lines = d_score_fw.read().splitlines()    
-    lines = lines[:30000]
+    lines = lines[:SUBSET]
     for line in lines:
         # scores = np.loadtxt(line)
         line = line.split(" ")
@@ -120,7 +122,7 @@ def main(argv):
         # print(len(acceptor_ps))
 
     lines = a_score_fw.read().splitlines()
-    lines = lines[:30000]
+    lines = lines[:SUBSET]
     for line in lines:
         # scores = np.loadtxt(line)
         line = line.split(" ")
@@ -156,13 +158,140 @@ def main(argv):
 
     my_dpi = 300
     plt.figure(figsize=(4200/my_dpi, 1200/my_dpi), dpi=my_dpi)
-    donor = plt.plot(list(range(400)), avg_donor_p, color="blue", label="Donor")
-    acceptor = plt.plot(list(range(400, 800)), avg_acceptor_p, color="red", label="Acceptor")
+    donor = plt.plot(list(range(400)), avg_donor_p, color="blue", label="SPLAM Donor")
+    acceptor = plt.plot(list(range(400, 800)), avg_acceptor_p, color="red", label="SPLAM Acceptor")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    # print(">> label\t\t: ", label)
+    da_faf = "./dataset/"+output_file+"/spliceai/spliceai."+SPLICEAI_TYPE+".juncs.seq.fa"
+
+
+    d_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.d."+SPLICEAI_TYPE+"."+output_file+".tsv"
+    a_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+SPLICEAI_TYPE+"."+output_file+".tsv"
+    n_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+SPLICEAI_TYPE+"."+output_file+".tsv"
+
+    name_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.name."+SPLICEAI_TYPE+"."+output_file+".tsv"
+
+    d_score_fw = open(d_score_tsv_f, "r") 
+    a_score_fw = open(a_score_tsv_f, "r") 
+    n_score_fw = open(n_score_tsv_f, "r") 
+
+    name_fw = open(name_tsv_f, "r") 
+
+
+    # scores = np.loadtxt(score_tsv_f)
+
+
+    donor_p = np.zeros(400)
+    acceptor_p = np.zeros(400)
+
+    donor_concat = []
+    acceptor_concat = []
+    donor_l_concat = []
+    acceptor_l_concat = []
+    
+    lines = d_score_fw.read().splitlines()    
+    lines = lines[:SUBSET]
+    for line in lines:
+        # scores = np.loadtxt(line)
+        line = line.split(" ")
+        donor_ps = np.array(line[0:400]).astype(float)
+        donor_p = donor_p + donor_ps
+        donor_ls = np.zeros(400)
+        donor_ls[199] = 1
+
+        if len(donor_concat) == 0:
+            donor_concat = donor_ps
+            donor_l_concat = donor_ls
+        else:
+            donor_concat =  np.concatenate((donor_concat, donor_ps), axis=0)
+            donor_l_concat = np.concatenate((donor_l_concat, donor_ls))
+
+
+        # print(len(donor_ps))
+        # print(len(acceptor_ps))
+
+    lines = a_score_fw.read().splitlines()
+    lines = lines[:SUBSET]
+    for line in lines:
+        # scores = np.loadtxt(line)
+        line = line.split(" ")
+        acceptor_ps = np.array(line[len(line)-400:len(line)]).astype(float)
+        acceptor_p = acceptor_p + acceptor_ps
+        acceptor_ls = np.zeros(400)
+        acceptor_ls[200] = 1
+
+        if len(acceptor_concat) == 0:
+            acceptor_concat = acceptor_ps
+            acceptor_l_concat = acceptor_ls
+        else:
+            acceptor_concat =  np.concatenate((acceptor_concat, acceptor_ps), axis=0)
+            acceptor_l_concat = np.concatenate((acceptor_l_concat, acceptor_ls))
+
+
+    print(donor_concat.shape)
+    print(acceptor_concat.shape)
+    print(donor_l_concat.shape)
+    print(acceptor_l_concat.shape)
+    
+
+    print(len(donor_p))
+    print(len(acceptor_p))
+    avg_donor_p = -donor_p/len(lines)
+    avg_acceptor_p = -acceptor_p/len(lines)
+    # scores = np.concatenate((avg_donor_p, avg_acceptor_p))
+
+    # avg_donor_p = np.pad(avg_donor_p,(0, 400), 'constant')
+    # avg_acceptor_p = np.pad(avg_acceptor_p,(400, 0), 'constant')
+
+    scores = avg_donor_p, avg_acceptor_p
+
+    my_dpi = 300
+    # plt.figure(figsize=(4200/my_dpi, 1200/my_dpi), dpi=my_dpi)
+    donor = plt.plot(list(range(400)), avg_donor_p, color="purple", label="SpliceAI Donor")
+    acceptor = plt.plot(list(range(400, 800)), avg_acceptor_p, color="orange", label="SpliceAI Acceptor")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     plt.xlabel('Indices')
     plt.ylabel('Score')
+    # plt.ylim((-1, 1))
     plt.legend()
     plt.tight_layout()
-    plt.savefig("score_plts/splam_" + TYPE + "_" + output_file + ".png", dpi=my_dpi)
+    plt.savefig("score_plts/splam_" + SPLAM_TYPE + "_spliceai_" + SPLICEAI_TYPE + "_" + output_file + ".png", dpi=my_dpi)
     # plt.show()
 
 
