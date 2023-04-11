@@ -2,68 +2,90 @@ import matplotlib.pyplot as plt
 import numpy as np
 import seaborn as sns
 import pandas as pd
+import random
 import os
 
-output_file = "neg_1"
-
-
-TOOL = "SPLICEAI"
-# TOOL = "SPLAM"
-
-if TOOL == "SPLAM":
-    TYPE = "noshuffle"
-    d_score_tsv_f = "../../src_tools_evaluation/splam_result/"+output_file+"/splam_all_seq.score.d."+TYPE+"."+output_file+".tsv"
-    a_score_tsv_f = "../../src_tools_evaluation/splam_result/"+output_file+"/splam_all_seq.score.a."+TYPE+"."+output_file+".tsv"
-    n_score_tsv_f = "../../src_tools_evaluation/splam_result/"+output_file+"/splam_all_seq.score.n."+TYPE+"."+output_file+".tsv"
-
-elif TOOL == "SPLICEAI":
-    TYPE = "noN"
-    d_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
-    a_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
-    n_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
-
-
-FIGURE_ROOT = "Figures/"
 def main():
-    target_idx = 601
-    # Read data from a TSV file
+    # for TOOL in ["SPLAM", "SPLICEAI"]:
+    COLORS = ["green", "blue"]
+    TOOLS = ["SPLAM", "SPLICEAI"]
+    TARGETS = ["Donor", "Acceptor"]
+    output_files = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"] 
+    for output_file in output_files:
+        fig = plt.figure(figsize=(8, 4))
+        for TARGET in TARGETS:
+            HANDELS = []
+            for INDEX in range(len(TOOLS)):
+                TOOL = TOOLS[INDEX]
+                if TOOL == "SPLAM":
+                    TYPE = "noshuffle"
+                    d_score_tsv_f = "../../src_tools_evaluation/splam_result/"+output_file+"/splam_all_seq.score.d."+TYPE+"."+output_file+".tsv"
+                    a_score_tsv_f = "../../src_tools_evaluation/splam_result/"+output_file+"/splam_all_seq.score.a."+TYPE+"."+output_file+".tsv"
+                    n_score_tsv_f = "../../src_tools_evaluation/splam_result/"+output_file+"/splam_all_seq.score.n."+TYPE+"."+output_file+".tsv"
 
-    donors = []
-    with open(a_score_tsv_f, "r") as fr:
-        lines = fr.read().splitlines()
-        for line in lines:
-            eles = line.split(" ")
-            print("len(eles): ", len(eles))
-            donors.append(float(eles[len(eles)-200]))
-            # donors.append(float(eles[target_idx-1]))
-            # print(len(donors))
-    donors = np.array(donors)
-    donors = pd.Series(donors)
-    print("donors: ", donors)
+
+                elif TOOL == "SPLICEAI":
+                    TYPE = "noN"
+                    d_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
+                    a_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
+                    n_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
 
 
-    os.makedirs(FIGURE_ROOT, exist_ok=True)
+                FIGURE_ROOT = "Figures/"
+                os.makedirs(FIGURE_ROOT, exist_ok=True)
+                if TARGET == "Donor":
+                    if TOOL == "SPLAM":
+                        target_idx = 201
+                    elif TOOL == "SPLICEAI":
+                        target_idx = 200
+                    donors = []
+                    with open(d_score_tsv_f, "r") as fr:
+                        lines = fr.read().splitlines()
+                        for line in lines:
+                            eles = line.split(" ")
+                            print("len(eles): ", len(eles))
 
-    # d_df = pd.read_csv(d_score_tsv_f, sep=' ', header=None, squeeze=True)
-    # print(d_df)
-    # donors = d_df.iloc[:, target_idx]  # 0-based index, so 199 corresponds to the 200th column
-    # # column_600 = d_df.iloc[:, 600]  # 0-based index, so 199 corresponds to the 200th column
-    # print("donors: ", donors)
-    # print("column_600: ", column_600)
+                            rand_idx = target_idx
+                            while rand_idx != target_idx:
+                                rand_idx = random.random()
+                            donors.append(float(eles[target_idx-1]))
+                            # print(len(donors))
+                    donors = np.array(donors)
+                    print("donors: ", donors)
+                    # Create a distribution plot with density plot
+                    # sns.histplot(donors, kde=True, bins=50, color=COLORS[INDEX], alpha=0.7, stat="probability", label=TOOL)
+                    # plt.hist(donors, density=True, histtype='stepfilled', alpha=0.8, label=TOOL)
+                    sns.kdeplot(donors, shade=True, clip = (0.0, 1.0), alpha=0.5, label=TOOL)
 
-    # # Generate random data following a normal distribution
-    # # mean = 0
-    # # std = 1
-    # # data = np.random.normal(mean, std, 1000)  # generates 1000 random values from a normal distribution
-
-    # Create a distribution plot with density plot
-    sns.histplot(donors, kde=True, bins=30, color='blue', alpha=0.7)
-    plt.xlabel('X-axis Label')
-    plt.ylabel('Y-axis Label')
-    plt.title('Distribution Plot with Normal Distribution')
-    plt.grid(True)
-    plt.savefig(FIGURE_ROOT+TOOL+"_"+output_file+"_acceptor.png")
-    plt.show()
+                elif TARGET == "Acceptor":
+                    target_idx = 200
+                    acceptors = []
+                    with open(a_score_tsv_f, "r") as fr:
+                        lines = fr.read().splitlines()
+                        for line in lines:
+                            eles = line.split(" ")
+                            print("len(eles): ", len(eles))
+                            acceptors.append(float(eles[len(eles)-target_idx]))
+                            # acceptors.append(float(eles[target_idx-1]))
+                            # print(len(acceptors))
+                    acceptors = np.array(acceptors)
+                    print("acceptors: ", acceptors)
+                    # Create a distribution plot with density plot
+                    # sns.histplot(acceptors, kde=True, bins=50, color=COLORS[INDEX], alpha=0.7, stat="probability", label=TOOL)
+                    # plt.hist(acceptors, density=True, histtype='stepfilled', alpha=0.8, label=TOOL)
+                    sns.kdeplot(acceptors, shade=True, clip = (0.0, 1.0), alpha=0.5, label=TOOL)
+                # HANDELS.append(plt_res)
+            plt.legend(loc="upper center")
+            plt.xlabel('Scores')
+            plt.ylabel('Density')
+            plt.title('Distribution Plot of '+TARGET+' Scores ('+output_file+')')
+            plt.tight_layout()
+            plt.grid(True)
+            # Add a legend
+            plt.savefig(FIGURE_ROOT+output_file+"_"+TARGET+".png", dpi=300)
+            plt.clf()
+            print(">>> Finish plotting 1 figure!")
+            # plt.show()
 
 if __name__ == "__main__":
     main()
