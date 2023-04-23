@@ -18,7 +18,7 @@ print("pytorch_total_params: ", pytorch_total_params)
 
 model.to("cpu")
 print("model: ", model)
-model_traced.save("./MODEL/"+MODEL_VERSION+"/splam_14_cpu.pt")
+torch.save(model, "./MODEL/"+MODEL_VERSION+"/splam_14_cpu.pt")
 
 # # Trace the model with random data.
 # example_input = torch.rand(1, 4, 800, device="cpu")
