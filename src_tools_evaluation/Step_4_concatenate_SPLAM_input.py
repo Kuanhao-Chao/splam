@@ -10,7 +10,7 @@ def main():
     # output_files = ["./dataset/pos/", "./dataset/outlier_test/", "./dataset/neg_5/"]
 
     output_dir = "./dataset/"
-    output_files = [output_dir+"pos/", output_dir+"pos_MANE/", output_dir+"pos_ALTS/"]
+    output_files = [output_dir+"pos/", output_dir+"pos_MANE/", output_dir+"pos_ALTS/", output_dir+"neg_1/", output_dir+"neg_random/"]
 
     for output_file in output_files:
         print("output_file: ", output_file)
@@ -51,17 +51,14 @@ def main():
                 else:
                     x = seq_d + (HALF_SEQ_LEN - len_d) * 'N' + (HALF_SEQ_LEN - len_a) * 'N' + seq_a
                     # y = (250, 750)
-                
-                # print("x: ", len(x))
-                # print("x: ", len(x))
-
                 x = x.upper()
+                if len(x) != 800:
+                    print(len(x))
                 # if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
                 #     print(chr_name)
                 #     continue
 
                 fw.write(lines_d[idx-1]+"_"+lines_a[idx-1][1:] + "\n")
-
                 fw.write(x + "\n")
 
                 donor_dimer = x[QUATER_SEQ_LEN:QUATER_SEQ_LEN+2]
@@ -71,7 +68,6 @@ def main():
                     donors[donor_dimer] = 1
                 else:
                     donors[donor_dimer] += 1
-
 
                 if acceptor_dimer not in acceptors.keys():
                     acceptors[acceptor_dimer] = 1
@@ -86,7 +82,7 @@ def main():
                     canonical_a_count += 1
                 else:
                     noncanonical_a_count += 1
-
+        print("Simple line counter: ", idx)
         print("Canonical donor count: ", canonical_d_count)
         print("Noncanonical donor count: ", noncanonical_d_count)
 

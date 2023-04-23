@@ -1,3 +1,13 @@
+"""
+This file evaluate the testing dataset for the SPLAM model.
+
+Parameters:
+    MODEL_VERSION   : the version of the model.
+
+    Input directory : "./INPUTS/"+SEQ_LEN+"bp/input_pos/"
+
+    Output directory: "../src_tools_evaluation/splam_result/"+MODEL_VERSION+"/"
+"""
 import os, sys
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -17,7 +27,6 @@ import platform
 
 warnings.filterwarnings("ignore")
 
-# MODEL_VERSION = "SPLAM_v7/"
 MODEL_VERSION = "SPLAM_v12/"
 JUNC_THRESHOLD = 0.1
 
@@ -60,7 +69,7 @@ def main():
     print(f"\033[1m[Info]: Use {device} now!\033[0m")
 
     MODEL = "./MODEL/"+MODEL_VERSION+"splam_14.pt"
-    MODEL_OUTPUT_BASE = "../src_tools_evaluation/splam_result/"
+    MODEL_OUTPUT_BASE = "../src_tools_evaluation/splam_result/"+MODEL_VERSION+"/"
 
     print(">> Using model: ", MODEL)
 
@@ -87,8 +96,6 @@ def main():
     # TARGETS = ["neg_1_random"]
     # for shuffle in [True, False]:
 
-
-
     for shuffle in [False]:
         junc_counter = 0
         TYPE = "shuffle" if shuffle else "noshuffle"
@@ -114,7 +121,7 @@ def main():
             # test_iterator = iter(test_loader)
             print(f"[Info]: Finish loading data!", flush = True)
             print("valid_iterator: ", len(test_loader))
-            LOG_OUTPUT_TEST_BASE = MODEL_OUTPUT_BASE + "/" + "LOG/"
+            LOG_OUTPUT_TEST_BASE = MODEL_OUTPUT_BASE + "/" + target + "/LOG/"
             os.makedirs(LOG_OUTPUT_TEST_BASE, exist_ok=True)
 
 
