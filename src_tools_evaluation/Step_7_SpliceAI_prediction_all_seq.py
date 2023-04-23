@@ -28,132 +28,106 @@ def main(argv):
     BATCH_SIZE_BASE = 200
 
     TYPE = argv[1]
-    output_file = argv[2]
-    # output_files = "outlier_test"
-    # paths = ('./models/spliceai{}.h5'.format(x) for x in range(1, 2))
-    # models = [load_model(resource_filename('spliceai', x)) for x in paths]
-    path = './models/spliceai1.h5'
-    print(">> path\t\t: ", path)
-    print(">> output_file\t: ", output_file)
-    model = load_model(resource_filename('spliceai', path))
+    output_dir = "./dataset/"
+    output_files = [output_dir+"pos_MANE/", output_dir+"pos_ALTS/", output_dir+"neg_1/", output_dir+"neg_random/"]
 
-    os.makedirs("./spliceai_result/", exist_ok=True)
+    for output_file in output_files:
+        path = './models/spliceai1.h5'
+        print(">> path\t\t: ", path)
+        print(">> output_file\t: ", output_file)
+        model = load_model(resource_filename('spliceai', path))
+        os.makedirs("./spliceai_result/", exist_ok=True)
+        all_lines = []
+        label = '.'
+        if output_file == "pos" or output_file == "pos_MANE" or output_file == "pos_ALTS":
+            label = '+'
+        if output_file == "neg_1" or output_file == "neg_random":
+            label = '-'
 
-    all_lines = []
-    
-    # if output_file != "pos" and output_file != "neg_can" and output_file != "neg_noncan" and output_file != "outlier_test" and output_file != "neg_20" and output_file != "neg_5" and output_file != "pos_refseq_protein_isoforms" and output_file != "pos_refseq_protein_alternative_only":
-    #     exit()
+        da_faf = "./dataset/"+output_file+"/spliceai/spliceai."+TYPE+".juncs.seq.fa"
+        os.makedirs("./spliceai_result/"+output_file, exist_ok=True)
 
-    label = '.'
-    if output_file == "pos" or output_file == "pos_MANE" or output_file == "pos_ALTS":
-        label = '+'
+        d_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
+        a_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
+        n_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
+        name_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.name."+TYPE+"."+output_file+".tsv"
 
-    if output_file == "neg_1" or output_file == "neg_random":
-        label = '-'
+        d_score_fw = open(d_score_tsv_f, "a")
+        a_score_fw = open(a_score_tsv_f, "a") 
+        n_score_fw = open(n_score_tsv_f, "a") 
+        name_fw = open(name_tsv_f, "a") 
 
-    # print(">> label\t\t: ", label)
-    da_faf = "./dataset/"+output_file+"/spliceai/spliceai."+TYPE+".juncs.seq.fa"
+        #################################
+        ## Get all lines of sequences in FASTA file
+        #################################
+        with open(da_faf, "r") as f:
+            print("Processing : ", da_faf)
+            lines = f.read().splitlines()
+            all_lines = lines
+        print("all_lines  : ", len(all_lines))
 
-    os.makedirs("./spliceai_result/"+output_file, exist_ok=True)
+        #################################
+        ## Processing 'POSITIVE' samples
+        #################################
+        COUNTER = 0
+        pidx = 0
+        
+        pidx = BATCH_SIZE-BATCH_SIZE_BASE
+        seq = ""
+        print("BATCH_SIZE     : ", BATCH_SIZE)
+        print("BATCH_SIZE_BASE: ", BATCH_SIZE_BASE)
 
-    d_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
-    a_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
-    n_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
+        while pidx < len(all_lines):
+            print(pidx)
+            if pidx == BATCH_SIZE:
+                exit()    
+            if pidx % 2 == 0:
+                chr, start, end, strand = all_lines[pidx].split(";")
+                chr = chr[1:]
 
+                name_fw.write(' '.join([chr, start, end, strand])+"\n")
 
-    name_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.name."+TYPE+"."+output_file+".tsv"
+                pass
+            elif pidx % 2 == 1:
+                seq = all_lines[pidx]
 
-    d_score_fw = open(d_score_tsv_f, "a")
-    a_score_fw = open(a_score_tsv_f, "a") 
-    n_score_fw = open(n_score_tsv_f, "a") 
-    
-    name_fw = open(name_tsv_f, "a") 
+                X, Y = create_datapoints(seq, label)
+                
+                X = X[None, :]
+                Y = np.array(Y)
+                X = tf.convert_to_tensor(X, dtype=tf.float32)
+                Y = tf.convert_to_tensor(Y, dtype=tf.float32)
 
+                Y_pred = model.predict(X)
+                
+                K.clear_session()
+                # del model
+                gc.collect()
+                COUNTER += 1
+                print("X.shape     : ", X.shape)
+                print("Y_pred.shape: ", Y_pred.shape)
 
-    print(">> da_faf\t\t: ", da_faf)
-    print(">> pkl file\t\t: ", "./spliceai_result/spliceai_all_seq."+TYPE+"."+output_file+".pkl")
-    
-    with open(da_faf, "r") as f:
-        print("Processing : ", da_faf)
-        lines = f.read().splitlines()
-        all_lines = lines
-    print("all_lines  : ", len(all_lines))
+                donor_p = Y_pred[0][200-1][2]
+                acceptor_p = Y_pred[0][len(Y_pred)-200-1][1]
+                print("(chr, start, end, strand): ", (chr, start, end, strand))
 
-    #################################
-    ## Processing 'POSITIVE' samples
-    #################################
-    COUNTER = 0
-    pidx = 0
-    
-    pidx = BATCH_SIZE-BATCH_SIZE_BASE
-    seq = ""
-    print("BATCH_SIZE     : ", BATCH_SIZE)
-    print("BATCH_SIZE_BASE: ", BATCH_SIZE_BASE)
+                print("donor_p    : ", donor_p)
+                print("acceptor_p : ", acceptor_p)
 
-    while pidx < len(all_lines):
-        print(pidx)
-        if pidx == BATCH_SIZE:
-            exit()    
-        if pidx % 2 == 0:
-            chr, start, end, strand = all_lines[pidx].split(";")
-            chr = chr[1:]
+                Y_pred = np.array(Y_pred)
+                print(Y_pred)
+                print("Y_pred.shape: ", Y_pred.shape)
 
-            name_fw.write(' '.join([chr, start, end, strand])+"\n")
-
-            pass
-        elif pidx % 2 == 1:
-            seq = all_lines[pidx]
-
-            X, Y = create_datapoints(seq, label)
-            
-            X = X[None, :]
-            Y = np.array(Y)
-            X = tf.convert_to_tensor(X, dtype=tf.float32)
-            Y = tf.convert_to_tensor(Y, dtype=tf.float32)
-
-            Y_pred = model.predict(X)
-            
-            K.clear_session()
-            # del model
-            gc.collect()
-            COUNTER += 1
-            print("X.shape     : ", X.shape)
-            print("Y_pred.shape: ", Y_pred.shape)
-
-            # print(Y_pred)
-            # Y_pred = str(Y_pred)
-            # print(Y_pred)
-
-            # score_fw.write('\t'.join(Y_pred))
-
-            donor_p = Y_pred[0][200-1][2]
-            acceptor_p = Y_pred[0][len(Y_pred)-200-1][1]
-            print("(chr, start, end, strand): ", (chr, start, end, strand))
-
-            print("donor_p    : ", donor_p)
-            print("acceptor_p : ", acceptor_p)
-
-
-            Y_pred = np.array(Y_pred)
-            print(Y_pred)
-            print("Y_pred.shape: ", Y_pred.shape)
-
-            d_scores = Y_pred[0, :, 2]
-            a_scores = Y_pred[0, :, 1]
-            n_scores = Y_pred[0, :, 0]
-            np.savetxt(d_score_fw, d_scores.reshape((1,len(d_scores))), delimiter=" ")
-            np.savetxt(a_score_fw, a_scores.reshape((1,len(a_scores))), delimiter=" ")
-            np.savetxt(n_score_fw, n_scores.reshape((1,len(n_scores))), delimiter=" ")
-
-            print("Y_pred.shape: ", Y_pred.shape)
-
-        pidx += 1
-        print("====================")
-
-        if pidx %100 == 0:
-            print("pidx: ", pidx)
-        # if pidx >= 10:
-        #     break
+                d_scores = Y_pred[0, :, 2]
+                a_scores = Y_pred[0, :, 1]
+                n_scores = Y_pred[0, :, 0]
+                np.savetxt(d_score_fw, d_scores.reshape((1,len(d_scores))), delimiter=" ")
+                np.savetxt(a_score_fw, a_scores.reshape((1,len(a_scores))), delimiter=" ")
+                np.savetxt(n_score_fw, n_scores.reshape((1,len(n_scores))), delimiter=" ")
+            pidx += 1
+            print("====================")
+            if pidx %100 == 0:
+                print("pidx: ", pidx)
 
 if __name__ == "__main__":
     main(sys.argv[1:])

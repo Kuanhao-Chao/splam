@@ -21,17 +21,13 @@ def main():
     # For 'donor.bed': 0-based, 0-based
     # For 'acceptor.bed': 0-based, 0-based
     #################################
-    # output_fiSles = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/outlier_test/"]
-    # output_files = ["./dataset/outlier_test/"]
     output_dir = "./dataset/"
-    output_files = [output_dir+"pos/", output_dir+"pos_MANE/", output_dir+"pos_ALTS/"]
+    output_files = [output_dir+"pos/", output_dir+"pos_MANE/", output_dir+"pos_ALTS/", output_dir+"neg_1/", output_dir+"neg_random/"]
 
     splam_dir = "splam/"
     for output_file in output_files:
         fw_donor = open(output_file + splam_dir + "splam.juncs.donor.bed", "w")
         fw_acceptor = open(output_file + splam_dir + "splam.juncs.acceptor.bed", "w")
-        # d_a_bed = "./dataset/splam.juncs.bed"
-        # fw_da = open(d_a_bed, "w")
         JUNCS = set()
 
         with open(output_file + splam_dir + "splam.juncs.bed", "r") as f:

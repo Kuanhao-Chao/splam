@@ -2,7 +2,7 @@ SAMPLE=$1
 # TARGET="NEG_noncan_junctions"
 
 # for OUTPUTFILE in "./dataset/pos" "./dataset/neg_1" "./dataset/neg_random"
-for OUTPUTFILE in "./dataset/pos" "./dataset/pos_MANE" "./dataset/pos_ALTS"
+for OUTPUTFILE in "./dataset/pos" "./dataset/pos_MANE" "./dataset/pos_ALTS" "./dataset/neg_1" "./dataset/neg_random"
 
 # for OUTPUTFILE in "./dataset/outlier_test"
 do  
