@@ -6,10 +6,6 @@ import os
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve
 
 def main():
-
-    # os.makedirs("./IMG/spliceai/", exist_ok=True)
-    # os.makedirs("./IMG/splam/", exist_ok=True)
-    
     d_pred_neg = []
     d_label_neg = []
     a_pred_neg = []
@@ -37,8 +33,6 @@ def main():
     splam_j_pred_prob = []
     splam_j_label_prob = []
 
-
-    # SUBSET = 9900
     TARGETS = ["pos_refseq_protein_alts", "neg_1"]
     # , "neg_random"]
     # TARGETS = ["pos", "neg_1"]

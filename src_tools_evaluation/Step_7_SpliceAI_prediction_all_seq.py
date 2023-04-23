@@ -25,10 +25,10 @@ def seq_name(seq):
 
 def main(argv):
     BATCH_SIZE = int(argv[0])
-    BATCH_SIZE_BASE = 200
+    BATCH_SIZE_BASE = 1000
 
     TYPE = argv[1]
-    output_files = ["pos_MANE/", "pos_ALTS/", "neg_1/", "neg_random/"]
+    output_files = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
 
     for output_file in output_files:
         path = './models/spliceai1.h5'
@@ -83,15 +83,12 @@ def main(argv):
             if pidx % 2 == 0:
                 chr, start, end, strand = all_lines[pidx].split(";")
                 chr = chr[1:]
-
                 name_fw.write(' '.join([chr, start, end, strand])+"\n")
 
                 pass
             elif pidx % 2 == 1:
                 seq = all_lines[pidx]
-
                 X, Y = create_datapoints(seq, label)
-                
                 X = X[None, :]
                 Y = np.array(Y)
                 X = tf.convert_to_tensor(X, dtype=tf.float32)
