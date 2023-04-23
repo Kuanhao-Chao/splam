@@ -28,8 +28,7 @@ def main(argv):
     BATCH_SIZE_BASE = 200
 
     TYPE = argv[1]
-    output_dir = "./dataset/"
-    output_files = [output_dir+"pos_MANE/", output_dir+"pos_ALTS/", output_dir+"neg_1/", output_dir+"neg_random/"]
+    output_files = ["pos_MANE/", "pos_ALTS/", "neg_1/", "neg_random/"]
 
     for output_file in output_files:
         path = './models/spliceai1.h5'
