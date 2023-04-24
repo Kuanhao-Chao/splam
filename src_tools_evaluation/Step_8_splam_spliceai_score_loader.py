@@ -267,25 +267,6 @@ def main(argv):
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     plt.xlabel('Indices')
     plt.ylabel('Score')
     # plt.ylim((-1, 1))
@@ -306,7 +287,6 @@ def main(argv):
     #     # scores = np.loadtxt(line)
     #     line = line.split(" ")
     #     print(len(line))
-
 
     print ("\n\033[1mDonor:\033[0m")
     print_topl_statistics(donor_l_concat,
