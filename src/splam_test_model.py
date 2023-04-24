@@ -22,12 +22,12 @@ import numpy as np
 from tqdm import tqdm
 import warnings
 from sklearn.metrics import precision_recall_curve, roc_curve
-import pickle 
+import pickle
 import platform
 
 warnings.filterwarnings("ignore")
 
-MODEL_VERSION = "SPLAM_v12/"
+MODEL_VERSION = "SPLAM_v11/"
 JUNC_THRESHOLD = 0.1
 
 def parse_junction(name):
@@ -68,7 +68,7 @@ def main():
     device = torch.device(device_str)
     print(f"\033[1m[Info]: Use {device} now!\033[0m")
 
-    MODEL = "./MODEL/"+MODEL_VERSION+"splam_14.pt"
+    MODEL = "./MODEL/"+MODEL_VERSION+"splam_14_cpu.pt"
     MODEL_OUTPUT_BASE = "../src_tools_evaluation/splam_result/"+MODEL_VERSION+"/"
 
     print(">> Using model: ", MODEL)
@@ -112,9 +112,9 @@ def main():
             name_tsv_f = MODEL_OUTPUT_BASE+target+"/splam_all_seq.name."+TYPE+"."+target+".tsv"
 
             d_score_fw = open(d_score_tsv_f, "a")
-            a_score_fw = open(a_score_tsv_f, "a") 
-            n_score_fw = open(n_score_tsv_f, "a") 
-            name_fw = open(name_tsv_f, "a") 
+            a_score_fw = open(a_score_tsv_f, "a")
+            n_score_fw = open(n_score_tsv_f, "a")
+            name_fw = open(name_tsv_f, "a")
 
             test_loader = get_eval_dataloader(BATCH_SIZE, MODEL_VERSION, N_WORKERS, shuffle, target)
 
@@ -164,7 +164,7 @@ def main():
             print("** Testing Dataset **")
             print("**********************")
             pbar = tqdm(total=len(test_loader), ncols=0, desc="Test", unit=" step")
-            
+
             A_G_TP = 1e-6
             A_G_FN = 1e-6
             A_G_FP = 1e-6
@@ -180,7 +180,7 @@ def main():
             J_G_TN = 1e-6
             #######################################
             # Important => setting model into evaluation mode
-            #######################################   
+            #######################################
 
             All_Junction_YL_MIN = []
             All_Junction_YP_MIN = []
@@ -199,7 +199,7 @@ def main():
                 # print("batch_idx: ", batch_idx)
                 # DNAs:  torch.Size([40, 800, 4])
                 # labels:  torch.Size([40, 1, 800, 3])
-                DNAs, labels, chr = data 
+                DNAs, labels, chr = data
 
                 # print("chr: ", chr)
 
@@ -216,7 +216,7 @@ def main():
 
                 #######################################
                 # predicting all bp.
-                #######################################    
+                #######################################
                 is_expr = (labels.sum(axis=(1,2)) >= 1)
                 # print("is_expr: ", is_expr)
 
@@ -251,11 +251,11 @@ def main():
 
 
                 All_Junction_YL_MIN.extend(junction_labels_min)
-                All_Junction_YP_MIN.extend(junction_scores_min)     
+                All_Junction_YP_MIN.extend(junction_scores_min)
                 All_Junction_YL_AVG.extend(junction_labels_avg)
-                All_Junction_YP_AVG.extend(junction_scores_avg)     
+                All_Junction_YP_AVG.extend(junction_scores_avg)
 
-                J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = print_junc_statistics(D_YL, A_YL, D_YP, A_YP, JUNC_THRESHOLD, J_G_TP, J_G_FN, J_G_FP, J_G_TN)        
+                J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = print_junc_statistics(D_YL, A_YL, D_YP, A_YP, JUNC_THRESHOLD, J_G_TP, J_G_FN, J_G_FP, J_G_TN)
                 A_accuracy, A_auprc = print_top_1_statistics(Acceptor_YL, Acceptor_YP)
                 D_accuracy, D_auprc = print_top_1_statistics(Donor_YL, Donor_YP)
                 A_G_TP, A_G_FN, A_G_FP, A_G_TN, A_TP, A_FN, A_FP, A_TN = print_threshold_statistics(Acceptor_YL, Acceptor_YP, JUNC_THRESHOLD, A_G_TP, A_G_FN, A_G_FP, A_G_TN)
@@ -286,12 +286,12 @@ def main():
                     A_auprc = f"{A_auprc:.6f}",
                     D_auprc = f"{D_auprc:.6f}",
                     # A_TP=A_TP,
-                    # A_FN=A_FN, 
-                    # A_FP=A_FP, 
+                    # A_FN=A_FN,
+                    # A_FP=A_FP,
                     # A_TN=A_TN,
                     # D_TP=D_TP,
-                    # D_FN=D_FN, 
-                    # D_FP=D_FP, 
+                    # D_FN=D_FN,
+                    # D_FP=D_FP,
                     # D_TN=D_TN,
                     A_Precision=f"{A_TP/(A_TP+A_FP+1e-6):.6f}",
                     A_Recall=f"{A_TP/(A_TP+A_FN+1e-6):.6f}",
@@ -332,13 +332,13 @@ def main():
             print("Acceptor_YL: ", len(SPLAM_Acceptor_YL))
             print("Acceptor_YP: ", len(SPLAM_Acceptor_YP))
 
-            with open(MODEL_OUTPUT_BASE + "/splam." + TYPE + "." + target + ".pkl", 'wb') as f: 
+            with open(MODEL_OUTPUT_BASE + "/splam." + TYPE + "." + target + ".pkl", 'wb') as f:
                 pickle.dump(All_Junction_YP_MIN, f)
                 pickle.dump(All_Junction_YL_MIN, f)
                 pickle.dump(All_Junction_YP_AVG, f)
                 pickle.dump(All_Junction_YL_AVG, f)
 
-            with open(MODEL_OUTPUT_BASE + "/splam.da." + TYPE + "." + target + ".pkl", 'wb') as f: 
+            with open(MODEL_OUTPUT_BASE + "/splam.da." + TYPE + "." + target + ".pkl", 'wb') as f:
                 pickle.dump(SPLAM_Donor_YL, f)
                 pickle.dump(SPLAM_Donor_YP, f)
                 pickle.dump(SPLAM_Acceptor_YL, f)
@@ -396,17 +396,17 @@ def main():
             #     for batch_idx, data in enumerate(test_loader):
             #         # DNAs:  torch.Size([40, 800, 4])
             #         # labels:  torch.Size([40, 1, 800, 3])
-            #         DNAs, labels, chr = data 
+            #         DNAs, labels, chr = data
             #         DNAs = DNAs.to(torch.float32).to(device)
             #         labels = labels.to(torch.float32).to(device)
 
             #         DNAs = torch.permute(DNAs, (0, 2, 1))
             #         loss, accuracy, yps = model_fn(DNAs, labels, model, criterion)
-                
+
 
             #         #######################################
             #         # predicting splice / non-splice
-            #         #######################################    
+            #         #######################################
             #         batch_loss = loss.item()
             #         batch_acc = accuracy
             #         epoch_loss += loss.item()
@@ -415,7 +415,7 @@ def main():
             #         labels = labels.to("cpu").detach().numpy()
             #         yps = yps.to("cpu").detach().numpy()
 
-            #         J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = junc_statistics(labels, yps, 0.5, J_G_TP, J_G_FN, J_G_FP, J_G_TN)      
+            #         J_G_TP, J_G_FN, J_G_FP, J_G_TN, J_TP, J_FN, J_FP, J_TN = junc_statistics(labels, yps, 0.5, J_G_TP, J_G_FN, J_G_FP, J_G_TN)
 
             #         All_Junction_YL.extend(labels)
             #         All_Junction_YP.extend(yps)
@@ -440,7 +440,7 @@ def main():
             # print("All_Junction_YP: ", All_Junction_YP)
             # print("All_Junction_YL: ", All_Junction_YL)
 
-            # with open(MODEL_OUTPUT_BASE + "/splam." + TYPE + ".pkl", 'wb') as f: 
+            # with open(MODEL_OUTPUT_BASE + "/splam." + TYPE + ".pkl", 'wb') as f:
             #     pickle.dump(All_Junction_YP, f)
             #     pickle.dump(All_Junction_YL, f)
 
