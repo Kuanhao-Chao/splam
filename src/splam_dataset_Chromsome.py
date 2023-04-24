@@ -33,7 +33,7 @@ class myDataset(Dataset):
 
         CONSTANT_SIZE = 5000
         CONSTANT_SIZE_NEG = 5000
-        EVAL_CONST = 10000
+        # EVAL_CONST = 10000
         #################################
         ## Processing 'POSITIVE' samples
         #################################
@@ -109,9 +109,6 @@ class myDataset(Dataset):
                     if type == "train" or type == "test":
                         if n1idx >= CONSTANT_SIZE_NEG:
                             break
-                    elif type == "eval":
-                        if n1idx >= EVAL_CONST:
-                            break
             print("n1idx: ", n1idx)
 
         if type == "train" or type == "test" or (type == "eval" and eval_select=="neg_random"):
@@ -134,8 +131,6 @@ class myDataset(Dataset):
                         X, Y = create_datapoints(seq, '-')
                         X = torch.Tensor(np.array(X))
                         Y = torch.Tensor(np.array(Y)[0])
-                        # print(X)
-                        # print(Y)
                         if X.size()[0] != 800:
                             print("seq_name: ", seq_name)
                             print(X.size())
@@ -147,9 +142,6 @@ class myDataset(Dataset):
 
                     if type == "train" or type == "test":
                         if nridx >= CONSTANT_SIZE_NEG:
-                            break
-                    elif type == "eval":
-                        if nridx >= EVAL_CONST:
                             break
             print("nridx: ", nridx)
 
@@ -184,9 +176,6 @@ class myDataset(Dataset):
                     if pp_alts_idx %10000 == 0:
                         print("pidx: ", pp_alts_idx)
                         # print(seq_name)
-                    if type == "eval":
-                        if pp_alts_idx >= EVAL_CONST:
-                            break
             print("pp_alts_idx: ", pp_alts_idx)
 
         if type == "eval" and eval_select=="pos_MANE":
@@ -219,9 +208,6 @@ class myDataset(Dataset):
                     pp_MANE_idx += 1
                     if pp_MANE_idx %10000 == 0:
                         print("pidx: ", pp_MANE_idx)
-                    if type == "eval":
-                        if pp_MANE_idx >= EVAL_CONST:
-                            break
             print("pp_MANE_idx: ", pp_MANE_idx)
         
         #################################
