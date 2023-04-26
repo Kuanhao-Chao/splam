@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 import sys
 import numpy as np
 import os
+import pickle
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve, average_precision_score
 
 def print_topl_statistics(y_true, y_pred, topl_csv):
@@ -44,24 +45,28 @@ def main(argv):
     for output_file in output_files:
         os.makedirs("spliceai_result/"+output_file+"/score_plts", exist_ok=True)
         print(">> output_file\t: ", output_file)
-        label = '.'
-        if output_file == "pos" or output_file == "pos_MANE" or output_file == "pos_ALTS":
-            label = '+'
-        if output_file == "neg_1" or output_file == "neg_random":
-            label = '-'
 
         d_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
         a_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
         n_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
         name_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.name."+TYPE+"."+output_file+".tsv"
 
+        d_score_ls_f = "./spliceai_result/"+output_file+"/d_scores_"+TYPE+".tsv"
+        a_score_ls_f = "./spliceai_result/"+output_file+"/a_scores_"+TYPE+".tsv"
+
         d_score_fr = open(d_score_tsv_f, "r") 
         a_score_fr = open(a_score_tsv_f, "r") 
         n_score_fr = open(n_score_tsv_f, "r") 
         name_fr = open(name_tsv_f, "r") 
 
+        d_score_fw = open(d_score_ls_f, "w") 
+        a_score_fw = open(a_score_ls_f, "w") 
+
         donor_p = np.zeros(400)
         acceptor_p = np.zeros(400)
+        
+        donor_scores = []
+        acceptor_scores = []
 
         donor_concat = []
         acceptor_concat = []
@@ -81,6 +86,9 @@ def main(argv):
             else:
                 donor_concat =  np.concatenate((donor_concat, donor_p_holder), axis=0)
                 donor_l_concat = np.concatenate((donor_l_concat, donor_ls))
+            # Appending only score for the donor site
+            donor_scores.append(donor_p_holder[199])
+            d_score_fw.write(str(donor_p_holder[199]) + "\n")
 
         lines = a_score_fr.read().splitlines()
         for line in lines:
@@ -97,16 +105,29 @@ def main(argv):
             else:
                 acceptor_concat =  np.concatenate((acceptor_concat, acceptor_p_holder), axis=0)
                 acceptor_l_concat = np.concatenate((acceptor_l_concat, acceptor_ls))
+            # Appending only score for the acceptor site
+            acceptor_scores.append(acceptor_p_holder[200])
+            a_score_fw.write(str(acceptor_p_holder[200]) + "\n")
 
         print(donor_concat.shape)
         print(acceptor_concat.shape)
         print(donor_l_concat.shape)
         print(acceptor_l_concat.shape)
 
+        #################################
+        # Write out the list of scores of donors / acceptors
+        #################################
+        # d_score_fw.write("\t".join(donor_scores))
+        # a_score_fw.write("\t".join(acceptor_scores))
 
-        #######################
+        with open("./spliceai_result/"+output_file+"/d_scores_"+TYPE+".pkl", 'wb') as fw:
+            pickle.dump(donor_scores, fw)
+        with open("./spliceai_result/"+output_file+"/a_scores_"+TYPE+".pkl", 'wb') as fw:
+            pickle.dump(acceptor_scores, fw)
+
+        #################################
         # Calculating the average donor & acceptor scores.
-        #######################
+        #################################
         avg_donor_p = donor_p/len(lines)
         avg_acceptor_p = acceptor_p/len(lines)
         scores = avg_donor_p, avg_acceptor_p
@@ -122,9 +143,9 @@ def main(argv):
         plt.savefig("spliceai_result/" + output_file+"/score_plts/spliceai_" + TYPE + "_" + output_file + ".png", dpi=my_dpi)
 
 
-        #######################
+        #################################
         # Calculating the topl statistics
-        #######################
+        #################################
         topl_csv = "./dataset/"+output_file+"/topk_statistics.csv"
 
         print ("\n\033[1mDonor:\033[0m")
