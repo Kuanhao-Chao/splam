@@ -196,6 +196,7 @@ def precision_recall_curve_J_level_self(y_true, y_prob_d, y_prob_a, label, optio
     y_true = np.array(y_true)
     y_prob_d = np.array(y_prob_d)
     y_prob_a = np.array(y_prob_a)
+
     if choice == "min":
         y_prob_J = np.minimum(y_prob_d, y_prob_a)
     elif choice == "avg":

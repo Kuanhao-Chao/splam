@@ -60,3 +60,5 @@ src_tools_evaluation/spliceai_result_prev/
 src_tools_evaluation/splam_result/
 src_tools_evaluation/spliceai_result/
 src_tools_evaluation/Ida/
+src_tools_evaluation/dataset/
+src_tools_evaluation/IMG/
