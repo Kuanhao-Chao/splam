@@ -27,7 +27,7 @@ import platform
 
 warnings.filterwarnings("ignore")
 
-MODEL_VERSION = "SPLAM_v11/"
+MODEL_VERSION = "SPLAM_v12/"
 JUNC_THRESHOLD = 0.1
 
 def parse_junction(name):
@@ -68,7 +68,7 @@ def main():
     device = torch.device(device_str)
     print(f"\033[1m[Info]: Use {device} now!\033[0m")
 
-    MODEL = "./MODEL/"+MODEL_VERSION+"splam_14_cpu.pt"
+    MODEL = "./MODEL/"+MODEL_VERSION+"splam_14.pt"
     MODEL_OUTPUT_BASE = "../src_tools_evaluation/splam_result/"+MODEL_VERSION+"/"
 
     print(">> Using model: ", MODEL)
