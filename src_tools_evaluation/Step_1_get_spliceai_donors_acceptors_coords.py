@@ -20,9 +20,9 @@ def main():
     SEQ_LEN = 800
     THRESHOLD = 100
 
-    pos_junc_f = '../src/2_GET_REF_JUNCS_REFSEQ/BAM_REF_Intersection/'+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
-    pos_MANE_f = "../src/5_GET_REF_JUNCS_MANE/BAM_REF_Intersection/"+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
-    pos_ALTS_f = "../src/6_GET_REF_JUNCS_REFSEQ_ALTS/BAM_REF_Intersection/"+str(SEQ_LEN)+"bp/100_juncs/d_a.bed"
+    pos_junc_f = '../src/2_GET_REF_JUNCS_REFSEQ/BAM_REF_Intersection/'+str(SEQ_LEN)+"bp/100_juncs/d_a_paralog_removed.bed"
+    pos_MANE_f = "../src/5_GET_REF_JUNCS_MANE/BAM_REF_Intersection/"+str(SEQ_LEN)+"bp/100_juncs/d_a_paralog_removed.bed"
+    pos_ALTS_f = "../src/6_GET_REF_JUNCS_REFSEQ_ALTS/BAM_REF_Intersection/"+str(SEQ_LEN)+"bp/100_juncs/d_a_paralog_removed.bed"
 
     neg_1_junc_f = '../src/4_GET_BAM_NEG_OPP_STRAND_JUNCS/BAM_junctions/'+str(SEQ_LEN)+"bp/1_juncs/d_a.bed"
     neg_random_junc_f = '../src/3_GET_BAM_NEG_OPP_STRAND_JUNCS_RANDOM/NEG_rev_junctions/'+str(SEQ_LEN)+"bp/d_a/d_a.bed"
@@ -35,7 +35,7 @@ def main():
     for output_file in output_files:
         os.makedirs(output_file, exist_ok=True)
 
-    nums = [12000, 12000, 12000, 12000, 12000]
+    nums = [7156, 4459, 2697, 12000, 12000]
 
     COUNTER = 0
     global_df = pd.DataFrame(columns = [0, 1, 2, 3, 4, 5])
