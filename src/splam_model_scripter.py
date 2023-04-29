@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as pl
 import os
 
-MODEL_VERSION = "SPLAM_v12"
+MODEL_VERSION = "SPLAM_v11"
 device = torch.device("cpu")
 model = torch.load("./MODEL/"+MODEL_VERSION+"/splam_14.pt")
 
