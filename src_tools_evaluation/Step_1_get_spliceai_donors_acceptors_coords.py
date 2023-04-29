@@ -61,6 +61,10 @@ def main():
         print("SPLAM junc_df   : ", junc_df)
         global_df = junc_df
         global_df[2] -= 1
+
+        ################################
+        # SPLAM test data curatiolsn
+        ################################
         global_df.to_csv(output_files[junc_fidx]+"splam/splam.juncs.bed", sep="\t", header=None, index=0)
 
         ################################
