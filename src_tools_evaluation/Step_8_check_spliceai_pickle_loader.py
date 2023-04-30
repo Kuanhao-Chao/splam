@@ -32,17 +32,17 @@ def main():
             print("./spliceai_result/"+TARGET+"/d_scores_"+TYPE+".pkl")        
             with open("./spliceai_result/"+TARGET+"/d_scores_"+TYPE+".pkl", 'rb') as f:
                 print(">> Processing ", TARGET)
+                spliceai_noS_d_pred_prob = pickle.load(f)[:SUBSET]
                 if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
-                    splam_noS_d_label_prob = np.ones(SUBSET)
+                    spliceai_noS_d_label_prob = np.ones(len(spliceai_noS_d_pred_prob))
                 else:
-                    splam_noS_d_label_prob = np.zeros(SUBSET)                    
-                splam_noS_d_pred_prob = pickle.load(f)[:SUBSET]
+                    spliceai_noS_d_label_prob = np.zeros(len(spliceai_noS_d_pred_prob))                    
 
-                print("len(splam_noS_d_label_prob): ", len(splam_noS_d_label_prob))
-                print("len(splam_noS_d_pred_prob): ", len(splam_noS_d_pred_prob))
+                print("len(spliceai_noS_d_label_prob): ", len(spliceai_noS_d_label_prob))
+                print("len(spliceai_noS_d_pred_prob): ", len(spliceai_noS_d_pred_prob))
 
-            d_label = np.concatenate((d_label, splam_noS_d_label_prob), axis=None)
-            d_pred = np.concatenate((d_pred, splam_noS_d_pred_prob), axis=None)        
+            d_label = np.concatenate((d_label, spliceai_noS_d_label_prob), axis=None)
+            d_pred = np.concatenate((d_pred, spliceai_noS_d_pred_prob), axis=None)        
 
 
             ###########################
@@ -51,17 +51,16 @@ def main():
             print("./spliceai_result/"+TARGET+"/a_scores_"+TYPE+".pkl")        
             with open("./spliceai_result/"+TARGET+"/a_scores_"+TYPE+".pkl", 'rb') as f:
                 print(">> Processing ", TARGET)
+                spliceai_noS_a_pred_prob = pickle.load(f)[:SUBSET]
                 if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
-                    splam_noS_a_label_prob = np.ones(SUBSET)
+                    spliceai_noS_a_label_prob = np.ones(len(spliceai_noS_a_pred_prob))
                 else:
-                    splam_noS_a_label_prob = np.zeros(SUBSET)                    
-                splam_noS_a_pred_prob = pickle.load(f)[:SUBSET]
+                    spliceai_noS_a_label_prob = np.zeros(len(spliceai_noS_a_pred_prob))                    
+                print("len(spliceai_noS_a_label_prob): ", len(spliceai_noS_a_label_prob))
+                print("len(spliceai_noS_a_pred_prob): ", len(spliceai_noS_a_pred_prob))
 
-                print("len(splam_noS_a_label_prob): ", len(splam_noS_a_label_prob))
-                print("len(splam_noS_a_pred_prob): ", len(splam_noS_a_pred_prob))
-
-            a_label = np.concatenate((a_label, splam_noS_a_label_prob), axis=None)
-            a_pred = np.concatenate((a_pred, splam_noS_a_pred_prob), axis=None)        
+            a_label = np.concatenate((a_label, spliceai_noS_a_label_prob), axis=None)
+            a_pred = np.concatenate((a_pred, spliceai_noS_a_pred_prob), axis=None)        
 
 
             print("\td_pred : ", len(d_pred))
@@ -108,7 +107,7 @@ def main():
             pickle.dump(a_pred, f)
 
         ###################################
-        # Checking splam pkl file.
+        # Checking spliceai pkl file.
         ###################################
         with open("./spliceai_result/spliceai.da."+TYPE+".merged.pkl",'rb') as f:
             print("./spliceai_result/spliceai.da."+TYPE+".merged.pkl")

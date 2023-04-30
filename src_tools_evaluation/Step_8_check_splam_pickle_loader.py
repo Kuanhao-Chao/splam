@@ -32,12 +32,12 @@ def main():
             print("./splam_result/"+SPLAM_VERSION+"/"+TARGET+"/d_scores_noshuffle.pkl")        
             with open("./splam_result/"+SPLAM_VERSION+"/"+TARGET+"/d_scores_noshuffle.pkl", 'rb') as f:
                 print(">> Processing ", TARGET)
-                if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
-                    splam_noS_d_label_prob = np.ones(SUBSET)
-                else:
-                    splam_noS_d_label_prob = np.zeros(SUBSET)                    
                 splam_noS_d_pred_prob = pickle.load(f)[:SUBSET]
-
+                
+                if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
+                    splam_noS_d_label_prob = np.ones(len(splam_noS_d_pred_prob))
+                else:
+                    splam_noS_d_label_prob = np.zeros(len(splam_noS_d_pred_prob))
                 print("len(splam_noS_d_label_prob): ", len(splam_noS_d_label_prob))
                 print("len(splam_noS_d_pred_prob): ", len(splam_noS_d_pred_prob))
 
@@ -51,12 +51,11 @@ def main():
             print("./splam_result/"+SPLAM_VERSION+"/"+TARGET+"/a_scores_noshuffle.pkl")        
             with open("./splam_result/"+SPLAM_VERSION+"/"+TARGET+"/a_scores_noshuffle.pkl", 'rb') as f:
                 print(">> Processing ", TARGET)
-                if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
-                    splam_noS_a_label_prob = np.ones(SUBSET)
-                else:
-                    splam_noS_a_label_prob = np.zeros(SUBSET)                    
                 splam_noS_a_pred_prob = pickle.load(f)[:SUBSET]
-
+                if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
+                    splam_noS_a_label_prob = np.ones(len(splam_noS_a_pred_prob))
+                else:
+                    splam_noS_a_label_prob = np.zeros(len(splam_noS_a_pred_prob))
                 print("len(splam_noS_a_label_prob): ", len(splam_noS_a_label_prob))
                 print("len(splam_noS_a_pred_prob): ", len(splam_noS_a_pred_prob))
 
