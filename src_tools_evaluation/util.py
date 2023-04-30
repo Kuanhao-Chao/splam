@@ -75,8 +75,8 @@ def _binary_clf_curve(y_true, y_prob, pos_label=None, sample_weight=None):
     distinct_value_indices = np.where(np.diff(y_prob))[0]
     threshold_idxs = np.r_[distinct_value_indices, y_prob.size - 1]
 
-    for threshold_idx in threshold_idxs:
-        print("threshold_idx: ", threshold_idx)
+    # for threshold_idx in threshold_idxs:
+    #     print("threshold_idx: ", threshold_idx)
 
     # accumulate the true positives with decreasing threshold
     tps = stable_cumsum(y_true)[threshold_idxs]
@@ -183,8 +183,8 @@ def _binary_clf_curve_J_level(y_true, y_prob, pos_label=None, sample_weight=None
     distinct_value_indices = np.where(np.diff(y_prob))[0]
     threshold_idxs = np.r_[distinct_value_indices, y_prob.size - 1]
 
-    for threshold_idx in threshold_idxs:
-        print("threshold_idx: ", threshold_idx)
+    # for threshold_idx in threshold_idxs:
+    #     print("threshold_idx: ", threshold_idx)
 
     # accumulate the true positives with decreasing threshold
     tps = stable_cumsum(y_true)[threshold_idxs]

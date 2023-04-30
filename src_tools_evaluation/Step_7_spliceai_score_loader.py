@@ -146,7 +146,7 @@ def main(argv):
         #################################
         # Calculating the topl statistics
         #################################
-        topl_csv = "./dataset/"+output_file+"/topk_statistics.csv"
+        topl_csv = "./spliceai_result/"+output_file+"/topk_statistics."+TYPE+"csv"
 
         print ("\n\033[1mDonor:\033[0m")
         print_topl_statistics(donor_l_concat,
