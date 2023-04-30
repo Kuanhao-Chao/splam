@@ -11,8 +11,9 @@ def main():
     # SUBSET = 9900
     TARGETS = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
 
-    SUBSETS = [12000, 12000, 12000, 12000]
-
+    # SUBSETS = [12000, 12000, 12000, 12000]
+    # 4459, 2697
+    SUBSETS = [2500, 2500, 12000, 12000]
 
     for SPLAM_VERSION in ["SPLAM_v11", "SPLAM_v12"]:
 
@@ -35,9 +36,9 @@ def main():
                 splam_noS_d_pred_prob = pickle.load(f)[:SUBSET]
                 
                 if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
-                    splam_noS_d_label_prob = np.ones(len(splam_noS_d_pred_prob))
+                    splam_noS_d_label_prob = np.ones(SUBSET)
                 else:
-                    splam_noS_d_label_prob = np.zeros(len(splam_noS_d_pred_prob))
+                    splam_noS_d_label_prob = np.zeros(SUBSET)
                 print("len(splam_noS_d_label_prob): ", len(splam_noS_d_label_prob))
                 print("len(splam_noS_d_pred_prob): ", len(splam_noS_d_pred_prob))
 
@@ -53,9 +54,9 @@ def main():
                 print(">> Processing ", TARGET)
                 splam_noS_a_pred_prob = pickle.load(f)[:SUBSET]
                 if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
-                    splam_noS_a_label_prob = np.ones(len(splam_noS_a_pred_prob))
+                    splam_noS_a_label_prob = np.ones(SUBSET)
                 else:
-                    splam_noS_a_label_prob = np.zeros(len(splam_noS_a_pred_prob))
+                    splam_noS_a_label_prob = np.zeros(SUBSET)
                 print("len(splam_noS_a_label_prob): ", len(splam_noS_a_label_prob))
                 print("len(splam_noS_a_pred_prob): ", len(splam_noS_a_pred_prob))
 

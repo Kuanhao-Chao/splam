@@ -11,7 +11,7 @@ def main():
     # SUBSET = 9900
     TARGETS = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
 
-    SUBSETS = [12000, 12000, 12000, 12000]
+    SUBSETS = [2500, 2500, 12000, 12000]
 
 
 
@@ -34,9 +34,9 @@ def main():
                 print(">> Processing ", TARGET)
                 spliceai_noS_d_pred_prob = pickle.load(f)[:SUBSET]
                 if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
-                    spliceai_noS_d_label_prob = np.ones(len(spliceai_noS_d_pred_prob))
+                    spliceai_noS_d_label_prob = np.ones(SUBSET)
                 else:
-                    spliceai_noS_d_label_prob = np.zeros(len(spliceai_noS_d_pred_prob))                    
+                    spliceai_noS_d_label_prob = np.zeros(SUBSET)                    
 
                 print("len(spliceai_noS_d_label_prob): ", len(spliceai_noS_d_label_prob))
                 print("len(spliceai_noS_d_pred_prob): ", len(spliceai_noS_d_pred_prob))
@@ -53,9 +53,9 @@ def main():
                 print(">> Processing ", TARGET)
                 spliceai_noS_a_pred_prob = pickle.load(f)[:SUBSET]
                 if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
-                    spliceai_noS_a_label_prob = np.ones(len(spliceai_noS_a_pred_prob))
+                    spliceai_noS_a_label_prob = np.ones(SUBSET)
                 else:
-                    spliceai_noS_a_label_prob = np.zeros(len(spliceai_noS_a_pred_prob))                    
+                    spliceai_noS_a_label_prob = np.zeros(SUBSET)                    
                 print("len(spliceai_noS_a_label_prob): ", len(spliceai_noS_a_label_prob))
                 print("len(spliceai_noS_a_pred_prob): ", len(spliceai_noS_a_pred_prob))
 
