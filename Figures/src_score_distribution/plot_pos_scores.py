@@ -8,7 +8,7 @@ import os
 def main():
     # for TOOL in ["SPLAM", "SPLICEAI"]:
     COLORS = ["green", "blue"]
-    TOOLS = ["SPLAM", "SPLICEAI"]
+    TOOLS = ["SPLAM", "SpliceAI-10k", "SpliceAI-10k-Ns"]
     TARGETS = ["Donor", "Acceptor"]
     output_files = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"] 
     FIGURE_ROOT = "Figures/"
@@ -27,15 +27,22 @@ def main():
                         n_score_tsv_f = "../../src_tools_evaluation/splam_result/"+SPLAM_VERSION+"/"+output_file+"/splam_all_seq.score.n."+TYPE+"."+output_file+".tsv"
 
 
-                    elif TOOL == "SPLICEAI":
+                    elif TOOL == "SpliceAI-10k":
                         TYPE = "noN"
                         d_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
                         a_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
                         n_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
+                    
+                    elif TOOL == "SpliceAI-10k-Ns":
+                        TYPE = "N"
+                        d_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
+                        a_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
+                        n_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
+
                     if TARGET == "Donor":
                         if TOOL == "SPLAM":
                             target_idx = 201
-                        elif TOOL == "SPLICEAI":
+                        elif TOOL == "SpliceAI-10k" or TOOL == "SpliceAI-10k-Ns":
                             target_idx = 200
                         donors = []
                         with open(d_score_tsv_f, "r") as fr:
