@@ -73,6 +73,7 @@ THRESHOLDS = [0.1, 0.01]
 
 def main():
 
+    MANE_OR_ALTS = "ALTS"
     for threshold in THRESHOLDS:
         #####################################
         # Creating directories for visualization.
@@ -385,7 +386,7 @@ def main():
 
                     # handles, labels = .get_legend_handles_labels()
                     # fig.legend(handles, labels, loc='lower center')
-                    plt.savefig(target_figure_root + TOOL + "_" + str(threshold) + ".png", dpi=300, bbox_extra_artists=(lgd,), bbox_inches='tight')
+                    plt.savefig(target_figure_root + TOOL + "_" + str(threshold) + "_" + MANE_OR_ALTS + ".png", dpi=300, bbox_extra_artists=(lgd,), bbox_inches='tight')
                     # fig.legend(labels, loc='lower right', bbox_to_anchor=(1,-0.1), ncol=len(labels), bbox_transform=fig.transFigure)
                     # plt.savefig(target_figure_root + TOOL + "_" + str(threshold) + ".png", dpi=300, bbox_inches='tight')
                     plt.close()

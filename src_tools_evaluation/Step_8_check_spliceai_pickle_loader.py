@@ -9,11 +9,11 @@ def main():
 
 
     # SUBSET = 9900
-    TARGETS = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
+    # TARGETS = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
+    TARGETS = ["pos_ALTS", "neg_1", "neg_random"]
 
-    SUBSETS = [2500, 2500, 12000, 12000]
-
-
+    # 4459, 2697
+    SUBSETS = [2500, 12000, 12000]
 
 
     for TYPE in ["noN", "N"]:
