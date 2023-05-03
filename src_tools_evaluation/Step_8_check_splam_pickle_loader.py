@@ -14,7 +14,7 @@ def main():
 
     # SUBSETS = [12000, 12000, 12000, 12000]
     # 4459, 2697
-    SUBSETS = [2500, 12000, 12000]
+    SUBSETS = [2000, 12000, 12000]
 
     for SPLAM_VERSION in ["SPLAM_v11", "SPLAM_v12"]:
 

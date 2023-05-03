@@ -13,7 +13,7 @@ def main():
     TARGETS = ["pos_ALTS", "neg_1", "neg_random"]
 
     # 4459, 2697
-    SUBSETS = [2500, 12000, 12000]
+    SUBSETS = [2000, 12000, 12000]
 
 
     for TYPE in ["noN", "N"]:

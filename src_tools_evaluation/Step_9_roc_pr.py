@@ -412,7 +412,7 @@ def main():
 
         ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
         ax.plot([1, 0], [0, 1], transform=ax.transAxes, linestyle='dashed')
-        plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_pr_min_ratio_2500-12000_"+MANE_OR_ALTS+".png", bbox_inches='tight', dpi=300)
+        plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_pr_min_ratio_2000-12000_"+MANE_OR_ALTS+".png", bbox_inches='tight', dpi=300)
         plt.close()
 
 
@@ -444,7 +444,7 @@ def main():
 
         ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
         ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='dashed')
-        plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_roc_min_ratio_2500-12000_"+MANE_OR_ALTS+".png", bbox_inches='tight', dpi=300)
+        plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_roc_min_ratio_2000-12000_"+MANE_OR_ALTS+".png", bbox_inches='tight', dpi=300)
         plt.close()
 
         # ################################### 
