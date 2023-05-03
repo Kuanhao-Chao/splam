@@ -74,10 +74,18 @@ def main():
     print("Canonical acceptor count: ", canonical_a_count)
     print("Noncanonical acceptor count: ", noncanonical_a_count)
 
-    for key, value in donors.items():
-        print("Donor   : ", key, " (", value, ")")
-    for key, value in acceptors.items():
-        print("Acceptor: ", key, " (", value, ")")
+    donors = sorted(donors.items(), key=lambda x: x[1], reverse=True)
+    acceptors = sorted(acceptors.items(), key=lambda x: x[1], reverse=True)
+    
+    
+    fw_d_a = open("d_a_type.tsv", "w")
+    for key, value in donors[:5]:
+        print("Donor   : ", key, " (", str(value), ")")
+        fw_d_a.write(key + "\t" + str(value) + "\n")
+    for key, value in acceptors[:5]:
+        print("Acceptor: ", key, " (", str(value), ")")
+        fw_d_a.write(key + "\t" + str(value) + "\n")
+    fw_d_a.close()
     fw.close()
 if __name__ == "__main__":
     main()
