@@ -73,7 +73,7 @@ THRESHOLDS = [0.1, 0.01]
 
 def main():
 
-    MANE_OR_ALTS = "ALTS"
+    MANE_OR_ALTS = ""
     for threshold in THRESHOLDS:
         #####################################
         # Creating directories for visualization.
