@@ -293,208 +293,204 @@ def main():
     # Declaring parameters for probability & prediction array
     #####################################
 
-    MANE_OR_ALTS = "ALTS"
-
-    with open("./spliceai_result/spliceai.da.N.merged.pkl", "rb") as fr:
-        spliceai_N_d_label = pickle.load(fr)
-        spliceai_N_d_pred = pickle.load(fr)
-        spliceai_N_a_label = pickle.load(fr)
-        spliceai_N_a_pred = pickle.load(fr)
-
-        # j_pred_prob = [x.numpy() for x in j_pred_prob]
-        # j_pred_prob = [x.numpy() for x in j_pred_prob]
-
-        print("\tspliceai_N_d_label : ", len(spliceai_N_d_label))
-        print("\tspliceai_N_d_pred: ", len(spliceai_N_d_pred))
-        print("\tspliceai_N_d_label : ", len(spliceai_N_d_label[spliceai_N_d_label == 1]))
-        print("\tspliceai_N_d_pred: ", spliceai_N_d_pred)
-        print("")
-        print("\tspliceai_N_a_label : ", len(spliceai_N_a_label))
-        print("\tspliceai_N_a_pred: ", len(spliceai_N_a_pred))
-        print("\tspliceai_N_a_pred: ", len(spliceai_N_a_label[spliceai_N_a_label == 1]))
-        print("\tspliceai_N_a_pred: ", spliceai_N_a_pred)
-        print("")
-
-    with open("./spliceai_result/spliceai.da.noN.merged.pkl", "rb") as fr:
-        spliceai_noN_d_label = pickle.load(fr)
-        spliceai_noN_d_pred = pickle.load(fr)
-        spliceai_noN_a_label = pickle.load(fr)
-        spliceai_noN_a_pred = pickle.load(fr)
-
-        print("\tspliceai_noN_d_label : ", len(spliceai_noN_d_label))
-        print("\tspliceai_noN_d_pred: ", len(spliceai_noN_d_pred))
-        print("\tspliceai_noN_d_pred: ", spliceai_noN_d_pred)
-        print("")
-        print("\tspliceai_noN_a_label : ", len(spliceai_noN_a_label))
-        print("\tspliceai_noN_a_pred: ", len(spliceai_noN_a_pred))
-        print("\tspliceai_noN_a_pred: ", spliceai_noN_a_pred)
-        print("")
-
-
-    for SPLAM_VERSION in ["SPLAM_v11", "SPLAM_v12"]:
-        #####################################
-        # Creating directories for visualization.
-        #####################################
-        os.makedirs("./IMG/"+SPLAM_VERSION+"/junction/", exist_ok=True)
-        os.makedirs("./IMG/"+SPLAM_VERSION+"/T_histogram/", exist_ok=True)
-
-        with open("./splam_result/"+SPLAM_VERSION+"/splam.da.noshuffle.merged.pkl",'rb') as f:
-            splam_d_label = pickle.load(f)
-            splam_d_pred = pickle.load(f)
-            splam_a_label = pickle.load(f)
-            splam_a_pred = pickle.load(f)
-            print("\tsplam_d_label : ", len(splam_d_label))
-            print("\tsplam_d_pred: ", len(splam_d_pred))
+    for MANE_OR_ALTS in ["pos_MANE", "pos_ALTS"]:
+        with open("./spliceai_result/spliceai.da.N.merged."+MANE_OR_ALTS+".pkl", "rb") as fr:
+            spliceai_N_d_label = pickle.load(fr)
+            spliceai_N_d_pred = pickle.load(fr)
+            spliceai_N_a_label = pickle.load(fr)
+            spliceai_N_a_pred = pickle.load(fr)
+            # j_pred_prob = [x.numpy() for x in j_pred_prob]
+            # j_pred_prob = [x.numpy() for x in j_pred_prob]
+            print("\tspliceai_N_d_label : ", len(spliceai_N_d_label))
+            print("\tspliceai_N_d_pred: ", len(spliceai_N_d_pred))
+            print("\tspliceai_N_d_label : ", len(spliceai_N_d_label[spliceai_N_d_label == 1]))
+            print("\tspliceai_N_d_pred: ", spliceai_N_d_pred)
             print("")
-            print("\tsplam_a_label : ", len(splam_a_label))
-            print("\tsplam_a_pred: ", len(splam_a_pred))
+            print("\tspliceai_N_a_label : ", len(spliceai_N_a_label))
+            print("\tspliceai_N_a_pred: ", len(spliceai_N_a_pred))
+            print("\tspliceai_N_a_pred: ", len(spliceai_N_a_label[spliceai_N_a_label == 1]))
+            print("\tspliceai_N_a_pred: ", spliceai_N_a_pred)
+            print("")
+
+        with open("./spliceai_result/spliceai.da.noN.merged."+MANE_OR_ALTS+".pkl", "rb") as fr:
+            spliceai_noN_d_label = pickle.load(fr)
+            spliceai_noN_d_pred = pickle.load(fr)
+            spliceai_noN_a_label = pickle.load(fr)
+            spliceai_noN_a_pred = pickle.load(fr)
+
+            print("\tspliceai_noN_d_label : ", len(spliceai_noN_d_label))
+            print("\tspliceai_noN_d_pred: ", len(spliceai_noN_d_pred))
+            print("\tspliceai_noN_d_pred: ", spliceai_noN_d_pred)
+            print("")
+            print("\tspliceai_noN_a_label : ", len(spliceai_noN_a_label))
+            print("\tspliceai_noN_a_pred: ", len(spliceai_noN_a_pred))
+            print("\tspliceai_noN_a_pred: ", spliceai_noN_a_pred)
             print("")
 
 
-        # with open("./splam_result/SPLAM_v12/splam.da.noshuffle.merged.pkl",'rb') as f:
-        #     splam_v12_d_label_prob = pickle.load(f)
-        #     splam_v12_d_pred_prob = pickle.load(f)
-        #     splam_v12_a_label_prob = pickle.load(f)
-        #     splam_v12_a_pred_prob = pickle.load(f)
-        #     print("\tsplam_v12_d_label_prob : ", len(splam_v12_d_label_prob))
-        #     print("\tsplam_v12_d_pred_prob: ", len(splam_v12_d_pred_prob))
-        #     print("")
-        #     print("\tsplam_v12_a_label_prob : ", len(splam_v12_a_label_prob))
-        #     print("\tsplam_v12_a_pred_prob: ", len(splam_v12_a_pred_prob))
-        #     print("")
-        
-        # splam_d_label = np.array(splam_d_label)
-        # splam_d_pred = np.array(splam_d_pred)
-        # splam_a_label = np.array(splam_a_label)
-        # splam_a_pred = np.array(splam_a_pred)
-        # splam_noS_junc_name = np.array(splam_noS_junc_name)
+        for SPLAM_VERSION in ["SPLAM_v11", "SPLAM_v12"]:
+            #####################################
+            # Creating directories for visualization.
+            #####################################
+            os.makedirs("./IMG/"+SPLAM_VERSION+"/junction/", exist_ok=True)
+            os.makedirs("./IMG/"+SPLAM_VERSION+"/T_histogram/", exist_ok=True)
 
-        # print("splam_d_label : ", (splam_d_label))
-        # print("splam_d_pred: ", (splam_d_pred))
-        # print("splam_a_label : ", (splam_a_label))
-        # print("splam_a_pred: ", (splam_a_pred))
-        # # print("splam_noS_junc_name  : ", (splam_noS_junc_name))
-
-        # print("splam_d_label : ", len(splam_d_label))
-        # print("splam_d_pred: ", len(splam_d_pred))
-        # print("splam_a_label : ", len(splam_a_label))
-        # print("splam_a_pred: ", len(splam_a_pred))
-        # print("splam_noS_junc_name  : ", len(splam_noS_junc_name))
+            with open("./splam_result/"+SPLAM_VERSION+"/splam.da.noshuffle.merged."+MANE_OR_ALTS+".pkl",'rb') as f:
+                splam_d_label = pickle.load(f)
+                splam_d_pred = pickle.load(f)
+                splam_a_label = pickle.load(f)
+                splam_a_pred = pickle.load(f)
+                print("\tsplam_d_label : ", len(splam_d_label))
+                print("\tsplam_d_pred: ", len(splam_d_pred))
+                print("")
+                print("\tsplam_a_label : ", len(splam_a_label))
+                print("\tsplam_a_pred: ", len(splam_a_pred))
+                print("")
 
 
+            # with open("./splam_result/SPLAM_v12/splam.da.noshuffle.merged.pkl",'rb') as f:
+            #     splam_v12_d_label_prob = pickle.load(f)
+            #     splam_v12_d_pred_prob = pickle.load(f)
+            #     splam_v12_a_label_prob = pickle.load(f)
+            #     splam_v12_a_pred_prob = pickle.load(f)
+            #     print("\tsplam_v12_d_label_prob : ", len(splam_v12_d_label_prob))
+            #     print("\tsplam_v12_d_pred_prob: ", len(splam_v12_d_pred_prob))
+            #     print("")
+            #     print("\tsplam_v12_a_label_prob : ", len(splam_v12_a_label_prob))
+            #     print("\tsplam_v12_a_pred_prob: ", len(splam_v12_a_pred_prob))
+            #     print("")
+            
+            # splam_d_label = np.array(splam_d_label)
+            # splam_d_pred = np.array(splam_d_pred)
+            # splam_a_label = np.array(splam_a_label)
+            # splam_a_pred = np.array(splam_a_pred)
+            # splam_noS_junc_name = np.array(splam_noS_junc_name)
 
-        ###################################
-        # Threshold plots
-        ###################################
-        # plot_thresholds(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "splcieai", SPLAM_VERSION)
-        # plot_thresholds(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "splcieai_N", SPLAM_VERSION)
+            # print("splam_d_label : ", (splam_d_label))
+            # print("splam_d_pred: ", (splam_d_pred))
+            # print("splam_a_label : ", (splam_a_label))
+            # print("splam_a_pred: ", (splam_a_pred))
+            # # print("splam_noS_junc_name  : ", (splam_noS_junc_name))
 
-        # plot_thresholds(splam_d_label, splam_d_pred, splam_a_pred, "splam_noshuffle", SPLAM_VERSION)
-        # plot_thresholds(splam_S_a_label_prob, splam_S_a_pred_prob, splam_S_d_pred_prob, "splam_shuffle", SPLAM_VERSION)
-
-        # plot_thresholds_J(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_shuffle", SPLAM_VERSION)
-        # plot_thresholds_J(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_noshuffle", SPLAM_VERSION)
-
-        # plot_thresholds_J(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_shuffle_avg", SPLAM_VERSION)
-        # plot_thresholds_J(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_noshuffle_avg", SPLAM_VERSION)
-        # plot_thresholds_J(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_nobatch", SPLAM_VERSION)
-
-
-        ###################################
-        # PR of junction (min)
-        ###################################
-        print("Plotting junction!!")
-        fig, ax = plt.subplots()
-        plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "min")
-        
-        plot_pr_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred,spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "min")
-        plot_pr_curve_J(spliceai_N_d_label, spliceai_N_d_pred,spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "min")
-
-        ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
-        ax.plot([1, 0], [0, 1], transform=ax.transAxes, linestyle='dashed')
-        plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_pr_min_ratio_2000-12000_"+MANE_OR_ALTS+".png", bbox_inches='tight', dpi=300)
-        plt.close()
+            # print("splam_d_label : ", len(splam_d_label))
+            # print("splam_d_pred: ", len(splam_d_pred))
+            # print("splam_a_label : ", len(splam_a_label))
+            # print("splam_a_pred: ", len(splam_a_pred))
+            # print("splam_noS_junc_name  : ", len(splam_noS_junc_name))
 
 
 
+            ###################################
+            # Threshold plots
+            ###################################
+            # plot_thresholds(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "splcieai", SPLAM_VERSION)
+            # plot_thresholds(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "splcieai_N", SPLAM_VERSION)
+
+            # plot_thresholds(splam_d_label, splam_d_pred, splam_a_pred, "splam_noshuffle", SPLAM_VERSION)
+            # plot_thresholds(splam_S_a_label_prob, splam_S_a_pred_prob, splam_S_d_pred_prob, "splam_shuffle", SPLAM_VERSION)
+
+            # plot_thresholds_J(splam_j_shuffle_label_prob_min, splam_j_shuffle_pred_prob_min, "splam_shuffle", SPLAM_VERSION)
+            # plot_thresholds_J(splam_j_noshuffle_label_prob_min, splam_j_noshuffle_pred_prob_min, "splam_noshuffle", SPLAM_VERSION)
+
+            # plot_thresholds_J(splam_j_shuffle_label_prob_avg, splam_j_shuffle_pred_prob_avg, "splam_shuffle_avg", SPLAM_VERSION)
+            # plot_thresholds_J(splam_j_noshuffle_label_prob_avg, splam_j_noshuffle_pred_prob_avg, "splam_noshuffle_avg", SPLAM_VERSION)
+            # plot_thresholds_J(splam_j_nobatch_label_prob, splam_j_nobatch_pred_prob, "splam_nobatch", SPLAM_VERSION)
+
+
+            ###################################
+            # PR of junction (min)
+            ###################################
+            print("Plotting junction!!")
+            fig, ax = plt.subplots()
+            plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "min")
+            
+            plot_pr_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred,spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "min")
+            plot_pr_curve_J(spliceai_N_d_label, spliceai_N_d_pred,spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "min")
+
+            ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
+            ax.plot([1, 0], [0, 1], transform=ax.transAxes, linestyle='dashed')
+            plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_pr_min_ratio_2500-10000_"+MANE_OR_ALTS+".png", bbox_inches='tight', dpi=300)
+            plt.close()
 
 
 
-        # # ###################################
-        # # # PR of junction (avg)
-        # # ###################################
-        # fig, ax = plt.subplots()
-        # plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "avg")
-        # plot_pr_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "avg")
-        # plot_pr_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "avg")
-
-        # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
-        # ax.plot([1, 0], [0, 1], transform=ax.transAxes, linestyle='dashed')
-        # plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_pr_avg.png", bbox_inches='tight', dpi=300)
-        # plt.close()
-        
-
-        ###################################
-        # ROC of junction (min)
-        ###################################
-        fig, ax = plt.subplots()
-        plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "min")
-        plot_roc_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "min")
-        plot_roc_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "min")
-
-        ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
-        ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='dashed')
-        plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_roc_min_ratio_2000-12000_"+MANE_OR_ALTS+".png", bbox_inches='tight', dpi=300)
-        plt.close()
-
-        # ################################### 
-        # # ROC of junction (avg)
-        # ###################################
-        # fig, ax = plt.subplots()
-        # plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "avg")
-        # plot_roc_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "avg")
-        # plot_roc_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "avg")
-
-        # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
-        # ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='dashed')
-        # plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_roc_avg.png", bbox_inches='tight', dpi=300)
-        # plt.close()
 
 
-        # # ###################################
-        # # # PR / ROC of donor
-        # # ###################################
-        # # plot_pr_curve(spliceai_noN_d_label, spliceai_noN_d_pred, "spliceai_donor", "self")
-        # # plot_pr_curve(spliceai_N_d_label, spliceai_N_d_pred, "spliceai_N_donor", "self")
-        # # plot_pr_curve(splam_d_label, splam_d_pred, "splam_donor", "self")
-        # # # plt.show()
-        # # plt.savefig("./IMG/"+SPLAM_VERSION+"/donor/donor_pr.png")
-        # # plt.close()
 
-        # # plot_roc_curve(spliceai_noN_d_label, spliceai_noN_d_pred, "spliceai_donor", "self")
-        # # plot_roc_curve(spliceai_N_d_label, spliceai_N_d_pred, "spliceai_N_donor", "self")
-        # # plot_roc_curve(splam_d_label, splam_d_pred, "splam_donor", "self")
-        # # # plt.show()
-        # # plt.savefig("./IMG/"+SPLAM_VERSION+"/donor/donor_roc.png")
-        # # plt.close()
+            # # ###################################
+            # # # PR of junction (avg)
+            # # ###################################
+            # fig, ax = plt.subplots()
+            # plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "avg")
+            # plot_pr_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "avg")
+            # plot_pr_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "avg")
 
-        # # ###################################
-        # # # PR / ROC of acceptor
-        # # ###################################
-        # # plot_pr_curve(spliceai_noN_a_label_prob, spliceai_noN_a_pred, "spliceai_acceptor", "self")
-        # # plot_pr_curve(spliceai_N_a_label_prob, spliceai_N_a_pred, "spliceai_N_acceptor", "self")
-        # # plot_pr_curve(splam_a_label, splam_a_pred, "splam_acceptor", "self")
-        # # # plt.show()
-        # # plt.savefig("./IMG/"+SPLAM_VERSION+"/acceptor/acceptor_pr.png")
-        # # plt.close()
+            # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
+            # ax.plot([1, 0], [0, 1], transform=ax.transAxes, linestyle='dashed')
+            # plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_pr_avg.png", bbox_inches='tight', dpi=300)
+            # plt.close()
+            
 
-        # # plot_roc_curve(spliceai_noN_a_label_prob, spliceai_noN_a_pred, "spliceai_acceptor", "self")
-        # # plot_roc_curve(spliceai_N_a_label_prob, spliceai_N_a_pred, "spliceai_N_acceptor", "self")
-        # # plot_roc_curve(splam_a_label, splam_a_pred, "splam_acceptor", "self")
-        # # # plt.show()
-        # # plt.savefig("./IMG/"+SPLAM_VERSION+"/acceptor/acceptor_roc.png")
-        # # plt.close()
+            ###################################
+            # ROC of junction (min)
+            ###################################
+            fig, ax = plt.subplots()
+            plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "min")
+            plot_roc_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "min")
+            plot_roc_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "min")
 
+            ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
+            ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='dashed')
+            plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_roc_min_ratio_2500-10000_"+MANE_OR_ALTS+".png", bbox_inches='tight', dpi=300)
+            plt.close()
+
+            # ################################### 
+            # # ROC of junction (avg)
+            # ###################################
+            # fig, ax = plt.subplots()
+            # plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "avg")
+            # plot_roc_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "avg")
+            # plot_roc_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "avg")
+
+            # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
+            # ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='dashed')
+            # plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_roc_avg.png", bbox_inches='tight', dpi=300)
+            # plt.close()
+
+
+            # # ###################################
+            # # # PR / ROC of donor
+            # # ###################################
+            # # plot_pr_curve(spliceai_noN_d_label, spliceai_noN_d_pred, "spliceai_donor", "self")
+            # # plot_pr_curve(spliceai_N_d_label, spliceai_N_d_pred, "spliceai_N_donor", "self")
+            # # plot_pr_curve(splam_d_label, splam_d_pred, "splam_donor", "self")
+            # # # plt.show()
+            # # plt.savefig("./IMG/"+SPLAM_VERSION+"/donor/donor_pr.png")
+            # # plt.close()
+
+            # # plot_roc_curve(spliceai_noN_d_label, spliceai_noN_d_pred, "spliceai_donor", "self")
+            # # plot_roc_curve(spliceai_N_d_label, spliceai_N_d_pred, "spliceai_N_donor", "self")
+            # # plot_roc_curve(splam_d_label, splam_d_pred, "splam_donor", "self")
+            # # # plt.show()
+            # # plt.savefig("./IMG/"+SPLAM_VERSION+"/donor/donor_roc.png")
+            # # plt.close()
+
+            # # ###################################
+            # # # PR / ROC of acceptor
+            # # ###################################
+            # # plot_pr_curve(spliceai_noN_a_label_prob, spliceai_noN_a_pred, "spliceai_acceptor", "self")
+            # # plot_pr_curve(spliceai_N_a_label_prob, spliceai_N_a_pred, "spliceai_N_acceptor", "self")
+            # # plot_pr_curve(splam_a_label, splam_a_pred, "splam_acceptor", "self")
+            # # # plt.show()
+            # # plt.savefig("./IMG/"+SPLAM_VERSION+"/acceptor/acceptor_pr.png")
+            # # plt.close()
+
+            # # plot_roc_curve(spliceai_noN_a_label_prob, spliceai_noN_a_pred, "spliceai_acceptor", "self")
+            # # plot_roc_curve(spliceai_N_a_label_prob, spliceai_N_a_pred, "spliceai_N_acceptor", "self")
+            # # plot_roc_curve(splam_a_label, splam_a_pred, "splam_acceptor", "self")
+            # # # plt.show()
+            # # plt.savefig("./IMG/"+SPLAM_VERSION+"/acceptor/acceptor_roc.png")
+            # # plt.close()
 
 if __name__ == "__main__":
     main()
