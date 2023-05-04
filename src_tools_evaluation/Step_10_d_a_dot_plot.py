@@ -392,50 +392,6 @@ def main():
                     plt.close()
 
 
-                # spliceai_TP__splam_FN = ax.scatter(splam_d_pred[spliceai_TP__splam_FN_idices], splam_a_pred[spliceai_TP__splam_FN_idices], s = 5, color="blue")
-                # spliceai_FN__splam_TP = ax.scatter(splam_d_pred[spliceai_FN__splam_TP_idices], splam_a_pred[spliceai_FN__splam_TP_idices], s = 5, color="red")
-                # spliceai_FN__splam_FN = ax.scatter(splam_d_pred[spliceai_FN__splam_FN_idices], splam_a_pred[spliceai_FN__splam_FN_idices], s = 5, color="green")
-                # spliceai_TN__splam_FP = ax.scatter(splam_d_pred[spliceai_TN__splam_FP_idices], splam_a_pred[spliceai_TN__splam_FP_idices], s = 5, color="orange")
-                # spliceai_FP__splam_TN = ax.scatter(splam_d_pred[spliceai_FP__splam_TN_idices], splam_a_pred[spliceai_FP__splam_TN_idices], s = 5, color="cyan")
-                # spliceai_FP__splam_FP = ax.scatter(splam_d_pred[spliceai_FP__splam_FP_idices], splam_a_pred[spliceai_FP__splam_FP_idices], s = 5, color="purple")
-                # # non_junc_legend = ax.scatter(score_d[non_junc_prob], score_a[non_junc_prob], s = 0.3)
-                # ax.legend([spliceai_TP__splam_FN, spliceai_FN__splam_TP, spliceai_FN__splam_FN, spliceai_TN__splam_FP, spliceai_FP__splam_TN, spliceai_FP__splam_FP], ["spliceai_TP__splam_FN", "spliceai_FN__splam_TP", "spliceai_FN__splam_FN", "spliceai_TN__splam_FP", "spliceai_FP__splam_TN", "spliceai_FP__splam_FP"])
-                # plt.xlim([0, 1])
-                # plt.ylim([0, 1])
-                # plt.show()
-
-                # plot_scatter_plot(spliceai_d_label[spliceai_FP_idices], spliceai_d_pred, spliceai_a_label, spliceai_a_pred, figure_root+"spliceai.png")
-
-
-                # print(spliceai_d_pred[spliceai_d_pred > threshold])
-
-                # spliceai_d_label[spliceai_d_label > threshold]
-                # spliceai_a_pred[spliceai_a_pred > threshold]
-                # spliceai_a_label[spliceai_a_label > threshold]
-                # spliceai_d_label
-
-
-                # for x, y in zip(spliceai_d_label, splam_d_pred):
-                #     if (x[0] == y[0] and int(x[1]) == int(y[1]) and int(x[2]) == int(y[2]) and x[3] == y[3]):
-                #         print(True)
-                #     else:
-                #         print(False)
-
-                ################################################
-                # spliceai scatter plot
-                ################################################
-                # plot_scatter_plot(spliceai_d_label, spliceai_d_pred, spliceai_a_label, spliceai_a_pred, figure_root+"spliceai.png")
-                # # plot_min_linear_plot(spliceai_d_label, spliceai_d_pred, spliceai_a_label, spliceai_a_pred, figure_root+"spliceai_1d.png")
-                # # plot_scatter_plot(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_label_prob, spliceai_N_a_pred_prob, figure_root+"spliceai_N.png")
-                # # # plot_min_linear_plot(spliceai_N_d_label_prob, spliceai_N_d_pred_prob, spliceai_N_a_label_prob, spliceai_N_a_pred_prob, figure_root+"spliceai_N_1d.png")
-
-                # # plot_scatter_plot(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_label_prob, splam_S_a_pred_prob, figure_root+"splam_shuffle.png")
-                # # # plot_min_linear_plot(splam_S_d_label_prob, splam_S_d_pred_prob, splam_S_a_label_prob, splam_S_a_pred_prob, figure_root+"splam_shuffle_1d.png")
-
-                # plot_scatter_plot(splam_d_pred, splam_d_pred, splam_noS_a_label_prob, splam_a_pred, figure_root+"splam_noshuffle.png")
-                # # plot_min_linear_plot(splam_d_pred, splam_d_pred, splam_noS_a_label_prob, splam_a_pred, figure_root+"splam_noshuffle_1d.png")
-
-
 if __name__ == "__main__":
     main()
 
