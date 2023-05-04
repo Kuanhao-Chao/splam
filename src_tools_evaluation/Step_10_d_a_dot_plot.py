@@ -124,7 +124,7 @@ def main():
                 os.makedirs(target_figure_root+"tsv_"+str(threshold)+"/", exist_ok=True)
                 
 
-                with open("./spliceai_result/spliceai.da."+TARGET+".merged.pkl", "rb") as fr:
+                with open("./spliceai_result/spliceai.da."+TARGET+".merged.BOTH.pkl", "rb") as fr:
                     spliceai_d_label = pickle.load(fr)
                     spliceai_d_pred = pickle.load(fr)
                     spliceai_a_label = pickle.load(fr)
@@ -177,7 +177,7 @@ def main():
 
                 
 
-                with open("./splam_result/"+SPLAM_VERSION+"/splam.da.noshuffle.merged.pkl",'rb') as f:
+                with open("./splam_result/"+SPLAM_VERSION+"/splam.da.noshuffle.merged.BOTH.pkl",'rb') as f:
                     splam_d_label = pickle.load(f)
                     splam_d_pred = pickle.load(f)
                     splam_a_label = pickle.load(f)
