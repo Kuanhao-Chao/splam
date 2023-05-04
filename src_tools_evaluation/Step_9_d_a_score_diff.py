@@ -33,7 +33,7 @@ def main():
 
     MANE_OR_ALTS = "ALTS"
 
-    with open("./spliceai_result/spliceai.da.N.merged.pkl", "rb") as fr:
+    with open("./spliceai_result/spliceai.da.N.merged.BOTH.pkl", "rb") as fr:
         spliceai_N_d_label = pickle.load(fr)
         spliceai_N_d_pred = pickle.load(fr)
         spliceai_N_a_label = pickle.load(fr)
@@ -53,7 +53,7 @@ def main():
         print("\tspliceai_N_a_pred: ", spliceai_N_a_pred)
         print("")
 
-    with open("./spliceai_result/spliceai.da.noN.merged.pkl", "rb") as fr:
+    with open("./spliceai_result/spliceai.da.noN.merged.BOTH.pkl", "rb") as fr:
         spliceai_noN_d_label = pickle.load(fr)
         spliceai_noN_d_pred = pickle.load(fr)
         spliceai_noN_a_label = pickle.load(fr)
@@ -99,7 +99,7 @@ def main():
                 sns.kdeplot(score_noN_diff, shade=True, clip = (0.1, 1.0), alpha=0.5, color="#DD8452")
 
 
-            with open("./splam_result/"+SPLAM_VERSION+"/splam.da.noshuffle.merged.pkl",'rb') as f:
+            with open("./splam_result/"+SPLAM_VERSION+"/splam.da.noshuffle.merged.BOTH.pkl",'rb') as f:
                 splam_d_label = pickle.load(f)
                 splam_d_pred = pickle.load(f)
                 splam_a_label = pickle.load(f)

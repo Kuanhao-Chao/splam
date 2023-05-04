@@ -53,7 +53,7 @@ for TYPE in ['N', "noN"]:
     print(">> SpliceAI, TYPE: ", TYPE)
     # spliceai
 
-    with open("./spliceai_result/spliceai.da."+TYPE+".merged.pkl", "rb") as fr:
+    with open("./spliceai_result/spliceai.da."+TYPE+".merged.BOTH.pkl", "rb") as fr:
         d_label = pickle.load(fr)
         d_pred = pickle.load(fr)
         a_label = pickle.load(fr)
@@ -79,7 +79,7 @@ for MODEL_VERSION in ['SPLAM_v11', "SPLAM_v12"]:
     # splam
     print(">> output_file\t: ", output_file)
 
-    with open("./splam_result/"+MODEL_VERSION+"/splam.da."+TYPE+".merged.pkl", "rb") as fr:
+    with open("./splam_result/"+MODEL_VERSION+"/splam.da."+TYPE+".merged.BOTH.pkl", "rb") as fr:
         d_label = pickle.load(fr)
         d_pred = pickle.load(fr)
         a_label = pickle.load(fr)
