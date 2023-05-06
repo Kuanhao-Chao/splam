@@ -74,7 +74,7 @@ def main():
 
     MANE_OR_ALTS = "ALTS"
     threshold_min = 0.001
-    threshold_max = 0.5
+    threshold_max = 0.999
     THRESHOLDS= np.arange(threshold_min, threshold_max, 0.001)
 
 
@@ -283,13 +283,13 @@ def main():
                 plt.ylabel("Number of splice sites")
 
                 plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_TP, label="SPLAM_TP__SpliceAI_FN")
-                plt.plot(THRESHOLDS_PLT, spliceai_FP__splam_TN, label="SPLAM_TN__SpliceAI_FP")
+                # plt.plot(THRESHOLDS_PLT, spliceai_FP__splam_TN, label="SPLAM_TN__SpliceAI_FP")
 
                 plt.plot(THRESHOLDS_PLT, spliceai_TP__splam_FN, label="SPLAM_FN__SpliceAI_TP")
-                plt.plot(THRESHOLDS_PLT, spliceai_TN__splam_FP, label="SPLAM_FP__SpliceAI_TN")
+                # plt.plot(THRESHOLDS_PLT, spliceai_TN__splam_FP, label="SPLAM_FP__SpliceAI_TN")
 
-                plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_FN, label="SPLAM_FN__SpliceAI_FN")
-                plt.plot(THRESHOLDS_PLT, spliceai_FP__splam_FP, label="SPLAM_FP__SpliceAI_FP")
+                # plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_FN, label="SPLAM_FN__SpliceAI_FN")
+                # plt.plot(THRESHOLDS_PLT, spliceai_FP__splam_FP, label="SPLAM_FP__SpliceAI_FP")
                 
                 plt.axvline(x = splam_threshold, linestyle ='--', color = 'r', label = 'SPLAM_threshold ('+str(splam_threshold)+')')
                 plt.axvline(x = spliceai_threshold, linestyle ='--', color = 'b', label = 'SpliceAI_threshold('+str(spliceai_threshold)+')')

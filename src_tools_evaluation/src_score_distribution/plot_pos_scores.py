@@ -8,14 +8,14 @@ import os
 def main():
     # for TOOL in ["SPLAM", "SPLICEAI"]:
     COLORS = ["green", "blue"]
-    TOOLS = ["SPLAM", "SpliceAI-10k", "SpliceAI-10k-Ns"]
+    TOOLS = ["SPLAM", "SpliceAI-10k"]#, "SpliceAI-10k-Ns"]
     TARGETS = ["Donor", "Acceptor"]
     output_files = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"] 
     FIGURE_ROOT = "Figures/"
     for SPLAM_VERSION in ["SPLAM_v11", "SPLAM_v12"]:
         os.makedirs(FIGURE_ROOT+SPLAM_VERSION+"/", exist_ok=True)
         for output_file in output_files:
-            fig = plt.figure(figsize=(8, 4))
+            fig = plt.figure(figsize=(6, 4))
             for TARGET in TARGETS:
                 HANDELS = []
                 for INDEX in range(len(TOOLS)):

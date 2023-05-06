@@ -117,14 +117,14 @@ def plot_DT_plot(true_labels, predict_probabilities, SPLAM_VERSION, target):
     precisions = []
     recalls = []
     f1_scores = []
-    queue_rates = []
+    # queue_rates = []
 
     for threshold in thresholds:
         precision, recall, f1_score, queue_rate = calculate_metrics(threshold, true_labels, predict_probabilities)
         precisions.append(precision)
         recalls.append(recall)
         f1_scores.append(f1_score)
-        queue_rates.append(queue_rate)
+        # queue_rates.append(queue_rate)
 
     print(f1_scores)
     # find the optimal threshold based on F1 score
@@ -133,10 +133,9 @@ def plot_DT_plot(true_labels, predict_probabilities, SPLAM_VERSION, target):
     optimal_precision = precisions[optimal_index]
     optimal_recall = recalls[optimal_index]
     optimal_f1_score = f1_scores[optimal_index]
-    optimal_queue_rate = queue_rates[optimal_index]
+    # optimal_queue_rate = queue_rates[optimal_index]
     print(f'Optimal threshold: {optimal_threshold}')
-    print(f'optimal_threshold: {optimal_threshold:.4f}, Precision: {optimal_precision:.2f}, Recall: {optimal_recall:.2f}, F1 score: {optimal_f1_score:.2f}')
-
+    print(f'Optimal_threshold: {optimal_threshold:.4f}, Precision: {optimal_precision:.2f}, Recall: {optimal_recall:.2f}, F1 score: {optimal_f1_score:.2f}')
 
     # plot the DT plot
     plt.figure(figsize=(9, 3.5))
@@ -147,8 +146,10 @@ def plot_DT_plot(true_labels, predict_probabilities, SPLAM_VERSION, target):
     plt.axvline(x=optimal_threshold, linestyle='--', color='r', label='Optimal Threshold (maximum F1 score)')
     plt.xlabel('Threshold', size = 13)
     plt.ylabel('Performance Metrics', size = 13)
+    plt.xlim(-0.02, 1.02)
+    plt.ylim(0.0, 1.0)
     # plt.legend(loc='upper right', ncol=5, bbox_to_anchor=(1.0, 1.4))
-    plt.title(f'optimal_threshold: {optimal_threshold:.4f}, Precision: {optimal_precision:.2f}, Recall: {optimal_recall:.2f}, F1 score: {optimal_f1_score:.2f}')
+    plt.title(f'Optimal_threshold: {optimal_threshold:.4f}, Precision: {optimal_precision:.2f}, Recall: {optimal_recall:.2f}, F1 score: {optimal_f1_score:.2f}')
     plt.xticks(size = 10)
     plt.yticks(size = 10)
     plt.tight_layout()
