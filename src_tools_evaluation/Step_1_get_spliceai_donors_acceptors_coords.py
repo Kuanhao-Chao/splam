@@ -35,7 +35,7 @@ def main():
     for output_file in output_files:
         os.makedirs(output_file, exist_ok=True)
 
-    nums = [7156, 4459, 2697, 12000, 12000]
+    nums = [12000, 12000, 12000, 12000, 12000]
 
     COUNTER = 0
     global_df = pd.DataFrame(columns = [0, 1, 2, 3, 4, 5])
