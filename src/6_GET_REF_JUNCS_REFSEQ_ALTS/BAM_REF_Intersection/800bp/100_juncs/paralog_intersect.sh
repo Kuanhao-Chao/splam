@@ -1,1 +1,1 @@
-bedtools intersect -v -a d_a.bed -b ../../../../../Dataset/paralog.bed > d_a_paralog_removed.bed
+bedtools intersect -v -a d_a.bed -b ../../../../../src_tools_evaluation/remove_paralogs/paralogs.bed > d_a_paralog_removed.bed
