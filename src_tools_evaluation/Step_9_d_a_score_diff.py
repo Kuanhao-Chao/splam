@@ -71,7 +71,7 @@ def main():
 
     plt.figure(figsize=(9, 4))
     for type in ["filter", "nofilter"]:
-        for SPLAM_VERSION in ["SPLAM_v11", "SPLAM_v12"]:
+        for SPLAM_VERSION in ["SPLAM_v11"]:#, "SPLAM_v12"]:
             os.makedirs("./IMG/"+SPLAM_VERSION+"/d_a_diff_plot/", exist_ok=True)
             #####################################
             # Creating directories for visualization.

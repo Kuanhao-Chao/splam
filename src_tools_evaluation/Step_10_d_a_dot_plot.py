@@ -109,7 +109,7 @@ def main():
 
 
 
-        for SPLAM_VERSION in ["SPLAM_v11", "SPLAM_v12"]:
+        for SPLAM_VERSION in ["SPLAM_v11"]:#, "SPLAM_v12"]:
             #####################################
             # Creating directories for visualization.
             #####################################

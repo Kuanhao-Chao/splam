@@ -13,17 +13,13 @@ def main():
     
     for MANE_OR_ALTS in ["pos_MANE", "pos_ALTS", "BOTH"]:
         TARGETS = [MANE_OR_ALTS, "neg_1", "neg_random"]
-        SUBSETS = [2500, 10000, 10000]
+        SUBSETS = [3000, 12000, 12000]
 
         if MANE_OR_ALTS == "BOTH":
             TARGETS = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
-            SUBSETS = [2500, 2500, 10000, 10000]
+            SUBSETS = [3000, 3000, 12000, 12000]
 
-        # SUBSETS = [12000, 12000, 12000, 12000]
-        # 4459, 2697
-
-        for SPLAM_VERSION in ["SPLAM_v11", "SPLAM_v12"]:
-
+        for SPLAM_VERSION in ["SPLAM_v11"]:#, "SPLAM_v12"]:
             a_label = []
             d_label = []    
             a_pred = []
