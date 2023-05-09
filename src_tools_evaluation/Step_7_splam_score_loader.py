@@ -38,7 +38,7 @@ def print_topl_statistics(y_true, y_pred, topl_csv):
 
 def main(argv):
 
-    MODEL_VERSION = "SPLAM_v12"
+    MODEL_VERSION = "SPLAM_v11"
     TYPE = "noshuffle"
 
     output_files = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]

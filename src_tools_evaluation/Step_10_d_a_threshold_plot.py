@@ -73,19 +73,19 @@ def plot_min_linear_plot(label_d, score_d, label_a, score_a, filename):
 def main():
 
     MANE_OR_ALTS = "ALTS"
-    threshold_min = 0.001
-    threshold_max = 0.999
+    threshold_min = 0.0001
+    threshold_max = 0.9999
     THRESHOLDS= np.arange(threshold_min, threshold_max, 0.001)
 
 
-    splam_threshold = 0.0327
+    splam_threshold = 0.0707
     for TARGET in ["noN", "N"]:
         if TARGET == "noN":
             spliceai_threshold = 0.0003
         elif TARGET == "N":
-            spliceai_threshold = 0.0072 
+            spliceai_threshold = 0.0070
 
-        for SPLAM_VERSION in ["SPLAM_v11", "SPLAM_v12"]:
+        for SPLAM_VERSION in ["SPLAM_v11"]:#, "SPLAM_v12"]:
 
             for x_axis_rep in ["log", "no_log"]:
                 # spliceai_TP__splam_TP_idices
@@ -140,7 +140,7 @@ def main():
 
                     figure_root = "./IMG/"+SPLAM_VERSION+"/scatter_plot/"
                     target_figure_root = figure_root+TARGET+"/"
-                    os.makedirs(target_figure_root+"tsv_"+str(threshold)+"/", exist_ok=True)
+                    # os.makedirs(target_figure_root+"tsv_"+str(threshold)+"/", exist_ok=True)
                     
 
                     with open("./spliceai_result/spliceai.da."+TARGET+".merged.BOTH.pkl", "rb") as fr:

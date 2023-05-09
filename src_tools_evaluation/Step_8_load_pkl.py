@@ -27,7 +27,7 @@ for output_file in output_files:
     
     print("\n")
 
-    for MODEL_VERSION in ['SPLAM_v11', "SPLAM_v12"]:
+    for MODEL_VERSION in ['SPLAM_v11']:#, "SPLAM_v12"]:
         print(">> SPLAM, MODEL_VERSION: ", MODEL_VERSION)
         # splam
         TYPE = "noshuffle"
