@@ -27,7 +27,7 @@ import platform
 
 warnings.filterwarnings("ignore")
 
-MODEL_VERSION = "SPLAM_v12/"
+MODEL_VERSION = "SPLAM_v11/"
 JUNC_THRESHOLD = 0.1
 
 def parse_junction(name):
