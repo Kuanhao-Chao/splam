@@ -80,7 +80,7 @@ int usage(){
 
     if (COMMAND_MODE == J_EXTRACT) {
         GMessage(
-        "\033[1mUsage\033[0m:   splam j-extract [arguments] BAM-file(s) \n\n");
+        "\033[1mUsage\033[0m:   splam j-extract [arguments] BAM-file(s) \n\n\n");
         GMessage(
         "\033[1m\033[91mRequired argument:\033[0m\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
@@ -91,29 +91,33 @@ int usage(){
         );
     } else if (COMMAND_MODE == PREDICT) {
         GMessage(
-        "\033[1mUsage\033[0m:   splam predict [arguments] Junction-BED-file \n\n");
+        "\033[1mUsage\033[0m:   splam predict [arguments] BAM-file(s) | Junction-BED-file\n\n"
+        "\t* BAM-file(s):\t\tThe default mode. Input is the path to a BAM file or a list of BAM files.\n"
+        "\t* Junction-BED-file:\tThe junction mode running with [-J / --junction]. Input is the path to a list of junctions. We highly recommend inputting the BED file generated from the \"j-extract\" step (BED).\n\n\n");
+
         GMessage(
         "\033[1m\033[91mRequired argument:\033[0m\n"
-        // "\t-j / --junction\t\tPath to the splice junctions file (BED)\n"
         "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
-        "\t-j / --junction\t\tPath to a list of junctions. We highly recommend inputting the BED file generated from the \"j-extract\" step (BED).\n"
         "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
-        "\t-o / --output\t\tPath to the output directory\n\n"
-        );
+        "\t-o / --output\t\tPath to the output directory\n\n");
+
+        GMessage(
+        "\033[1m\033[94mOptional argument:\033[0m\n"
+        "\t-J / --junction:\tRun the junction mode taking a junction BED file as input (input: Junction-BED-file).\n");
     } else if (COMMAND_MODE == CLEAN) {
         GMessage(
-        "\033[1mUsage\033[0m:   splam clean [arguments] BAM-file(s) \n\n");
+        "\033[1mUsage\033[0m:   splam clean [arguments] BAM-file(s) \n\n\n");
         GMessage(
         "\033[1m\033[91mRequired argument:\033[0m\n"
         // "\t-b / --bam\t\tPath to the alignment file (BAM)\n"
         "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
-        "\t-s / --score\t\tPath to a list of junctions with scores (BED).\n"
+        // "\t-s / --score\t\tPath to a list of junctions with scores (BED).\n"
         "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
         );
     } else if (COMMAND_MODE == ALL) {
         GMessage(
-        "\033[1mUsage\033[0m:   splam all [arguments] BAM-file(s) \n\n");
+        "\033[1mUsage\033[0m:   splam all [arguments] BAM-file(s) \n\n\n");
         GMessage(
         "\033[1m\033[91mRequired argument:\033[0m\n"
         "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
@@ -130,13 +134,11 @@ int usage(){
         GMessage(
         "\033[1mCommands\033[0m:\n");
         GMessage("        j-extract    : extract junctions from a BAM file / a list of BAM files.\n");
-        GMessage("        predict      : score junctions\n");
-        GMessage("        clean        : clean up a BAM file\n");
-        GMessage("        nh-update    : update NH tags in the BAM file.\n");
-        GMessage("        all          : run all steps: [j-extract], [predict], [clean], [nh-update] \n");
+        GMessage("        predict      : score junctions from (1) a BAM file / a list of BAM files or (2) a junction BED file.\n");
+        GMessage("        clean        : run [j-extract], [predict] steps, clean up the BAM file, and update it's NH tag.\n");
+        // GMessage("        nh-update    : update NH tags in the BAM file.\n");
+        // GMessage("        all          : run all steps: [j-extract], [predict], [clean], [nh-update] \n");
     }
-
-
 //   std::cout << helpMsg.str();
   return 0;
 }
