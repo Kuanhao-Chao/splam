@@ -22,17 +22,11 @@ GStr splamJExtract() {
         GMessage("###########################################\n");
     }
     
-    // This is normal workflow for writing out all junctions.
-    // outfile_multimapped = new GSamWriter(outfname_multimapped, in_records.header(), GSamFile_BAM);
-    
     GStr outfname_junc_bed = out_dir + "/junction.bed";
-    // outfile_spliced = new GSamWriter(outfname_spliced, in_records.header(), GSamFile_BAM);
 
     if (verbose) {
         GMessage("[INFO] Extracting junctions ...\n");
     }
-    // GMessage("[INFO] Output directory\t\t: %s\n", out_dir.chars());
-    // GMessage("[INFO] Output Junction file\t: %s\n", outfname_junc_bed.chars());
 
     /****************************
     * Creating junction bed files.
@@ -73,8 +67,6 @@ GStr splamJExtract() {
             int hi=0;
             int gseq_id=lastref_id;  //current chr id
             bool new_bundle=false;
-            //delete brec;
-
 
             /***********************************
              * (1) Assessing the current alignment. See if it's good
@@ -212,7 +204,6 @@ GStr splamJExtract() {
         if (verbose) {
             GMessage("[INFO] Processing BAM file ...\n");
         }
-        // GMessage("\t\tBefore Hash map size: %d\n", read_hashmap.size());
         while ((irec=in_records.next())!=NULL) {
             ALN_COUNT += 1;
             brec=irec->brec;
@@ -232,7 +223,9 @@ GStr splamJExtract() {
             int accYC = 0;
             accYC = brec->tag_int("YC", 1);
             if (joutf && brec->exons.Count()>1) {
-                // Spliced reads
+                /*************************
+                 * Spliced reads
+                *************************/
                 addJunction(*brec, accYC, prev_refname);
                 if (COMMAND_MODE == CLEAN) {
                     int new_nh = brec->tag_int("NH", 0);
@@ -242,12 +235,12 @@ GStr splamJExtract() {
                     } else if (new_nh > 1) {
                         outfile_s_multi_map->write(brec);
                         ALN_COUNT_SPLICED_MULTI += 1;
-                    // } else {
-                    //     GMessage("\t\t brec->name(): %s !!!\n", brec->name());
-                    //     GMessage("\t\t NH tag is zero !!!: %d\n", new_nh);
                     }
                 }
             } else {
+                /*************************
+                 * Non-spliced reads
+                *************************/
                 // Non-spliced reads.
                 // Not spliced => check their NH tags!
                 // if (brec->isUnmapped()) continue;
@@ -259,9 +252,6 @@ GStr splamJExtract() {
                     } else if (new_nh > 1){
                         outfile_ns_multi_map->write(brec);
                         ALN_COUNT_NSPLICED_MULTI += 1;
-                    // } else {
-                    //     GMessage("\t\t brec->name(): %s !!!\n", brec->name());
-                    //     GMessage("\t\t NH tag is zero !!!: %d\n", new_nh);
                     }
                     ALN_COUNT_GOOD += 1;
                 }
@@ -275,19 +265,14 @@ GStr splamJExtract() {
     flushJuncs(joutf);
     fclose(joutf);
     junctions.setCapacity(128);
-    // delete outfile_spliced;    
-
-    // delete outfile_cleaned;
     if (COMMAND_MODE == CLEAN) {
         delete outfile_ns_multi_map;
         delete outfile_s_uniq_map;
         delete outfile_s_multi_map;
         delete outfile_discard_unpair;
     }
-
     return outfname_junc_bed;
 }
-
 
 
 
@@ -321,7 +306,6 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
             accYC = brec_bd.tag_int("YC", 1);
             // GMessage("Add junction: %d!\n", accYC);
             addJunction(brec_bd, accYC, brec_bd.refName());
-            // outfile_spliced->write(brec);
             ALN_COUNT_SPLICED++;
         }
 
