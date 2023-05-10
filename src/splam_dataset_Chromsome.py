@@ -31,8 +31,8 @@ class myDataset(Dataset):
             neg_1_f = "../src_tools_evaluation/dataset/neg_1/splam/splam.juncs.seq.fa"
             neg_random_f = "../src_tools_evaluation/dataset/neg_random/splam/splam.juncs.seq.fa"
 
-        CONSTANT_SIZE = 5000
-        CONSTANT_SIZE_NEG = 5000
+        # CONSTANT_SIZE = 5000
+        # CONSTANT_SIZE_NEG = 5000
         # EVAL_CONST = 10000
         #################################
         ## Processing 'POSITIVE' samples
@@ -67,8 +67,8 @@ class myDataset(Dataset):
                     elif type == "test":
                         if pidx >= 3000:
                             break
-                    if pidx > CONSTANT_SIZE:
-                        break
+                    # if pidx > CONSTANT_SIZE:
+                    #     break
 
             print("pidx: ", pidx)
 
