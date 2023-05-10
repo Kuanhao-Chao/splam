@@ -30,7 +30,6 @@ void processOptions(int argc, char* argv[]);
 void processOptionsJExtract(GArgs& args);
 void processOptionsPredict(GArgs& args);
 void processOptionsClean(GArgs& args);
-void processOptionsAll(GArgs& args);
 void processOptionsNHUpdate(GArgs& args);
 
 void optionsMaxSplice(GArgs& args);
@@ -38,8 +37,8 @@ void optionsBundleGap(GArgs& args);
 void optionsModel(GArgs& args);
 void optionsRef(GArgs& args);
 void optionsOutput(GArgs& args);
+void checkJunction(GArgs& args);
 void optionsJunction(GArgs& args);
-void optionsScore(GArgs& args);
 
 CommandMode COMMAND_MODE = UNSET;
 GStr command_str;
@@ -55,6 +54,7 @@ GStr infname_NH_tag("");
 GStr out_dir;
 
 bool verbose = false;
+bool predict_junc_mode = false;
 TInputFiles in_records;
 TInputRecord* irec=NULL;
 
@@ -182,17 +182,11 @@ int main(int argc, char* argv[]) {
         infname_juncbed = splamJExtract();
         GMessage("\n[INFO] Total number of junctions\t:%d\n", JUNC_COUNT);
     } else if (COMMAND_MODE == PREDICT) {
+        if (!predict_junc_mode) {
+            infname_juncbed = splamJExtract();
+        }
         infname_scorebed = splamPredict();
-    // } else if (COMMAND_MODE == CLEAN) {
-    //     infname_NH_tag = splamClean();
-    //     splamNHUpdate();
-    //     GMessage("\n\n[INFO] Total number of alignments\t:%d\n", ALN_COUNT);
-    //     GMessage("[INFO]     spliced alignments\t\t:%d\n", ALN_COUNT_SPLICED);
-    //     GMessage("[INFO]     non-spliced alignments\t:%d\n", ALN_COUNT_NSPLICED);
-    //     GMessage("[INFO] Number of removed alignments\t:%d\n", ALN_COUNT_BAD);
-    //     GMessage("[INFO] Number of kept alignments\t:%d\n", ALN_COUNT_GOOD);
-        
-    } else if (COMMAND_MODE == ALL) {
+    } else if (COMMAND_MODE == CLEAN) {
         infname_juncbed = splamJExtract();
         infname_scorebed = splamPredict();
         infname_NH_tag = splamClean();
@@ -249,7 +243,7 @@ int main(int argc, char* argv[]) {
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;model=;junction=;output=;score=;max-splice=;bundle-gap=;hvcVSPo:N:Q:m:j:r:s:M:g:");
+    GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;junction;model=;output=;score=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -269,7 +263,7 @@ void processOptions(int argc, char* argv[]) {
     }
 
     if (args.getOpt('c') || args.getOpt("cite")) {
-        fprintf(stdout,"%s\n", "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, SPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM");
+        fprintf(stdout,"%s\n", "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, \033[1m\x1B[3mSPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments\x1B[0m\033[0m, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM");
         exit(0);
     }
 
@@ -316,8 +310,6 @@ void processOptions(int argc, char* argv[]) {
         processOptionsPredict(args);
     } else if (COMMAND_MODE == CLEAN) {
         processOptionsClean(args);
-    } else if (COMMAND_MODE == ALL) {
-        processOptionsAll(args);
     }
 
     GMessage(">>  command_str      : %s\n", command_str.chars());
@@ -342,17 +334,17 @@ void processOptions(int argc, char* argv[]) {
     }
     args.nextNonOpt(); 
 
-    if (COMMAND_MODE == J_EXTRACT || COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+    if (!predict_junc_mode) {
+        GMessage("Inside processing BAM file");
         const char* ifn=NULL;
         while ( (ifn=args.nextNonOpt())!=NULL) {
             //input alignment files
             std::string absolute_ifn = get_full_path(ifn);
             in_records.addFile(absolute_ifn.c_str());
         }
-    } else if (COMMAND_MODE == PREDICT) {
-        infname_juncbed = args.nextNonOpt(); 
+    } else if (predict_junc_mode && COMMAND_MODE == PREDICT) {
+        checkJunction(args);
     }
-    GMessage(">> NEXT!! infname_juncbed   : %s\n", infname_juncbed.chars());
 
     // } 
     // else if (COMMAND_MODE == PREDICT) {
@@ -372,7 +364,6 @@ void processOptions(int argc, char* argv[]) {
     // outfile_s_uniq_map = new GSamWriter(outfname_s_uniq_map, in_records.header(), GSamFile_BAM);
     // outfile_s_multi_map = new GSamWriter(outfname_s_multi_map, in_records.header(), GSamFile_BAM);
     // outfile_discard_unpair = new GSamWriter(outfname_discard_unpair, in_records.header(), GSamFile_BAM);
-
 }
 
 
@@ -385,20 +376,13 @@ void processOptionsJExtract(GArgs& args) {
 
 void processOptionsPredict(GArgs& args) {
     optionsModel(args);
-    // optionsJunction(args);
     optionsRef(args);
     optionsOutput(args);
+    optionsJunction(args);
 }
 
 
 void processOptionsClean(GArgs& args) {
-    optionsModel(args);
-    optionsRef(args);
-    optionsScore(args);
-    optionsOutput(args);
-}
-
-void processOptionsAll(GArgs& args) {
     optionsModel(args);
     optionsRef(args);
     optionsOutput(args);
@@ -494,22 +478,22 @@ void optionsOutput(GArgs& args) {
 
 
 void optionsJunction(GArgs& args) {
-    // -j / --junction
-    infname_juncbed = args.getOpt('j');
+    // -J / --junction
+    predict_junc_mode = (args.getOpt("junction")!=NULL || args.getOpt('J')!=NULL);
+    if (predict_junc_mode) {
+        GMessage(">>  SPLAM predict [Junction mode]\n");
+    } else {
+        GMessage(">>  SPLAM predict [Default mode]\n");
+    }
+}
+
+
+void checkJunction(GArgs& args) {
+    infname_juncbed = args.nextNonOpt(); 
     if (infname_juncbed.is_empty()) {
-        infname_juncbed=args.getOpt("junction");
-        if (infname_juncbed.is_empty()) {
-            usage();
-            GMessage("\n[ERROR] junction bed file must be provided (-j / --junction)!\n");
-            exit(1);
-        } else {
-            if (fileExists(infname_juncbed.chars())>1) {
-                // guided=true;
-            } else {
-                GError("[ERROR] junction bed file (%s) not found.\n",
-                    infname_juncbed.chars());
-            }
-        }
+        usage();
+        GMessage("\n[ERROR] junction input bed file must be provided!\n");
+        exit(1);
     } else {
         if (fileExists(infname_juncbed.chars())>1) {
             // guided=true;
@@ -521,29 +505,29 @@ void optionsJunction(GArgs& args) {
 }
 
 
-void optionsScore(GArgs& args) {
-    // -s / --score
-    infname_scorebed = args.getOpt('s');
-    if (infname_scorebed.is_empty()) {
-        infname_scorebed=args.getOpt("score");
-        if (infname_scorebed.is_empty()) {
-            usage();
-            GMessage("\n[ERROR] junction score bed file must be provided (-s / --score)!\n");
-            exit(1);
-        } else {
-            if (fileExists(infname_scorebed.chars())>1) {
-                // guided=true;
-            } else {
-                GError("[ERROR] junction score bed file (%s) not found.\n",
-                    infname_scorebed.chars());
-            }
-        }
-    } else {
-        if (fileExists(infname_scorebed.chars())>1) {
-            // guided=true;
-        } else {
-            GError("[ERROR] junction score bed file (%s) not found.\n",
-                infname_scorebed.chars());
-        }
-    }
-}
+// void optionsScore(GArgs& args) {
+//     // -s / --score
+//     infname_scorebed = args.getOpt('s');
+//     if (infname_scorebed.is_empty()) {
+//         infname_scorebed=args.getOpt("score");
+//         if (infname_scorebed.is_empty()) {
+//             usage();
+//             GMessage("\n[ERROR] junction score bed file must be provided (-s / --score)!\n");
+//             exit(1);
+//         } else {
+//             if (fileExists(infname_scorebed.chars())>1) {
+//                 // guided=true;
+//             } else {
+//                 GError("[ERROR] junction score bed file (%s) not found.\n",
+//                     infname_scorebed.chars());
+//             }
+//         }
+//     } else {
+//         if (fileExists(infname_scorebed.chars())>1) {
+//             // guided=true;
+//         } else {
+//             GError("[ERROR] junction score bed file (%s) not found.\n",
+//                 infname_scorebed.chars());
+//         }
+//     }
+// }
