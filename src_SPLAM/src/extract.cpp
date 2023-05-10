@@ -234,7 +234,7 @@ GStr splamJExtract() {
             if (joutf && brec->exons.Count()>1) {
                 // Spliced reads
                 addJunction(*brec, accYC, prev_refname);
-                if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+                if (COMMAND_MODE == CLEAN) {
                     int new_nh = brec->tag_int("NH", 0);
                     if (new_nh <= 1) {
                         outfile_s_uniq_map->write(brec);
@@ -251,7 +251,7 @@ GStr splamJExtract() {
                 // Non-spliced reads.
                 // Not spliced => check their NH tags!
                 // if (brec->isUnmapped()) continue;
-                if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+                if (COMMAND_MODE == CLEAN) {
                     int new_nh = brec->tag_int("NH", 0);
                     if (new_nh <= 1) {
                         outfile_cleaned->write(brec);
@@ -278,7 +278,7 @@ GStr splamJExtract() {
     // delete outfile_spliced;    
 
     // delete outfile_cleaned;
-    if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+    if (COMMAND_MODE == CLEAN) {
         delete outfile_ns_multi_map;
         delete outfile_s_uniq_map;
         delete outfile_s_multi_map;
@@ -370,7 +370,7 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
         // GMessage("\tbrec_bd_refName   %s\n", brec_bd.name());
         // GMessage("\tbrec_bd_p_refName %s\n", brec_bd_p.name());
 
-        if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+        if (COMMAND_MODE == CLEAN) {
             if ( (!brec_bd.hasIntrons() && !brec_bd_p.hasIntrons()) && (brec_bd_tag==1 || brec_bd_p_tag==1)) {
                 // a, b nonspliced, NH == 1
                 outfile_cleaned->write(&brec_bd);

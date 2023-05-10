@@ -227,26 +227,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
         //     processRead(currentstart, currentend, readlist, *bundle, hashread, alndata);
         // } //for each read alignment
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    } else if (COMMAND_MODE == ALL) {
         
         if (g_paired_removal) {
             /*********************************************
