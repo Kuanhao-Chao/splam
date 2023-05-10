@@ -80,30 +80,31 @@ int usage(){
 
     if (COMMAND_MODE == J_EXTRACT) {
         GMessage(
-        "Usage:  splam j-extract [arguments] BAM-file(s) \n\n");
+        "\033[1mUsage\033[0m:   splam j-extract [arguments] BAM-file(s) \n\n");
         GMessage(
-        "Required argument:\n"
+        "\033[1m\033[91mRequired argument:\033[0m\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
-        "Optional argument:\n"
-        "\t-t / --threshold:\tThreshold of the number of alignments supporting a junction. Junctions are distributed into two files \"junctions_above.bed\" and \"junctions_below.bed\".\n\n"
+        "\033[1m\033[94mOptional argument:\033[0m\n"
+        "\t-M / --max-splice:\tThe maximum intron length for the splice site.\n"
+        "\t-g / --bundle-gap:\tMinimum locus gap separation value. Reads that are mapped closer than this distance are merged together in the same processing bundle. Default: 100 (bp).\n\n"        
+        // "\t-t / --threshold:\tThreshold of the number of alignments supporting a junction. Splice sites having less then the threshold are removed. Default: 100 (bp)\n\n"
         );
-
     } else if (COMMAND_MODE == PREDICT) {
         GMessage(
-        "Usage:  splam predict [arguments] Junction-BED-file \n\n");
+        "\033[1mUsage\033[0m:   splam predict [arguments] Junction-BED-file \n\n");
         GMessage(
-        "Required argument:\n"
+        "\033[1m\033[91mRequired argument:\033[0m\n"
         // "\t-j / --junction\t\tPath to the splice junctions file (BED)\n"
         "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
-        "\t-j / --junction\t\tPath to a list of junctions (BED).\n"
+        "\t-j / --junction\t\tPath to a list of junctions. We highly recommend inputting the BED file generated from the \"j-extract\" step (BED).\n"
         "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
         );
     } else if (COMMAND_MODE == CLEAN) {
         GMessage(
-        "Usage:  splam clean [arguments] BAM-file(s) \n\n");
+        "\033[1mUsage\033[0m:   splam clean [arguments] BAM-file(s) \n\n");
         GMessage(
-        "Required argument:\n"
+        "\033[1m\033[91mRequired argument:\033[0m\n"
         // "\t-b / --bam\t\tPath to the alignment file (BAM)\n"
         "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
         "\t-s / --score\t\tPath to a list of junctions with scores (BED).\n"
@@ -112,25 +113,27 @@ int usage(){
         );
     } else if (COMMAND_MODE == ALL) {
         GMessage(
-        "Usage:  splam all [arguments] BAM-file(s) \n\n");
+        "\033[1mUsage\033[0m:   splam all [arguments] BAM-file(s) \n\n");
         GMessage(
-        "Required argument:\n"
+        "\033[1m\033[91mRequired argument:\033[0m\n"
         "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
         "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
         );
     } else {
         GMessage(
-        "Usage:  splam -h|--help or \n"
+        "\033[1mUsage\033[0m:\n"
+        "        splam -h|--help or \n"
         "        splam -v|--version or \n"
         "        splam -c|--cite or \n"
         "        splam <COMMAND> [-h | options]\n\n");
-        GMessage("Commands:\n");
-        GMessage("     j-extract    : extract junctions from a BAM file / a list of BAM files.\n");
-        GMessage("     predict      : score junctions\n");
-        GMessage("     clean        : clean up a BAM file\n");
-        GMessage("     nh-update    : update NH tags in the BAM file.\n");
-        GMessage("     all          : run all steps: [j-extract], [predict], [clean], [nh-update] \n");
+        GMessage(
+        "\033[1mCommands\033[0m:\n");
+        GMessage("        j-extract    : extract junctions from a BAM file / a list of BAM files.\n");
+        GMessage("        predict      : score junctions\n");
+        GMessage("        clean        : clean up a BAM file\n");
+        GMessage("        nh-update    : update NH tags in the BAM file.\n");
+        GMessage("        all          : run all steps: [j-extract], [predict], [clean], [nh-update] \n");
     }
 
 

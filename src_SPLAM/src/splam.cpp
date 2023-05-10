@@ -269,7 +269,7 @@ void processOptions(int argc, char* argv[]) {
     }
 
     if (args.getOpt('c') || args.getOpt("cite")) {
-        fprintf(stdout,"%s\n", "Paper to SPLAM");
+        fprintf(stdout,"%s\n", "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, SPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM");
         exit(0);
     }
 
@@ -340,16 +340,20 @@ void processOptions(int argc, char* argv[]) {
         GMessage("\n[ERROR] no input provided!\n");
         exit(1);
     }
-    infname_bam=args.nextNonOpt(); 
+    args.nextNonOpt(); 
 
-
-    // if (COMMAND_MODE == J_EXTRACT) {
-    const char* ifn=NULL;
-    while ( (ifn=args.nextNonOpt())!=NULL) {
-        //input alignment files
-        std::string absolute_ifn = get_full_path(ifn);
-        in_records.addFile(absolute_ifn.c_str());
+    if (COMMAND_MODE == J_EXTRACT || COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+        const char* ifn=NULL;
+        while ( (ifn=args.nextNonOpt())!=NULL) {
+            //input alignment files
+            std::string absolute_ifn = get_full_path(ifn);
+            in_records.addFile(absolute_ifn.c_str());
+        }
+    } else if (COMMAND_MODE == PREDICT) {
+        infname_juncbed = args.nextNonOpt(); 
     }
+    GMessage(">> NEXT!! infname_juncbed   : %s\n", infname_juncbed.chars());
+
     // } 
     // else if (COMMAND_MODE == PREDICT) {
     //     const char* ifn=NULL;
@@ -381,7 +385,7 @@ void processOptionsJExtract(GArgs& args) {
 
 void processOptionsPredict(GArgs& args) {
     optionsModel(args);
-    optionsJunction(args);
+    // optionsJunction(args);
     optionsRef(args);
     optionsOutput(args);
 }
@@ -426,7 +430,7 @@ void optionsBundleGap(GArgs& args) {
     } else {
         s=args.getOpt("bundle-gap");
         if (!s.is_empty()) {
-            // Use the default max-splice
+            // Use the default bundle-gap
             g_bundle_gap = s.asInt();
         }
     }
