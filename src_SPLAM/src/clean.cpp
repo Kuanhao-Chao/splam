@@ -327,7 +327,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             if (verbose) GMessage("\n");
         } else {
             /*********************************************
-             * Cleaning up alignments by individuals.
+             * Cleaning up alignments by individuals (not-paired).
             *********************************************/
             // Processing uniquely mapped reads
             GSamReader reader_s_uniq_map(outfname_s_uniq_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
