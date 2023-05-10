@@ -8,7 +8,7 @@ import os
 
 device = torch.device("cpu")
 
-model = torch.jit.load("./MODEL/SpliceAI_6_RB_p_n_nn_n1_TB_all_samples_thr_100_splitByChrom_L64_C16_L800_v32/splam_24_scripted.pt")
+model = torch.jit.load("./MODEL/SPLAM_v11/splam_14.pt")
 
 model = model.to("mps")
 
