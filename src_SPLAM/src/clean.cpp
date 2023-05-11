@@ -227,7 +227,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
         //     processRead(currentstart, currentend, readlist, *bundle, hashread, alndata);
         // } //for each read alignment
 
-        
         if (g_paired_removal) {
             /*********************************************
              * Cleaning up alignments by pairs.
@@ -236,44 +235,71 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             GSamReader reader_s_uniq_map(outfname_s_uniq_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
             bool uniq_next_main_aln = true;
-            GSamRecord* uniq_brec_prev;
+            GSamRecord* uniq_brec_1st;
 
             progressbar bar_uniq(ALN_COUNT_SPLICED_UNIQ);
             bar_uniq.set_opening_bracket_char("[INFO] SPLAM! Filtering unique spliced alignments \n\t[");
             while ( (brec = reader_s_uniq_map.next())!=NULL ) {
-                // GMessage("unique-mapped Algnment name: %s\n", brec->name());
+                // GMessage("unique-mapped spliced algnment name: %s\n", brec->name());
                 if (verbose) {
                     bar_uniq.update();
                 }
-                if (uniq_next_main_aln) {
-                    // This is the first alignment.
-                    bool spur = alignmentAssessment(brec, rm_juncs);
-                    if (spur) {
-                        removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
-                        brec = reader_s_uniq_map.next();
-                        removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
-                        uniq_next_main_aln = true;
-                        ALN_COUNT_SPLICED_UNIQ_DISCARD+=2;
-                    } else {
-                        uniq_brec_prev = new GSamRecord(*brec);
-                        uniq_next_main_aln = false;
-                    }
-                } else {
-                    // This is the second alignment.
-                    bool spur = alignmentAssessment(brec, rm_juncs);
-                    // GMessage("spur:%d\n", spur);
-                    if (spur) {
-                        removeAlignment(outfile_discard_s_uniq_map, uniq_brec_prev, rm_hit, false);
-                        removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
-                        ALN_COUNT_SPLICED_UNIQ_DISCARD+=2;
-                        delete uniq_brec_prev;
-                    } else {
-                        keepAlignment(outfile_cleaned, uniq_brec_prev);
-                        keepAlignment(outfile_cleaned, brec);
-                        delete uniq_brec_prev;
-                    }
-                    uniq_next_main_aln = true;
+
+                bool spur = alignmentAssessment(brec, rm_juncs);
+                uniq_brec_1st = new GSamRecord(*brec);
+                brec = reader_s_uniq_map.next();
+                bool spur_pair = alignmentAssessment(brec, rm_juncs);
+
+                if (spur && spur_pair) {
+                    removeAlignment(outfile_discard_s_uniq_map, uniq_brec_1st, rm_hit, false);
+                    removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD += 2;
+                } else if (spur && !spur_pair) {
+                    removeAlignment(outfile_discard_s_uniq_map, uniq_brec_1st, rm_hit, false);
+                    keepAlignment(outfile_cleaned, brec);
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD += 1;
+                    // Update brec
+                } else if (!spur && spur_pair) {
+                    // Update uniq_brec_1st
+                    keepAlignment(outfile_cleaned, uniq_brec_1st);
+                    removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD += 1;
+                } else if (!spur && !spur_pair) {
+                    keepAlignment(outfile_cleaned, uniq_brec_1st);
+                    keepAlignment(outfile_cleaned, brec);
                 }
+                delete uniq_brec_1st;
+
+                // if (uniq_next_main_aln) {
+                //     // This is the first alignment.
+                //     bool spur = alignmentAssessment(brec, rm_juncs);
+                //     // if (spur) {
+                //     //     removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
+                //     //     brec = reader_s_uniq_map.next();
+                //     //     removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
+                //     //     uniq_next_main_aln = true;
+                //     //     ALN_COUNT_SPLICED_UNIQ_DISCARD+=2;
+                //     // } else {
+                //     //     uniq_brec_prev = new GSamRecord(*brec);
+                //     //     uniq_next_main_aln = false;
+                //     // }
+                // } else {
+                //     // This is the second alignment.
+                //     bool spur = alignmentAssessment(brec, rm_juncs);
+                //     // GMessage("spur:%d\n", spur);
+                //     // if (spur) {
+                //     //     removeAlignment(outfile_discard_s_uniq_map, uniq_brec_prev, rm_hit, false);
+                //     //     removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
+                //     //     ALN_COUNT_SPLICED_UNIQ_DISCARD+=2;
+                //     //     delete uniq_brec_prev;
+                //     // } else {
+                //     //     keepAlignment(outfile_cleaned, uniq_brec_prev);
+                //     //     keepAlignment(outfile_cleaned, brec);
+                //     //     delete uniq_brec_prev;
+                //     // }
+                //     uniq_next_main_aln = true;
+                // }
+            
             }
             reader_s_uniq_map.bclose();
             if (verbose) GMessage("\n");
@@ -283,58 +309,89 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             GSamReader reader_s_multi_map(outfname_s_multi_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
             bool multi_next_main_aln = true;
-            GSamRecord* multi_brec_prev;
+            GSamRecord* multi_brec_1st;
 
             progressbar bar_multi(ALN_COUNT_SPLICED_MULTI);
             bar_multi.set_opening_bracket_char("[INFO] SPLAM! Filtering multi-mapped spliced alignments \n\t[");
             while ( (brec = reader_s_multi_map.next())!=NULL ) {
                 // GMessage("multi-mapped Algnment name: %s\n", brec->name());
-
                 if (verbose) {
                     bar_multi.update();
                 }
-                if (multi_next_main_aln) {
-                    // This is the first alignment.
-                    bool spur = alignmentAssessment(brec, rm_juncs);
-                    if (spur) {
-                        removeAlignment(outfile_discard_s_multi_map, brec, rm_hit, true);
-                        brec = reader_s_multi_map.next();
-                        removeAlignment(outfile_discard_s_multi_map, brec, rm_hit, false);
-                        multi_next_main_aln = true;
-                        ALN_COUNT_SPLICED_MULTI_DISCARD += 2;
-                    } else {
-                        multi_brec_prev = new GSamRecord(*brec);
-                        multi_next_main_aln = false;
-                    }
-                } else {
-                    // This is the second alignment.
-                    bool spur = alignmentAssessment(brec, rm_juncs);
-                    // GMessage("spur:%d\n", spur);
-                    if (spur) {
-                        removeAlignment(outfile_discard_s_multi_map, multi_brec_prev, rm_hit, true);
-                        removeAlignment(outfile_discard_s_multi_map, brec, rm_hit, false);
-                        delete multi_brec_prev;
-                        ALN_COUNT_SPLICED_MULTI_DISCARD += 2;
-                    } else {
-                        keepAlignment(outfile_s_multi_map_tmp, multi_brec_prev);
-                        keepAlignment(outfile_s_multi_map_tmp, brec);
-                        delete multi_brec_prev;
-                    }
-                    multi_next_main_aln = true;
+
+                bool spur = alignmentAssessment(brec, rm_juncs);
+                multi_brec_1st = new GSamRecord(*brec);
+                brec = reader_s_multi_map.next();
+                bool spur_pair = alignmentAssessment(brec, rm_juncs);
+
+                if (spur && spur_pair) {
+                    removeAlignment(outfile_discard_s_uniq_map, multi_brec_1st, rm_hit, false);
+                    removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
+                    ALN_COUNT_SPLICED_MULTI_DISCARD += 2;
+                } else if (spur && !spur_pair) {
+                    removeAlignment(outfile_discard_s_uniq_map, multi_brec_1st, rm_hit, false);
+                    ALN_COUNT_SPLICED_MULTI_DISCARD += 1;
+                    keepAlignment(outfile_cleaned, brec);
+                    // Update brec
+                } else if (!spur && spur_pair) {
+                    // Update multi_brec_1st
+                    keepAlignment(outfile_cleaned, multi_brec_1st);
+                    removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit, false);
+                    ALN_COUNT_SPLICED_MULTI_DISCARD += 1;
+                } else if (!spur && !spur_pair) {
+                    keepAlignment(outfile_cleaned, multi_brec_1st);
+                    keepAlignment(outfile_cleaned, brec);
                 }
+                delete multi_brec_1st;
+
+                
+                
+                // if (multi_next_main_aln) {
+                //     // This is the first alignment.
+                //     bool spur = alignmentAssessment(brec, rm_juncs);
+                //     // if (spur) {
+                //     //     removeAlignment(outfile_discard_s_multi_map, brec, rm_hit, true);
+                //     //     brec = reader_s_multi_map.next();
+                //     //     removeAlignment(outfile_discard_s_multi_map, brec, rm_hit, false);
+                //     //     multi_next_main_aln = true;
+                //     //     ALN_COUNT_SPLICED_MULTI_DISCARD += 2;
+                //     // } else {
+                //     //     multi_brec_prev = new GSamRecord(*brec);
+                //     //     multi_next_main_aln = false;
+                //     // }
+                // } else {
+                //     // This is the second alignment.
+                //     bool spur = alignmentAssessment(brec, rm_juncs);
+                //     // GMessage("spur:%d\n", spur);
+                //     // if (spur) {
+                //     //     removeAlignment(outfile_discard_s_multi_map, multi_brec_prev, rm_hit, true);
+                //     //     removeAlignment(outfile_discard_s_multi_map, brec, rm_hit, false);
+                //     //     delete multi_brec_prev;
+                //     //     ALN_COUNT_SPLICED_MULTI_DISCARD += 2;
+                //     // } else {
+                //     //     keepAlignment(outfile_s_multi_map_tmp, multi_brec_prev);
+                //     //     keepAlignment(outfile_s_multi_map_tmp, brec);
+                //     //     delete multi_brec_prev;
+                //     // }
+                //     multi_next_main_aln = true;
+                // }
             }
             reader_s_multi_map.bclose();
             if (verbose) GMessage("\n");
         } else {
+
             /*********************************************
              * Cleaning up alignments by individuals (not-paired).
             *********************************************/
-            // Processing uniquely mapped reads
+
+            /*********************************
+             * Processing unique spliced alignments
+            *********************************/
             GSamReader reader_s_uniq_map(outfname_s_uniq_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
             progressbar bar_uniq(ALN_COUNT_SPLICED_UNIQ);
             bar_uniq.set_opening_bracket_char("[INFO] SPLAM! Filtering unique spliced alignments \n\t[");
             while ( (brec = reader_s_uniq_map.next())!=NULL ) {
-                // GMessage("unique-mapped Algnment name: %s\n", brec->name());
+                GMessage("unique-mapped spliced algnment name: %s\n", brec->name());
                 if (verbose) {
                     bar_uniq.update();
                 }
@@ -349,7 +406,9 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             reader_s_uniq_map.bclose();
             if (verbose) GMessage("\n");
 
-            // Processing multi-mapped reads
+            /*********************************
+             * Processing multi-mapped spliced alignments
+            *********************************/
             GSamReader reader_s_multi_map(outfname_s_multi_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
             progressbar bar_multi(ALN_COUNT_SPLICED_MULTI);
             bar_multi.set_opening_bracket_char("[INFO] SPLAM! Filtering multi-mapped spliced alignments \n\t[");
@@ -671,8 +730,10 @@ void noMoreBundles() {
 }
 
 void removeAlignment(GSamWriter* outfile_target, GSamRecord* brec, robin_hdd_rm_hit& rm_hit, bool add_hit) {
+    GMessage("Removing alignment!\n");
     outfile_target->write(brec);
     std::string kv = brec->name();
+    GMessage("kv: %s\n", kv.c_str());
     if (add_hit) {
         if (rm_hit.find(kv) == rm_hit.end()) {
             rm_hit[kv] = 1;
@@ -686,6 +747,7 @@ void removeAlignment_se(GSamWriter* outfile_target, GSamRecord* brec, robin_hdd_
     outfile_target->write(brec);
     std::string kv = brec->name();
     kv = kv + "_" + std::to_string(brec->pairOrder());
+    GMessage("kv: %s\n", kv.c_str());
     if (rm_hit.find(kv) == rm_hit.end()) {
         rm_hit[kv] = 1;
     } else {

@@ -5,8 +5,7 @@ enum CommandMode {
   UNSET,
   J_EXTRACT,
   PREDICT,
-  CLEAN,
-  ALL
+  CLEAN
 };
 
 #endif /* TIEBRUSH_TMERGE_H_ */

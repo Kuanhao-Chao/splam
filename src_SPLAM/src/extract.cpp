@@ -57,6 +57,7 @@ GStr splamJExtract() {
     if (g_paired_removal) {
         /****************************
         * This is the workflow to remove bad junctions and their mates.
+        *   Bundling approach
         *****************************/
         while (more_alns) {
             bool chr_changed=false;
@@ -183,7 +184,7 @@ GStr splamJExtract() {
             } //adjusted currentend and checked for overlapping reference transcripts
 
 
-            GMessage("current boundaries: %d - %d\n", currentstart, currentend);
+            // GMessage("current boundaries: %d - %d\n", currentstart, currentend);
 
             /***********************************
              * (3) Process the alignment!
@@ -194,7 +195,7 @@ GStr splamJExtract() {
         } //for each read alignment
     } else {
         /****************************
-        * Iterating BAM file(s) and write out junctions.
+        * This is the workflow to remove alignments with bad junctions itself.
         *****************************/
         // Reading BAM file.
         int prev_tid=-1;
@@ -331,8 +332,10 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
         if (pair_idx == -1) {
             // This read is unpaired.
             // Check the NH tag hit.
-            outfile_discard_unpair->write(&brec_bd);
+            // outfile_discard_unpair->write(&brec_bd);
+            outfile_cleaned->write(&brec_bd);
             ALN_COUNT_UNPAIRED++;
+            ALN_COUNT_GOOD ++;
             continue;
         }
         hash_processed.insert(pair_idx);
@@ -366,7 +369,7 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
                 outfile_ns_multi_map->write(&brec_bd);
                 outfile_ns_multi_map->write(&brec_bd_p);
                 ALN_COUNT_NSPLICED_MULTI+=2;
-                ALN_COUNT_GOOD += 2;
+                // ALN_COUNT_GOOD += 2;
             } else if ( (brec_bd.hasIntrons() || brec_bd_p.hasIntrons()) && (brec_bd_tag==1 || brec_bd_p_tag==1)) {
                 // a, b spliced, NH = 1
                 outfile_s_uniq_map->write(&brec_bd);
@@ -379,9 +382,12 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
                 ALN_COUNT_SPLICED_MULTI+=2;
             } else {
                 // Execption case
-                outfile_discard_unpair->write(&brec_bd);
-                outfile_discard_unpair->write(&brec_bd_p);
-                ALN_COUNT_UNPAIRED+=2;
+                // outfile_discard_unpair->write(&brec_bd);
+                // outfile_discard_unpair->write(&brec_bd_p);
+                outfile_cleaned->write(&brec_bd);
+                outfile_cleaned->write(&brec_bd_p);
+                ALN_COUNT_GOOD += 2;
+                // ALN_COUNT_UNPAIRED+=2;
             }
         }
 

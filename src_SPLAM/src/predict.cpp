@@ -39,6 +39,9 @@ GStr splamPredict() {
     robin_hdd_rm_hit acceptor_dimers;
     GStr outfname_junc_fa = splamCreateFasta(infname_juncbed, doner_dimers, acceptor_dimers, ref_faidx);
     
+    /*************************
+     * Here is the main part of printing the doner / acceptor statistics
+    **************************/
     // std::cout << ">> Donor dimers: " << std::endl;
     // for (auto i : doner_dimers) {
     //     std::cout << "\t" << i.first << ": " << i.second << std::endl;
@@ -273,8 +276,6 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_rm_hit &doner_dimers, ro
                 outfile_fa_junc << donor_seq << std::string(2*(400-(int)strlen(donor_seq)), 'N') << acceptor_seq << std::endl;
             }
         }
-
-
 
         char donor_dim[3];
         memcpy(donor_dim, &donor_seq[200], 2);
