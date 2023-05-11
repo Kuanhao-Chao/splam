@@ -35,51 +35,15 @@ GStr splamNHUpdate() {
         // }
 
     if (COMMAND_MODE == CLEAN) {
-        // outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
-        // GSamReader bam_reader_nh_updater(outfname_cleaned_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
-        // int bam_clean_counter=0;
-        // GMessage("[INFO] Processing BAM file ...\n");
-
-        // progressbar bar(ALN_COUNT_GOOD);
-        // bar.set_opening_bracket_char("[INFO] SPLAM! Output the final clean BAM file \n\t[");
-        // // while ((irec=final_bam_records.next())!=NULL) {
-        // while ((brec=bam_reader_nh_updater.next())!=NULL) {
-
-        //     bar.update();
-        //     std::string kv = brec->name();
-            
-        //     kv = kv + "_" + std::to_string(brec->pairOrder());
-
-        //     // GMessage("kv: %s\n", kv.c_str());
-
-        //     if (rm_hit.find(kv) != rm_hit.end()) {
-        //         // GMessage("Original brec NH tag: %d\n", brec->tag_int("NH", 0));
-        //         int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
-        //         brec->add_int_tag("NH", new_nh);
-        //         // GMessage("After    brec NH tag: %d\n", brec->tag_int("NH", 0));
-        //     }
-        //     outfile_cleaned->write(brec);
-        // }
-        // delete outfile_cleaned;
-    } else if (COMMAND_MODE == ALL) {
-
-        // TInputFiles final_bam_records;
-        // final_bam_records.setup(VERSION, argc, argv);
-        // for (int i=0; i<in_records.freaders.Count(); i++) {
-        //     GStr fname = in_records.freaders[i]->fname.chars();
-        //     GMessage(">> fname: %s\n", fname.chars());
-        //     final_bam_records.addFile(fname.chars());
-        // }
-        // int num_samples=final_bam_records.start();
-        // outfile_cleaned = new GSamWriter(outfname_cleaned, final_bam_records.header(), GSamFile_BAM);
-        // outfile_discard = new GSamWriter(outfname_discard, final_bam_records.header(), GSamFile_BAM);
-
+        /*********************************
+         * Processing multip-mapped spliced temporary alignments
+        *********************************/
         int bam_clean_counter=0;
         GSamReader reader_s_multi_map_tmp(outfname_s_multi_map_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
         progressbar bar_s(ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
         bar_s.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments \n\t[");
-        // while ((irec=final_bam_records.next())!=NULL) {
+
         while ((brec=reader_s_multi_map_tmp.next())!=NULL) {
             if (verbose) {
                 bar_s.update();
@@ -101,11 +65,14 @@ GStr splamNHUpdate() {
         GMessage("\n");
 
 
+        /*********************************
+         * Processing multip-mapped non-spliced alignments
+        *********************************/
         GSamReader reader_ns_multi_map(outfname_ns_multi_map .chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
         progressbar bar_ns(ALN_COUNT_NSPLICED_MULTI);
         bar_ns.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped nonspliced alignments \n\t[");
-        // while ((irec=final_bam_records.next())!=NULL) {
+
         while ((brec=reader_ns_multi_map.next())!=NULL) {
             if (verbose) {
                 bar_ns.update();
@@ -117,7 +84,6 @@ GStr splamNHUpdate() {
             // GMessage("kv: %s\n", kv.c_str());
             if (rm_hit.find(kv) != rm_hit.end()) {
                 int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
-
                 // GMessage("Before update NH tag: %d\n", new_nh);
                 brec->add_int_tag("NH", new_nh);
                 // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));

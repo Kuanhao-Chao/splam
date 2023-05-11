@@ -115,15 +115,6 @@ int usage(){
         "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
         );
-    } else if (COMMAND_MODE == ALL) {
-        GMessage(
-        "\033[1mUsage\033[0m:   splam all [arguments] BAM-file(s) \n\n\n");
-        GMessage(
-        "\033[1m\033[91mRequired argument:\033[0m\n"
-        "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
-        "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
-        "\t-o / --output\t\tPath to the output directory\n\n"
-        );
     } else {
         GMessage(
         "\033[1mUsage\033[0m:\n"

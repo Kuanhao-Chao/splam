@@ -163,7 +163,7 @@ int main(int argc, char* argv[]) {
     
     // Start reading the files
     int num_samples=in_records.start();
-    if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+    if (COMMAND_MODE == CLEAN) {
         std::filesystem::create_directories(tmp_dir.chars());
         std::filesystem::create_directories(discard_dir.chars());
         // The only two modes that need to write out files.
@@ -193,12 +193,12 @@ int main(int argc, char* argv[]) {
         splamNHUpdate();
     }
 
-    if (COMMAND_MODE == CLEAN || COMMAND_MODE == ALL) {
+    if (COMMAND_MODE == CLEAN) {
 
         ALN_COUNT_SPLICED = ALN_COUNT_SPLICED_UNIQ + ALN_COUNT_SPLICED_MULTI;
         ALN_COUNT_NSPLICED = ALN_COUNT_NSPLICED_UNIQ + ALN_COUNT_NSPLICED_MULTI;
         if (g_paired_removal) {
-            ALN_COUNT_BAD = ALN_COUNT_UNPAIRED + ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_NSPLICED_UNIQ_DISCARD + ALN_COUNT_NSPLICED_MULTI_DISCARD;
+            ALN_COUNT_BAD = ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_NSPLICED_UNIQ_DISCARD + ALN_COUNT_NSPLICED_MULTI_DISCARD;
             ALN_COUNT_GOOD_CAL = ALN_COUNT - ALN_COUNT_BAD;
 
             GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
@@ -283,8 +283,6 @@ void processOptions(int argc, char* argv[]) {
         COMMAND_MODE = PREDICT;
     } else if (strcmp(command_str.chars(), "clean") == 0) {
         COMMAND_MODE = CLEAN;
-    } else if (strcmp(command_str.chars(), "all") == 0) {
-        COMMAND_MODE = ALL;
     } else {
         usage();
         GERROR("\n[ERROR] The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
@@ -335,7 +333,6 @@ void processOptions(int argc, char* argv[]) {
     args.nextNonOpt(); 
 
     if (!predict_junc_mode) {
-        GMessage("Inside processing BAM file");
         const char* ifn=NULL;
         while ( (ifn=args.nextNonOpt())!=NULL) {
             //input alignment files
