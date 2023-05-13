@@ -10,8 +10,6 @@
 #include "common.h"
 #include "GSam.h"
 
-// JUNC_COUNT
-
 class CJunc {
 
 	public:
@@ -20,12 +18,13 @@ class CJunc {
 		char strand;
 		uint64_t dupcount;
 		
-		std::vector<GSamRecord*> read_ls;
-
 		CJunc(int vs=0, int ve=0, char vstrand='+', GStr vref=".", uint64_t dcount=1):
 		start(vs), end(ve), strand(vstrand), ref(vref), dupcount(dcount) { }
 
 		bool operator==(const CJunc& a) {
+			/************************
+			 * Printing check
+			************************/
 			// if (start==a.start && end==a.end) {
 			// 	std::cout << " >> 1 == : " << ref.chars() << ";  strand: " << strand << ";  start: " << start << ";  end: " << end << std::endl;
 			// 	std::cout << " >> 2 == : " << a.ref.chars() << ";  strand: " << a.strand << ";  start: " << a.start << ";  end: " << a.end << std::endl;
@@ -65,12 +64,8 @@ class CJunc {
 
 		void add(CJunc& j) {
 			dupcount+=j.dupcount;
+			GMessage("%s  (%d - %d) Update junction count: %d\n", j.ref.chars(), j.start, j.end, dupcount);
 		}
-
-		void add_read(CJunc& j, GSamRecord* r) {
-			read_ls.push_back(r);
-		}
-
 
 		void write(FILE* f) {
 			JUNC_COUNT++;
