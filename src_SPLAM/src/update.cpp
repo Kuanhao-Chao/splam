@@ -36,9 +36,8 @@ GStr splamNHUpdate() {
 
     if (COMMAND_MODE == CLEAN) {
         /*********************************
-         * Processing multip-mapped spliced temporary alignments
+         * Processing multip-mapped spliced temporary alignments (paired)
         *********************************/
-        int bam_clean_counter=0;
         GSamReader reader_s_multi_map_tmp(outfname_s_multi_map_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
         progressbar bar_s(ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
@@ -62,11 +61,12 @@ GStr splamNHUpdate() {
             }
             keepAlignment(outfile_cleaned, brec);
         }
+        reader_s_multi_map_tmp.bclose();
         GMessage("\n");
 
 
         /*********************************
-         * Processing multip-mapped non-spliced alignments
+         * Processing multip-mapped non-spliced alignments (paired)
         *********************************/
         GSamReader reader_ns_multi_map(outfname_ns_multi_map .chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
@@ -90,7 +90,72 @@ GStr splamNHUpdate() {
             }
             keepAlignment(outfile_cleaned, brec);
         }
+        reader_ns_multi_map.bclose();
         GMessage("\n");
+
+
+        /*********************************
+         * Processing multip-mapped spliced temporary alignments (unpaired)
+        *********************************/
+        GSamReader reader_s_multi_unpair_tmp(outfname_s_multi_unpair_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+
+        progressbar bar_s_unpair(ALN_COUNT_SPLICED_MULTI_UNPAIR - ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD);
+        bar_s_unpair.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments \n\t[");
+
+        while ((brec=reader_s_multi_unpair_tmp.next())!=NULL) {
+            if (verbose) {
+                bar_s_unpair.update();
+            }
+            std::string kv = brec->name();
+            if (!g_paired_removal) {
+                kv = kv + "_" + std::to_string(brec->pairOrder());
+            }
+            // GMessage("kv: %s\n", kv.c_str());
+            if (rm_hit.find(kv) != rm_hit.end()) {
+                // GMessage("rm_hit[kv]: %d\n", rm_hit[kv]);
+                // GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
+                int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
+                brec->add_int_tag("NH", new_nh);
+                // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
+            }
+            keepAlignment(outfile_cleaned, brec);
+        }
+        reader_s_multi_unpair_tmp.bclose();
+        GMessage("\n");
+
+
+        /*********************************
+         * Processing multip-mapped non-spliced alignments (unpaired)
+        *********************************/
+        GSamReader reader_ns_multi_unpair(outfname_ns_multi_unpair.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+
+        progressbar bar_ns_unpair(ALN_COUNT_NSPLICED_MULTI_UNPAIR);
+        bar_ns_unpair.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped nonspliced alignments \n\t[");
+
+        while ((brec=reader_ns_multi_unpair.next())!=NULL) {
+            if (verbose) {
+                bar_ns_unpair.update();
+            }
+            std::string kv = brec->name();
+            if (!g_paired_removal) {
+                kv = kv + "_" + std::to_string(brec->pairOrder());
+            }
+            // GMessage("kv: %s\n", kv.c_str());
+            if (rm_hit.find(kv) != rm_hit.end()) {
+                int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
+                // GMessage("Before update NH tag: %d\n", new_nh);
+                brec->add_int_tag("NH", new_nh);
+                // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
+            }
+            keepAlignment(outfile_cleaned, brec);
+        }
+        reader_ns_multi_unpair.bclose();
+        GMessage("\n");
+
+
+
+
+
         delete outfile_cleaned;
 
         if (verbose) {
