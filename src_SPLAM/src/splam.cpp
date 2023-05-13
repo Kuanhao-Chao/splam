@@ -1,3 +1,4 @@
+// #define DEBUG
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -12,19 +13,12 @@
 #include "util.h"
 #include "junc.h"
 #include "update.h"
-// #include "filter.h"
-
-
-// #include "splam_stream.h"
-
 
 #include <gclib/GArgs.h>
 #include <gclib/GBase.h>
 #include <gclib/GStr.h>
 #include <robin_hood/robin_hood.h>
-
 #include <Python.h>
-
 
 void processOptions(int argc, char* argv[]);
 void processOptionsJExtract(GArgs& args);
@@ -50,7 +44,6 @@ GStr infname_bam("");
 GStr infname_juncbed("");
 GStr infname_scorebed("");
 GStr infname_NH_tag("");
-
 GStr out_dir;
 
 bool verbose = false;
@@ -176,7 +169,6 @@ int main(int argc, char* argv[]) {
     outfname_s_multi_map = out_dir + "/TMP/splice_multi_map.bam";
     outfname_s_multi_map_tmp = out_dir + "/TMP/splice_multi_map_tmp.bam";
         
-    // outfname_unpair = out_dir + "/TMP/unpair.bam";
     /*********************
      * For unpaired uniq- / multi- mapped alignments
     *********************/
@@ -195,7 +187,12 @@ int main(int argc, char* argv[]) {
     
     // Start reading the files
     int num_samples=in_records.start();
+
+    /*********************
+     * Directory creating + Sam writer creation
+    *********************/
     if (COMMAND_MODE == CLEAN) {
+        // Creating the directory
         std::filesystem::create_directories(tmp_dir.chars());
         std::filesystem::create_directories(discard_dir.chars());
         // The only two modes that need to write out files.
@@ -206,7 +203,6 @@ int main(int argc, char* argv[]) {
         outfile_s_uniq_map = new GSamWriter(outfname_s_uniq_map, in_records.header(), GSamFile_BAM);
         outfile_s_multi_map = new GSamWriter(outfname_s_multi_map, in_records.header(), GSamFile_BAM);
         outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
-        // outfile_unpair = new GSamWriter(outfname_unpair, in_records.header(), GSamFile_BAM);
 
         // Unpaired
         outfile_ns_multi_unpair = new GSamWriter(outfname_ns_multi_unpair, in_records.header(), GSamFile_BAM);
@@ -214,11 +210,15 @@ int main(int argc, char* argv[]) {
         outfile_s_multi_unpair = new GSamWriter(outfname_s_multi_unpair, in_records.header(), GSamFile_BAM);
         outfile_s_multi_unpair_tmp = new GSamWriter(outfname_s_multi_unpair_tmp, in_records.header(), GSamFile_BAM);
         
-        outfile_discard_s_uniq_map= new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
-        outfile_discard_s_multi_map= new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);
+        // discarded files
+        outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
+        outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);
     }
     
 
+    /*********************
+     * Main algorithms
+    *********************/
     if (COMMAND_MODE == J_EXTRACT) {
         infname_juncbed = splamJExtract();
         GMessage("\n[INFO] Total number of junctions\t:%d\n", JUNC_COUNT);
@@ -234,17 +234,23 @@ int main(int argc, char* argv[]) {
         splamNHUpdate();
     }
 
+    /*********************
+     * Final statistics printing
+    *********************/
     if (COMMAND_MODE == CLEAN) {
-
         ALN_COUNT_SPLICED = ALN_COUNT_SPLICED_UNIQ + ALN_COUNT_SPLICED_MULTI;
         ALN_COUNT_NSPLICED = ALN_COUNT_NSPLICED_UNIQ + ALN_COUNT_NSPLICED_MULTI;
         if (g_paired_removal) {
-
             ALN_COUNT_SPLICED_UNPAIR = ALN_COUNT_SPLICED_UNIQ_UNPAIR + ALN_COUNT_SPLICED_MULTI_UNPAIR;
             ALN_COUNT_NSPLICED_UNPAIR = ALN_COUNT_NSPLICED_UNIQ_UNPAIR + ALN_COUNT_NSPLICED_MULTI_UNPAIR;
-            ALN_COUNT_UNPAIR = ALN_COUNT_SPLICED_UNIQ_UNPAIR + ALN_COUNT_SPLICED_MULTI_UNPAIR + ALN_COUNT_NSPLICED_UNIQ_UNPAIR + ALN_COUNT_NSPLICED_MULTI_UNPAIR;
 
-            ALN_COUNT_BAD = ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD;
+            ALN_COUNT_SPLICED += ALN_COUNT_SPLICED_UNPAIR;
+            ALN_COUNT_NSPLICED += ALN_COUNT_NSPLICED_UNPAIR;
+
+            ALN_COUNT_UNPAIR = ALN_COUNT_SPLICED_UNPAIR + ALN_COUNT_NSPLICED_UNPAIR;
+
+            ALN_COUNT_BAD = ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD + ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD;
+
             ALN_COUNT_GOOD_CAL = ALN_COUNT - ALN_COUNT_BAD;
 
             GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
@@ -292,7 +298,6 @@ int main(int argc, char* argv[]) {
 
             if (ALN_COUNT_GOOD_CAL != ALN_COUNT_GOOD) GMessage("Num of cleaned alignments do not agree with each other. Calculated: %d; iter: %d\n", ALN_COUNT_GOOD_CAL, ALN_COUNT_GOOD);
         }
-
     }
     return 0;
 }
@@ -365,6 +370,7 @@ void processOptions(int argc, char* argv[]) {
         processOptionsClean(args);
     }
 
+#ifdef DEBUG
     GMessage(">>  command_str      : %s\n", command_str.chars());
     GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
     GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
@@ -377,6 +383,7 @@ void processOptions(int argc, char* argv[]) {
     GMessage(">> g_max_splice      : %d\n", g_max_splice);
     GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
     GMessage(">> verbose           : %d\n", verbose);
+#endif
 
     args.startNonOpt();
 
@@ -397,25 +404,6 @@ void processOptions(int argc, char* argv[]) {
     } else if (predict_junc_mode && COMMAND_MODE == PREDICT) {
         checkJunction(args);
     }
-
-    // } 
-    // else if (COMMAND_MODE == PREDICT) {
-    //     const char* ifn=NULL;
-    //     while ( (ifn=args.nextNonOpt())!=NULL) {
-    //         //input alignment files
-    //         std::string absolute_ifn = get_full_path(ifn);
-    //         std::cout << "absolute_ifn: " << absolute_ifn << std::endl;
-    //         in_records.addFile(absolute_ifn.c_str());
-    //     }
-    // } else if (COMMAND_MODE == CLEAN) {
-    // }
-
-    // int num_samples=in_records.start();
-    // outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
-    // outfile_ns_multi_map = new GSamWriter(outfname_ns_multi_map, in_records.header(), GSamFile_BAM);
-    // outfile_s_uniq_map = new GSamWriter(outfname_s_uniq_map, in_records.header(), GSamFile_BAM);
-    // outfile_s_multi_map = new GSamWriter(outfname_s_multi_map, in_records.header(), GSamFile_BAM);
-    // outfile_unpair = new GSamWriter(outfname_unpair, in_records.header(), GSamFile_BAM);
 }
 
 
@@ -555,31 +543,3 @@ void checkJunction(GArgs& args) {
         }
     }
 }
-
-
-// void optionsScore(GArgs& args) {
-//     // -s / --score
-//     infname_scorebed = args.getOpt('s');
-//     if (infname_scorebed.is_empty()) {
-//         infname_scorebed=args.getOpt("score");
-//         if (infname_scorebed.is_empty()) {
-//             usage();
-//             GMessage("\n[ERROR] junction score bed file must be provided (-s / --score)!\n");
-//             exit(1);
-//         } else {
-//             if (fileExists(infname_scorebed.chars())>1) {
-//                 // guided=true;
-//             } else {
-//                 GError("[ERROR] junction score bed file (%s) not found.\n",
-//                     infname_scorebed.chars());
-//             }
-//         }
-//     } else {
-//         if (fileExists(infname_scorebed.chars())>1) {
-//             // guided=true;
-//         } else {
-//             GError("[ERROR] junction score bed file (%s) not found.\n",
-//                 infname_scorebed.chars());
-//         }
-//     }
-// }
