@@ -60,7 +60,7 @@ GStr splamNHUpdate() {
                 brec->add_int_tag("NH", new_nh);
                 // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
-            outfile_cleaned->write(brec);   
+            keepAlignment(outfile_cleaned, brec);
         }
         GMessage("\n");
 
@@ -88,7 +88,7 @@ GStr splamNHUpdate() {
                 brec->add_int_tag("NH", new_nh);
                 // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
-            outfile_cleaned->write(brec); 
+            keepAlignment(outfile_cleaned, brec);
         }
         GMessage("\n");
         delete outfile_cleaned;

@@ -371,7 +371,7 @@ CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
 //Details about finding Python
-FIND_PACKAGE_MESSAGE_DETAILS_Python:INTERNAL=[/usr/local/Frameworks/Python.framework/Versions/3.11/bin/python3.11][/usr/local/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/include/python3.11][/usr/local/opt/python@3.11/Frameworks/Python.framework/Versions/3.11/lib/libpython3.11.dylib][cfound components: Interpreter Development Development.Module Development.Embed ][v3.11.2()]
+FIND_PACKAGE_MESSAGE_DETAILS_Python:INTERNAL=[/usr/local/Frameworks/Python.framework/Versions/3.10/bin/python3.10][/usr/local/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/include/python3.10][/usr/local/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/libpython3.10.dylib][cfound components: Interpreter Development Development.Module Development.Embed ][v3.10.10()]
 //Details about finding ZLIB
 FIND_PACKAGE_MESSAGE_DETAILS_ZLIB:INTERNAL=[/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/lib/libz.tbd][/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX12.3.sdk/usr/include][v1.2.11()]
 //ADVANCED property for variable: ZLIB_INCLUDE_DIR
@@ -380,11 +380,15 @@ ZLIB_INCLUDE_DIR-ADVANCED:INTERNAL=1
 ZLIB_LIBRARY_DEBUG-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: ZLIB_LIBRARY_RELEASE
 ZLIB_LIBRARY_RELEASE-ADVANCED:INTERNAL=1
+_Python_DEVELOPMENT_EMBED_SIGNATURE:INTERNAL=b50c5999c0a4a697287b760787b3c900
+_Python_DEVELOPMENT_MODULE_SIGNATURE:INTERNAL=346fbc081a2dcd47b21c9372b89a49c0
 //Path to a program.
-_Python_CONFIG:INTERNAL=_Python_CONFIG-NOTFOUND
-//Path to a program.
-_Python_EXECUTABLE:INTERNAL=Python_EXECUTABLE-NOTFOUND
+_Python_EXECUTABLE:INTERNAL=/usr/local/Frameworks/Python.framework/Versions/3.10/bin/python3.10
+//Path to a file.
+_Python_INCLUDE_DIR:INTERNAL=/usr/local/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/include/python3.10
+//Python Properties
+_Python_INTERPRETER_PROPERTIES:INTERNAL=Python;3;10;10;64;;cpython-310-darwin;/usr/local/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10;/usr/local/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10;/usr/local/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages;/usr/local/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/python3.10/site-packages
 _Python_INTERPRETER_SIGNATURE:INTERNAL=d2037f47704ca12ebac47feb870c2f34
 //Path to a library.
-_Python_LIBRARY_RELEASE:INTERNAL=_Python_LIBRARY_RELEASE-NOTFOUND
+_Python_LIBRARY_RELEASE:INTERNAL=/usr/local/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib/libpython3.10.dylib
 

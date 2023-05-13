@@ -119,6 +119,7 @@ GStr splamJExtract() {
                 nh=brec->tag_int("NH", 1);
                 hi=brec->tag_int("HI", 0);
                 if (!chr_changed && currentend>0 && pos>currentend+g_bundle_gap) {
+                    GMessage("New bundle: currentend(%d - %d), %d, g_bundle_gap: %d\n ", currentend, currentend, pos, g_bundle_gap);
                     new_bundle=true;
                 }
             } else { //no more alignments
@@ -131,6 +132,7 @@ GStr splamJExtract() {
              * (2) Process the bundle!
             ************************************/
             if (new_bundle || chr_changed) {
+                GMessage("current boundaries: %d - %d\n", currentstart, currentend);
                 hashread.Clear();
                 if (readlist.Count()>0) {
                     // process reads in previous bundle
@@ -183,16 +185,14 @@ GStr splamJExtract() {
                 currentend=fragment_end;
             } //adjusted currentend and checked for overlapping reference transcripts
 
-
-            // GMessage("current boundaries: %d - %d\n", currentstart, currentend);
-
             /***********************************
              * (3) Process the alignment!
             ************************************/
-            // GMessage("brec->refName(): %s\n", brec->refName());
             CReadAln* alndata = new CReadAln(brec);
             processRead_jext(currentstart, currentend, readlist, *bundle, hashread, alndata);
         } //for each read alignment
+
+
     } else {
         /****************************
         * This is the workflow to remove alignments with bad junctions itself.
@@ -205,7 +205,9 @@ GStr splamJExtract() {
         if (verbose) {
             GMessage("[INFO] Processing BAM file ...\n");
         }
+        int Read_counter = 0;
         while ((irec=in_records.next())!=NULL) {
+            Read_counter += 1;
             ALN_COUNT += 1;
             brec=irec->brec;
             int endpos=brec->end;
@@ -223,6 +225,7 @@ GStr splamJExtract() {
             }
             int accYC = 0;
             accYC = brec->tag_int("YC", 1);
+            // GMessage("accYC: %d\n", accYC);
             if (joutf && brec->exons.Count()>1) {
                 /*************************
                  * Spliced reads
@@ -250,27 +253,32 @@ GStr splamJExtract() {
                     if (new_nh <= 1) {
                         outfile_cleaned->write(brec);
                         ALN_COUNT_NSPLICED_UNIQ += 1;
+                        ALN_COUNT_GOOD += 1;
                     } else if (new_nh > 1){
                         outfile_ns_multi_map->write(brec);
                         ALN_COUNT_NSPLICED_MULTI += 1;
                     }
-                    ALN_COUNT_GOOD += 1;
                 }
             }
             // if (ALN_COUNT % 1000000 == 0) {
             //     GMessage("\t\t%d alignments processed.\n", ALN_COUNT);
             // }
         }
+
+        GMessage("Read_counter: %d!\n", Read_counter);
     }
     in_records.stop();
     flushJuncs(joutf);
     fclose(joutf);
     junctions.setCapacity(128);
     if (COMMAND_MODE == CLEAN) {
+        delete outfile_ns_multi_unpair;
+        delete outfile_s_multi_unpair;
+        delete outfile_s_uniq_unpair;
+
         delete outfile_ns_multi_map;
         delete outfile_s_uniq_map;
         delete outfile_s_multi_map;
-        delete outfile_discard_unpair;
     }
     return outfname_junc_bed;
 }
@@ -297,10 +305,13 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
     junctions.setCapacity(128);
 
     // Writing out alignments
+
+    int Read_counter = 0;
     for (int idx=0; idx<readlist.Count(); idx++) {
         // GMessage("\tidx %d\n", idx);
+        Read_counter += 1;
         GSamRecord& brec_bd = readlist[idx]->brec;
-    
+
         if (joutf && brec_bd.hasIntrons()) {
             // Spliced reads
             int accYC = 0;
@@ -318,44 +329,44 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
 
         bool remove_algn = false;
         int pair_idx = readlist[idx]->pair_idx;
-        // GMessage("\t\tpair_idx %d\n", pair_idx);
-
-        // GMessage("idx      : %d\n", idx);
-        // GMessage("pair_idx : %d\n", pair_idx);
     
-
         /***********************************
-         * Cannot find its pair.
-         *  => Write it out into the unpaired BAM.
+         * Processing unpaired reads.
+         *   => Write it out into the unpaired BAM.
         ************************************/
         // Check the global hash => only used when its mate is unpaired.
         if (pair_idx == -1) {
-            // This read is unpaired.
-            // Check the NH tag hit.
-            // outfile_discard_unpair->write(&brec_bd);
-            outfile_cleaned->write(&brec_bd);
-            ALN_COUNT_UNPAIRED++;
-            ALN_COUNT_GOOD ++;
+            int brec_tag = brec_bd.tag_int("NH", 0);
+            if (brec_bd.hasIntrons()) {
+                if (brec_tag > 1)  {
+                    outfile_s_multi_unpair->write(&brec_bd);
+                    ALN_COUNT_SPLICED_MULTI_UNPAIR += 1;
+                } else {
+                    outfile_s_uniq_unpair->write(&brec_bd);
+                    ALN_COUNT_SPLICED_UNIQ_UNPAIR += 1;
+                }
+            } else {
+                if (brec_tag > 1)  {
+                    outfile_ns_multi_unpair->write(&brec_bd);
+                    ALN_COUNT_NSPLICED_MULTI_UNPAIR += 1;
+                } else {
+                    outfile_cleaned->write(&brec_bd);
+                    ALN_COUNT_NSPLICED_UNIQ_UNPAIR += 1;
+                    ALN_COUNT_GOOD += 1;
+                }
+            }
             continue;
         }
         hash_processed.insert(pair_idx);
 
         /***********************************
-         * Find its pair.
+         * Processing paired reads.
         ************************************/
         // Process both the current and paired alginments.
         GSamRecord& brec_bd_p = readlist[readlist[idx]->pair_idx]->brec;
 
-        /***********************************
-         * Find its pair.
-        ************************************/
         int brec_bd_tag = brec_bd.tag_int("NH", 0);
         int brec_bd_p_tag = brec_bd_p.tag_int("NH", 0);
-
-        // GMessage("\tbrec_bd_tag   %d\n", brec_bd_tag);
-        // GMessage("\tbrec_bd_p_tag %d\n", brec_bd_p_tag);
-        // GMessage("\tbrec_bd_refName   %s\n", brec_bd.name());
-        // GMessage("\tbrec_bd_p_refName %s\n", brec_bd_p.name());
 
         if (COMMAND_MODE == CLEAN) {
             if ( (!brec_bd.hasIntrons() && !brec_bd_p.hasIntrons()) && (brec_bd_tag==1 || brec_bd_p_tag==1)) {
@@ -369,7 +380,6 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
                 outfile_ns_multi_map->write(&brec_bd);
                 outfile_ns_multi_map->write(&brec_bd_p);
                 ALN_COUNT_NSPLICED_MULTI+=2;
-                // ALN_COUNT_GOOD += 2;
             } else if ( (brec_bd.hasIntrons() || brec_bd_p.hasIntrons()) && (brec_bd_tag==1 || brec_bd_p_tag==1)) {
                 // a, b spliced, NH = 1
                 outfile_s_uniq_map->write(&brec_bd);
@@ -382,18 +392,16 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
                 ALN_COUNT_SPLICED_MULTI+=2;
             } else {
                 // Execption case
-                // outfile_discard_unpair->write(&brec_bd);
-                // outfile_discard_unpair->write(&brec_bd_p);
                 outfile_cleaned->write(&brec_bd);
                 outfile_cleaned->write(&brec_bd_p);
                 ALN_COUNT_GOOD += 2;
-                // ALN_COUNT_UNPAIRED+=2;
             }
         }
-
         brec_bd.clear();
         brec_bd_p.clear();
     }
+
+    GMessage("Read_counter: %d!\n", Read_counter);
     bundle->Clear();
 }
 

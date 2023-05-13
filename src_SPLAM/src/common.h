@@ -37,47 +37,73 @@ extern GSamRecord* brec;
 
 // output file names 
 extern GStr outfname_cleaned;
-
+// Paired
 extern GStr outfname_ns_multi_map;
 extern GStr outfname_s_uniq_map;
 extern GStr outfname_s_multi_map;
 extern GStr outfname_s_multi_map_tmp;
-extern GStr outfname_discard_unpair;
+// Unpaired
+extern GStr outfname_ns_multi_unpair;
+extern GStr outfname_s_uniq_unpair;
+extern GStr outfname_s_multi_unpair;
+extern GStr outfname_s_multi_unpair_tmp;
+
 extern GStr outfname_discard_s_uniq_map;
 extern GStr outfname_discard_s_multi_map;
 
 // GSamWriter 
 extern GSamWriter* outfile_cleaned;
-
+// Paired
 extern GSamWriter* outfile_ns_multi_map;
 extern GSamWriter* outfile_s_uniq_map;
 extern GSamWriter* outfile_s_multi_map;
 extern GSamWriter* outfile_s_multi_map_tmp;
-extern GSamWriter* outfile_discard_unpair;
+// Unpaired
+extern GSamWriter* outfile_ns_multi_unpair;
+extern GSamWriter* outfile_s_uniq_unpair;
+extern GSamWriter* outfile_s_multi_unpair;
+extern GSamWriter* outfile_s_multi_unpair_tmp;
+
 extern GSamWriter* outfile_discard_s_uniq_map;
 extern GSamWriter* outfile_discard_s_multi_map;
 
 
 extern FILE* joutf;
 
+// ALN summary
 extern int ALN_COUNT;
+extern int ALN_COUNT_BAD;
+extern int ALN_COUNT_GOOD;
+extern int ALN_COUNT_GOOD_CAL;
+
+
+// JUNC summary
 extern int JUNC_COUNT;
 extern int JUNC_COUNT_GOOD;
 extern int JUNC_COUNT_BAD;
-extern int ALN_COUNT_UNPAIRED;
+
+// Paired
 extern int ALN_COUNT_SPLICED;
 extern int ALN_COUNT_NSPLICED;
+extern int ALN_COUNT_PAIRED;
 extern int ALN_COUNT_SPLICED_UNIQ;
 extern int ALN_COUNT_SPLICED_MULTI;
 extern int ALN_COUNT_SPLICED_UNIQ_DISCARD;
 extern int ALN_COUNT_SPLICED_MULTI_DISCARD;
 extern int ALN_COUNT_NSPLICED_UNIQ;
 extern int ALN_COUNT_NSPLICED_MULTI;
-extern int ALN_COUNT_NSPLICED_UNIQ_DISCARD;
-extern int ALN_COUNT_NSPLICED_MULTI_DISCARD;
-extern int ALN_COUNT_BAD;
-extern int ALN_COUNT_GOOD;
-extern int ALN_COUNT_GOOD_CAL;
+
+// Unpaired
+extern int ALN_COUNT_SPLICED_UNPAIR;
+extern int ALN_COUNT_NSPLICED_UNPAIR;
+extern int ALN_COUNT_UNPAIR;
+extern int ALN_COUNT_SPLICED_UNIQ_UNPAIR;
+extern int ALN_COUNT_SPLICED_MULTI_UNPAIR;
+extern int ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD;
+extern int ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD;
+extern int ALN_COUNT_NSPLICED_UNIQ_UNPAIR;
+extern int ALN_COUNT_NSPLICED_MULTI_UNPAIR;
+
 
 extern int STEP_COUNTER;
 
