@@ -26,6 +26,7 @@ GStr splamJExtract() {
 
     if (verbose) {
         GMessage("[INFO] Extracting junctions ...\n");
+        GMessage("[INFO] Processing BAM file ...\n");
     }
 
     /****************************
@@ -53,10 +54,10 @@ GStr splamJExtract() {
     int currentstart = 0, currentend = 0;
     int bundle_counter = 0;
 
+    /****************************
+    * Workflow to extract junctions
+    *****************************/
     if (g_paired_removal) {
-        /****************************
-        * Workflow to extract junctions
-        *****************************/
         while (more_alns) {
             bool chr_changed=false;
             int pos=0;
@@ -179,9 +180,9 @@ GStr splamJExtract() {
             }
 
             if (currentend<fragment_end) {
-                //current read extends the bundle
+                //current read extends the bundle => adjusted currentend
                 currentend=fragment_end;
-            } //adjusted currentend and checked for overlapping reference transcripts
+            }
 
             /***********************************
              * (3) Process the alignment!
@@ -192,17 +193,9 @@ GStr splamJExtract() {
 
 
     } else {
-        /****************************
-        * Workflow to extract splice junctions.
-        *****************************/
-        // Reading BAM file.
         int prev_tid=-1;
         GStr prev_refname;
-        int b_end=0, b_start=0;
-
-        if (verbose) {
-            GMessage("[INFO] Processing BAM file ...\n");
-        }
+        int b_end=0;
         int Read_counter = 0;
         while ((irec=in_records.next())!=NULL) {
             Read_counter += 1;
@@ -212,7 +205,6 @@ GStr splamJExtract() {
             if (brec->refId()!=prev_tid || (int)brec->start>b_end) {
                 flushJuncs(joutf);
                 junctions.setCapacity(128);
-                b_start=brec->start;
                 b_end=endpos;
                 prev_tid=brec->refId();
                 prev_refname=(char*)brec->refName();
@@ -244,8 +236,6 @@ GStr splamJExtract() {
                  * Non-spliced reads
                 *************************/
                 // Non-spliced reads.
-                // Not spliced => check their NH tags!
-                // if (brec->isUnmapped()) continue;
                 if (COMMAND_MODE == CLEAN) {
                     int new_nh = brec->tag_int("NH", 0);
                     if (new_nh <= 1) {
@@ -263,7 +253,7 @@ GStr splamJExtract() {
             // }
         }
 
-        GMessage("Read_counter: %d!\n", Read_counter);
+        GMessage("[Info] Total number of alignments processed: %d!\n", Read_counter);
     }
     in_records.stop();
     flushJuncs(joutf);
@@ -387,7 +377,7 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
         brec_bd_p.clear();
     }
 
-    GMessage("Read_counter: %d!\n", Read_counter);
+    GMessage("\t* # alignments processed: %d!\n", Read_counter);
     bundle->Clear();
 }
 
@@ -407,8 +397,6 @@ void processRead_jext(int currentstart, int currentend, GList<CReadAln>& readlis
 	}
 	*/
 
-	// double nm = (double)brec.tag_int("NM"); // read mismatch
-	// float unitig_cov = brec.tag_float("YK");
 	bool match=false;  // true if current read matches a previous read
 	int n = 0;
 	if (bdata.end<currentend) {
@@ -416,19 +404,6 @@ void processRead_jext(int currentstart, int currentend, GList<CReadAln>& readlis
 		bdata.end=currentend;
 	}
 	bdata.numreads++;  // number of reads gets increased no matter what
-
-    // GMessage("brec->refName(): %s\n", brec->refName());
-    // CReadAln* readaln = new CReadAln(&brec);
-    
-    // // for (int i=0;i<brec->exons.Count();i++) {
-    // //     readaln->len+=brec->exons[i].len();
-    // //     if(i) {
-    // //         int jstrand=strand;
-    // //         uint jstart=brec->exons[i-1].end;
-    // //         uint jend=brec->exons[i].start;
-    // //     }
-    // //     readaln->segs.Add(brec->exons[i]);
-    // // }
 
     /************************
     * Adding splice sites
@@ -483,9 +458,6 @@ void processRead_jext(int currentstart, int currentend, GList<CReadAln>& readlis
                 _id+='*';
                 _id_p+='*';
                 n_check=hashread[_id.chars()];
-                // GMessage("\t old n: %d;\n", n);
-                // readlist.Remove(alndata);
-                // n = n-1;
             }
 
 			if(pair_start < self_start) { // if I've seen the pair already <- I might not have seen it yet because the pair starts at the same place
@@ -498,7 +470,6 @@ void processRead_jext(int currentstart, int currentend, GList<CReadAln>& readlis
                 } else {
                     // GMessage(">> Pair not in the same bundle\n");
                 }
-                // hashread.Remove(_id_p.chars());
 
             } else if (pair_start == self_start) {
 				hashread.Add(_id.chars(), n);
@@ -516,12 +487,9 @@ void processRead_jext(int currentstart, int currentend, GList<CReadAln>& readlis
                     // hashread.Remove(_id_p.chars());
                 }
             } // Do not process the pair that is larger.
-            // GMessage("Adding read to hash: %s;  %d\n", _id.chars(), n);
             hashread.Add(_id.chars(), n);
             const int* n_check_final=hashread[_id.chars()];
             // GMessage("Retrieving read from hash: %s;  %d\n", _id.chars(), *n_check_final);
 		}
-	} else {
-
-    }
+	}
 }

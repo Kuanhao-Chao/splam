@@ -155,11 +155,11 @@ GStr splamNHUpdate() {
 
     delete outfile_cleaned;
     if (verbose) {
-        GMessage("[INFO] %d alignments processed.\n", processed_aln);
-        // ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD + 
-        // ALN_COUNT_NSPLICED_MULTI +
-        // ALN_COUNT_SPLICED_MULTI_UNPAIR - ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD + 
-        // ALN_COUNT_NSPLICED_MULTI_UNPAIR);
+        GMessage("[INFO] %d alignments processed.\n", 
+        ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD + 
+        ALN_COUNT_NSPLICED_MULTI +
+        ALN_COUNT_SPLICED_MULTI_UNPAIR - ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD + 
+        ALN_COUNT_NSPLICED_MULTI_UNPAIR);
     }
     return outfname_cleaned;
 }

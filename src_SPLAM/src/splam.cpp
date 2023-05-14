@@ -51,9 +51,8 @@ bool predict_junc_mode = false;
 TInputFiles in_records;
 TInputRecord* irec=NULL;
 
-float threshold = 0.3;
+float threshold = 0.1;
 int aln_num_thr = 4;
-
 GSamRecord* brec=NULL;
 
 // output file names 
@@ -139,7 +138,6 @@ FILE* joutf_below=NULL;
 
 // clean parameters:
 bool g_paired_removal = false;
-
 bool g_is_single_end = false;
 
 int main(int argc, char* argv[]) {
@@ -242,9 +240,6 @@ int main(int argc, char* argv[]) {
         ALN_COUNT_NSPLICED = ALN_COUNT_NSPLICED_UNIQ + ALN_COUNT_NSPLICED_MULTI;
         ALN_COUNT_SPLICED_UNPAIR = ALN_COUNT_SPLICED_UNIQ_UNPAIR + ALN_COUNT_SPLICED_MULTI_UNPAIR;
         ALN_COUNT_NSPLICED_UNPAIR = ALN_COUNT_NSPLICED_UNIQ_UNPAIR + ALN_COUNT_NSPLICED_MULTI_UNPAIR;
-
-        ALN_COUNT_SPLICED += ALN_COUNT_SPLICED_UNPAIR;
-        ALN_COUNT_NSPLICED += ALN_COUNT_NSPLICED_UNPAIR;
 
         ALN_COUNT_UNPAIR = ALN_COUNT_SPLICED_UNPAIR + ALN_COUNT_NSPLICED_UNPAIR;
 
