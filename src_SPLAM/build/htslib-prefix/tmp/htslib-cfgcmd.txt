@@ -1,1 +1,0 @@
-cmd='autoconf;-i;COMMAND;./configure;--without-libdeflate;--disable-libcurl;--disable-lzma'
