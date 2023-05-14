@@ -128,7 +128,9 @@ GStr splamJExtract() {
              * (2) Process the bundle!
             ************************************/
             if (new_bundle || chr_changed) {
-                GMessage("current boundaries: %d - %d\n", currentstart, currentend);
+                if (currentstart < currentend) {
+                    GMessage("current boundaries: %d - %d\n", currentstart, currentend);
+                }
                 hashread.Clear();
                 if (readlist.Count()>0) {
                     // process reads in previous bundle
