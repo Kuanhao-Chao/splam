@@ -64,7 +64,6 @@ class CJunc {
 
 		void add(CJunc& j) {
 			dupcount+=j.dupcount;
-			GMessage("%s  (%d - %d) Update junction count: %d\n", j.ref.chars(), j.start, j.end, dupcount);
 		}
 
 		void write(FILE* f) {

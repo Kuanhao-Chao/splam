@@ -182,7 +182,7 @@ class myDataset(Dataset):
                         print(Y.size())
                     self.data.append([X, Y, seq_name])
                 pidx += 1
-                if pidx %10000 == 0:
+                if pidx %100000 == 0:
                     print('\t', pidx, ' junctions loaded.')
 
         index_shuf = list(range(len(self.data)))
