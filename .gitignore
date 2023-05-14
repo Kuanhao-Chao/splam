@@ -5,7 +5,6 @@ src/Conformer/.git/
 src/block-recurrent-transformer/
 Dataset/
 .DS_Store
-*.txt
 *.fa
 *.bed
 src/MODEL/
