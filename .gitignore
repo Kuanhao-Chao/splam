@@ -21,8 +21,8 @@ src/INPUTS/
 src_spliceNN/SpliceNN/build/
 src_spliceNN/SpliceNN/libtorch/
 SPLAM_C++/build/
-src_intron_matcher/build/
 SPLAM_C++/SPLAM/include/htslib/
+src_intron_matcher/build/
 src_intron_matcher/build/include/htslib
 src/Experiment_SpliceAI/INPUTS/
 src/Experiment_SpliceAI/models/
@@ -50,4 +50,3 @@ src_tools_evaluation/dataset/
 src_tools_evaluation/IMG/
 Figure/*.pptx
 src_tools_evaluation/1st_res_noparalog/
-src_SPLAM/build/CLEAN_TRR/
