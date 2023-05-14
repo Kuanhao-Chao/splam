@@ -6,10 +6,6 @@ src/block-recurrent-transformer/
 Dataset/
 .DS_Store
 *.txt
-src_all_isoforms/*.h5
-src_all_isoforms/*.txt
-src_all_isoforms/MODEL
-src_all_isoforms/data
 *.fa
 *.bed
 src/MODEL/
@@ -22,8 +18,6 @@ src_spliceNN/SpliceNN/build/
 src_spliceNN/SpliceNN/libtorch/
 SPLAM_C++/build/
 SPLAM_C++/SPLAM/include/htslib/
-src_intron_matcher/build/
-src_intron_matcher/build/include/htslib
 src/Experiment_SpliceAI/INPUTS/
 src/Experiment_SpliceAI/models/
 __pycache__/
