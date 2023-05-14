@@ -16,7 +16,6 @@ src/INPUTS/
 src_spliceNN/SpliceNN/build/
 src_spliceNN/SpliceNN/libtorch/
 SPLAM_C++/build/
-SPLAM_C++/SPLAM/include/htslib/
 src/Experiment_SpliceAI/INPUTS/
 src/Experiment_SpliceAI/models/
 __pycache__/
