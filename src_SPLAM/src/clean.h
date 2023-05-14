@@ -23,4 +23,8 @@ GStr writenhHitFile(robin_hdd_rm_hit& rm_hit);
 bool alignmentAssessment(GSamRecord* brec, robin_hdd_string &rm_juncs);
 // std::string get_global_removed_algns_key(GSamRecord* brec);
 std::string get_global_removed_mate_algns_key(GSamRecord* brec);
+void update_flag_paired_remove_both(GSamRecord* brec_1, GSamRecord* brec_2);
+void update_flag_paired_remove_one(GSamRecord* removed, GSamRecord* kept);
+void update_flag_unpair_remove(GSamRecord* removed);
+void update_flag_unpair_kept(GSamRecord* kept);
 #endif

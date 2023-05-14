@@ -163,7 +163,7 @@ std::string python_script =
 "                        print(Y.size())\n"
 "                    self.data.append([X, Y, seq_name])\n"
 "                pidx += 1\n"
-"                if pidx %10000 == 0:\n"
+"                if pidx %100000 == 0:\n"
 "                    print('\t', pidx, ' junctions loaded.')\n"
 "        index_shuf = list(range(len(self.data)))\n"
 "        if shuffle:\n"

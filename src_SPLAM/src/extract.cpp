@@ -31,7 +31,6 @@ GStr splamJExtract() {
     /****************************
     * Creating junction bed files.
     *****************************/
-    // Creating the output junction bed file
     if (!outfname_junc_bed.is_empty()) {
         if (strcmp(outfname_junc_bed.substr(outfname_junc_bed.length()-4, 4).chars(), ".bed")!=0) {
             outfname_junc_bed.append(".bed");
@@ -56,8 +55,7 @@ GStr splamJExtract() {
 
     if (g_paired_removal) {
         /****************************
-        * This is the workflow to remove bad junctions and their mates.
-        *   Bundling approach
+        * Workflow to extract junctions
         *****************************/
         while (more_alns) {
             bool chr_changed=false;
@@ -65,7 +63,6 @@ GStr splamJExtract() {
             const char* refseqName=NULL;
             char xstrand=0;
             int nh=1;
-            int hi=0;
             int gseq_id=lastref_id;  //current chr id
             bool new_bundle=false;
 
@@ -117,7 +114,6 @@ GStr splamJExtract() {
                     prev_pos=pos;
                 }
                 nh=brec->tag_int("NH", 1);
-                hi=brec->tag_int("HI", 0);
                 if (!chr_changed && currentend>0 && pos>currentend+g_bundle_gap) {
                     GMessage("New bundle: currentend(%d - %d), %d, g_bundle_gap: %d\n ", currentend, currentend, pos, g_bundle_gap);
                     new_bundle=true;
@@ -224,9 +220,7 @@ GStr splamJExtract() {
                 }
             }
 
-            // GMessage("accYC: %d\n", accYC);
             if (joutf && brec->exons.Count()>1) {
-                GMessage("Alignment (%d - %d)\n", brec->start, brec->end);
                 /*************************
                  * Spliced reads
                 *************************/
@@ -306,10 +300,8 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
     junctions.setCapacity(128);
 
     // Writing out alignments
-
     int Read_counter = 0;
     for (int idx=0; idx<readlist.Count(); idx++) {
-        // GMessage("\tidx %d\n", idx);
         Read_counter += 1;
         GSamRecord& brec_bd = readlist[idx]->brec;
 
@@ -352,6 +344,7 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
 
         /***********************************
          * Processing paired reads.
+         *   => Write it out into the paired BAM.
         ************************************/
         // Process both the current and paired alginments.
         GSamRecord& brec_bd_p = readlist[readlist[idx]->pair_idx]->brec;
@@ -396,9 +389,9 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
     bundle->Clear();
 }
 
-void processRead_jext(int currentstart, int currentend, GList<CReadAln>& readlist, BundleData& bdata, GHash<int>& hashread, CReadAln* alndata) { // some false positives should be eliminated here in order to break the bundle
-
-	GSamRecord& brec=(alndata->brec);			   // bam record
+void processRead_jext(int currentstart, int currentend, GList<CReadAln>& readlist, BundleData& bdata, GHash<int>& hashread, CReadAln* alndata) { 
+	
+    GSamRecord& brec=(alndata->brec);
     static GStr _id("", 256); //to prevent repeated reallocation for each parsed read
     static GStr _id_p("", 256); //to prevent repeated reallocation for each parsed read
 	
@@ -412,8 +405,8 @@ void processRead_jext(int currentstart, int currentend, GList<CReadAln>& readlis
 	}
 	*/
 
-	double nm=(double)brec.tag_int("NM"); // read mismatch
-	float unitig_cov = brec.tag_float("YK");
+	// double nm = (double)brec.tag_int("NM"); // read mismatch
+	// float unitig_cov = brec.tag_float("YK");
 	bool match=false;  // true if current read matches a previous read
 	int n = 0;
 	if (bdata.end<currentend) {
@@ -439,17 +432,14 @@ void processRead_jext(int currentstart, int currentend, GList<CReadAln>& readlis
     * Adding splice sites
     ************************/
     if (joutf && brec.exons.Count()>1) {
-        GMessage("Alignment (%d - %d)\n", brec.start, brec.end);
         // Spliced reads
         int accYC = 0;
         accYC = brec.tag_int("YC", 1);
-        GMessage("Add junction: %d!\n", accYC);
         addJunction(brec, accYC, brec.refName());
         ALN_COUNT_SPLICED++;
     }
 
     n = readlist.Add(alndata); // reset n for the case there is no match
-    // GMessage(">> n: %d\n", n);
 
 	if((int)brec.end>currentend) {
 		currentend=brec.end;
@@ -494,7 +484,6 @@ void processRead_jext(int currentstart, int currentend, GList<CReadAln>& readlis
                 // GMessage("\t old n: %d;\n", n);
                 // readlist.Remove(alndata);
                 // n = n-1;
-                // GMessage("\t new n: %d \n", n);
             }
 
 			if(pair_start < self_start) { // if I've seen the pair already <- I might not have seen it yet because the pair starts at the same place

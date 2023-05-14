@@ -342,6 +342,8 @@ class GSamRecord: public GSeg {
  bool isMateUnmapped() { return ((b->core.flag & BAM_FMUNMAP) != 0); }
  bool isMateMapped() { return ((b->core.flag & BAM_FMUNMAP) == 0); }
  bool isPaired() { return ((b->core.flag & BAM_FPAIRED) != 0); }
+ bool isProperPaired() { return ((b->core.flag & BAM_FPROPER_PAIR) != 0); }
+
  const char* name() { return bam_get_qname(b); }
  int pairOrder() {
     //which read in the pair: 0 = unpaired, 1=first read, 2=second read
