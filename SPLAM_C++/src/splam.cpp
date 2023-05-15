@@ -554,12 +554,12 @@ void optionsJunction(GArgs& args) {
 void optionsNoPrediction(GArgs& args) {
     //--no-prediction
     no_predict = (args.getOpt("no-prediction")!=NULL);
-    // GMessage("no_predict: %d\n", no_predict);
-    // if (no_predict) {
-    //     GMessage(">>  Running no_predict mode\n");
-    // } else {
-    //     GMessage(">>  Running predict mode\n");
-    // }
+    GMessage("no_predict: %d\n", no_predict);
+    if (no_predict) {
+        GMessage(">>  Running no_predict mode\n");
+    } else {
+        GMessage(">>  Running predict mode\n");
+    }
 }
 
 
