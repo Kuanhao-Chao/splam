@@ -62,10 +62,10 @@ void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
             JUNC_COUNT_GOOD ++;
         }
     }
-    // for (auto ele : rm_juncs) {
-    //     GMessage("rm_juncs : %s\n", ele.c_str());
-    //     // GMessage("ele.second : %d\n", ele.second);
-    // }
+    for (auto ele : rm_juncs) {
+        GMessage("rm_juncs : %s\n", ele.c_str());
+        // GMessage("ele.second : %d\n", ele.second);
+    }
 }
 
 GStr filterSpurJuncs(GStr outfname_junc_score) {
@@ -95,12 +95,10 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             if (verbose) {
                 bar_uniq.update();
             }
-
             bool spur = alignmentAssessment(brec, rm_juncs);
             uniq_brec_1st = new GSamRecord(*brec);
             brec = reader_s_uniq_map.next();
             bool spur_pair = alignmentAssessment(brec, rm_juncs);
-            
             if (!g_2_stage_run) {
                 if (spur && spur_pair) {
                     // Make sure both reads are unmapped.
@@ -144,8 +142,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                     keepAlignment(outfile_cleaned_2stage, brec);
                 }
             }
-
-
             delete uniq_brec_1st;
         }
         reader_s_uniq_map.bclose();
@@ -239,6 +235,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             }
             bool spur = alignmentAssessment(brec, rm_juncs);
             if (spur) {
+                update_flag_unpair_remove(brec);
                 removeAlignment(outfile_discard_s_multi_map, brec, rm_hit);
                 ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD += 1;
             } else {
@@ -271,6 +268,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             }
             bool spur = alignmentAssessment(brec, rm_juncs);
             if (spur) {
+                update_flag_unpair_remove(brec);
                 removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit);
                 ALN_COUNT_SPLICED_UNIQ_DISCARD += 1;
             } else {
@@ -296,6 +294,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             }
             bool spur = alignmentAssessment(brec, rm_juncs);
             if (spur) {
+                update_flag_unpair_remove(brec);
                 removeAlignment(outfile_discard_s_multi_map, brec, rm_hit);
                 ALN_COUNT_SPLICED_MULTI_DISCARD += 1;
             } else {
@@ -306,10 +305,10 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
         if (verbose) GMessage("\n");
     }
 
-    // for (auto ele : rm_hit) {
-    //     GMessage("ele.first : %s\n", ele.first.c_str());
-    //     GMessage("ele.second: %d\n\n", ele.second);
-    // }
+    for (auto ele : rm_hit) {
+        GMessage("ele.first : %s\n", ele.first.c_str());
+        GMessage("ele.second: %d\n\n", ele.second);
+    }
 
     delete outfile_s_multi_map_tmp;
     delete outfile_discard_s_uniq_map;
@@ -527,91 +526,98 @@ std::string get_global_removed_mate_algns_key(GSamRecord* brec) {
 }
 
 void update_flag_paired_remove_both(GSamRecord* brec_1, GSamRecord* brec_2) {
+    
+    GMessage("Before brec_1->flags(): %d (%s)\n", brec_1->flags(), brec_1->name());
     // First read in a pair
     int brec_1_flag_update = 0;
-    // if (brec_1->isPaired()) {
-    //     brec_1_flag_update -= 1;
-    // }
+    if (brec_1->isPaired()) {
+        brec_1_flag_update -= 1;
+    }
+    if (brec_1->isProperPaired()) {
+        brec_1_flag_update -= 2;
+    }
     if (brec_1->isMapped()) {
         brec_1_flag_update += 4;
     }
     if (brec_1->isMateMapped()) {
         brec_1_flag_update += 8;
     }
-    if (brec_1->isProperPaired()) {
-        brec_1_flag_update -= 2;
-    }
     brec_1->set_flags(brec_1->flags() + brec_1_flag_update);
+    GMessage("After brec_1->flags(): %d\n", brec_1->flags());
 
+
+    GMessage("Before brec_2->flags(): %d (%s)\n", brec_2->flags(), brec_2->name());
     // Second read in a pair
-    // if (brec_2->isPaired()) {
-    //     brec_2_flag_update -= 1;
-    // }
     int brec_2_flag_update = 0;
+    if (brec_2->isPaired()) {
+        brec_2_flag_update -= 1;
+    }
+    if (brec_2->isProperPaired()) {
+        brec_2_flag_update -= 2;
+    }
     if (brec_2->isMapped()) {
         brec_2_flag_update += 4;
     }
     if (brec_2->isMateMapped()) {
         brec_2_flag_update += 8;
     }
-    if (brec_2->isProperPaired()) {
-        brec_2_flag_update -= 2;
-    }
     brec_2->set_flags(brec_2->flags() + brec_2_flag_update);
+    GMessage("After brec_2->flags(): %d\n", brec_2->flags());
 }
 
 void update_flag_paired_remove_one(GSamRecord* removed, GSamRecord* kept) {
+    GMessage("Before removed->flags(): %d (%s)\n", removed->flags(), removed->name());
     // Removed alignment in a pair
     int removed_flag_update = 0;
-    // if (removed->isPaired()) {
-    //     removed_flag_update -= 1;
-    // }
-    if (removed->isMapped()) {
-        removed_flag_update += 4;
+    if (removed->isPaired()) {
+        removed_flag_update -= 1;
     }
     if (removed->isProperPaired()) {
         removed_flag_update -= 2;
     }
+    if (removed->isMapped()) {
+        removed_flag_update += 4;
+    }
     removed->set_flags(removed->flags() + removed_flag_update);
+
+    GMessage("After removed->flags(): %d\n", removed->flags());
 
     // Kept alignment in a pair
     int kept_flag_update = 0;
-    // if (kept->isPaired()) {
-    //     kept_flag_update -= 1;
-    // }
-    if (kept->isMateMapped()) {
-        kept_flag_update += 8;
+    if (kept->isPaired()) {
+        kept_flag_update -= 1;
     }
     if (kept->isProperPaired()) {
         kept_flag_update -= 2;
+    }
+    if (kept->isMateMapped()) {
+        kept_flag_update += 8;
     }
     kept->set_flags(kept->flags() + kept_flag_update);
 }
 
 void update_flag_unpair_remove(GSamRecord* removed) {
+
+    GMessage("Before removed->flags(): %d (%s)\n", removed->flags(), removed->name());
     int removed_flag_update = 0;
     if (removed->isPaired()) {
         removed_flag_update -= 1;
     }
-    if (removed->isMapped()) {
-        removed_flag_update += 4;
-    }
-    if (removed->isMateUnmapped()) {
-        removed_flag_update -= 8;
-    }
     if (removed->isProperPaired()) {
         removed_flag_update -= 2;
     }
+    // Unmap the current read
+    if (removed->isMapped()) {
+        removed_flag_update += 4;
+    }
     removed->set_flags(removed->flags() + removed_flag_update);
+    GMessage("After removed->flags(): %d\n", removed->flags());
 }
 
 void update_flag_unpair_kept(GSamRecord* kept) {
     int kept_flag_update = 0;
     if (kept->isPaired()) {
         kept_flag_update -= 1;
-    }
-    if (kept->isMateUnmapped()) {
-        kept_flag_update -= 8;
     }
     if (kept->isProperPaired()) {
         kept_flag_update -= 2;
