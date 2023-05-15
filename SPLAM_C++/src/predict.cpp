@@ -86,26 +86,27 @@ GStr splamPredict() {
     }
     
 
-    /*********************************************
-     * Step 3: SPLAM model prediction
-    *********************************************/
-    STEP_COUNTER += 1;
-
-    if (verbose) {
-        GMessage("\n###########################################\n");
-        GMessage("## Step %d: SPLAM model prediction\n", STEP_COUNTER);
-        GMessage("###########################################\n");
-    }
-    Py_Initialize();
-    // GStr python_f = "./script/splam.py";
     GStr outfname_junc_score(out_dir + "/junction_score.bed");
+    if (!no_predict) {
+        /*********************************************
+         * Step 3: SPLAM model prediction
+        *********************************************/
+        STEP_COUNTER += 1;
 
-    wchar_t *argvv[] = {GetWC("."), GetWC("-f"), GetWC(outfname_junc_fa.chars()), GetWC("-o"), GetWC(outfname_junc_score.chars()), GetWC("-m"), GetWC(infname_model_name.chars())};
-    PySys_SetArgv(7, argvv);
+        if (verbose) {
+            GMessage("\n###########################################\n");
+            GMessage("## Step %d: SPLAM model prediction\n", STEP_COUNTER);
+            GMessage("###########################################\n");
+        }
+        Py_Initialize();
+        // GStr python_f = "./script/splam.py";
 
-    PyRun_SimpleString(python_script.c_str());
-    Py_Finalize();
+        wchar_t *argvv[] = {GetWC("."), GetWC("-f"), GetWC(outfname_junc_fa.chars()), GetWC("-o"), GetWC(outfname_junc_score.chars()), GetWC("-m"), GetWC(infname_model_name.chars())};
+        PySys_SetArgv(7, argvv);
 
+        PyRun_SimpleString(python_script.c_str());
+        Py_Finalize();
+    }
     return outfname_junc_score;
 }
 
