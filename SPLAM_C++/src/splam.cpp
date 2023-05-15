@@ -260,6 +260,7 @@ int main(int argc, char* argv[]) {
         infname_NH_tag = splamClean();
         splamNHUpdate();
     } else if (COMMAND_MODE == CLEAN && g_2_stage_run) {
+        infname_scorebed = out_dir + "/junction_score.bed";
         infname_NH_tag = splamClean();
         splamNHUpdate();
     }
@@ -358,7 +359,7 @@ void processOptions(int argc, char* argv[]) {
 
     if (args.getOpt('P') || args.getOpt("paired-removal") ) {
         g_paired_removal = true;
-        // GMessage("g_paired_removal: %d\n", g_paired_removal);
+        GMessage("g_paired_removal: %d\n", g_paired_removal);
     }
 
     if (strcmp(command_str.chars(), "j-extract") == 0) {
