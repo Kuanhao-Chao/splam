@@ -75,7 +75,7 @@ add_executable(SPLAM
 # target_link_libraries(SPLAM Python::Python)
 
 add_dependencies(SPLAM htslib)
-target_link_libraries(SPLAM stdc++fs)
+# target_link_libraries(SPLAM stdc++fs)
 target_link_libraries(SPLAM ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
 # target_link_libraries(SPLAM "${TORCH_LIBRARIES}")
 # target_include_directories(SPLAM PRIVATE ${PYTHON_INCLUDE_DIRS})
