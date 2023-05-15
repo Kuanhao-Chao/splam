@@ -115,6 +115,9 @@ extern GSamWriter* outfile_below_spliced;
 extern FILE* joutf_above;
 extern FILE* joutf_below;
 
+// predict parameters
+extern bool no_predict;
+
 // clean parameters
 extern bool g_paired_removal;
 // extern robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;

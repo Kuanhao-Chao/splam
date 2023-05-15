@@ -33,6 +33,7 @@ void optionsRef(GArgs& args);
 void optionsOutput(GArgs& args);
 void checkJunction(GArgs& args);
 void optionsJunction(GArgs& args);
+void optionsNoPrediction(GArgs& args);
 
 CommandMode COMMAND_MODE = UNSET;
 GStr command_str;
@@ -136,6 +137,9 @@ GSamWriter* outfile_below_spliced = NULL;
 FILE* joutf_above=NULL;
 FILE* joutf_below=NULL;
 
+// predict parameters:
+bool no_predict = false;
+
 // clean parameters:
 bool g_paired_removal = false;
 bool g_is_single_end = false;
@@ -189,7 +193,7 @@ int main(int argc, char* argv[]) {
     /*********************
      * Directory creating + Sam writer creation
     *********************/
-    if (COMMAND_MODE == CLEAN) {
+    if (COMMAND_MODE == CLEAN || no_predict) {
         // Creating the directory
         std::filesystem::create_directories(tmp_dir.chars());
         std::filesystem::create_directories(discard_dir.chars());
@@ -200,17 +204,24 @@ int main(int argc, char* argv[]) {
         outfile_ns_multi_map = new GSamWriter(outfname_ns_multi_map, in_records.header(), GSamFile_BAM);
         outfile_s_uniq_map = new GSamWriter(outfname_s_uniq_map, in_records.header(), GSamFile_BAM);
         outfile_s_multi_map = new GSamWriter(outfname_s_multi_map, in_records.header(), GSamFile_BAM);
-        outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
 
-        // Unpaired
-        outfile_ns_multi_unpair = new GSamWriter(outfname_ns_multi_unpair, in_records.header(), GSamFile_BAM);
-        outfile_s_uniq_unpair = new GSamWriter(outfname_s_uniq_unpair, in_records.header(), GSamFile_BAM);
-        outfile_s_multi_unpair = new GSamWriter(outfname_s_multi_unpair, in_records.header(), GSamFile_BAM);
-        outfile_s_multi_unpair_tmp = new GSamWriter(outfname_s_multi_unpair_tmp, in_records.header(), GSamFile_BAM);
-        
-        // discarded files
-        outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
-        outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);
+        if (g_paired_removal) {
+            // Unpaired
+            outfile_ns_multi_unpair = new GSamWriter(outfname_ns_multi_unpair, in_records.header(), GSamFile_BAM);
+            outfile_s_uniq_unpair = new GSamWriter(outfname_s_uniq_unpair, in_records.header(), GSamFile_BAM);
+            outfile_s_multi_unpair = new GSamWriter(outfname_s_multi_unpair, in_records.header(), GSamFile_BAM);
+        }
+
+        if (COMMAND_MODE == CLEAN) {
+            // The tmp files only for CLEANING
+            outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
+            if (g_paired_removal) {
+                outfile_s_multi_unpair_tmp = new GSamWriter(outfname_s_multi_unpair_tmp, in_records.header(), GSamFile_BAM);    
+            }
+            // discarded files
+            outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
+            outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);   
+        }
     }
     
 
@@ -295,7 +306,7 @@ int main(int argc, char* argv[]) {
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;junction;model=;output=;score=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
+    GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;junction;no-prediction;model=;output=;score=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -321,12 +332,12 @@ void processOptions(int argc, char* argv[]) {
 
     if (args.getOpt('S') || args.getOpt("single-end") ) {
         g_is_single_end = true;
-        GMessage("g_is_single_end: %d\n", g_is_single_end);
+        // GMessage("g_is_single_end: %d\n", g_is_single_end);
     }
 
     if (args.getOpt('P') || args.getOpt("paired-removal") ) {
         g_paired_removal = true;
-        GMessage("g_paired_removal: %d\n", g_paired_removal);
+        // GMessage("g_paired_removal: %d\n", g_paired_removal);
     }
 
     if (strcmp(command_str.chars(), "j-extract") == 0) {
@@ -356,7 +367,6 @@ void processOptions(int argc, char* argv[]) {
     if (COMMAND_MODE == J_EXTRACT) {
         processOptionsJExtract(args);    
     } else if (COMMAND_MODE == PREDICT) {
-        GMessage(">> Inside PREDICT:\n");
         processOptionsPredict(args);
     } else if (COMMAND_MODE == CLEAN) {
         processOptionsClean(args);
@@ -411,6 +421,7 @@ void processOptionsPredict(GArgs& args) {
     optionsRef(args);
     optionsOutput(args);
     optionsJunction(args);
+    optionsNoPrediction(args);
 }
 
 
@@ -512,11 +523,23 @@ void optionsOutput(GArgs& args) {
 void optionsJunction(GArgs& args) {
     // -J / --junction
     predict_junc_mode = (args.getOpt("junction")!=NULL || args.getOpt('J')!=NULL);
-    if (predict_junc_mode) {
-        GMessage(">>  SPLAM predict [Junction mode]\n");
-    } else {
-        GMessage(">>  SPLAM predict [Default mode]\n");
-    }
+    // if (predict_junc_mode) {
+    //     GMessage(">>  SPLAM predict [Junction mode]\n");
+    // } else {
+    //     GMessage(">>  SPLAM predict [Default mode]\n");
+    // }
+}
+
+
+void optionsNoPrediction(GArgs& args) {
+    //--no-prediction
+    no_predict = (args.getOpt("no-prediction")!=NULL);
+    // GMessage("no_predict: %d\n", no_predict);
+    // if (no_predict) {
+    //     GMessage(">>  Running no_predict mode\n");
+    // } else {
+    //     GMessage(">>  Running predict mode\n");
+    // }
 }
 
 
