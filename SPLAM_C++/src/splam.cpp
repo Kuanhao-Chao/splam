@@ -34,6 +34,7 @@ void optionsOutput(GArgs& args);
 void checkJunction(GArgs& args);
 void optionsJunction(GArgs& args);
 void optionsNoPrediction(GArgs& args);
+void options2StageRun(GArgs& args);
 
 CommandMode COMMAND_MODE = UNSET;
 GStr command_str;
@@ -58,6 +59,8 @@ GSamRecord* brec=NULL;
 
 // output file names 
 GStr outfname_cleaned;
+GStr outfname_cleaned_2stage;
+
 // Paired
 GStr outfname_ns_multi_map;
 GStr outfname_s_uniq_map;
@@ -74,6 +77,7 @@ GStr outfname_discard_s_multi_map;
 
 // GSamWriter 
 GSamWriter* outfile_cleaned = NULL;
+GSamWriter* outfile_cleaned_2stage = NULL;
 // Paired
 GSamWriter* outfile_ns_multi_map = NULL;
 GSamWriter* outfile_s_uniq_map = NULL;
@@ -143,6 +147,7 @@ bool no_predict = false;
 // clean parameters:
 bool g_paired_removal = false;
 bool g_is_single_end = false;
+bool g_2_stage_run = false;
 
 int main(int argc, char* argv[]) {
     GMessage(
@@ -163,6 +168,7 @@ int main(int argc, char* argv[]) {
     processOptions(argc, argv);
 
     outfname_cleaned = out_dir + "/cleaned.bam";
+    outfname_cleaned = out_dir + "/cleaned_2stage.bam";
     /*********************
      * For paired uniq- / multi- mapped alignments
     *********************/
@@ -193,7 +199,7 @@ int main(int argc, char* argv[]) {
     /*********************
      * Directory creating + Sam writer creation
     *********************/
-    if (COMMAND_MODE == CLEAN || no_predict) {
+    if ((COMMAND_MODE == CLEAN && !g_2_stage_run)  || (COMMAND_MODE == PREDICT && no_predict)) {
         // Creating the directory
         std::filesystem::create_directories(tmp_dir.chars());
         std::filesystem::create_directories(discard_dir.chars());
@@ -212,7 +218,7 @@ int main(int argc, char* argv[]) {
             outfile_s_multi_unpair = new GSamWriter(outfname_s_multi_unpair, in_records.header(), GSamFile_BAM);
         }
 
-        if (COMMAND_MODE == CLEAN) {
+        if (COMMAND_MODE == CLEAN && !g_2_stage_run) {
             // The tmp files only for CLEANING
             outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
             if (g_paired_removal) {
@@ -222,6 +228,16 @@ int main(int argc, char* argv[]) {
             outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
             outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);   
         }
+    } else if (COMMAND_MODE == CLEAN && g_2_stage_run) {
+        // The tmp files only for CLEANING
+        outfile_cleaned_2stage = new GSamWriter(outfname_cleaned_2stage, in_records.header(), GSamFile_BAM);
+        outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
+        if (g_paired_removal) {
+            outfile_s_multi_unpair_tmp = new GSamWriter(outfname_s_multi_unpair_tmp, in_records.header(), GSamFile_BAM);    
+        }
+        // discarded files
+        outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
+        outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);   
     }
     
 
@@ -236,9 +252,12 @@ int main(int argc, char* argv[]) {
             infname_juncbed = splamJExtract();
         }
         infname_scorebed = splamPredict();
-    } else if (COMMAND_MODE == CLEAN) {
+    } else if (COMMAND_MODE == CLEAN && !g_2_stage_run) {
         infname_juncbed = splamJExtract();
         infname_scorebed = splamPredict();
+        infname_NH_tag = splamClean();
+        splamNHUpdate();
+    } else if (COMMAND_MODE == CLEAN && g_2_stage_run) {
         infname_NH_tag = splamClean();
         splamNHUpdate();
     }
@@ -306,7 +325,7 @@ int main(int argc, char* argv[]) {
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;junction;no-prediction;model=;output=;score=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
+    GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;junction;no-prediction;2-stage-run;model=;output=;score=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
     // args.printError(USAGE, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -429,6 +448,7 @@ void processOptionsClean(GArgs& args) {
     optionsModel(args);
     optionsRef(args);
     optionsOutput(args);
+    options2StageRun(args);
 }
 
 
@@ -540,6 +560,18 @@ void optionsNoPrediction(GArgs& args) {
     // } else {
     //     GMessage(">>  Running predict mode\n");
     // }
+}
+
+
+void options2StageRun(GArgs& args) {
+    //--no-prediction
+    g_2_stage_run = (args.getOpt("2-stage-run")!=NULL);
+    GMessage("g_2_stage_run: %d\n", g_2_stage_run);
+    if (g_2_stage_run) {
+        GMessage(">>  Running 2_stage_run mode\n");
+    } else {
+        GMessage(">>  Running non-2_stage_run mode\n");
+    }
 }
 
 

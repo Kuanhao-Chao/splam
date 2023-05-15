@@ -100,26 +100,52 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
             uniq_brec_1st = new GSamRecord(*brec);
             brec = reader_s_uniq_map.next();
             bool spur_pair = alignmentAssessment(brec, rm_juncs);
-            if (spur && spur_pair) {
-                // Make sure both reads are unmapped.
-                update_flag_paired_remove_both(uniq_brec_1st, brec);
-                removeAlignment(outfile_discard_s_uniq_map, uniq_brec_1st, rm_hit);
-                removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit);
-                ALN_COUNT_SPLICED_UNIQ_DISCARD += 2;
-            } else if (spur && !spur_pair) {
-                update_flag_paired_remove_one(uniq_brec_1st, brec);
-                removeAlignment(outfile_discard_s_uniq_map, uniq_brec_1st, rm_hit);
-                keepAlignment(outfile_cleaned, brec);
-                ALN_COUNT_SPLICED_UNIQ_DISCARD += 1;
-            } else if (!spur && spur_pair) {
-                update_flag_paired_remove_one(brec, uniq_brec_1st);
-                keepAlignment(outfile_cleaned, uniq_brec_1st);
-                removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit);
-                ALN_COUNT_SPLICED_UNIQ_DISCARD += 1;
-            } else if (!spur && !spur_pair) {
-                keepAlignment(outfile_cleaned, uniq_brec_1st);
-                keepAlignment(outfile_cleaned, brec);
+            
+            if (!g_2_stage_run) {
+                if (spur && spur_pair) {
+                    // Make sure both reads are unmapped.
+                    update_flag_paired_remove_both(uniq_brec_1st, brec);
+                    removeAlignment(outfile_discard_s_uniq_map, uniq_brec_1st, rm_hit);
+                    removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit);
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD += 2;
+                } else if (spur && !spur_pair) {
+                    update_flag_paired_remove_one(uniq_brec_1st, brec);
+                    removeAlignment(outfile_discard_s_uniq_map, uniq_brec_1st, rm_hit);
+                    keepAlignment(outfile_cleaned, brec);
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD += 1;
+                } else if (!spur && spur_pair) {
+                    update_flag_paired_remove_one(brec, uniq_brec_1st);
+                    keepAlignment(outfile_cleaned, uniq_brec_1st);
+                    removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit);
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD += 1;
+                } else if (!spur && !spur_pair) {
+                    keepAlignment(outfile_cleaned, uniq_brec_1st);
+                    keepAlignment(outfile_cleaned, brec);
+                }
+            } else {
+                if (spur && spur_pair) {
+                    // Make sure both reads are unmapped.
+                    update_flag_paired_remove_both(uniq_brec_1st, brec);
+                    removeAlignment(outfile_discard_s_uniq_map, uniq_brec_1st, rm_hit);
+                    removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit);
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD += 2;
+                } else if (spur && !spur_pair) {
+                    update_flag_paired_remove_one(uniq_brec_1st, brec);
+                    removeAlignment(outfile_discard_s_uniq_map, uniq_brec_1st, rm_hit);
+                    keepAlignment(outfile_cleaned_2stage, brec);
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD += 1;
+                } else if (!spur && spur_pair) {
+                    update_flag_paired_remove_one(brec, uniq_brec_1st);
+                    keepAlignment(outfile_cleaned_2stage, uniq_brec_1st);
+                    removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit);
+                    ALN_COUNT_SPLICED_UNIQ_DISCARD += 1;
+                } else if (!spur && !spur_pair) {
+                    keepAlignment(outfile_cleaned_2stage, uniq_brec_1st);
+                    keepAlignment(outfile_cleaned_2stage, brec);
+                }
             }
+
+
             delete uniq_brec_1st;
         }
         reader_s_uniq_map.bclose();
@@ -189,7 +215,11 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD += 1;
             } else {
                 update_flag_unpair_kept(brec);
-                keepAlignment(outfile_cleaned, brec);
+                if (!g_2_stage_run) {
+                    keepAlignment(outfile_cleaned, brec);
+                } else {
+                    keepAlignment(outfile_cleaned_2stage, brec);
+                }
             }
         }
         reader_s_uniq_unpair.bclose();
@@ -244,7 +274,11 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
                 removeAlignment(outfile_discard_s_uniq_map, brec, rm_hit);
                 ALN_COUNT_SPLICED_UNIQ_DISCARD += 1;
             } else {
-                keepAlignment(outfile_cleaned, brec);
+                if (!g_2_stage_run) {
+                    keepAlignment(outfile_cleaned, brec);
+                } else {
+                    keepAlignment(outfile_cleaned_2stage, brec);
+                }
             }
         }
         reader_s_uniq_map.bclose();
