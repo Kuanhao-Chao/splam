@@ -168,7 +168,7 @@ int main(int argc, char* argv[]) {
     processOptions(argc, argv);
 
     outfname_cleaned = out_dir + "/cleaned.bam";
-    outfname_cleaned = out_dir + "/cleaned_2stage.bam";
+    outfname_cleaned_2stage = out_dir + "/cleaned_2stage.bam";
     /*********************
      * For paired uniq- / multi- mapped alignments
     *********************/
@@ -229,6 +229,7 @@ int main(int argc, char* argv[]) {
             outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);   
         }
     } else if (COMMAND_MODE == CLEAN && g_2_stage_run) {
+        GMessage(">> Inside COMMAND_MODE == CLEAN && g_2_stage_run\n");
         // The tmp files only for CLEANING
         outfile_cleaned_2stage = new GSamWriter(outfname_cleaned_2stage, in_records.header(), GSamFile_BAM);
         outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
@@ -240,6 +241,7 @@ int main(int argc, char* argv[]) {
         outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);   
     }
     
+    GMessage(">> Finish creating GSamWriter\n");
 
     /*********************
      * Main algorithms
