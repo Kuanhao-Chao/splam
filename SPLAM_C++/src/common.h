@@ -37,6 +37,7 @@ extern GSamRecord* brec;
 
 // output file names 
 extern GStr outfname_cleaned;
+extern GStr outfname_cleaned_2stage;
 // Paired
 extern GStr outfname_ns_multi_map;
 extern GStr outfname_s_uniq_map;
@@ -53,6 +54,7 @@ extern GStr outfname_discard_s_multi_map;
 
 // GSamWriter 
 extern GSamWriter* outfile_cleaned;
+extern GSamWriter* outfile_cleaned_2stage;
 // Paired
 extern GSamWriter* outfile_ns_multi_map;
 extern GSamWriter* outfile_s_uniq_map;
@@ -120,9 +122,7 @@ extern bool no_predict;
 
 // clean parameters
 extern bool g_paired_removal;
-// extern robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
-// extern robin_hood::unordered_set<std::string>* rm_rd_set;
-
 extern bool g_is_single_end;
+extern bool g_2_stage_run;
 
 #endif /* TIEBRUSH_TMERGE_H_ */

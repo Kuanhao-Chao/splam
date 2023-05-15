@@ -59,7 +59,11 @@ GStr splamNHUpdate() {
             brec->add_int_tag("NH", new_nh);
             // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
         }
-        keepAlignment(outfile_cleaned, brec);
+        if (!g_2_stage_run) {
+            keepAlignment(outfile_cleaned, brec);
+        } else {
+            keepAlignment(outfile_cleaned_2stage, brec);
+        }
     }
     reader_s_multi_map_tmp.bclose();
     GMessage("\n");
@@ -88,7 +92,11 @@ GStr splamNHUpdate() {
             brec->add_int_tag("NH", new_nh);
             // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
         }
-        keepAlignment(outfile_cleaned, brec);
+        if (!g_2_stage_run) {
+            keepAlignment(outfile_cleaned, brec);
+        } else {
+            keepAlignment(outfile_cleaned_2stage, brec);
+        }
     }
     reader_ns_multi_map.bclose();
     GMessage("\n");
@@ -118,7 +126,11 @@ GStr splamNHUpdate() {
                 brec->add_int_tag("NH", new_nh);
                 // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
-            keepAlignment(outfile_cleaned, brec);
+            if (!g_2_stage_run) {
+                keepAlignment(outfile_cleaned, brec);
+            } else {
+                keepAlignment(outfile_cleaned_2stage, brec);
+            }
         }
         reader_s_multi_unpair_tmp.bclose();
         GMessage("\n");
@@ -147,13 +159,21 @@ GStr splamNHUpdate() {
                 brec->add_int_tag("NH", new_nh);
                 // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
-            keepAlignment(outfile_cleaned, brec);
+            if (!g_2_stage_run) {
+                keepAlignment(outfile_cleaned, brec);
+            } else {
+                keepAlignment(outfile_cleaned_2stage, brec);
+            }
         }
         reader_ns_multi_unpair.bclose();
         GMessage("\n");
     }
 
-    delete outfile_cleaned;
+    if (!g_2_stage_run) {
+        delete outfile_cleaned;
+    } else {
+        delete outfile_cleaned_2stage;
+    }
     if (verbose) {
         GMessage("[INFO] %d alignments processed.\n", 
         ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD + 
