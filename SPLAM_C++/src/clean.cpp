@@ -38,6 +38,7 @@ GStr splamClean() {
 }
 
 void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
+    GMessage("threshold: %f\n", threshold);
     std::ifstream bed_f(inbedname);
     std::string line;
     while (getline(bed_f, line)) {
@@ -62,10 +63,10 @@ void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
             JUNC_COUNT_GOOD ++;
         }
     }
-    for (auto ele : rm_juncs) {
-        GMessage("rm_juncs : %s\n", ele.c_str());
-        // GMessage("ele.second : %d\n", ele.second);
-    }
+    // for (auto ele : rm_juncs) {
+    //     GMessage("rm_juncs : %s\n", ele.c_str());
+    //     // GMessage("ele.second : %d\n", ele.second);
+    // }
 }
 
 GStr filterSpurJuncs(GStr outfname_junc_score) {
@@ -146,7 +147,6 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
         }
         reader_s_uniq_map.bclose();
         if (verbose) GMessage("\n");
-
 
         /*********************************
          * Processonmg multi-mapped paired spliced reads
@@ -527,7 +527,7 @@ std::string get_global_removed_mate_algns_key(GSamRecord* brec) {
 
 void update_flag_paired_remove_both(GSamRecord* brec_1, GSamRecord* brec_2) {
     
-    GMessage("Before brec_1->flags(): %d (%s)\n", brec_1->flags(), brec_1->name());
+    // GMessage("Before brec_1->flags(): %d (%s)\n", brec_1->flags(), brec_1->name());
     // First read in a pair
     int brec_1_flag_update = 0;
     if (brec_1->isPaired()) {
@@ -543,10 +543,10 @@ void update_flag_paired_remove_both(GSamRecord* brec_1, GSamRecord* brec_2) {
         brec_1_flag_update += 8;
     }
     brec_1->set_flags(brec_1->flags() + brec_1_flag_update);
-    GMessage("After brec_1->flags(): %d\n", brec_1->flags());
+    // GMessage("After brec_1->flags(): %d\n", brec_1->flags());
 
 
-    GMessage("Before brec_2->flags(): %d (%s)\n", brec_2->flags(), brec_2->name());
+    // GMessage("Before brec_2->flags(): %d (%s)\n", brec_2->flags(), brec_2->name());
     // Second read in a pair
     int brec_2_flag_update = 0;
     if (brec_2->isPaired()) {
@@ -562,11 +562,11 @@ void update_flag_paired_remove_both(GSamRecord* brec_1, GSamRecord* brec_2) {
         brec_2_flag_update += 8;
     }
     brec_2->set_flags(brec_2->flags() + brec_2_flag_update);
-    GMessage("After brec_2->flags(): %d\n", brec_2->flags());
+    // GMessage("After brec_2->flags(): %d\n", brec_2->flags());
 }
 
 void update_flag_paired_remove_one(GSamRecord* removed, GSamRecord* kept) {
-    GMessage("Before removed->flags(): %d (%s)\n", removed->flags(), removed->name());
+    // GMessage("Before removed->flags(): %d (%s)\n", removed->flags(), removed->name());
     // Removed alignment in a pair
     int removed_flag_update = 0;
     if (removed->isPaired()) {
@@ -579,8 +579,7 @@ void update_flag_paired_remove_one(GSamRecord* removed, GSamRecord* kept) {
         removed_flag_update += 4;
     }
     removed->set_flags(removed->flags() + removed_flag_update);
-
-    GMessage("After removed->flags(): %d\n", removed->flags());
+    // GMessage("After removed->flags(): %d\n", removed->flags());
 
     // Kept alignment in a pair
     int kept_flag_update = 0;
@@ -598,7 +597,7 @@ void update_flag_paired_remove_one(GSamRecord* removed, GSamRecord* kept) {
 
 void update_flag_unpair_remove(GSamRecord* removed) {
 
-    GMessage("Before removed->flags(): %d (%s)\n", removed->flags(), removed->name());
+    // GMessage("Before removed->flags(): %d (%s)\n", removed->flags(), removed->name());
     int removed_flag_update = 0;
     if (removed->isPaired()) {
         removed_flag_update -= 1;
@@ -611,7 +610,7 @@ void update_flag_unpair_remove(GSamRecord* removed) {
         removed_flag_update += 4;
     }
     removed->set_flags(removed->flags() + removed_flag_update);
-    GMessage("After removed->flags(): %d\n", removed->flags());
+    // GMessage("After removed->flags(): %d\n", removed->flags());
 }
 
 void update_flag_unpair_kept(GSamRecord* kept) {
