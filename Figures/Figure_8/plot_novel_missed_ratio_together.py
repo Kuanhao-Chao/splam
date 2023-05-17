@@ -18,7 +18,7 @@ for level in ["exons", "introns", "loci"]:
         for annotation in annotations:
             before_df = pd.read_csv("../../results/"+library+"/assembly/" + annotation + "/BEFORE.tsv", delimiter="\t", index_col=0)
             after_df = pd.read_csv("../../results/"+library+"/assembly/" + annotation + "/AFTER.tsv", delimiter="\t", index_col=0)
-            plt.figure(figsize=(16,4))
+            plt.figure(figsize=(10,4))
             for target in ["novel", "missed"]:
                 print("../../results/"+library+"/assembly/" + annotation + "/BEFORE.tsv")
 
@@ -64,9 +64,9 @@ for level in ["exons", "introns", "loci"]:
             plt.ylabel('Number of ' + level + " change (%)")
 
             if library == "polyA":
-                plt.title('Poly-A capture (Missed '+level+' & Novel '+level + ')', fontsize = 24)
+                plt.title('Poly-A capture (Missed '+level+' & Novel '+level + ')', fontsize = 20)
             elif library == "ribozero":
-                plt.title('Ribosomal RNA depletion (Missed '+level+' & Novel '+level + ')', fontsize = 24)
+                plt.title('Ribosomal RNA depletion (Missed '+level+' & Novel '+level + ')', fontsize = 20)
 
             plt.xticks(ind + width / 2, rowname)
             plt.legend()
