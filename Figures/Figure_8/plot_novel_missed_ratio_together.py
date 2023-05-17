@@ -18,7 +18,7 @@ for level in ["exons", "introns", "loci"]:
         for annotation in annotations:
             before_df = pd.read_csv("../../results/"+library+"/assembly/" + annotation + "/BEFORE.tsv", delimiter="\t", index_col=0)
             after_df = pd.read_csv("../../results/"+library+"/assembly/" + annotation + "/AFTER.tsv", delimiter="\t", index_col=0)
-            plt.figure(figsize=(10,6))
+            plt.figure(figsize=(16,4))
             for target in ["novel", "missed"]:
                 print("../../results/"+library+"/assembly/" + annotation + "/BEFORE.tsv")
 
@@ -51,18 +51,23 @@ for level in ["exons", "introns", "loci"]:
 
                 # Plotting
                 if target == "novel":
-                    plt.bar(ind, difference_target_ls , width, label=target)
+                    plt.bar(ind, difference_target_ls , width, label=target+" "+level)
                     print("novel: ", difference_target_ls)
                 elif target == "missed":
-                    plt.bar(ind+width, difference_target_ls , width, label=target)
+                    plt.bar(ind+width, difference_target_ls , width, label=target+" "+level)
                     # print("missed: ", difference_target_ls)
 
                 # plt.bar(rowname + width, orange_bar, width, label='Orange bar label')
 
 
-            plt.xlabel('Samples')
-            plt.ylabel('Number of ' + level + " (%)")
-            plt.title('Missed & Novel (' + annotation + ')')
+            # plt.xlabel('Samples')
+            plt.ylabel('Number of ' + level + " change (%)")
+
+            if library == "polyA":
+                plt.title('Poly-A capture (Missed '+level+' & Novel '+level + ')', fontsize = 24)
+            elif library == "ribozero":
+                plt.title('Ribosomal RNA depletion (Missed '+level+' & Novel '+level + ')', fontsize = 24)
+
             plt.xticks(ind + width / 2, rowname)
             plt.legend()
 

@@ -48,7 +48,12 @@ for level in ["transcript", "locus"]:
                 plt.axis('equal')
                 plt.xlabel('Precision')
                 plt.ylabel('Recall')
-                plt.title('Precision vs. Recall (' + annotation + ')')
+                # plt.title('Precision vs. Recall (' + annotation + ')')
+                if library == "polyA":
+                    plt.title('Poly-A capture', fontsize = 20)
+                elif library == "ribozero":
+                    plt.title('Ribosomal RNA depletion', fontsize = 20)
+
 
                 # Adding an arrow between two dots
                 arrow_start = (b_precision, b_sensitivity)
@@ -79,7 +84,7 @@ for level in ["transcript", "locus"]:
 
 
                 # Adding a legend
-            plt.legend()
+            plt.legend(bbox_to_anchor=(1.04, 0.96), loc="upper left")
             plt.tight_layout()
             plt.savefig("sensitivity_recall/"+library+ "_" + annotation + "_" + level + ".png", dpi=300)
             plt.close()
