@@ -21,8 +21,8 @@ for library in ["polyA", "ribozero"]:
             b_line = fr.readline().splitlines()[0]
             b_eles = b_line.split("\t")
             print("b_eles: ", b_eles)
-            b_precision = float(b_eles[4])
-            b_sensitivity = float(b_eles[5])
+            b_precision = 100*float(b_eles[4])
+            b_sensitivity = 100*float(b_eles[5])
             # for ele in b_eles:
             #     print(ele)
 
@@ -30,8 +30,8 @@ for library in ["polyA", "ribozero"]:
             a_line = fr.readline().splitlines()[0]
             a_eles = a_line.split("\t")
             print("a_eles: ", a_eles)
-            a_precision = float(a_eles[4])
-            a_sensitivity = float(a_eles[5])
+            a_precision = 100*float(a_eles[4])
+            a_sensitivity = 100*float(a_eles[5])
         
 
 
@@ -43,8 +43,8 @@ for library in ["polyA", "ribozero"]:
 
             # Adding labels and title
             plt.axis('equal')
-            plt.xlabel('Precision')
-            plt.ylabel('Recall')
+            plt.xlabel('Precision (%)')
+            plt.ylabel('Recall (%)')
             # plt.title('Precision vs. Recall (' + annotation + ')')
             if library == "polyA":
                 plt.title("Poly-A capture", fontsize = 18)
