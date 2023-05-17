@@ -46,8 +46,8 @@ for level in ["transcript", "locus"]:
 
                 # Adding labels and title
                 plt.axis('equal')
-                plt.xlabel('Precision')
-                plt.ylabel('Recall')
+                plt.xlabel('Precision (%)')
+                plt.ylabel('Recall (%)')
                 # plt.title('Precision vs. Recall (' + annotation + ')')
                 if library == "polyA":
                     plt.title('Poly-A capture', fontsize = 20)
