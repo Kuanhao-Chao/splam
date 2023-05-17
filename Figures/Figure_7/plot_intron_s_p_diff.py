@@ -1,7 +1,6 @@
 import os
 import pandas as pd
 import matplotlib.pyplot as plt
-from adjustText import adjust_text
 import numpy as np
 
 annotations = ["chess", "gencode", "refseq_ucsc"]
@@ -41,7 +40,7 @@ for library in ["polyA", "ribozero"]:
 
             difference_precision_ls.append(a_precision - b_precision)
             difference_sensitivity_ls.append(a_sensitivity - b_sensitivity)
-        
+
 
         difference_precision_ls = 100*np.array(difference_precision_ls)
         difference_sensitivity_ls = 100*np.array(difference_sensitivity_ls)
