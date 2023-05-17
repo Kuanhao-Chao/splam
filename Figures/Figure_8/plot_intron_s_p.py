@@ -46,7 +46,12 @@ for library in ["polyA", "ribozero"]:
             plt.axis('equal')
             plt.xlabel('Precision')
             plt.ylabel('Recall')
-            plt.title('Precision vs. Recall (' + annotation + ')')
+
+            # plt.title('Precision vs. Recall (' + annotation + ')')
+            if library == "polyA":
+                plt.title("Poly-A capture", fontsize = 18)
+            elif library == "ribozero":
+                plt.title("Ribosomal RNA depletion", fontsize = 18)
 
             # Adding an arrow between two dots
             arrow_start = (b_precision, b_sensitivity)
