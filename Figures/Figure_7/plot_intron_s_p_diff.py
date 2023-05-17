@@ -56,7 +56,10 @@ for library in ["polyA", "ribozero"]:
         plt.legend()
         # plt.xlabel('Samples')
         plt.ylabel("Difference(%)")
-        # plt.title('Precision and Recall difference (' + annotation + ')')
+        if library == "polyA":
+            plt.title("Poly-A capture", fontsize = 20)
+        elif library == "ribozero":
+            plt.title("Ribosomal RNA depletion", fontsize = 20)
 
         plt.tight_layout()
         plt.savefig("intron_s_p_diff/" + library + "_" + annotation + ".png", dpi=300)
