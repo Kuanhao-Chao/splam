@@ -22,10 +22,11 @@ fw = open("paralogs.bed", "w")
 
 chrs = chr_name_convert()
 
-with open("../../Dataset/refseq_all_transcripts.gff", "r") as fr:
+with open("../../Dataset/refseq_GCF_000001405.40_GRCh38.p14_genomic.gff", "r") as fr:
     lines = fr.read().splitlines()
     for line in lines:
         eles = line.split("\t")
+        if (len(eles) < 9): continue
         trans_id = eles[8].split(";")[0][3:]
         if trans_id in paralogs:
             print(eles)
