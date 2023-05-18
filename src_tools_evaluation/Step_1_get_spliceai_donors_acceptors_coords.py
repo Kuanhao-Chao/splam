@@ -35,7 +35,7 @@ def main():
     for output_file in output_files:
         os.makedirs(output_file, exist_ok=True)
 
-    nums = [12000, 12000, 12000, 12000, 12000]
+    nums = [10000, 10000, 10000, 10000, 10000]
 
     COUNTER = 0
     global_df = pd.DataFrame(columns = [0, 1, 2, 3, 4, 5])
@@ -52,7 +52,15 @@ def main():
         # Selecting junctions only on chr1 and chr9 (testing dataset).
         junc_df = junc_df.loc[((junc_df[0] == "chr1") | (junc_df[0] == "chr9"))]
         junc_df = junc_df.loc[junc_df[1] > 0]
-        junc_df = junc_df.sample(n=nums[junc_fidx], random_state=1).reset_index(drop=True)
+
+        print("nums[junc_fidx]: ", nums[junc_fidx])
+        print("len(junc_df)   : ", len(junc_df))
+        if nums[junc_fidx] <= len(junc_df):
+            junc_df = junc_df.sample(n=nums[junc_fidx], random_state=1).reset_index(drop=True)
+        else:
+            junc_df = junc_df.sample(n=len(junc_df), random_state=1).reset_index(drop=True)
+            # junc_df = junc_df.sample(n=nums[junc_fidx], random_state=1, replace=True).reset_index(drop=True)
+
 
         if junc_fidx == 0:
             junc_df[6] = 1
