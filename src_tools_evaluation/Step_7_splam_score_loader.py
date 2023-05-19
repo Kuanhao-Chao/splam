@@ -74,7 +74,12 @@ def main(argv):
         acceptor_l_concat = []
         
         lines = d_score_fr.read().splitlines()    
-        lines = lines[:30000]
+        print("lines: ", len(lines))
+        
+        
+        
+        
+        lines = lines[:10000]
         for line in lines:
             # scores = np.loadtxt(line)
             line = line.split(" ")
@@ -94,7 +99,7 @@ def main(argv):
             d_score_fw.write(str(donor_p_holder[200]) + "\n")
 
         lines = a_score_fr.read().splitlines()
-        lines = lines[:30000]
+        lines = lines[:10000]
         for line in lines:
             # scores = np.loadtxt(line)
             line = line.split(" ")
