@@ -14,6 +14,7 @@ for library in ["polyA", "ribozero"]:
 
         rowname = list (after_df.index)
         print("rowname: ", rowname)
+        plt.figure(figsize=(10, 3.5))  # Adjust the width and height as desired
 
         for sample_id in range(10):
             sample = rowname[sample_id]
@@ -33,7 +34,7 @@ for library in ["polyA", "ribozero"]:
             a_precision = 100*float(a_eles[4])
             a_sensitivity = 100*float(a_eles[5])
         
-
+            
 
             # Plotting the existing data points
             plt.scatter(b_precision, b_sensitivity, color=colors[sample_id])
@@ -42,9 +43,11 @@ for library in ["polyA", "ribozero"]:
             plt.scatter(a_precision, a_sensitivity, color=colors[sample_id], label=rowname[sample_id])
 
             # Adding labels and title
+            # plt.rcParams["figure.autolayout"] = True
             plt.axis('equal')
-            plt.xlabel('Precision (%)')
-            plt.ylabel('Recall (%)')
+            # plt.ylim(50, 60)
+            plt.xlabel('Intron precision (%)')
+            plt.ylabel('Intron recall (%)')
             # plt.title('Precision vs. Recall (' + annotation + ')')
             if library == "polyA":
                 plt.title("Poly-A capture", fontsize = 18)
@@ -54,7 +57,8 @@ for library in ["polyA", "ribozero"]:
             # Adding an arrow between two dots
             arrow_start = (b_precision, b_sensitivity)
             arrow_end = (a_precision, a_sensitivity)
-            plt.annotate("", xy=arrow_end, xytext=arrow_start, arrowprops=dict(arrowstyle='->', color=colors[sample_id]))
+            # plt.annotate("", xy=arrow_end, xytext=arrow_start, arrowprops=dict(arrowstyle='->', color=colors[sample_id]))
+            plt.annotate("", xy=arrow_end, xytext=arrow_start, arrowprops=dict(arrowstyle='->', color=colors[sample_id], mutation_scale=20))
 
         # plt.legend()
         plt.legend(bbox_to_anchor=(1.04, 0.96), loc="upper left")
