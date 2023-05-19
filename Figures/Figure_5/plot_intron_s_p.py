@@ -14,7 +14,7 @@ for library in ["polyA", "ribozero"]:
 
         rowname = list (after_df.index)
         print("rowname: ", rowname)
-        plt.figure(figsize=(10, 3.5))  # Adjust the width and height as desired
+        plt.figure(figsize=(7, 3))  # Adjust the width and height as desired
 
         for sample_id in range(10):
             sample = rowname[sample_id]
@@ -46,8 +46,8 @@ for library in ["polyA", "ribozero"]:
             # plt.rcParams["figure.autolayout"] = True
             plt.axis('equal')
             # plt.ylim(50, 60)
-            plt.xlabel('Intron precision (%)')
-            plt.ylabel('Intron recall (%)')
+            plt.xlabel('Intron precision (%)', labelpad=10)
+            plt.ylabel('Intron recall (%)', labelpad=10)
             # plt.title('Precision vs. Recall (' + annotation + ')')
             if library == "polyA":
                 plt.title("Poly-A capture", fontsize = 18)
@@ -61,7 +61,8 @@ for library in ["polyA", "ribozero"]:
             plt.annotate("", xy=arrow_end, xytext=arrow_start, arrowprops=dict(arrowstyle='->', color=colors[sample_id], mutation_scale=20))
 
         # plt.legend()
-        plt.legend(bbox_to_anchor=(1.04, 0.96), loc="upper left")
+        # plt.legend(bbox_to_anchor=(1.04, 0.96), loc="upper left")
+        # plt.legend(bbox_to_anchor=(0.5, 1.25), loc="upper center", ncol=5)
         plt.tight_layout()
         plt.savefig("intron_sensitivity_precision/"+library+ "_" + annotation + ".png", dpi=300)
         plt.close()

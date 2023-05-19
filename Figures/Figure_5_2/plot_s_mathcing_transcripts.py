@@ -16,7 +16,8 @@ for level in ["transcript", "locus"]:
 
             rowname = list (after_df.index)
             print("rowname: ", rowname)
-            plt.figure(figsize=(8, 6))  # Adjust the width and height as desired
+            plt.figure(figsize=(7, 5.25))  # Adjust the width and height as desired
+
             for sample_id in range(10):
 
                 a_df = after_df.iloc[[sample_id]]
