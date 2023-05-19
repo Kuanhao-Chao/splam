@@ -78,12 +78,12 @@ def main():
     THRESHOLDS= np.arange(threshold_min, threshold_max, 0.001)
 
 
-    splam_threshold = 0.0707
+    splam_threshold = 0.1
     for TARGET in ["noN", "N"]:
         if TARGET == "noN":
-            spliceai_threshold = 0.0003
+            spliceai_threshold = 0.01
         elif TARGET == "N":
-            spliceai_threshold = 0.0070
+            spliceai_threshold = 0.01
 
         for SPLAM_VERSION in ["SPLAM_v11"]:#, "SPLAM_v12"]:
 
@@ -280,21 +280,27 @@ def main():
                     THRESHOLDS_PLT = THRESHOLDS
                 plt.figure(figsize=(12, 3))
                 plt.xlabel("Threshold ("+str(threshold_min)+" - "+ str(threshold_max) +")")
-                plt.ylabel("Number of splice sites")
+                plt.ylabel("Number of splice junctions")
 
-                plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_TP, label="SPLAM_TP__SpliceAI_FN")
+                plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_TP, label="SPLAM captured\nSpliceAI missed", color="#2ca02c")
                 # plt.plot(THRESHOLDS_PLT, spliceai_FP__splam_TN, label="SPLAM_TN__SpliceAI_FP")
-
-                plt.plot(THRESHOLDS_PLT, spliceai_TP__splam_FN, label="SPLAM_FN__SpliceAI_TP")
+                plt.plot(THRESHOLDS_PLT, spliceai_TP__splam_FN, label="SpliceAI captured\nSPLAM missed", color="#ff7f0e")
                 # plt.plot(THRESHOLDS_PLT, spliceai_TN__splam_FP, label="SPLAM_FP__SpliceAI_TN")
 
                 # plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_FN, label="SPLAM_FN__SpliceAI_FN")
                 # plt.plot(THRESHOLDS_PLT, spliceai_FP__splam_FP, label="SPLAM_FP__SpliceAI_FP")
                 
-                # plt.axvline(x = splam_threshold, linestyle ='--', color = 'r', label = 'SPLAM_threshold ('+str(splam_threshold)+')')
+                plt.axvline(x = splam_threshold, linestyle ='--', color = 'r', label = 'Dot plot threshold ('+str(splam_threshold)+')')
+                plt.text(splam_threshold, spliceai_TP__splam_FN[100]+50, str(spliceai_TP__splam_FN[100]))
+                plt.scatter(splam_threshold, spliceai_TP__splam_FN[100], color="#ff7f0e", s=10)
+
+                plt.text(splam_threshold, spliceai_FN__splam_TP[100]+200, str(spliceai_FN__splam_TP[100]))
+                plt.scatter(splam_threshold, spliceai_FN__splam_TP[100], color="#2ca02c", s=10)
+
                 # plt.axvline(x = spliceai_threshold, linestyle ='--', color = 'b', label = 'SpliceAI_threshold('+str(spliceai_threshold)+')')
 
-                plt.legend(loc="center right", bbox_to_anchor=(1.3, 0.5))
+
+                plt.legend(loc="center right", bbox_to_anchor=(1.3, 0.5), labelspacing=2)
                 plt.tight_layout()
                 plt.savefig("IMG/" + SPLAM_VERSION + "/TP_TN_FP_FN/"+TARGET+"/threshold_"+x_axis_rep+"_"+str(threshold_min)+"_"+str(threshold_max)+".png", dpi=300)
                 # plt.show()
