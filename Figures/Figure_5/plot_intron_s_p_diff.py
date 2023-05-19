@@ -20,6 +20,7 @@ for library in ["polyA", "ribozero"]:
 
         difference_precision_ls = []
         difference_sensitivity_ls = []
+        # plt.figure(figsize=(10, 3.5))  # Adjust the width and height as desired
         for sample_id in range(10):
             sample = rowname[sample_id]
             fr = open("../../results/"+library+"/"+sample+"/intron_matcher/BEFORE/res.txt", "r")
@@ -45,8 +46,8 @@ for library in ["polyA", "ribozero"]:
         difference_precision_ls = 100*np.array(difference_precision_ls)
         difference_sensitivity_ls = 100*np.array(difference_sensitivity_ls)
 
-        # colors_p = ['blue' if value > 0 else 'red' for value in difference_precision_ls]
-        # colors_s = ['blue' if value > 0 else 'red' for value in difference_sensitivity_ls]
+        colors_p = ['blue' if value > 0 else 'red' for value in difference_precision_ls]
+        colors_s = ['blue' if value > 0 else 'red' for value in difference_sensitivity_ls]
 
         # Plotting the existing data points
         plt.figure(figsize=(10,6))

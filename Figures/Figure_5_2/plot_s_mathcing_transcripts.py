@@ -7,7 +7,7 @@ annotations = ["chess", "gencode", "refseq_ucsc"]
 
 colors = ['blue', 'red', 'green', 'cyan', 'magenta', 'olive', 'black', 'gray', 'orange', 'purple']
 
-os.makedirs("sensitivity_recall", exist_ok=True)
+os.makedirs("sensitivity_mathcing_transcript", exist_ok=True)
 for level in ["transcript", "locus"]:
     for library in ["polyA", "ribozero"]:
         for annotation in annotations:
@@ -16,19 +16,26 @@ for level in ["transcript", "locus"]:
 
             rowname = list (after_df.index)
             print("rowname: ", rowname)
-
-            texts = []
+            plt.figure(figsize=(8, 6))  # Adjust the width and height as desired
             for sample_id in range(10):
 
                 a_df = after_df.iloc[[sample_id]]
-                a_sensitivity = a_df[level+"_s"]
+                # a_sensitivity = a_df[level+"_s"]
+                if level == "transcript":
+                    a_sensitivity = a_df["matching_transcripts"]
+                else:
+                    a_sensitivity = a_df["matching_loci"]
+
                 a_precision = a_df[level+"_p"]
 
                 b_df = before_df.iloc[[sample_id]] 
-                b_sensitivity = b_df[level+"_s"]
+                # b_sensitivity = b_df[level+"_s"]
+                if level == "transcript":
+                    b_sensitivity = b_df["matching_transcripts"]
+                else:
+                    b_sensitivity = b_df["matching_loci"]
+
                 b_precision = b_df[level+"_p"]
-
-
 
                 # # Existing data points
                 # existing_precision = [0.8, 0.7, 0.6, 0.5, 0.4]
@@ -45,9 +52,13 @@ for level in ["transcript", "locus"]:
                 plt.scatter(a_precision, a_sensitivity, color=colors[sample_id], label=rowname[sample_id])
 
                 # Adding labels and title
-                plt.axis('equal')
-                plt.xlabel('Precision (%)')
-                plt.ylabel('Recall (%)')
+                # plt.axis('equal')
+                plt.xlabel('Transcript precision (%)', labelpad=10)
+                plt.ylabel('Assembled matching transcripts', labelpad=10)
+                # # Set the pad parameter to increase the space between labels and ticks
+                # plt.tick_params(axis='x', which='both', pad=10)
+                # plt.tick_params(axis='y', which='both', pad=10)
+
                 # plt.title('Precision vs. Recall (' + annotation + ')')
                 if library == "polyA":
                     plt.title('Poly-A capture', fontsize = 20)
@@ -58,7 +69,8 @@ for level in ["transcript", "locus"]:
                 # Adding an arrow between two dots
                 arrow_start = (b_precision, b_sensitivity)
                 arrow_end = (a_precision, a_sensitivity)
-                plt.annotate("", xy=arrow_end, xytext=arrow_start, arrowprops=dict(arrowstyle='->', color=colors[sample_id]))
+                plt.annotate("", xy=arrow_end, xytext=arrow_start, arrowprops=dict(arrowstyle='->', color=colors[sample_id], mutation_scale=20))
+
 
             #     # Calculating the precision and recall difference
             #     precision_diff = float(a_precision - b_precision)
@@ -86,39 +98,5 @@ for level in ["transcript", "locus"]:
                 # Adding a legend
             plt.legend(bbox_to_anchor=(1.04, 0.96), loc="upper left")
             plt.tight_layout()
-            plt.savefig("sensitivity_recall/"+library+ "_" + annotation + "_" + level + ".png", dpi=300)
+            plt.savefig("sensitivity_mathcing_transcript/"+library+ "_" + annotation + "_" + level + ".png", dpi=300)
             plt.close()
-                # Displaying the plot
-            # plt.show()
-
-                # print("a_df['transcript_s']: ", a_df["transcript_s"])
-                # print("a_df['transcript_p']", a_df["transcript_p"])
-
-    #             a_df = a_df.values.tolist()[0]
-    #             a_df = [float(value) for value in a_df]
-    #             print("a_df: ", a_df)
-
-
-    #             # diff_df = after_df.iloc[[sample_id]] - before_df.iloc[[sample_id]] 
-    #             # print(diff_df)
-    #             # diff_df[""]
-    #             # y = diff_df.values.tolist()[0]
-    #             # y = [float(value) for value in y]
-    #             # print("y: ", y)
-
-    #             # Create a list of colors based on the values
-    #             colors = ['blue' if value > 0 else 'red' for value in y]
-
-    #             # Create the bar chart
-    #             plt.bar(list(before_df.columns.values)[:12] , y[:12], color = colors)
-
-    #             # Add labels and title
-    #             plt.xlabel('X-axis')
-    #             plt.ylabel('Y-axis')
-    #             plt.title('Bar Chart with Blue and Red Bars')
-
-    #             # Display the chart
-    #             plt.show()
-    #             # print("before_df: ", before_df.iloc[[4]])
-    #             # print("after_df : ", after_df.iloc[[4]])
-
