@@ -14,7 +14,7 @@ for library in ["polyA", "ribozero"]:
 
         rowname = list (after_df.index)
         print("rowname: ", rowname)
-        plt.figure(figsize=(7, 3))  # Adjust the width and height as desired
+        plt.figure(figsize=(6, 2.57))  # Adjust the width and height as desired
 
         for sample_id in range(10):
             sample = rowname[sample_id]
