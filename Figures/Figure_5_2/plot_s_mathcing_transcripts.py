@@ -16,7 +16,7 @@ for level in ["transcript", "locus"]:
 
             rowname = list (after_df.index)
             print("rowname: ", rowname)
-            plt.figure(figsize=(7, 5.25))  # Adjust the width and height as desired
+            plt.figure(figsize=(5, 5))  # Adjust the width and height as desired
 
             for sample_id in range(10):
 
@@ -97,7 +97,7 @@ for level in ["transcript", "locus"]:
 
 
                 # Adding a legend
-            plt.legend(bbox_to_anchor=(1.04, 0.96), loc="upper left")
+            # plt.legend(bbox_to_anchor=(1.04, 0.96), loc="upper left")
             plt.tight_layout()
             plt.savefig("sensitivity_mathcing_transcript/"+library+ "_" + annotation + "_" + level + ".png", dpi=300)
             plt.close()
