@@ -292,10 +292,10 @@ def main():
                 
                 plt.axvline(x = splam_threshold, linestyle ='--', color = 'r', label = 'Dot plot threshold ('+str(splam_threshold)+')')
                 plt.text(splam_threshold, spliceai_TP__splam_FN[100]+50, str(spliceai_TP__splam_FN[100]))
-                plt.scatter(splam_threshold, spliceai_TP__splam_FN[100], color="#ff7f0e", s=10)
+                plt.scatter(splam_threshold, spliceai_TP__splam_FN[100], color="#ff7f0e", s=15)
 
                 plt.text(splam_threshold, spliceai_FN__splam_TP[100]+200, str(spliceai_FN__splam_TP[100]))
-                plt.scatter(splam_threshold, spliceai_FN__splam_TP[100], color="#2ca02c", s=10)
+                plt.scatter(splam_threshold, spliceai_FN__splam_TP[100], color="#2ca02c", s=15)
 
                 # plt.axvline(x = spliceai_threshold, linestyle ='--', color = 'b', label = 'SpliceAI_threshold('+str(spliceai_threshold)+')')
 
