@@ -39,6 +39,12 @@ def main():
                         a_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
                         n_score_tsv_f = "../../src_tools_evaluation/spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
 
+                    color_plt = ""
+                    if TOOL == "SPLAM":
+                        color_plt = "#2ca02c" 
+                    elif TOOL == "SpliceAI-10k" or TOOL == "SpliceAI-10k-Ns":
+                        color_plt = "#ff7f0e"
+
                     if TARGET == "Donor":
                         if TOOL == "SPLAM":
                             target_idx = 201
@@ -58,7 +64,7 @@ def main():
                         # sns.histplot(donors, kde=True, bins=50, color=COLORS[INDEX], alpha=0.7, stat="probability", label=TOOL)
                         # plt.hist(donors, density=True, histtype='stepfilled', alpha=0.8, label=TOOL)
                         
-                        sns.kdeplot(donors, shade=True, clip = (0.0, 1.0), alpha=0.5, label=TOOL)
+                        sns.kdeplot(donors, shade=True, clip = (0.0, 1.0), alpha=0.5, label=TOOL, color=color_plt)
 
                     elif TARGET == "Acceptor":
                         target_idx = 200
@@ -67,7 +73,6 @@ def main():
                             lines = fr.read().splitlines()
                             for line in lines:
                                 eles = line.split(" ")
-                                print("len(eles): ", len(eles))
                                 acceptors.append(float(eles[len(eles)-target_idx]))
                                 # acceptors.append(float(eles[target_idx-1]))
                                 # print(len(acceptors))
@@ -76,7 +81,7 @@ def main():
                         # Create a distribution plot with density plot
                         # sns.histplot(acceptors, kde=True, bins=50, color=COLORS[INDEX], alpha=0.7, stat="probability", label=TOOL)
                         # plt.hist(acceptors, density=True, histtype='stepfilled', alpha=0.8, label=TOOL)
-                        sns.kdeplot(acceptors, shade=True, clip = (0.0, 1.0), alpha=0.5, label=TOOL)
+                        sns.kdeplot(acceptors, shade=True, clip = (0.0, 1.0), alpha=0.5, label=TOOL, color=color_plt)
                     # HANDELS.append(plt_res)
                 plt.legend(loc="upper center")
                 plt.xlabel('Scores')
