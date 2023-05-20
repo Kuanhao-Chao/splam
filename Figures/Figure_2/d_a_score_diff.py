@@ -125,8 +125,8 @@ def main():
                 #     sns.kdeplot(score_N_diff, shade=True, clip = (-1.0, -0.15), alpha=0.25, label="SpliceAI-10k-Ns", color="#4C72B0")#, cut = -0.15)
                 #     sns.kdeplot(score_N_diff, shade=True, clip = (0.15, 1.0), alpha=0.25, color="#4C72B0")#, cut = 0.15)
                 
-                plt.axvline(x=-0.15, linestyle='--', color='black', label = "cutoff line (0.15 / -0.15)" )#, label='Optimal Threshold (maximum F1 score)')
-                plt.axvline(x=0.15, linestyle='--', color='black')#, label='Optimal Threshold (maximum F1 score)')
+                plt.axvline(x=-0.15, linestyle='--', color='r', label = "cutoff line (0.15 / -0.15)" )#, label='Optimal Threshold (maximum F1 score)')
+                plt.axvline(x=0.15, linestyle='--', color='r')#, label='Optimal Threshold (maximum F1 score)')
 
 
                 plt.xlabel('Score difference')
@@ -144,7 +144,7 @@ def main():
                 handles, labels = plt.gca().get_legend_handles_labels()
 
                 #specify order of items in legend
-                order = [1, 0]
+                order = [1, 0, 2]
 
                 #add legend to plot
                 plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc="upper right")
