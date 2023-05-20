@@ -7,23 +7,22 @@ from scipy.stats import gaussian_kde
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve, PrecisionRecallDisplay
 
 
+
 def plot_scatter_plot(d_score, a_score, indices_1, indices_2, axis, cmap_1, cmap_2):
-    
-    # selected_d_scores = np.concatenate([d_score[indices_1], d_score[indices_2]]) 
-    # selected_a_scores = np.concatenate([a_score[indices_1], a_score[indices_2]]) 
-    
     selected_indices_combined = np.vstack([d_score, a_score])
 
     density_combined = gaussian_kde(selected_indices_combined)
+    density_all_values = density_combined(np.vstack([d_score, a_score]))
+
     density_1_values = density_combined(np.vstack([d_score[indices_1], a_score[indices_1]]))
     density_2_values = density_combined(np.vstack([d_score[indices_2], a_score[indices_2]]))
 
-    norm = plt.Normalize(vmin=min(density_1_values.min(), density_2_values.min()) - 100, vmax=max(density_1_values.max(), density_2_values.max()))
+    vmin = -10 #min(density_1_values.min(), density_2_values.min())-100
+    vmax = density_all_values.max()
+    norm = plt.Normalize(vmin=vmin, vmax=vmax)
 
     plt_res_1 = axis.scatter(d_score[indices_1], a_score[indices_1], cmap=cmap_1, s=0.3, c=density_1_values, norm=norm)
     plt_res_2 = axis.scatter(d_score[indices_2], a_score[indices_2], cmap=cmap_2, s=0.3, c=density_2_values, norm=norm)
-
-
 
 
 
@@ -150,13 +149,10 @@ def main():
             #####################################
             # Creating directories for visualization.
             #####################################
-            os.makedirs("./IMG/"+SPLAM_VERSION+"/junction/", exist_ok=True)
-            os.makedirs("./IMG/"+SPLAM_VERSION+"/T_histogram/", exist_ok=True)
-
 
 
             for TARGET in ["noN", "N"]:
-                figure_root = "./IMG/"+SPLAM_VERSION+"/scatter_plot/"
+                figure_root = "./IMG/"+SPLAM_VERSION+"/scatter_plot_density/"
                 target_figure_root = figure_root+TARGET+"/"
                 os.makedirs(target_figure_root+"tsv_"+str(threshold)+"/", exist_ok=True)
                 
@@ -363,26 +359,28 @@ def main():
                     # spliceai_TP__splam_TP = plot_scatter_plot(d_score, a_score, spliceai_TP__splam_TP_idices, axes["main"], 'Reds')
                     # spliceai_TP__splam_TP_len = len(d_score[spliceai_TP__splam_TP_idices])
 
-                    spliceai_TP__splam_FN_main = axes["main"].scatter(d_score[spliceai_TP__splam_FN_idices], a_score[spliceai_TP__splam_FN_idices], s = 0.3, color="#13E8EC", alpha=1.0)
+                    # spliceai_TP__splam_FN_main = axes["main"].scatter(d_score[spliceai_TP__splam_FN_idices], a_score[spliceai_TP__splam_FN_idices], s = 0.3, color="#13E8EC", alpha=1.0)
+                    # spliceai_FN__splam_TP_main = axes["main"].scatter(d_score[spliceai_FN__splam_TP_idices], a_score[spliceai_FN__splam_TP_idices], s = 0.3, color="#EC1713", alpha=1.0)
+                    spliceai_TP__splam_FN_main, spliceai_FN__splam_TP_main= plot_scatter_plot(d_score, a_score, spliceai_TP__splam_FN_idices, spliceai_FN__splam_TP_idices, axes["main"], 'Blues', 'Reds')
                     spliceai_TP__splam_FN_len = len(d_score[spliceai_TP__splam_FN_idices])
-
-                    spliceai_FN__splam_TP_main = axes["main"].scatter(d_score[spliceai_FN__splam_TP_idices], a_score[spliceai_FN__splam_TP_idices], s = 0.3, color="#EC1713", alpha=1.0)
                     spliceai_FN__splam_TP_len = len(d_score[spliceai_FN__splam_TP_idices])
-
-                    spliceai_FN__splam_FN_main = axes["main"].scatter(d_score[spliceai_FN__splam_FN_idices], a_score[spliceai_FN__splam_FN_idices], s = 0.3, color="#118F14", alpha=1.0)
-                    spliceai_FN__splam_FN_len = len(d_score[spliceai_FN__splam_FN_idices])
 
 
                     # spliceai_TN__splam_TN = axes["main"].scatter(d_score[spliceai_TN__splam_TN_idices], a_score[spliceai_TN__splam_TN_idices], s = 0, color="gray", alpha=1.0)
                     # spliceai_TN__splam_TN_len = len(d_score[spliceai_TN__splam_TN_idices])
 
-                    spliceai_TN__splam_FP_main = axes["main"].scatter(d_score[spliceai_TN__splam_FP_idices], a_score[spliceai_TN__splam_FP_idices], s = 0.3, color="#FFA300", alpha=1.0)
-                    spliceai_TN__splam_FP_len = len(d_score[spliceai_TN__splam_FP_idices])
+                    # spliceai_TN__splam_FP_main = axes["main"].scatter(d_score[spliceai_TN__splam_FP_idices], a_score[spliceai_TN__splam_FP_idices], s = 0.3, color="#FFA300", alpha=1.0)
+                    # spliceai_FP__splam_TN_main = axes["main"].scatter(d_score[spliceai_FP__splam_TN_idices], a_score[spliceai_FP__splam_TN_idices], s = 0.3, color="#005CFF", alpha=1.0)
 
-                    spliceai_FP__splam_TN_main = axes["main"].scatter(d_score[spliceai_FP__splam_TN_idices], a_score[spliceai_FP__splam_TN_idices], s = 0.3, color="#005CFF", alpha=1.0)
+                    spliceai_TN__splam_FP_main, spliceai_FP__splam_TN_main= plot_scatter_plot(d_score, a_score, spliceai_TN__splam_FP_idices, spliceai_FP__splam_TN_idices, axes["main"], 'Purples', 'Greens')
+                    spliceai_TN__splam_FP_len = len(d_score[spliceai_TN__splam_FP_idices])
                     spliceai_FP__splam_TN_len = len(d_score[spliceai_FP__splam_TN_idices])
 
-                    spliceai_FP__splam_FP_main = axes["main"].scatter(d_score[spliceai_FP__splam_FP_idices], a_score[spliceai_FP__splam_FP_idices], s = 0.3, color="#8F118C", alpha=1.0)
+
+                    # spliceai_FN__splam_FN_main = axes["main"].scatter(d_score[spliceai_FN__splam_FN_idices], a_score[spliceai_FN__splam_FN_idices], s = 0.3, color="#118F14", alpha=1.0)
+                    # spliceai_FP__splam_FP_main = axes["main"].scatter(d_score[spliceai_FP__splam_FP_idices], a_score[spliceai_FP__splam_FP_idices], s = 0.3, color="#8F118C", alpha=1.0)
+                    spliceai_FN__splam_FN_main, spliceai_FP__splam_FP_main= plot_scatter_plot(d_score, a_score, spliceai_FN__splam_FN_idices, spliceai_FP__splam_FP_idices, axes["main"], 'Greys', 'Oranges')
+                    spliceai_FN__splam_FN_len = len(d_score[spliceai_FN__splam_FN_idices])
                     spliceai_FP__splam_FP_len = len(d_score[spliceai_FP__splam_FP_idices])
 
 
