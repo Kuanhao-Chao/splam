@@ -70,7 +70,9 @@ library(Biostrings)
 dna <- readDNAStringSet("../../src/INPUTS/800bp/input_neg_random.shuffle.fa")
 dir.create("neg_random")
 # Donor
-ggseqlogo(as.character(subseq(dna[1:50000], 580, 620)), method = 'bits' , col_scheme='nucleotide')
+print("as.character(subseq(dna[1:50000], 580, 620)): ", as.character(subseq(dna[1:50000], 580, 620)))
+ggseqlogo(as.character(subseq(dna[1:50000], 580, 620)), method = 'probability', seq_type='dna', col_scheme='nucleotide')
+ggseqlogo(as.character(subseq(dna[1:50000], 580, 620)), method = 'bits', seq_type='dna', col_scheme='nucleotide')
 ggsave(
   "neg_random/acceptor.png",
   width = 15,
@@ -78,7 +80,8 @@ ggsave(
   dpi = 300
 )
 # Acceptor
-ggseqlogo(as.character(subseq(dna[1:50000], 180, 220)), method = 'bits' , col_scheme='nucleotide')
+ggseqlogo(as.character(subseq(dna[1:50000], 180, 220)), method = 'probability', seq_type='dna', col_scheme='nucleotide')
+ggseqlogo(as.character(subseq(dna[1:50000], 180, 220)), method = 'bits', seq_type='dna', col_scheme='nucleotide')
 ggsave(
   "neg_random/donor.png",
   width = 15,
