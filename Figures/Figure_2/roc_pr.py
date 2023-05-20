@@ -30,13 +30,15 @@ def plot_pr_curve_J(true_y, y_prob_d, y_prob_a, label, option, choice, color):
     precision, recall, thresholds = precision_recall_curve_J_level_self(true_y, y_prob_d, y_prob_a, label, option, choice)
     auc_precision_recall = auc(recall, precision)
     print("auc_precision_recall: ", auc_precision_recall)
-    plt.plot(recall, precision, label=label + "  ${\\bf  (" + str('%.4f' % auc_precision_recall) + ")}$", color=color)
+    label_res = label + "  ${\\bf  (" + str('%.4f' % auc_precision_recall) + ")}$"
+    plt_res = plt.plot(recall, precision, label=label_res, color=color)
     # plt.plot(recall, precision, label=f"{label:<50}{'%10.4f' % auc_precision_recall:>1}")
 
     # , marker='o')
-    plt.legend(fontsize=8)
+    # plt.legend(fontsize=8)
     plt.xlabel('Recall')
     plt.ylabel('Precision')
+    return plt_res, label_res
 
 def plot_roc_curve(true_y, y_prob, label, option):
     """
@@ -58,12 +60,14 @@ def plot_roc_curve_J(true_y, y_prob_d, y_prob_a, label, option, choice, color):
     fpr, tpr, thresholds = roc_curve_J_level_self(true_y, y_prob_d, y_prob_a, label, option, choice)
     auc_roc = auc(fpr, tpr)
     print("auc_roc: ", auc_roc)
-    plt.plot(fpr, tpr, label=r""+label + "  ${\\bf  (" + str('%.4f' % auc_roc) + ")}$", color=color)
+    label_res = r""+label + "  ${\\bf  (" + str('%.4f' % auc_roc) + ")}$"
+    plt_res = plt.plot(fpr, tpr, label=label_res, color=color)
             #  "$\textbf{(}$" + str('%.4f' % auc_roc) + ")}")
     # , marker='o')
-    plt.legend(fontsize=8)
+    # plt.legend(fontsize=8)
     plt.xlabel('False Positive Rate')
     plt.ylabel('True Positive Rate')
+    return plt_res, label_res
 
 
 def plot_thresholds(true_y, y_prob_d, y_prob_a, type, SPLAM_VERSION):
@@ -402,12 +406,21 @@ def main():
             ###################################
             print("Plotting junction!!")
             fig, ax = plt.subplots()
-            plot_pr_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred,spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "min", color="#ff7f0e")
-            plot_pr_curve_J(spliceai_N_d_label, spliceai_N_d_pred,spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "min", color="#1f77b4")
-            plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "min", color="#2ca02c")
+            spliceainoN_plt, spliceainoN_label = plot_pr_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred,spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "min", color="#ff7f0e")
+            spliceaiN_plt, spliceaiN_label = plot_pr_curve_J(spliceai_N_d_label, spliceai_N_d_pred,spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "min", color="#1f77b4")
+            splam_plt, splam_label = plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "min", color="#2ca02c")
 
             ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
             ax.plot([1, 0], [0, 1], transform=ax.transAxes, linestyle='dashed', color="#d62728")
+            #get handles and labels
+            handles, labels = plt.gca().get_legend_handles_labels()
+
+            #specify order of items in legend
+            order = [2, 0 ,1]
+
+            #add legend to plot
+            plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order], fontsize=8)
+            # plt.legend([splam_plt, spliceainoN_plt, spliceaiN_plt], [splam_label, spliceainoN_label, spliceaiN_label], fontsize=8)
             plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_pr_min_ratio_2000-10000_"+MANE_OR_ALTS+".png", bbox_inches='tight', dpi=300)
             plt.close()
 
@@ -434,12 +447,22 @@ def main():
             # ROC of junction (min)
             ###################################
             fig, ax = plt.subplots()
-            plot_roc_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "min", color="#ff7f0e")
-            plot_roc_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "min", color="#1f77b4")
-            plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "min", color="#2ca02c")
+            spliceainoN_plt, spliceainoN_label = plot_roc_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI with 10k flanking sequence", "sklearn", "min", color="#ff7f0e")
+            spliceaiN_plt, spliceaiN_label = plot_roc_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI with 10k N", "sklearn", "min", color="#1f77b4")
+            splam_plt, splam_label = plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "min", color="#2ca02c")
 
             ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
             ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='dashed', color="#d62728")
+
+            #get handles and labels
+            handles, labels = plt.gca().get_legend_handles_labels()
+
+            #specify order of items in legend
+            order = [2, 0 ,1]
+
+            #add legend to plot
+            plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order], fontsize=8)
+            # plt.legend([splam_plt, spliceainoN_plt, spliceaiN_plt], [splam_label, spliceainoN_label, spliceaiN_label], fontsize=8)
             plt.savefig("./IMG/"+SPLAM_VERSION+"/junction/junc_roc_min_ratio_2000-10000_"+MANE_OR_ALTS+".png", bbox_inches='tight', dpi=300)
             plt.close()
 
