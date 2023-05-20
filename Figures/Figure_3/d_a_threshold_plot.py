@@ -279,7 +279,7 @@ def main():
                 else:
                     THRESHOLDS_PLT = THRESHOLDS
                 plt.figure(figsize=(12, 3))
-                plt.xlabel("Threshold ("+str(threshold_min)+" - "+ str(threshold_max) +")")
+                plt.xlabel("Thresholds")
                 plt.ylabel("Number of splice junctions")
 
                 plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_TP, label="SPLAM captured\nSpliceAI missed", color="#2ca02c")
