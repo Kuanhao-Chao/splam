@@ -8,31 +8,22 @@ from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc
 
 
 def plot_scatter_plot(d_score, a_score, indices_1, indices_2, axis, cmap_1, cmap_2):
+    
+    # selected_d_scores = np.concatenate([d_score[indices_1], d_score[indices_2]]) 
+    # selected_a_scores = np.concatenate([a_score[indices_1], a_score[indices_2]]) 
+    
+    selected_indices_combined = np.vstack([d_score, a_score])
 
-    new_2d_array = np.vstack([np.concatenate([d_score[indices_1], d_score[indices_2]]), np.concatenate([a_score[indices_1], a_score[indices_2]])])
-    print("new_2d_array: ", new_2d_array)
-    density = gaussian_kde(new_2d_array)
+    density_combined = gaussian_kde(selected_indices_combined)
+    density_1_values = density_combined(np.vstack([d_score[indices_1], a_score[indices_1]]))
+    density_2_values = density_combined(np.vstack([d_score[indices_2], a_score[indices_2]]))
 
-    # # Calculate density using Gaussian kernel density estimation
-    # density_1 = gaussian_kde(np.vstack([d_score[indices_1], a_score[indices_1]]))
-    # Calculate density values for each data point
-    density_1_values = density(np.vstack([d_score[indices_1], a_score[indices_1]]))
+    norm = plt.Normalize(vmin=min(density_1_values.min(), density_2_values.min()) - 100, vmax=max(density_1_values.max(), density_2_values.max()))
 
-    # # Calculate density using Gaussian kernel density estimation
-    # density_2 = gaussian_kde(np.vstack([d_score[indices_2], a_score[indices_2]]))
-    # Calculate density values for each data point
-    density_2_values = density(np.vstack([d_score[indices_2], a_score[indices_2]]))
+    plt_res_1 = axis.scatter(d_score[indices_1], a_score[indices_1], cmap=cmap_1, s=0.3, c=density_1_values, norm=norm)
+    plt_res_2 = axis.scatter(d_score[indices_2], a_score[indices_2], cmap=cmap_2, s=0.3, c=density_2_values, norm=norm)
 
-    print("density_1_values: ", density_1_values)
-    print("density_2_values: ", density_2_values)
 
-    # Define colormap and normalize density values
-    # cmap = 'Reds'
-    norm = plt.Normalize(vmin=-5, vmax=max(density_1_values.max(), density_2_values.max()))
-    print("norm: ", norm)
-
-    plt_res_1 = axis.scatter(d_score[indices_1], a_score[indices_1], cmap=cmap_1, s = 0.3, c=density_1_values, norm = norm)
-    plt_res_2 = axis.scatter(d_score[indices_2], a_score[indices_2], cmap=cmap_2, s = 0.3, c=density_2_values, norm = norm)
 
 
 
