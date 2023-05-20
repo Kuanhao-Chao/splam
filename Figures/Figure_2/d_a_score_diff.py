@@ -66,7 +66,6 @@ def main():
         print("")
         
 
-    plt.figure(figsize=(9, 4))
     for type in ["filter", "nofilter"]:
         for SPLAM_VERSION in ["SPLAM_v11"]:#, "SPLAM_v12"]:
             os.makedirs("./IMG/"+SPLAM_VERSION+"/d_a_diff_plot/", exist_ok=True)
@@ -103,7 +102,8 @@ def main():
                 # generate some sample data for predict probabilities and true labels
                 # predict_probabilities = np.minimum(splam_d_pred,splam_a_pred)
                 # true_labels = splam_d_label
-
+                fig, ax = plt.subplots(figsize=(9,4))
+                # plt.figure(figsize=(9, 4))
 
                 if type == "nofilter":
                     sns.kdeplot(score_noN_diff, shade=True, clip = (-1.0, 1.0), alpha=0.25, label="SpliceAI-10k", color="#ff7f0e")
@@ -129,7 +129,7 @@ def main():
                 plt.axvline(x=0.15, linestyle='--', color='black')#, label='Optimal Threshold (maximum F1 score)')
 
 
-                plt.xlabel('Scores')
+                plt.xlabel('Score difference')
                 plt.ylabel('Density')
                 # 'Score difference plot ('+
                 # plt.rcParams['text.usetex'] = True
@@ -140,7 +140,14 @@ def main():
                 # plt.text(2.5, 25, "My Plot", fontdict={'fontname': 'Arial', 'fontsize': 12, 'fontweight': 'bold'})
                 # plt.text(2.5, 22, "Subtitle", fontdict={'fontname': 'Times New Roman', 'fontsize': 10})
 
-                plt.legend(loc="upper right")
+                #get handles and labels
+                handles, labels = plt.gca().get_legend_handles_labels()
+
+                #specify order of items in legend
+                order = [1, 0]
+
+                #add legend to plot
+                plt.legend([handles[idx] for idx in order],[labels[idx] for idx in order], loc="upper right")
                 plt.tight_layout()
                 plt.grid(True)
                 # Add a legend
