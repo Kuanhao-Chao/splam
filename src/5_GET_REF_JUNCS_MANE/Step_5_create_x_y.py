@@ -24,6 +24,11 @@ def main():
     acceptors = {}
     chr_name = ""
     strand = ""
+
+
+    fw_noncan_TT = open("noncanonical_coords_TT.tsv", "w")
+    fw_noncan_GA = open("noncanonical_coords_GA.tsv", "w")
+
     for idx in range(line_num):
         if idx % 2 == 0:
             chr_name = lines_d[idx]
@@ -59,8 +64,6 @@ def main():
             else:
                 donors[donor_dimer] += 1
 
-
-
             if acceptor_dimer not in acceptors.keys():
                 acceptors[acceptor_dimer] = 1
             else:
@@ -74,6 +77,13 @@ def main():
                 canonical_a_count += 1
             else:
                 noncanonical_a_count += 1
+
+
+            if (donor_dimer == "TT"):
+                fw_noncan_TT.write(chr_name+"\n")
+            if (donor_dimer == "GA"):
+                fw_noncan_GA.write(chr_name+"\n")
+
     print("Canonical donor count: ", canonical_d_count)
     print("Noncanonical donor count: ", noncanonical_d_count)
 
@@ -91,6 +101,8 @@ def main():
         print("Acceptor: ", key, " (", str(value), ")")
         fw_d_a.write(key + "\t" + str(value) + "\n")
     fw_d_a.close()
+    fw_noncan_TT.close()
+    fw_noncan_GA.close()
     fw.close()
 
 
