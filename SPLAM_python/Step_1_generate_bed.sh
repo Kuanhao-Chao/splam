@@ -1,1 +1,2 @@
-./Junction-Extractor/build/junction_extractor -o ../Dataset/$1/$1.bed ../Dataset/$1/$1.bam
+mkdir ./$1/
+../SPLAM_C++/build/splam j-extract -o ./$1/ $2
