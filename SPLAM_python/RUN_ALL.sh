@@ -15,8 +15,8 @@ echo ./Step_3_extract_sequences.sh $SAMPLE
 echo python Step_4_create_x_y.py $SAMPLE
 python Step_4_create_x_y.py $SAMPLE
 
-echo python splam_predict.py -f $SAMPLE/INPUTS/input.fa -o $SAMPLE/junction.score.bed -m ../src/MODEL/SPLAM_v10/splam_14_scripted.pt
-python splam_predict.py -f $SAMPLE/INPUTS/input.fa -o $SAMPLE/junction.score.bed -m ../src/MODEL/SPLAM_v10/splam_14_scripted.pt
+echo python splam_predict.py -f $SAMPLE/INPUTS/input.fa -o $SAMPLE/junction.score.bed -m ../MODEL/splam_14_script.pt
+python splam_predict.py -f $SAMPLE/INPUTS/input.fa -o $SAMPLE/junction.score.bed -m ../MODEL/splam_14_script.pt
 
 # echo python Step_5_remove_juncs.py $SAMPLE $MODEL
 # python Step_5_remove_juncs.py $SAMPLE $MODEL
