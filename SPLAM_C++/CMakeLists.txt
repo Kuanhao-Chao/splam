@@ -15,7 +15,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 # find_package(PythonLibs REQUIRED)
 # find_package(Python COMPONENTS Interpreter Development)
-find_package(Python REQUIRED COMPONENTS Interpreter Development)
+find_package(Python REQUIRED COMPONENTS Interpreter Development REQUIRED)
 
 # find_package(Python COMPONENTS Interpreter Development)
 
@@ -24,8 +24,10 @@ find_package(Python REQUIRED COMPONENTS Interpreter Development)
 # find_package(PythonInterp 3.2 REQUIRED)
 # find_package(PythonLibs 3.2 REQUIRED)
 
-# set(PYTHON_INCLUDE_DIRS /Users/chaokuan-hao/miniconda3/include/python3.8/) # path to header
-# set(PYTHON_LIBRARIES /Users/chaokuan-hao/miniconda3/lib/libpython3.8.dylib)
+if(UNIX AND APPLE)
+        set(PYTHON_INCLUDE_DIRS /Users/chaokuan-hao/miniconda3/include/python3.8/) # path to header
+        set(PYTHON_LIBRARIES /Users/chaokuan-hao/miniconda3/lib/libpython3.8.dylib)
+endif()
 
 find_package(ZLIB)
 
@@ -75,27 +77,22 @@ add_executable(splam
 # target_link_libraries(splam Python::Python)
 
 add_dependencies(splam htslib)
-target_link_libraries(splam stdc++fs)
+if(UNIX AND NOT APPLE)
+        target_link_libraries(splam stdc++fs)
+endif ()
 target_link_libraries(splam ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
 # target_link_libraries(splam "${TORCH_LIBRARIES}")
-# target_include_directories(splam PRIVATE ${PYTHON_INCLUDE_DIRS})
+# target_includlse_directories(splam PRIVATE ${PYTHON_INCLUDE_DIRS})
 
-target_link_libraries(splam  Python::Python Python::Module)
+if(UNIX AND NOT APPLE)
+        target_link_libraries(splam  Python::Python Python::Module)
+endif()
 
-# target_link_libraries(splam ${PYTHON_LIBRARIES})
+if(UNIX AND APPLE)
+        target_link_libraries(splam ${PYTHON_LIBRARIES})
+endif()
+
 set_property(TARGET splam PROPERTY CXX_STANDARD 17)
-
-# The following code block is suggested to be used on Windows.
-# According to https://github.com/pytorch/pytorch/issues/25457,
-# the DLLs need to be copied to avoid memory errors.
-# if (MSVC)
-#   file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
-#   add_custom_command(TARGET splam
-#                      POST_BUILD
-#                      COMMAND ${CMAKE_COMMAND} -E copy_if_different
-#                      ${TORCH_DLLS}
-#                      $<TARGET_FILE_DIR:splam>)
-# endif (MSVC)
 
 message("${CMAKE_CURRENT_SOURCE_DIR}/build/: ")
 message("${CMAKE_CURRENT_SOURCE_DIR}/splam/: ")
@@ -104,25 +101,8 @@ message("Printing ${CMAKE_INSTALL_PREFIX}: ")
 
 message("CMAKE_CURRENT_SOURCE_DIR:${CMAKE_CURRENT_SOURCE_DIR}")
 message("PYTHON_FOUND:${PYTHON_FOUND}")
-message("PYTHON_VERSION:${PYTHON_VERSION}")
-# message("Python_Development_FOUND:${Python_Development_FOUND}")
+message("Python_Development_FOUND:${Python_Development_FOUND}")
 message("PYTHON_LIBRARIES:${PYTHON_LIBRARIES}")
 message("PYTHON_INCLUDE_DIRS:${PYTHON_INCLUDE_DIRS}")
 message("CMAKE_C_FLAGS:${CMAKE_C_FLAGS}")
-
-# install(TARGETS splam DESTINATION ${CMAKE_INSTALL_PREFIX})
-
-# install(TARGETS splam DESTINATION /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/splam)
-
-
-# install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/"
-#         DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/splam/")
-
-# install(DIRECTORY "myDir/"
-#         DESTINATION "myDestination"
-#         FILES_MATCHING PATTERN "*.h" )
-
-# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/build/splam ${CMAKE_CURRENT_SOURCE_DIR}/splam/splam COPYONLY)
-
-
 
