@@ -18,9 +18,7 @@ set(CMAKE_CXX_STANDARD 17)
 find_package(Python REQUIRED COMPONENTS Interpreter Development)
 
 # find_package(Python COMPONENTS Interpreter Development)
-
 # find_package (Python3 COMPONENTS Interpreter Development)
-
 # find_package(PythonInterp 3.2 REQUIRED)
 # find_package(PythonLibs 3.2 REQUIRED)
 
@@ -109,20 +107,3 @@ message("PYTHON_VERSION:${PYTHON_VERSION}")
 message("PYTHON_LIBRARIES:${PYTHON_LIBRARIES}")
 message("PYTHON_INCLUDE_DIRS:${PYTHON_INCLUDE_DIRS}")
 message("CMAKE_C_FLAGS:${CMAKE_C_FLAGS}")
-
-# install(TARGETS splam DESTINATION ${CMAKE_INSTALL_PREFIX})
-
-# install(TARGETS splam DESTINATION /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/splam)
-
-
-# install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/"
-#         DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/splam/")
-
-# install(DIRECTORY "myDir/"
-#         DESTINATION "myDestination"
-#         FILES_MATCHING PATTERN "*.h" )
-
-# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/build/splam ${CMAKE_CURRENT_SOURCE_DIR}/splam/splam COPYONLY)
-
-
-
