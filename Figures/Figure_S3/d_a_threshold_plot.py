@@ -304,7 +304,7 @@ def main():
                 # plt.axvline(x = spliceai_threshold, linestyle ='--', color = 'b', label = 'SpliceAI_threshold('+str(spliceai_threshold)+')')
 
 
-                plt.legend(loc="center right", bbox_to_anchor=(1.3, 0.5), labelspacing=2)
+                plt.legend(loc="upper center", bbox_to_anchor=(0.5, 1.25), labelspacing=2, ncol=3)
                 plt.tight_layout()
                 plt.savefig("IMG/" + SPLAM_VERSION + "/TP_TN_FP_FN/"+TARGET+"/threshold_"+x_axis_rep+"_"+str(threshold_min)+"_"+str(threshold_max)+".png", dpi=300)
                 # plt.show()
