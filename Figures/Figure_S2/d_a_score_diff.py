@@ -106,9 +106,9 @@ def main():
                 # plt.figure(figsize=(9, 4))
 
                 if type == "nofilter":
-                    sns.kdeplot(score_N_diff, shade=True, clip = (-1.0, 1.0), alpha=0.25, label="SpliceAI-10k", color="#1f77b4")
+                    sns.kdeplot(score_N_diff, shade=True, clip = (-1.0, 1.0), alpha=0.25, label="SpliceAI-10k-Ns", color="#1f77b4")
                 elif type == "filter":
-                    sns.kdeplot(score_N_diff, shade=True, clip = (-1.0, -0.15), alpha=0.25, label="SpliceAI-10k", color="#1f77b4")#, cut = -0.15)
+                    sns.kdeplot(score_N_diff, shade=True, clip = (-1.0, -0.15), alpha=0.25, label="SpliceAI-10k-Ns", color="#1f77b4")#, cut = -0.15)
                     sns.kdeplot(score_N_diff, shade=True, clip = (0.15, 1.0), alpha=0.25, color="#1f77b4")#, cut = 0.15)
 
 
