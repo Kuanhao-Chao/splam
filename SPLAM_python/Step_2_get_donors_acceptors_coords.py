@@ -2,23 +2,23 @@ import pandas as pd
 import os 
 import sys
 
-def get_hg38_chrom_size(target):
-    if target == "STAR":
-        f_chrs = open("./hg38_chrom_size_refseq.tsv", "r")
-    else:
-        f_chrs = open("./hg38_chrom_size.tsv", "r")
+def get_hg38_chrom_size():
+    # if target == "STAR":
+    #     f_chrs = open("./hg38_chrom_size_refseq.tsv", "r")
+    # else:
+    f_chrs = open("./hg38_chrom_size.tsv", "r")
     lines = f_chrs.read().splitlines()
     chrs = {}
     for line in lines:
-        if target == "STAR":
-            eles = line.split(" ")
-        else:
-            eles = line.split("\t")
+        # if target == "STAR":
+        #     eles = line.split(" ")
+        # else:
+        eles = line.split("\t")
         chrs[eles[0]] = int(eles[1])
     return chrs
 
 def main(argv):
-    chrs = get_hg38_chrom_size(argv[1])
+    chrs = get_hg38_chrom_size()
 
     threshold = "100"
     SEQ_LEN="800"
@@ -44,7 +44,6 @@ def main(argv):
             eles = line.split("\t")
             if len(eles) == 1:
                 continue
-            print("eles: ", eles)
             chr = eles[0]
             junc_name = eles[3]
             score = eles[4]

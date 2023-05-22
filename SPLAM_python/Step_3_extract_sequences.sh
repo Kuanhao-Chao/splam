@@ -1,14 +1,12 @@
-SEQ_LEN=800
+# if [ $2 = "STAR" ]
+# then
+# bedtools getfasta -s -fi ../Dataset/GRCh38_latest_genomic.fna -bed $1/juncs/donor.bed -fo $1/juncs/donor_seq.fa
 
-if [ $2 = "STAR" ]
-then
-bedtools getfasta -s -fi ../Dataset/GRCh38_latest_genomic.fna -bed $1/juncs/donor.bed -fo $1/juncs/donor_seq.fa
+# bedtools getfasta -s -fi ../Dataset/GRCh38_latest_genomic.fna -bed $1/juncs/acceptor.bed -fo $1/juncs/acceptor_seq.fa
 
-bedtools getfasta -s -fi ../Dataset/GRCh38_latest_genomic.fna -bed $1/juncs/acceptor.bed -fo $1/juncs/acceptor_seq.fa
-
-else
+# else
 bedtools getfasta -s -fi ../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa -bed $1/juncs/donor.bed -fo $1/juncs/donor_seq.fa
 
 bedtools getfasta -s -fi ../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa -bed $1/juncs/acceptor.bed -fo $1/juncs/acceptor_seq.fa
 
-fi
+# fi
