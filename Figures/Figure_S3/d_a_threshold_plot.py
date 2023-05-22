@@ -278,19 +278,21 @@ def main():
                     print("THRESHOLDS_PLT: ", THRESHOLDS_PLT)
                 else:
                     THRESHOLDS_PLT = THRESHOLDS
-                plt.figure(figsize=(12, 3))
+                plt.figure(figsize=(12, 6))
                 plt.xlabel("Thresholds")
                 plt.ylabel("Number of splice junctions")
 
                 # plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_TP, label="SPLAM captured\nSpliceAI missed", color="#2ca02c")
                 
-                plt.plot(THRESHOLDS_PLT, spliceai_FP__splam_TN, label="SPLAM_TN__SpliceAI_FP")
+                plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_TP, label="SPLAM_TP & SpliceAI_FN", linewidth=2)
+                plt.plot(THRESHOLDS_PLT, spliceai_FP__splam_TN, label="SPLAM_TN & SpliceAI_FP", linewidth=2)
                 
                 # plt.plot(THRESHOLDS_PLT, spliceai_TP__splam_FN, label="SpliceAI captured\nSPLAM missed", color="#ff7f0e")
+                plt.plot(THRESHOLDS_PLT, spliceai_TP__splam_FN, label="SPLAM_FN & SpliceAI_TP", linewidth=2)
                 
-                plt.plot(THRESHOLDS_PLT, spliceai_TN__splam_FP, label="SPLAM_FP__SpliceAI_TN")
-                plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_FN, label="SPLAM_FN__SpliceAI_FN")
-                plt.plot(THRESHOLDS_PLT, spliceai_FP__splam_FP, label="SPLAM_FP__SpliceAI_FP")
+                plt.plot(THRESHOLDS_PLT, spliceai_TN__splam_FP, label="SPLAM_FP & SpliceAI_TN", linewidth=2)
+                plt.plot(THRESHOLDS_PLT, spliceai_FN__splam_FN, label="SPLAM_FN & SpliceAI_FN", linewidth=2)
+                plt.plot(THRESHOLDS_PLT, spliceai_FP__splam_FP, label="SPLAM_FP & SpliceAI_FP", linewidth=2)
                 
                 # plt.axvline(x = splam_threshold, linestyle ='--', color = 'r', label = 'Dot plot threshold ('+str(splam_threshold)+')')
                 # plt.text(splam_threshold+0.01, spliceai_TP__splam_FN[100]+50, str(spliceai_TP__splam_FN[100]))
