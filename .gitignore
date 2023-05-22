@@ -7,7 +7,7 @@ Dataset/
 .DS_Store
 *.fa
 *.bed
-src/MODEL/
+src/MODEL
 src/INPUTS/Intersection/
 slides/
 results/
@@ -25,7 +25,6 @@ src/prev_MODEL/
 src/5_GET_BAM_NEG_JUNCS/BAM_junctions/
 src/6_GET_BAM_NEG_OPP_STRAND_JUNCS/BAM_junctions/
 *.pkl
-*.pt
 *.bed
 *.fa
 src_reimplementation_keras_pytorch/MODEL/*
