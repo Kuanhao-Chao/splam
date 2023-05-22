@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0 FATAL_ERROR)
-project(SPLAM)
+project(splam)
 set(CMAKE_CXX_STANDARD 17)
 
 # list(APPEND CMAKE_PREFIX_PATH "python -c 'import torch;print(torch.utils.cmake_prefix_path)'")
@@ -54,7 +54,7 @@ ExternalProject_Add(htslib
         INSTALL_COMMAND ""
         )
 
-add_executable(SPLAM
+add_executable(splam
         src/splam.cpp
         src/junc_func.cpp
         src/extract.cpp
@@ -72,33 +72,33 @@ add_executable(SPLAM
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.cpp)
 
-# target_link_libraries(SPLAM Python::Python)
+# target_link_libraries(splam Python::Python)
 
-add_dependencies(SPLAM htslib)
-target_link_libraries(SPLAM stdc++fs)
-target_link_libraries(SPLAM ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
-# target_link_libraries(SPLAM "${TORCH_LIBRARIES}")
-# target_include_directories(SPLAM PRIVATE ${PYTHON_INCLUDE_DIRS})
+add_dependencies(splam htslib)
+target_link_libraries(splam stdc++fs)
+target_link_libraries(splam ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+# target_link_libraries(splam "${TORCH_LIBRARIES}")
+# target_include_directories(splam PRIVATE ${PYTHON_INCLUDE_DIRS})
 
-target_link_libraries(SPLAM  Python::Python Python::Module)
+target_link_libraries(splam  Python::Python Python::Module)
 
-# target_link_libraries(SPLAM ${PYTHON_LIBRARIES})
-set_property(TARGET SPLAM PROPERTY CXX_STANDARD 17)
+# target_link_libraries(splam ${PYTHON_LIBRARIES})
+set_property(TARGET splam PROPERTY CXX_STANDARD 17)
 
 # The following code block is suggested to be used on Windows.
 # According to https://github.com/pytorch/pytorch/issues/25457,
 # the DLLs need to be copied to avoid memory errors.
 # if (MSVC)
 #   file(GLOB TORCH_DLLS "${TORCH_INSTALL_PREFIX}/lib/*.dll")
-#   add_custom_command(TARGET SPLAM
+#   add_custom_command(TARGET splam
 #                      POST_BUILD
 #                      COMMAND ${CMAKE_COMMAND} -E copy_if_different
 #                      ${TORCH_DLLS}
-#                      $<TARGET_FILE_DIR:SPLAM>)
+#                      $<TARGET_FILE_DIR:splam>)
 # endif (MSVC)
 
 message("${CMAKE_CURRENT_SOURCE_DIR}/build/: ")
-message("${CMAKE_CURRENT_SOURCE_DIR}/SPLAM/: ")
+message("${CMAKE_CURRENT_SOURCE_DIR}/splam/: ")
 
 message("Printing ${CMAKE_INSTALL_PREFIX}: ")
 
@@ -110,19 +110,19 @@ message("PYTHON_LIBRARIES:${PYTHON_LIBRARIES}")
 message("PYTHON_INCLUDE_DIRS:${PYTHON_INCLUDE_DIRS}")
 message("CMAKE_C_FLAGS:${CMAKE_C_FLAGS}")
 
-# install(TARGETS SPLAM DESTINATION ${CMAKE_INSTALL_PREFIX})
+# install(TARGETS splam DESTINATION ${CMAKE_INSTALL_PREFIX})
 
-# install(TARGETS SPLAM DESTINATION /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/SPLAM)
+# install(TARGETS splam DESTINATION /Users/chaokuan-hao/Documents/Projects/PR_SPLAM/src_SPLAM/splam)
 
 
 # install(DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/"
-#         DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/SPLAM/")
+#         DESTINATION "${CMAKE_CURRENT_SOURCE_DIR}/splam/")
 
 # install(DIRECTORY "myDir/"
 #         DESTINATION "myDestination"
 #         FILES_MATCHING PATTERN "*.h" )
 
-# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/build/SPLAM ${CMAKE_CURRENT_SOURCE_DIR}/SPLAM/SPLAM COPYONLY)
+# configure_file(${CMAKE_CURRENT_SOURCE_DIR}/build/splam ${CMAKE_CURRENT_SOURCE_DIR}/splam/splam COPYONLY)
 
 
 
