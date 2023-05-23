@@ -32,7 +32,7 @@ def main():
     #####################################
 
     MANE_OR_ALTS = "ALTS"
-    for SPLICEAI_VERSION in ["1", "2", "3", "4", "5"]:
+    for SPLICEAI_VERSION in ["1", "2", "3", "4", "5", "AVERAGE"]:
 
         with open("../../src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da.N.merged.BOTH.pkl", "rb") as fr:
             spliceai_N_d_label = pickle.load(fr)
@@ -140,9 +140,9 @@ def plot_DT_plot(true_labels, predict_probabilities, SPLAM_VERSION, target, SPLI
 
     # plot the DT plot
     plt.figure(figsize=(9, 3.5))
-    plt.plot(thresholds, precisions, label='Precision')
-    plt.plot(thresholds, recalls, label='Recall')
-    plt.plot(thresholds, f1_scores, label='F1 Score')
+    plt.plot(thresholds, precisions, label='Precision', linewidth=2)
+    plt.plot(thresholds, recalls, label='Recall', linewidth=2)
+    plt.plot(thresholds, f1_scores, label='F1 Score', linewidth=2)
     # plt.plot(thresholds, queue_rates, label='Queue Rate')
     plt.axvline(x=optimal_threshold, linestyle='--', color='r', label='Optimal Threshold (maximum F1 score)')
     plt.xlabel('Threshold', size = 13)
