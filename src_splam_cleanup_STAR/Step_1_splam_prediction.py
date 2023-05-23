@@ -89,10 +89,10 @@ class SpliceNN(Module):
 
 def get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP):
     return D_YL[:, 200], D_YP[:, 200], A_YL[:, 600], A_YP[:, 600]
-           
+
 def one_hot_encode(Xd, Yd):
     return IN_MAP[Xd.astype('int8')], [OUT_MAP[Yd[t].astype('int8')] for t in range(1)]
-      
+
 def create_datapoints(seq, strand):
     # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
     seq = seq.upper().replace('A', '1').replace('C', '2')
@@ -106,7 +106,7 @@ def create_datapoints(seq, strand):
     X0 = np.asarray(list(map(int, list(seq))))
     Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
     if strand == '+':
-        for t in range(1):        
+        for t in range(1):
             Y0[t][jn_start] = 2
             Y0[t][jn_end] = 1
     X, Y = one_hot_encode(X0, Y0)
@@ -182,20 +182,20 @@ class myDataset(Dataset):
                         print(Y.size())
                     self.data.append([X, Y, seq_name])
                 pidx += 1
-                if pidx %10000 == 0:
+                if pidx %100000 == 0:
                     print('\t', pidx, ' junctions loaded.')
 
         index_shuf = list(range(len(self.data)))
         if shuffle:
             random.shuffle(index_shuf)
         list_shuf = [self.data[i] for i in index_shuf]
-        self.data = list_shuf 
+        self.data = list_shuf
         self.indices = index_shuf
         print('\t', pidx, ' junctions loaded.')
 
     def __len__(self):
         return len(self.data)
- 
+
     def __getitem__(self, index):
         feature = self.data[index][0]
         label = self.data[index][1]
@@ -224,7 +224,8 @@ def test_model():
     N_WORKERS = None
     device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
     print(f'[Info] Loading model ...',flush = True)
-    model = torch.jit.load(MODEL_PATH)
+    #model = torch.jit.load(MODEL_PATH)
+    model = torch.load(MODEL_PATH)
     model = model.to('mps')
 
     print(f'[Info] Done loading model',flush = True)
@@ -236,14 +237,14 @@ def test_model():
     fw_junc_scores = open(OUT_SCORE, 'w')
 
     model.eval()
-    junc_counter = 0    
+    junc_counter = 0
     pbar = Bar('[Info] SPLAM! ', max=len(test_loader))
     with torch.no_grad():
         for batch_idx, data in enumerate(test_loader):
             # print('batch_idx: ', batch_idx)
             # DNAs:  torch.Size([40, 800, 4])
             # labels:  torch.Size([40, 1, 800, 3])
-            DNAs, labels, seqname = data 
+            DNAs, labels, seqname = data
             DNAs = DNAs.to(torch.float32).to(device)
             labels = labels.to(torch.float32).to(device)
 
