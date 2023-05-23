@@ -253,6 +253,7 @@ int main(int argc, char* argv[]) {
         if (!predict_junc_mode) {
             infname_juncbed = splamJExtract();
         }
+        // infname_juncbed = out_dir + "/junction.bed";
         infname_scorebed = splamPredict();
     } else if (COMMAND_MODE == CLEAN && !g_2_stage_run) {
         infname_juncbed = splamJExtract();
