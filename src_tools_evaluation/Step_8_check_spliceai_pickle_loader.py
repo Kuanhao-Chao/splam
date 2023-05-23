@@ -2,11 +2,13 @@ import matplotlib.pyplot as plt
 import pickle
 import numpy as np
 import os
+import sys
 # from Step_7_util import *
 from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve
 
 def main():
 
+    SPLICEAI_VERSION = sys.argv[1]
     for MANE_OR_ALTS in ["pos_MANE", "pos_ALTS", "BOTH"]:
         TARGETS = [MANE_OR_ALTS, "neg_1", "neg_random"]
         SUBSETS = [2000, 10000, 10000]
@@ -28,8 +30,8 @@ def main():
                 ###########################
                 # Donor scores
                 ###########################
-                print("./spliceai_result/"+TARGET+"/d_scores_"+TYPE+".pkl")        
-                with open("./spliceai_result/"+TARGET+"/d_scores_"+TYPE+".pkl", 'rb') as f:
+                print("./spliceai_result_"+SPLICEAI_VERSION+"/"+TARGET+"/d_scores_"+TYPE+".pkl")        
+                with open("./spliceai_result_"+SPLICEAI_VERSION+"/"+TARGET+"/d_scores_"+TYPE+".pkl", 'rb') as f:
                     print(">> Processing ", TARGET)
                     spliceai_noS_d_pred_prob = pickle.load(f)[:SUBSET]
                     if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
@@ -47,8 +49,8 @@ def main():
                 ###########################
                 # Acceptor scores
                 ###########################
-                print("./spliceai_result/"+TARGET+"/a_scores_"+TYPE+".pkl")        
-                with open("./spliceai_result/"+TARGET+"/a_scores_"+TYPE+".pkl", 'rb') as f:
+                print("./spliceai_result_"+SPLICEAI_VERSION+"/"+TARGET+"/a_scores_"+TYPE+".pkl")        
+                with open("./spliceai_result_"+SPLICEAI_VERSION+"/"+TARGET+"/a_scores_"+TYPE+".pkl", 'rb') as f:
                     print(">> Processing ", TARGET)
                     spliceai_noS_a_pred_prob = pickle.load(f)[:SUBSET]
                     if TARGET == "pos_MANE" or TARGET == "pos_ALTS":
@@ -99,7 +101,7 @@ def main():
             print("\ta_label: ", a_label)
             print("\ta_label == 1: ", len(a_label[a_label == 1]))
             print("")
-            with open("./spliceai_result/spliceai.da."+TYPE+".merged."+MANE_OR_ALTS+".pkl", 'wb') as f: 
+            with open("./spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da."+TYPE+".merged."+MANE_OR_ALTS+".pkl", 'wb') as f: 
                 pickle.dump(d_label, f)
                 pickle.dump(d_pred, f)
                 pickle.dump(a_label, f)
@@ -108,8 +110,8 @@ def main():
             ###################################
             # Checking spliceai pkl file.
             ###################################
-            with open("./spliceai_result/spliceai.da."+TYPE+".merged."+MANE_OR_ALTS+".pkl",'rb') as f:
-                print("./spliceai_result/spliceai.da."+TYPE+".merged."+MANE_OR_ALTS+".pkl")
+            with open("./spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da."+TYPE+".merged."+MANE_OR_ALTS+".pkl",'rb') as f:
+                print("./spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da."+TYPE+".merged."+MANE_OR_ALTS+".pkl")
                 d_label = pickle.load(f)
                 d_pred = pickle.load(f)
                 a_label = pickle.load(f)

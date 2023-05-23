@@ -2,10 +2,12 @@ import os
 import pickle 
 import sys
 
-# with open("./spliceai_result/"+output_file+"/d_scores_"+TYPE+".pkl", 'rb') as fw:
+# with open("./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/d_scores_"+TYPE+".pkl", 'rb') as fw:
 #     pickle.dump(donor_scores, fw)
-# with open("./spliceai_result/"+output_file+"/a_scores_"+TYPE+".pkl", 'rb') as fw:
+# with open("./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/a_scores_"+TYPE+".pkl", 'rb') as fw:
 #     pickle.dump(acceptor_scores, fw)
+
+SPLICEAI_VERSION = sys.argv[1]
 
 output_files = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
 for output_file in output_files:
@@ -15,12 +17,12 @@ for output_file in output_files:
         # spliceai
         print(">> output_file\t: ", output_file)
 
-        with open("./spliceai_result/"+output_file+"/d_scores_"+TYPE+".pkl", "rb") as fr:
+        with open("./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/d_scores_"+TYPE+".pkl", "rb") as fr:
             donor_scores = pickle.load(fr)
             # print("donor_scores: ", donor_scores)
             print("donor_scores: ", len(donor_scores))
 
-        with open("./spliceai_result/"+output_file+"/a_scores_"+TYPE+".pkl", "rb") as fr:
+        with open("./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/a_scores_"+TYPE+".pkl", "rb") as fr:
             acceptor_scores = pickle.load(fr)
             # print("acceptor_scores: ", acceptor_scores)
             print("acceptor_scores: ", len(acceptor_scores))
@@ -53,7 +55,7 @@ for TYPE in ['N', "noN"]:
     print(">> SpliceAI, TYPE: ", TYPE)
     # spliceai
 
-    with open("./spliceai_result/spliceai.da."+TYPE+".merged.BOTH.pkl", "rb") as fr:
+    with open("./spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da."+TYPE+".merged.BOTH.pkl", "rb") as fr:
         d_label = pickle.load(fr)
         d_pred = pickle.load(fr)
         a_label = pickle.load(fr)

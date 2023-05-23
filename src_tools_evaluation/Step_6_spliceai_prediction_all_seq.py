@@ -29,12 +29,13 @@ def main(argv):
 
     TYPE = argv[1]
     output_file = argv[2]
+    spliceai_version = argv[3]
 
-    path = './models/spliceai1.h5'
+    path = './models/spliceai'+spliceai_version+'.h5'
     print(">> path\t\t: ", path)
     print(">> output_file\t: ", output_file)
     model = load_model(resource_filename('spliceai', path))
-    os.makedirs("./spliceai_result/", exist_ok=True)
+    os.makedirs("./spliceai_result_"+spliceai_version+"/", exist_ok=True)
     all_lines = []
     label = '.'
     if output_file == "pos" or output_file == "pos_MANE" or output_file == "pos_ALTS":
@@ -43,12 +44,12 @@ def main(argv):
         label = '-'
 
     da_faf = "./dataset/"+output_file+"/spliceai/spliceai."+TYPE+".juncs.seq.fa"
-    os.makedirs("./spliceai_result/"+output_file, exist_ok=True)
+    os.makedirs("./spliceai_result_"+spliceai_version+"/"+output_file, exist_ok=True)
 
-    d_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
-    a_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
-    n_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
-    name_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.name."+TYPE+"."+output_file+".tsv"
+    d_score_tsv_f = "./spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
+    a_score_tsv_f = "./spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
+    n_score_tsv_f = "./spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
+    name_tsv_f = "./spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.name."+TYPE+"."+output_file+".tsv"
 
     d_score_fw = open(d_score_tsv_f, "a")
     a_score_fw = open(a_score_tsv_f, "a") 
