@@ -29,7 +29,7 @@ def main():
     #####################################
 
     MANE_OR_ALTS = "ALTS"
-    for SPLICEAI_VERSION in ["1", "2", "3", "4", "5"]:
+    for SPLICEAI_VERSION in ["1", "2", "3", "4", "5", "AVERAGE"]:
 
         with open("../../src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da.N.merged.BOTH.pkl", "rb") as fr:
             spliceai_N_d_label = pickle.load(fr)

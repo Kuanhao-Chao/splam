@@ -150,7 +150,7 @@ def main():
             # Creating directories for visualization.
             #####################################
 
-            for SPLICEAI_VERSION in ["1", "2", "3", "4", "5"]:
+            for SPLICEAI_VERSION in ["1", "2", "3", "4", "5", "AVERAGE"]:
 
                 for TARGET in ["noN", "N"]:
                     figure_root = "./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/scatter_plot_density/"

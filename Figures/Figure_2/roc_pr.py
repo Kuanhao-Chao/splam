@@ -230,64 +230,64 @@ def plot_roc_curve_J(true_y, y_prob_d, y_prob_a, label, option, choice, color):
 #     plt.close()
         
 
-def plot_thresholds_J(true_y, y_prob_j, type, SPLAM_VERSION):
-    J_TP = [0]*1001
-    J_TN = [0]*1001
-    J_FP = [0]*1001
-    J_FN = [0]*1001
-    """
-    plots TP, FP, TN, FN
-    """
-    thresholds = []
-    for idx in range(0, 1001, 1):
-        threshold = (idx)/1000
-        thresholds.append(threshold)
-        print("threshold: ", threshold)
+# def plot_thresholds_J(true_y, y_prob_j, type, SPLAM_VERSION):
+#     J_TP = [0]*1001
+#     J_TN = [0]*1001
+#     J_FP = [0]*1001
+#     J_FN = [0]*1001
+#     """
+#     plots TP, FP, TN, FN
+#     """
+#     thresholds = []
+#     for idx in range(0, 1001, 1):
+#         threshold = (idx)/1000
+#         thresholds.append(threshold)
+#         print("threshold: ", threshold)
         
-        labels_1 = np.where(true_y == 1)
-        labels_0 = np.where(true_y == 0)
+#         labels_1 = np.where(true_y == 1)
+#         labels_0 = np.where(true_y == 0)
 
-        ####################
-        # Junction
-        ####################
-        thre_j = np.where(y_prob_j >= threshold)
-        thre_j_0 = np.where(y_prob_j < threshold)
-        # print("thre_d: ", thre_d)
-        # print("thre_a: ", thre_a)
+#         ####################
+#         # Junction
+#         ####################
+#         thre_j = np.where(y_prob_j >= threshold)
+#         thre_j_0 = np.where(y_prob_j < threshold)
+#         # print("thre_d: ", thre_d)
+#         # print("thre_a: ", thre_a)
 
-        TPs = len(np.intersect1d(labels_1, thre_j))
-        FNs = len(np.setdiff1d(labels_1, thre_j))
-        FPs = len(np.setdiff1d(thre_j, labels_1))
-        TNs = len(np.intersect1d(labels_0, thre_j_0))
-        # TNs = len(true_y) - TPs - FNs - FPs
-        print("\tDonor TPs: ", TPs)
-        print("\tDonor FNs: ", FNs)
-        print("\tDonor FPs: ", FPs)
-        print("\tDonor TNs: ", TNs)
-        J_TP[idx] = TPs
-        J_TN[idx] = TNs
-        J_FP[idx] = FPs
-        J_FN[idx] = FNs
+#         TPs = len(np.intersect1d(labels_1, thre_j))
+#         FNs = len(np.setdiff1d(labels_1, thre_j))
+#         FPs = len(np.setdiff1d(thre_j, labels_1))
+#         TNs = len(np.intersect1d(labels_0, thre_j_0))
+#         # TNs = len(true_y) - TPs - FNs - FPs
+#         print("\tDonor TPs: ", TPs)
+#         print("\tDonor FNs: ", FNs)
+#         print("\tDonor FPs: ", FPs)
+#         print("\tDonor TNs: ", TNs)
+#         J_TP[idx] = TPs
+#         J_TN[idx] = TNs
+#         J_FP[idx] = FPs
+#         J_FN[idx] = FNs
 
-    ####################
-    # junction 
-    ####################
-    J_TP = np.array(J_TP)
-    J_TN = np.array(J_TN)
-    J_FP = np.array(J_FP)
-    J_FN = np.array(J_FN)
+#     ####################
+#     # junction 
+#     ####################
+#     J_TP = np.array(J_TP)
+#     J_TN = np.array(J_TN)
+#     J_FP = np.array(J_FP)
+#     J_FN = np.array(J_FN)
 
-    plt.bar(thresholds, J_TP, color='r', width=0.001)
-    plt.bar(thresholds, J_FN, bottom=J_TP, width=0.001, color='b')
-    plt.bar(thresholds, J_TN, bottom=J_TP+J_FN, width=0.001, color='y')
-    plt.bar(thresholds, J_FP, bottom=J_TP+J_FN+J_TN, width=0.001, color='g')
+#     plt.bar(thresholds, J_TP, color='r', width=0.001)
+#     plt.bar(thresholds, J_FN, bottom=J_TP, width=0.001, color='b')
+#     plt.bar(thresholds, J_TN, bottom=J_TP+J_FN, width=0.001, color='y')
+#     plt.bar(thresholds, J_FP, bottom=J_TP+J_FN+J_TN, width=0.001, color='g')
 
-    plt.xlabel("Thresholds")
-    plt.ylabel("Count")
-    plt.legend(["TP", "FN", "TN", "FP"])
-    # plt.title("Scores by Teams in 4 Rounds")
-    plt.savefig("./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/T_histogram/"+type+"_junction_thresholds.png")
-    plt.close()
+#     plt.xlabel("Thresholds")
+#     plt.ylabel("Count")
+#     plt.legend(["TP", "FN", "TN", "FP"])
+#     # plt.title("Scores by Teams in 4 Rounds")
+#     plt.savefig("./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/T_histogram/"+type+"_junction_thresholds.png")
+#     plt.close()
 
 
 def main():
@@ -298,7 +298,7 @@ def main():
     #####################################
 
     for MANE_OR_ALTS in ["pos_MANE", "pos_ALTS"]:
-        for SPLICEAI_VERSION in ["1", "2", "3", "4", "5"]:
+        for SPLICEAI_VERSION in ["1", "2", "3", "4", "5", "AVERAGE"]:
             with open("../../src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da.N.merged."+MANE_OR_ALTS+".pkl", "rb") as fr:
                 spliceai_N_d_label = pickle.load(fr)
                 spliceai_N_d_pred = pickle.load(fr)

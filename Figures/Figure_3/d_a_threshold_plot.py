@@ -86,7 +86,7 @@ def main():
             spliceai_threshold = 0.01
 
         for SPLAM_VERSION in ["SPLAM_v11"]:#, "SPLAM_v12"]:
-            for SPLICEAI_VERSION in ["1", "2", "3", "4", "5"]:
+            for SPLICEAI_VERSION in ["1", "2", "3", "4", "5", "AVERAGE"]:
 
                 for x_axis_rep in ["log", "no_log"]:
                     # spliceai_TP__splam_TP_idices

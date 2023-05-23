@@ -106,7 +106,7 @@ def main():
 
 
         for SPLAM_VERSION in ["SPLAM_v11"]:#, "SPLAM_v12"]:
-            for SPLICEAI_VERSION in ["1", "2", "3", "4", "5"]:
+            for SPLICEAI_VERSION in ["1", "2", "3", "4", "5", "AVERAGE"]:
                 #####################################
                 # Creating directories for visualization.
                 #####################################
