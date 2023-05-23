@@ -39,20 +39,21 @@ def print_topl_statistics(y_true, y_pred, topl_csv):
 
 def main(argv):
     TYPE = argv[1]
-    path = './models/spliceai1.h5'
+    SPLICEAI_VERSION = argv[2]
+    path = './models/spliceai'+SPLICEAI_VERSION+'.h5'
     print(">> path\t\t: ", path)
     output_files = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
     for output_file in output_files:
-        os.makedirs("spliceai_result/"+output_file+"/score_plts", exist_ok=True)
+        os.makedirs("spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/score_plts", exist_ok=True)
         print(">> output_file\t: ", output_file)
 
-        d_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
-        a_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
-        n_score_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
-        name_tsv_f = "./spliceai_result/"+output_file+"/spliceai_all_seq.name."+TYPE+"."+output_file+".tsv"
+        d_score_tsv_f = "./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
+        a_score_tsv_f = "./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
+        n_score_tsv_f = "./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
+        name_tsv_f = "./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/spliceai_all_seq.name."+TYPE+"."+output_file+".tsv"
 
-        d_score_ls_f = "./spliceai_result/"+output_file+"/d_scores_"+TYPE+".tsv"
-        a_score_ls_f = "./spliceai_result/"+output_file+"/a_scores_"+TYPE+".tsv"
+        d_score_ls_f = "./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/d_scores_"+TYPE+".tsv"
+        a_score_ls_f = "./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/a_scores_"+TYPE+".tsv"
 
         d_score_fr = open(d_score_tsv_f, "r") 
         a_score_fr = open(a_score_tsv_f, "r") 
@@ -120,9 +121,9 @@ def main(argv):
         # d_score_fw.write("\t".join(donor_scores))
         # a_score_fw.write("\t".join(acceptor_scores))
 
-        with open("./spliceai_result/"+output_file+"/d_scores_"+TYPE+".pkl", 'wb') as fw:
+        with open("./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/d_scores_"+TYPE+".pkl", 'wb') as fw:
             pickle.dump(donor_scores, fw)
-        with open("./spliceai_result/"+output_file+"/a_scores_"+TYPE+".pkl", 'wb') as fw:
+        with open("./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/a_scores_"+TYPE+".pkl", 'wb') as fw:
             pickle.dump(acceptor_scores, fw)
 
         #################################
@@ -140,13 +141,13 @@ def main(argv):
         plt.ylabel('Score')
         plt.legend()
         plt.tight_layout()
-        plt.savefig("spliceai_result/" + output_file+"/score_plts/spliceai_" + TYPE + "_" + output_file + ".png", dpi=my_dpi)
+        plt.savefig("spliceai_result_"+SPLICEAI_VERSION+"/" + output_file+"/score_plts/spliceai_" + TYPE + "_" + output_file + ".png", dpi=my_dpi)
 
 
         #################################
         # Calculating the topl statistics
         #################################
-        topl_csv = "./spliceai_result/"+output_file+"/topk_statistics."+TYPE+"csv"
+        topl_csv = "./spliceai_result_"+SPLICEAI_VERSION+"/"+output_file+"/topk_statistics."+TYPE+"csv"
 
         print ("\n\033[1mDonor:\033[0m")
         print_topl_statistics(donor_l_concat,
