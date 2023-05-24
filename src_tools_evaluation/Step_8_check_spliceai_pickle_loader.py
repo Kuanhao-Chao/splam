@@ -9,13 +9,18 @@ from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc
 def main():
 
     SPLICEAI_VERSION = sys.argv[1]
-    for MANE_OR_ALTS in ["pos_MANE", "pos_ALTS", "BOTH"]:
+    
+    for MANE_OR_ALTS in ["pos_MANE", "pos_ALTS", "BOTH", "FULL"]:
         TARGETS = [MANE_OR_ALTS, "neg_1", "neg_random"]
         SUBSETS = [2000, 10000, 10000]
 
         if MANE_OR_ALTS == "BOTH":
             TARGETS = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
             SUBSETS = [2000, 2000, 10000, 10000]
+
+        if MANE_OR_ALTS == "FULL":
+            TARGETS = ["pos_MANE", "pos_ALTS", "neg_1", "neg_random"]
+            SUBSETS = [10000, 10000, 10000, 10000]
 
         for TYPE in ["noN", "N"]:
             a_label = []
