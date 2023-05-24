@@ -14,7 +14,7 @@ def main():
     FIGURE_ROOT = "Figures/"
     for SPLAM_VERSION in ["SPLAM_v11"]:#, "SPLAM_v12"]:
         for SPLICEAI_VERSION in ["1", "2", "3", "4", "5"]:
-            os.makedirs(FIGURE_ROOT+SPLAM_VERSION+"/", exist_ok=True)
+            os.makedirs(FIGURE_ROOT+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/", exist_ok=True)
             for output_file in output_files:
                 fig = plt.figure(figsize=(6, 4))
                 for TARGET in TARGETS:
@@ -91,7 +91,7 @@ def main():
                     plt.tight_layout()
                     plt.grid(True)
                     # Add a legend
-                    plt.savefig(FIGURE_ROOT+SPLAM_VERSION+"/"+output_file+"_"+TARGET+".png", dpi=300)
+                    plt.savefig(FIGURE_ROOT+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/"+output_file+"_"+TARGET+".png", dpi=300)
                     plt.clf()
                     print(">>> Finish plotting 1 figure!")
                     # plt.show()
