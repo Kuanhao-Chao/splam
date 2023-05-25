@@ -103,7 +103,7 @@ def main():
                         #####################################
                         # Creating directories for visualization.
                         #####################################
-                        # figure_root = "./IMG/d_a/"
+                        # figure_root = "./IMG_FULL/d_a/"
 
                         #####################################
                         # Declaring parameters for probability & prediction array
@@ -137,14 +137,14 @@ def main():
                         #####################################
                         # Creating directories for visualization.
                         #####################################
-                        os.makedirs("IMG/" + SPLAM_VERSION + "/"+SPLICEAI_VERSION+"/TP_TN_FP_FN/"+TARGET+"/", exist_ok=True)
+                        os.makedirs("IMG_FULL/" + SPLAM_VERSION + "/"+SPLICEAI_VERSION+"/TP_TN_FP_FN/"+TARGET+"/", exist_ok=True)
 
-                        figure_root = "./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/scatter_plot/"
+                        figure_root = "./IMG_FULL/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/scatter_plot/"
                         target_figure_root = figure_root+TARGET+"/"
                         # os.makedirs(target_figure_root+"tsv_"+str(threshold)+"/", exist_ok=True)
                         
 
-                        with open("../../src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da."+TARGET+".merged.BOTH.pkl", "rb") as fr:
+                        with open("../../src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da."+TARGET+".merged.FULL.pkl", "rb") as fr:
                             spliceai_d_label = pickle.load(fr)
                             spliceai_d_pred = pickle.load(fr)
                             spliceai_a_label = pickle.load(fr)
@@ -197,7 +197,7 @@ def main():
 
                         
 
-                        with open("../../src_tools_evaluation/splam_result/"+SPLAM_VERSION+"/splam.da.noshuffle.merged.BOTH.pkl",'rb') as f:
+                        with open("../../src_tools_evaluation/splam_result/"+SPLAM_VERSION+"/splam.da.noshuffle.merged.FULL.pkl",'rb') as f:
                             splam_d_label = pickle.load(f)
                             splam_d_pred = pickle.load(f)
                             splam_a_label = pickle.load(f)
@@ -303,7 +303,7 @@ def main():
 
                     plt.legend(loc="center right", bbox_to_anchor=(1.3, 0.5), labelspacing=2)
                     plt.tight_layout()
-                    plt.savefig("IMG/" + SPLAM_VERSION + "/"+SPLICEAI_VERSION+"/TP_TN_FP_FN/"+TARGET+"/threshold_"+x_axis_rep+"_"+str(threshold_min)+"_"+str(threshold_max)+".png", dpi=300)
+                    plt.savefig("IMG_FULL/" + SPLAM_VERSION + "/"+SPLICEAI_VERSION+"/TP_TN_FP_FN/"+TARGET+"/threshold_"+x_axis_rep+"_"+str(threshold_min)+"_"+str(threshold_max)+".png", dpi=300)
                     # plt.show()
                     plt.close()
 
