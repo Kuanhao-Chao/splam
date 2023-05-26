@@ -37,8 +37,9 @@ def main(argv):
     fw_da = open(d_a_bed, "w")
     JUNCS = set()
 
-    with open(argv[0]+"/junction.bed", "r") as f:
+    # with open(argv[0]+"/junction.bed", "r") as f:
     # with open("../Dataset/"+argv[0]+"/"+argv[0]+".bed", "r") as f:
+    with open(argv[0]+'/'+argv[1], 'r') as f:
         lines = f.read().splitlines()
         for line in lines:
             eles = line.split("\t")
