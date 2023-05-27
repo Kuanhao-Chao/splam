@@ -1,5 +1,5 @@
 SAMPLE=tests
-DATABASE=MANE
+DATABASE=chess3
 
 
 # Step 1
