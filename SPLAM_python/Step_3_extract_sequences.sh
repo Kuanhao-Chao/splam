@@ -5,8 +5,8 @@
 # bedtools getfasta -s -fi ../Dataset/GRCh38_latest_genomic.fna -bed $1/juncs/acceptor.bed -fo $1/juncs/acceptor_seq.fa
 
 # else
-bedtools getfasta -s -fi ../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa -bed $1/juncs/donor.bed -fo $1/juncs/donor_seq.fa
+bedtools getfasta -s -fi ../Dataset/hg38_p14_ucsc.no_alts.no_fixs.fa -bed $1/juncs/donor.bed -fo $1/juncs/donor_seq.fa
 
-bedtools getfasta -s -fi ../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa -bed $1/juncs/acceptor.bed -fo $1/juncs/acceptor_seq.fa
+bedtools getfasta -s -fi ../Dataset/hg38_p14_ucsc.no_alts.no_fixs.fa -bed $1/juncs/acceptor.bed -fo $1/juncs/acceptor_seq.fa
 
 # fi
