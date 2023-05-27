@@ -77,6 +77,7 @@ def main(argv):
         else:
             discard_file.write(read)
 
-            
+    fr.close()
+    
 if __name__ == "__main__":
     main(sys.argv[1:])

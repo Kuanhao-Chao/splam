@@ -3,18 +3,22 @@ import os
 import sys
 
 def get_hg38_chrom_size():
-    # if target == "STAR":
-    #     f_chrs = open("./hg38_chrom_size_refseq.tsv", "r")
-    # else:
-    f_chrs = open("./hg38_chrom_size.tsv", "r")
-    lines = f_chrs.read().splitlines()
+    
     chrs = {}
-    for line in lines:
-        # if target == "STAR":
-        #     eles = line.split(" ")
-        # else:
-        eles = line.split("\t")
-        chrs[eles[0]] = int(eles[1])
+    with open('GRCh38.p14_assembly_report.txt', 'r') as file:       
+        # skip header
+        next(file)
+
+        # read the file line by line
+        for line in file:  
+            # split by tabs
+            columns = line.strip().split('\t')
+            ucsc_name = columns[9]
+            chrom_size = int(columns[8])
+
+            # store the key-value pair in the dictionary
+            chrs[ucsc_name] = chrom_size
+    
     return chrs
 
 def main(argv):
