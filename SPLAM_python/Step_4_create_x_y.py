@@ -125,5 +125,8 @@ def main(argv):
     for key, value in acceptors.items():
         print("Acceptor: ", key, " (", value, ")")
     fw.close()
+    fr_acceptor.close()
+    fr_donor.close()
+
 if __name__ == "__main__":
     main(sys.argv[1:])

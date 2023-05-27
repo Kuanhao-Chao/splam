@@ -1,7 +1,6 @@
 SAMPLE=tests
 DATABASE=chess3
 
-
 # Step 1
 #echo ">> Step 1"
 #echo "../SPLAM_C++/build/splam j-extract -o ./$SAMPLE $BAM_FILE"
