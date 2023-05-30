@@ -264,7 +264,10 @@ def test_model():
                     fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
                 elif strand == '-':
                     fw_junc_scores.write(chr + '\t'+ str(end) + '\t' + str(start) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
-                junc_counter += 1
+                junc_counter += 1   
+            
+            # increment the progress bar
+            pbar.next()
 
     pbar.finish()
     fw_junc_scores.close()
