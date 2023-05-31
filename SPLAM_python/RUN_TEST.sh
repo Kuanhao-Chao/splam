@@ -1,5 +1,5 @@
 SAMPLE=tests
-DATABASE=chess3
+DATABASE=refseq
 
 # Step 1
 #echo ">> Step 1"
