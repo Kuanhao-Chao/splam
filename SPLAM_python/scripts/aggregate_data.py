@@ -21,11 +21,20 @@ def run_aggregator(db_name):
     # collect the data to be aggregated from multiple sources
     input_dir = './outputs/' + db_name + '/'
     score_file = input_dir + db_name + '.score.bed'
-    df = collect_data(score_file)
+    output_file = input_dir + db_name + '.full_data.csv'
 
-    # write output to .csv file
-    output_file = input_dir + db_name + ''
-    write_output(df, output_file)
+    # make csv file if it does not exist, write to pd dataframe
+    if not os.path.exists(output_file):
+        df = collect_data(score_file)
+        write_output(df, output_file)
+    else:
+        df = pd.read_csv(output_file)
+
+    # compare the scores to dimer
+    avg_df = get_average(df)
+
+    # visualize results
+    visualize(avg_df)
 
 
 def collect_data(score_file):
@@ -62,26 +71,58 @@ def collect_data(score_file):
 
     pbar.finish()
     print(df.head())
-   
+
     return df
 
 def write_output(df, output_file):
-    
+    # convert df to csv file 
     df.to_csv(output_file, index=False)
+    print(f'Full data csv file saved to {output_file}')
 
-    pass
-
-# to elucidate the reason why there is a discrepancy between 
+# to elucidate the reason why there are genes missing from score file between input.fa file
 def compare_error(df, input_fa_file):
+    
     pass
 
 
-def stats(df):
-    pass
+# to check average score given flanking dimer sequence
+def get_average(df):
+    # get the counts of both dimers
+    donor_counts = df['donorDimer'].value_counts()
+    acceptor_counts = df['acceptorDimer'].value_counts()
 
+    # combine both series into a df
+    full_df = pd.concat([donor_counts, acceptor_counts], axis=1).fillna(0).astype('int64')
 
-def visualize():
-    pass
+    # get the average scores for each dimer
+    full_df['donorAvgScore'] = 0.0
+    full_df['acceptorAvgScore'] = 0.0
+
+    for target_dimer in full_df.index:
+        # filter out the target dimers, then get average score
+        donor_filt = df[df['donorDimer'] == target_dimer]
+        donor_avg = donor_filt['donorScore'].mean()
+        acceptor_filt = df[df['acceptorDimer'] == target_dimer]
+        acceptor_avg = acceptor_filt['acceptorScore'].mean()
+
+        # save to corresponding index in df
+        full_df.at[target_dimer, 'donorAvgScore'] = donor_avg
+        full_df.at[target_dimer, 'acceptorAvgScore'] = acceptor_avg
+
+    print(full_df)
+    return full_df
+
+def visualize(df):
+    sns.scatterplot(data=df, x='acceptorDimer', y='acceptorAvgScore')
+    plt.xscale('log')
+    # Set plot title and axis labels
+    plt.title('Correlation between Acceptor Dimer Frequency and Score')
+    plt.xlabel('Dimer Frequency')
+    plt.ylabel('Dimer Score')
+
+    # Display the plot
+    plt.show()
+
 
 
 if __name__ == '__main__':
