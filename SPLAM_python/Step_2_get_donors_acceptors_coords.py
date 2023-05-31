@@ -26,7 +26,7 @@ def main(argv):
 
     threshold = "100"
     SEQ_LEN="800"
-    QUOTER_SEQ_LEN = int(SEQ_LEN) // 4
+    QUARTER_SEQ_LEN = int(SEQ_LEN) // 4
 
     #################################
     # For 'd_a.bed': 0-based, 1-based
@@ -64,20 +64,20 @@ def main(argv):
                 donor = int(eles[2])
                 splice_junc_len = donor - acceptor
 
-            flanking_size = QUOTER_SEQ_LEN
-            if splice_junc_len < QUOTER_SEQ_LEN:
+            flanking_size = QUARTER_SEQ_LEN
+            if splice_junc_len < QUARTER_SEQ_LEN:
                 flanking_size = splice_junc_len
 
             if (strand == "+"):
-                donor_s = donor - QUOTER_SEQ_LEN
+                donor_s = donor - QUARTER_SEQ_LEN
                 donor_e = donor + flanking_size
                 acceptor_s = acceptor - flanking_size
-                acceptor_e = acceptor + QUOTER_SEQ_LEN
+                acceptor_e = acceptor + QUARTER_SEQ_LEN
 
             elif (strand == "-"):
                 donor_s = donor - flanking_size
-                donor_e = donor + QUOTER_SEQ_LEN
-                acceptor_s = acceptor - QUOTER_SEQ_LEN
+                donor_e = donor + QUARTER_SEQ_LEN
+                acceptor_s = acceptor - QUARTER_SEQ_LEN
                 acceptor_e = acceptor + flanking_size
 
 

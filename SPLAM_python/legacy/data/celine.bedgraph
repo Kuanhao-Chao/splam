@@ -1,0 +1,19 @@
+track type=bedGraph name="Sample Count Heatmap" description="Sample Count Heatmap" visibility=full graphType="heatmap" color=200,100,0 altColor=0,100,200
+chr9	11631	11707	1	inf
+chr9	11737	11813	1	inf
+chr9	11817	12065	1	inf
+chr9	12075	12418	1	inf
+chr9	12633	12709	1	inf
+chr9	12743	12819	1	inf
+chr9	13028	13104	1	inf
+chr9	13209	13285	1	inf
+chr9	13360	13563	1	inf
+chr9	14028	14104	1	inf
+chr9	14115	14225	1	inf
+chr9	14429	15285	1	inf
+chr9	15315	16876	1	inf
+chr9	16916	20026	1	inf
+chr9	22751	22805	1	inf
+chr9	24850	24925	1	inf
+chr9	29226	29235	1	inf
+chr9	75383	75390	1	inf
