@@ -31,21 +31,34 @@ def run_aggregator(db_name):
     else:
         df = pd.read_csv(output_file)
 
-    # compare the scores to dimer
-    avg_df = get_average(df)
 
-    # visualize results (fig1)
-    da = ['donor', 'acceptor']
-    log = [True, False]
-    for args in [(avg_df, db_name, i, j) for i in da for j in log]:
-        visualize_f1(*args)
+    # CHANGEME select which figures to make
+    make_fig1 = False
+    make_fig2 = False
+
+    if make_fig1:
+        # compare the scores to dimer
+        avg_df = get_average(df)
+
+        # visualize results (fig1)
+        da = ['donor', 'acceptor']
+        log = [True, False]
+        for args in [(avg_df, db_name, i, j) for i in da for j in log]:
+            visualize_f1(*args)
+    
+    if make_fig2:
+        # get the introns which were dropped from the INPUT.fa file to score file and investigate why
+        input_filepath = input_dir + 'INPUTS/input.fa'
+        dropped_fa_filepath = input_dir + db_name + '.dropped.fa'
+        dropped_df = compare_error(df, input_filepath, dropped_fa_filepath)
+
 
 
 def collect_data(score_file):
     # read score data from score file
-    df = pd.read_csv(score_file, sep='\t', header=0, \
+    df = pd.read_csv(score_file, sep='\t', header=None, \
         names=['chrom', 'chromStart(donor)', 'chromEnd(acceptor)', 'name', 'score', 'strand', 'donorScore', 'acceptorScore'])
-
+    print(df.head())
     # add new columns for the dimers
     df['donorDimer'] = ''
     df['acceptorDimer'] = ''
@@ -122,12 +135,6 @@ def get_average(df):
     print(full_df)
     return full_df
 
-# to elucidate the reason why there are genes missing from score file between input.fa file
-def compare_error(df, input_fa_file):
-    
-    pass
-
-
 def handle_duplicate_names(path):
     # pre: path has '/path/to/file(optversion).ext'
     filename, extension = os.path.splitext(path)
@@ -166,9 +173,42 @@ def visualize_f1(df, db, d_a = 'donor', log_xscale = True):
     print(f'Saved figure to {fig_path}.')
 
 
+# to elucidate the reason why there are genes missing from score file between input.fa file
+def compare_error(df_score, input_fa_file, output_file):
+    # extract rows from input fasta file into dataframe
+    columns = ['chromosome', 'donorPos', 'acceptorPos', 'strand', 'score', 'seq']
+    data = []
+    linenums = []
+    with open(input_fa_file, 'r') as fasta:
+        linenum = 1
+        for line in fasta:
+            if line.startswith('>'):
+                linenums.append(linenum)
+                # get attributes from header
+                header = line.split(';')
+                chromosome = header[0][1:]
+                donor_pos = int(header[1])
+                acceptor_pos = int(header[2])
+                strand = header[3]
+                score = header[4]
+                
+            else:
+                data.append((chromosome, donor_pos, acceptor_pos, strand, score, line))
+    df_inp = pd.DataFrame(data, columns=columns)
+
+    print(f'Input df length: {len(df_inp)}\nScore df length: {len(df_score)}')
+    print(len(linenums))
+
+    # get the dropped rows
+
+
+    # write the dropped rows to new .fa file
+    
+    
+
 if __name__ == '__main__':
     dbs = ['chess3', 'gencode_all', 'MANE', 'refseq']
-    nums = [2,3] # CHANGEME
+    nums = [0,1,2,3] # CHANGEME
 
     for num in nums:
         run_aggregator(dbs[num])
