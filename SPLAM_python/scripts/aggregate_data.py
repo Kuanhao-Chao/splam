@@ -112,17 +112,35 @@ def get_average(df):
     print(full_df)
     return full_df
 
+
+def handle_duplicate_names(path):
+    # pre: path has '/path/to/file(optversion).ext' format
+    filename, extension = os.path.splitext(path)
+    count = 1
+    while os.path.exists(path):
+        path = filename + '(' + str(count) + ')' + extension 
+        count += 1
+    
+    return path
+
+
 def visualize(df):
-    sns.scatterplot(data=df, x='acceptorDimer', y='acceptorAvgScore')
+    # do the plot
+    ax = sns.scatterplot(data=df, x='donorDimer', y='donorAvgScore')
     plt.xscale('log')
-    # Set plot title and axis labels
-    plt.title('Correlation between Acceptor Dimer Frequency and Score')
+
+    # set plot title and axis labels
+    plt.title('Correlation between Donor Dimer Frequency and Score')
     plt.xlabel('Dimer Frequency')
     plt.ylabel('Dimer Score')
 
-    # Display the plot
+    # display the plot
     plt.show()
 
+    # save the plot
+    fig_path = './outputs/FIGURES/acceptor_dimer_freq_vs_score.png'
+    os.makedirs(os.path.dirname(fig_path), exist_ok=True)
+    ax.figure.savefig(handle_duplicate_names(fig_path))
 
 
 if __name__ == '__main__':
