@@ -33,7 +33,7 @@ def run_aggregator(db_name):
 
 
     # CHANGEME select which figures to make
-    make_fig1 = False
+    make_fig1 = True
     make_fig2 = False
 
     if make_fig1:
@@ -53,12 +53,11 @@ def run_aggregator(db_name):
         dropped_df = compare_error(df, input_filepath, dropped_fa_filepath)
 
 
-
 def collect_data(score_file):
     # read score data from score file
     df = pd.read_csv(score_file, sep='\t', header=None, \
         names=['chrom', 'chromStart(donor)', 'chromEnd(acceptor)', 'name', 'score', 'strand', 'donorScore', 'acceptorScore'])
-    print(df.head())
+
     # add new columns for the dimers
     df['donorDimer'] = ''
     df['acceptorDimer'] = ''
@@ -184,6 +183,7 @@ def compare_error(df_score, input_fa_file, output_file):
         for line in fasta:
             if line.startswith('>'):
                 linenums.append(linenum)
+                linenum += 1
                 # get attributes from header
                 header = line.split(';')
                 chromosome = header[0][1:]
@@ -197,18 +197,11 @@ def compare_error(df_score, input_fa_file, output_file):
     df_inp = pd.DataFrame(data, columns=columns)
 
     print(f'Input df length: {len(df_inp)}\nScore df length: {len(df_score)}')
-    print(len(linenums))
-
-    # get the dropped rows
-
-
-    # write the dropped rows to new .fa file
-    
-    
+    print(f'Lines with leading > {len(linenums)}')
 
 if __name__ == '__main__':
     dbs = ['chess3', 'gencode_all', 'MANE', 'refseq']
-    nums = [0,1,2,3] # CHANGEME
+    nums = [0] # CHANGEME
 
     for num in nums:
         run_aggregator(dbs[num])
