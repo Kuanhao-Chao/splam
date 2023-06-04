@@ -33,8 +33,8 @@ def run_aggregator(db_name):
 
 
     # CHANGEME select which figures to make
-    make_fig1 = True
-    make_fig2 = False
+    make_fig1 = False
+    make_fig2 = True
 
     if make_fig1:
         # compare the scores to dimer
@@ -47,11 +47,10 @@ def run_aggregator(db_name):
             visualize_f1(*args)
     
     if make_fig2:
-        # get the introns which were dropped from the INPUT.fa file to score file and investigate why
-        input_filepath = input_dir + 'INPUTS/input.fa'
-        dropped_fa_filepath = input_dir + db_name + '.dropped.fa'
-        dropped_df = compare_error(df, input_filepath, dropped_fa_filepath)
+        # visualize results (fig2)
+        visualize_f2(df, db_name)
 
+        
 
 def collect_data(score_file):
     # read score data from score file
@@ -199,9 +198,41 @@ def compare_error(df_score, input_fa_file, output_file):
     print(f'Input df length: {len(df_inp)}\nScore df length: {len(df_score)}')
     print(f'Lines with leading > {len(linenums)}')
 
+# plot intron length vs. score
+def visualize_f2(df, db): 
+    # calculate the intron length for each entry
+    df['intron_length'] = df['chromEnd(acceptor)'] - df['chromStart(donor)']
+
+    # group the intron lengths into 
+
+    # plot the scatterplot with two different color dots
+    sns.set_palette('deep')
+    sns.set(font_scale=0.8)
+    scatterplot_params = {'s': 4, 'alpha': 0.25}
+    plt.figure(figsize=(8, 6))
+    sns.scatterplot(x='intron_length', y='donorScore', data=df, color='blue', label='Donor Score', **scatterplot_params)
+    sns.scatterplot(x='intron_length', y='acceptorScore', data=df, color='orange', label='Acceptor Score', **scatterplot_params)
+
+    # set up the plot
+    plt.xlabel('Intron Length')
+    plt.ylabel('Score')
+    plt.title(f'Intron Lengths vs. Score for {db} Database')
+    plt.xscale('log')
+    plt.legend(fontsize=8)
+
+    # save the plot
+    fig_path = handle_duplicate_names(f'./outputs/FIGURES/fig2/intron_length_vs_scores_{db}.png')
+    os.makedirs(os.path.dirname(fig_path), exist_ok=True)
+    plt.savefig(fig_path, dpi=500)
+    print(f'Saved figure to {fig_path}.')
+
+    # show the plot
+    plt.show()
+
+
 if __name__ == '__main__':
     dbs = ['chess3', 'gencode_all', 'MANE', 'refseq']
-    nums = [0] # CHANGEME
+    nums = [1,2,3] # CHANGEME
 
     for num in nums:
         run_aggregator(dbs[num])
