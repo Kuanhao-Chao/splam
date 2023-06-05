@@ -213,6 +213,10 @@ def visualize_f2(df, db):
     scoredf = pd.concat([d_df, a_df], axis=0)
     newdf = pd.concat([newdf, scoredf], axis=1)
 
+    # get rows where intron length is <400
+    newdf = newdf[newdf['intron_length'] < 400]
+    print(len(newdf))
+
     # plt.figure(figsize=(12,8))
     # sns.scatterplot(x='intron_length', y='donorScore', data=df, color='blue', label='Donor Score', **plot_params)
     # sns.scatterplot(x='intron_length', y='acceptorScore', data=df, color='orange', label='Acceptor Score', **plot_params)
@@ -225,12 +229,12 @@ def visualize_f2(df, db):
     # set up the plot
     plt.xlabel('Intron Length')
     plt.ylabel('Score')
-    plt.title(f'Intron Lengths vs. Score for {db} Database')
+    plt.title(f'Intron Lengths Above 400 vs. Score for {db} Database')
     plt.xscale('log')
     plt.legend(fontsize=8)
 
     # save the plot
-    fig_path = handle_duplicate_names(f'./outputs/FIGURES/fig2/intron_length_vs_scores_dist_{db}.png')
+    fig_path = handle_duplicate_names(f'./outputs/FIGURES/fig2/v2/intron_length_vs_scores_above_400_{db}.png')
     os.makedirs(os.path.dirname(fig_path), exist_ok=True)
     plt.savefig(fig_path, dpi=500)
     print(f'Saved figure to {fig_path}.')
