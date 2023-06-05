@@ -200,19 +200,28 @@ def compare_error(df_score, input_fa_file, output_file):
 
 # plot intron length vs. score
 def visualize_f2(df, db): 
-    # calculate the intron length for each entry
-    df['intron_length'] = df['chromEnd(acceptor)'] - df['chromStart(donor)']
+    # calculate the intron length for each entry and format into new df
+    newdf = pd.DataFrame()
+    newdf['intron_length'] = df['chromEnd(acceptor)'] - df['chromStart(donor)'] + 1
+    newdf = pd.concat([newdf, newdf], axis=0)
+    d_df = pd.DataFrame()
+    d_df['score'] = df['donorScore']
+    d_df['type'] = 'donor'
+    a_df = pd.DataFrame()
+    a_df['score'] = df['acceptorScore']
+    a_df['type'] = 'acceptor'
+    scoredf = pd.concat([d_df, a_df], axis=0)
+    newdf = pd.concat([newdf, scoredf], axis=1)
 
-    # group the intron lengths into 
-
-    # plot the scatterplot with two different color dots
-    sns.set_palette('deep')
+    # plt.figure(figsize=(12,8))
+    # sns.scatterplot(x='intron_length', y='donorScore', data=df, color='blue', label='Donor Score', **plot_params)
+    # sns.scatterplot(x='intron_length', y='acceptorScore', data=df, color='orange', label='Acceptor Score', **plot_params)
+    
+    # plot the scatterplot with marginal distributions
     sns.set(font_scale=0.8)
-    scatterplot_params = {'s': 4, 'alpha': 0.25}
-    plt.figure(figsize=(8, 6))
-    sns.scatterplot(x='intron_length', y='donorScore', data=df, color='blue', label='Donor Score', **scatterplot_params)
-    sns.scatterplot(x='intron_length', y='acceptorScore', data=df, color='orange', label='Acceptor Score', **scatterplot_params)
-
+    plot_params = {'s': 3, 'alpha': 0.25}
+    sns.jointplot(data=newdf, x='intron_length', y='score', hue='type', height=8, ratio=4, **plot_params)
+    
     # set up the plot
     plt.xlabel('Intron Length')
     plt.ylabel('Score')
@@ -221,7 +230,7 @@ def visualize_f2(df, db):
     plt.legend(fontsize=8)
 
     # save the plot
-    fig_path = handle_duplicate_names(f'./outputs/FIGURES/fig2/intron_length_vs_scores_{db}.png')
+    fig_path = handle_duplicate_names(f'./outputs/FIGURES/fig2/intron_length_vs_scores_dist_{db}.png')
     os.makedirs(os.path.dirname(fig_path), exist_ok=True)
     plt.savefig(fig_path, dpi=500)
     print(f'Saved figure to {fig_path}.')
@@ -232,7 +241,7 @@ def visualize_f2(df, db):
 
 if __name__ == '__main__':
     dbs = ['chess3', 'gencode_all', 'MANE', 'refseq']
-    nums = [1,2,3] # CHANGEME
+    nums = [0,1,2,3] # CHANGEME
 
     for num in nums:
         run_aggregator(dbs[num])
