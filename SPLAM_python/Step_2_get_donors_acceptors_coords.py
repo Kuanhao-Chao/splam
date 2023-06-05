@@ -21,8 +21,29 @@ def get_hg38_chrom_size():
     
     return chrs
 
+def get_chrom_size(path):
+    chrs = {}
+    with open(path, 'r') as file:       
+        # skip header
+        next(file)
+
+        # read the file line by line
+        for line in file:  
+            # split by tabs
+            columns = line.strip().split('\t')
+            refseq_name = columns[6]
+            chrom_size = int(columns[8])
+
+            # store the key-value pair in the dictionary
+            chrs[refseq_name] = chrom_size
+    
+    return chrs
+
+
 def main(argv):
-    chrs = get_hg38_chrom_size()
+    #chrs = get_hg38_chrom_size()
+    
+    chrs = get_chrom_size('../Dataset/' + argv[1].split('_parsed.bed')[0] + '_assembly_report.txt')
 
     threshold = "100"
     SEQ_LEN="800"

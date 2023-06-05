@@ -20,7 +20,8 @@ from pyfaidx import Fasta
 def run_aggregator(db_name):
 
     # collect the data to be aggregated from multiple sources
-    input_dir = './outputs/' + db_name + '/'
+    #input_dir = './outputs/' + db_name + '/'
+    input_dir = './primates/'
     score_file = input_dir + db_name + '.score.bed'
     output_file = input_dir + db_name + '.full_data.csv'
 
@@ -33,7 +34,7 @@ def run_aggregator(db_name):
 
 
     # CHANGEME select which figures to make
-    make_fig1 = False
+    make_fig1 = True
     make_fig2 = True
 
     if make_fig1:
@@ -50,7 +51,6 @@ def run_aggregator(db_name):
         # visualize results (fig2)
         visualize_f2(df, db_name)
 
-        
 
 def collect_data(score_file):
     # read score data from score file
@@ -62,8 +62,9 @@ def collect_data(score_file):
     df['acceptorDimer'] = ''
 
     # ping the GRCh38.p14 fasta file using pyfaidx to obtain the sequences as a dictionary
-    genes = Fasta('../Dataset/GRCh38_p14_genomic_ucsc.fa')
-    print(f'Found {len(genes.keys())} unique genes in GRCh38.p14 dataset.')
+    db_name = score_file.split('.score')[0].split('primates/')[1]
+    genes = Fasta('../Dataset/' + db_name + '_genomic.fa')
+    print(f'Found {len(genes.keys())} unique genes in {db_name} dataset.')
 
     # iterate over every coordinate and extract corresponding dimer from fasta
     pbar = Bar('[Info] Getting dimers...', max=len(df))
@@ -165,7 +166,7 @@ def visualize_f1(df, db, d_a = 'donor', log_xscale = True):
     plt.show()
 
     # save the plot
-    fig_path = handle_duplicate_names(f'./outputs/FIGURES/fig1/{d_a}_dimer_freq_vs_score_{db}_log{log_xscale}.png')
+    fig_path = handle_duplicate_names(f'./primates/FIGURES/fig1/{d_a}_dimer_freq_vs_score_{db}_log{log_xscale}.png')
     os.makedirs(os.path.dirname(fig_path), exist_ok=True)
     ax.figure.savefig(fig_path)
     print(f'Saved figure to {fig_path}.')
@@ -214,8 +215,8 @@ def visualize_f2(df, db):
     newdf = pd.concat([newdf, scoredf], axis=1)
 
     # get rows where intron length is <400
-    newdf = newdf[newdf['intron_length'] < 400]
-    print(len(newdf))
+    # newdf = newdf[newdf['intron_length'] < 400]
+    # print(len(newdf))
 
     # plt.figure(figsize=(12,8))
     # sns.scatterplot(x='intron_length', y='donorScore', data=df, color='blue', label='Donor Score', **plot_params)
@@ -229,12 +230,12 @@ def visualize_f2(df, db):
     # set up the plot
     plt.xlabel('Intron Length')
     plt.ylabel('Score')
-    plt.title(f'Intron Lengths Above 400 vs. Score for {db} Database')
+    plt.title(f'Intron Lengths vs. Score for {db} Database')
     plt.xscale('log')
     plt.legend(fontsize=8)
 
     # save the plot
-    fig_path = handle_duplicate_names(f'./outputs/FIGURES/fig2/v2/intron_length_vs_scores_above_400_{db}.png')
+    fig_path = handle_duplicate_names(f'./primates/FIGURES/fig2/intron_length_vs_scores_{db}.png')
     os.makedirs(os.path.dirname(fig_path), exist_ok=True)
     plt.savefig(fig_path, dpi=500)
     print(f'Saved figure to {fig_path}.')
@@ -244,8 +245,9 @@ def visualize_f2(df, db):
 
 
 if __name__ == '__main__':
-    dbs = ['chess3', 'gencode_all', 'MANE', 'refseq']
-    nums = [0,1,2,3] # CHANGEME
+    #dbs = ['chess3', 'gencode_all', 'MANE', 'refseq']
+    dbs = ['Mmul_10', 'NHGRI_mPanTro3', 'GRCm39']
+    nums = [0,1,2] # CHANGEME
 
     for num in nums:
         run_aggregator(dbs[num])
