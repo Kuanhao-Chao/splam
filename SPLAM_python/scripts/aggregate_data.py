@@ -35,7 +35,7 @@ def run_aggregator(db_name):
 
     # CHANGEME select which figures to make
     make_fig1 = True
-    make_fig2 = True
+    make_fig2 = False
 
     if make_fig1:
         # compare the scores to dimer
@@ -168,7 +168,7 @@ def visualize_f1(df, db, d_a = 'donor', log_xscale = True):
     # save the plot
     fig_path = handle_duplicate_names(f'./primates/FIGURES/fig1/{d_a}_dimer_freq_vs_score_{db}_log{log_xscale}.png')
     os.makedirs(os.path.dirname(fig_path), exist_ok=True)
-    ax.figure.savefig(fig_path)
+    ax.figure.savefig(fig_path, dpi=300)
     print(f'Saved figure to {fig_path}.')
 
 

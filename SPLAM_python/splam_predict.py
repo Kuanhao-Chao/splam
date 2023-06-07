@@ -214,11 +214,6 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
     return test_loader
 
 
-
-
-
-
-
 def test_model():
     BATCH_SIZE = 100
     N_WORKERS = None
