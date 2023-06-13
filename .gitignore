@@ -48,3 +48,5 @@ Figure/*.pptx
 src_tools_evaluation/1st_res_noparalog/
 src_reimplementation_keras_pytorch/
 src_tools_evaluation/splam_result_prev/
+src_compare_results/spliceai_result*
+src_compare_results/save/
