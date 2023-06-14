@@ -53,3 +53,7 @@ benchmark/src_compare_results/save/
 benchmark/src_splam_cleanup/results/*
 benchmark/src_splam_cleanup_STAR/results/*
 __pycache__/
+splam.egg-info/
+dist/
+build/
+
