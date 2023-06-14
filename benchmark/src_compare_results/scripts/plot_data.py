@@ -202,8 +202,8 @@ def make_fig2(df, fig_path, id):
 
 if __name__ == '__main__':
     databases = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    type = 'noN'
-    versions = [3,4,5]
+    type = 'N'
+    versions = [1,2,3,4,5]
     db_nums = [0,1,2,3]
 
     for ver, num in itertools.product(versions, db_nums):
