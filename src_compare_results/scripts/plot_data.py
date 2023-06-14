@@ -19,7 +19,6 @@ def run_plotter(argv, db):
     a_score_file = f'{dirpath}spliceai_all_seq.score.a.{TYPE}.{db}.tsv'
     name_file = f'{dirpath}spliceai_all_seq.name.{TYPE}.{db}.tsv'
     full_data_score_file = f'./data/{db}.full_data.csv'
-    # n_score_file = f'{dirpath}spliceai_all_seq.score.n.{TYPE}.{db}.tsv'
 
     # output filepaths
     id = f'.v{SPLICEAI_VERSION}.{TYPE}.{db}'
@@ -29,15 +28,12 @@ def run_plotter(argv, db):
     fig2_path = f'./figures/fig2/scores_distribution_comparison{id}.png'
     
     # collect the full data into a dataframe
-    index_compare(full_data_score_file, name_file)
-
-
-    # if not os.path.exists(csvpath):
-    #     data_df, name_df, indices = index_compare(full_data_score_file, name_file)
-    #     score_df, donor_df, acceptor_df = collect_data(d_score_file, a_score_file)
-    #     df = combine_and_write(score_df, name_df, data_df, indices, csvpath)
-    # else:
-    #     df = pd.read_csv(csvpath)
+    if not os.path.exists(csvpath):
+        score_df, donor_df, acceptor_df = collect_data(d_score_file, a_score_file)
+        full_df = index_compare(full_data_score_file, name_file, score_df)
+        write_df(full_df, csvpath)
+    else:
+        df = pd.read_csv(csvpath)
 
     # make figures 
     #make_fig1(df, fig1_path)
@@ -52,52 +48,6 @@ def handle_duplicate_names(path):
         count += 1
     
     return path
-
-'''Compare the indices between the SPLAM data file and SpliceAI output and get only the matches'''
-def index_compare(full_data_file, name_file, score_df):
-
-    # read files and create dfs (df1 = SPLAM file; df2 = SpliceAI file w. scores)
-    splam_full_df = pd.read_csv(full_data_file)
-    spliceai_name_df = pd.read_csv(name_file, delimiter=' ', names=['id', 'start', 'end', 'strand'])
-
-    df1 = splam_full_df
-    df2 = pd.concat([spliceai_name_df, score_df], axis=1)
-
-    # starts1 = df1.iloc[:,1:3].apply(tuple, axis=1)
-    # print(starts1)
-    # set1 = set(sorted(starts1))
-    # starts2 = df2.iloc[:,1:3].apply(tuple, axis=1)
-    # print(starts2)
-    # set2 = set(sorted(starts2))
-    # combined = set1.union(set2)
-    # print(len(set1), len(set2), len(combined))
-    # print(df1.shape, df2.shape)
-
-    # get the identifiers (seqid, start, end) as a list of tuples to search for matches
-    print('Filtering full data...')
-    df1_rows = df1.iloc[:,:3].apply(tuple,axis=1)
-    df2_rows = df2.iloc[:,:3].apply(tuple,axis=1)
-    print(f'\t\tRows\t\tUniques\nSPLAM:\t\t{len(df1_rows)}\t{len(df1_rows.drop_duplicates())}\nSpliceAI:\t{len(df2_rows)}\t{len(df2_rows.drop_duplicates())}')
-    
-    filtered_df = df1.merge(df2, how='inner', left_on=['chrom', 'chromStart(donor)', 'chromEnd(acceptor)', 'strand'], right_on=['id', 'start', 'end', 'strand'], sort=True).drop_duplicates()
-    indices = df2_rows.drop_duplicates().index 
-
-    print(f'Shape of merged: {filtered_df.shape}, size of indices: {indices.shape}')
-    filtered_df.to_csv('./output/test.csv')
-    # get the uniques from each row
-    # df1_rows = df1_rows.drop_duplicates()
-    # df2_rows = df2_rows.drop_duplicates()
-  
-    # get the matches (filtered_df = rows of df1 which match; indices = indices of SpliceAI files which are unique and are used here)
-    # filtered_df = df1[df1_rows.isin(df2_rows)].sort_values(by=['chrom', 'chromStart(donor)', 'chromEnd(acceptor)'])
-    # indices = df2_rows.index
-
-    
-
-    print(f'Preview filtered SPLAM values:\n{filtered_df}')
-    print('Finished filtering')
-
-    return filtered_df, df2, indices
 
 '''Parse the SpliceAI donor and acceptor files into a single dataframe'''
 def collect_data(d_file, a_file):
@@ -151,30 +101,47 @@ def collect_data(d_file, a_file):
 
     return score_df, donor_df, acceptor_df
 
+'''Compare the indices between the SPLAM data file and SpliceAI output and get only the matches'''
+def index_compare(full_data_file, name_file, score_df):
+
+    # read files and create dfs (df1 = SPLAM file; df2 = SpliceAI file w. scores)
+    splam_full_df = pd.read_csv(full_data_file)
+    spliceai_name_df = pd.read_csv(name_file, delimiter=' ')
+
+    df1 = splam_full_df
+    df2 = pd.concat([spliceai_name_df, score_df], axis=1)
+    df2.columns = ['id', 'start', 'end', 'strand', 'd_score_spliceai', 'a_score_spliceai']
+
+    # get the identifiers (seqid, start, end) as a list of tuples -> show uniques for each 
+    print('Filtering full data...')
+    df1_rows = df1.iloc[:,:3].apply(tuple,axis=1)
+    df2_rows = df2.iloc[:,:3].apply(tuple,axis=1)
+    print(f'\t\tRows\tUniques\nSPLAM:\t\t{len(df1_rows)}\t{len(df1_rows.drop_duplicates())}\nSpliceAI:\t{len(df2_rows)}\t{len(df2_rows.drop_duplicates())}')
+    
+    # merge the two dataframes by ID, sort result, and drop duplicates 
+    # NOTE: this will still keep some duplicate results as SpliceAI may give different scores to same sequence 
+    filtered_df = df1.merge(df2, how='inner', left_on=['chrom', 'chromStart(donor)', 'chromEnd(acceptor)', 'strand'], 
+                            right_on=['id', 'start', 'end', 'strand'], sort=True).drop_duplicates()
+
+    print(f'Merged rows: {len(filtered_df)}')
+    #filtered_df.to_csv('./output/test.csv')
+
+    print(f'Preview filtered SPLAM values:\n{filtered_df}')
+    print('Finished filtering')
+
+    return filtered_df
+
 '''Combine the full data with SpliceAI scores and save to csv file'''
-def combine_and_write(score_df, name_df, full_df, indices, csvpath):
-    
-    # combine the spliceai scores, then get only the unique rows corresponding to full data
-    comb_df = pd.concat([name_df, score_df], axis=1)
-    comb_df.columns = ['name', 'start', 'end', 'strand', 'donor_score', 'acceptor_score']
-    comb_df = comb_df.iloc[indices].sort_values(by=['name', 'start', 'end']).reset_index(drop=True)
-    full_df = full_df.reset_index(drop=True)
+def write_df(full_df, csvpath):
 
-    print(f'Length of\nspliceai: {len(comb_df)}\nfull splam: {len(full_df)}')
-    print(comb_df)
-    print(full_df)
+    # drop unneccesary columns and fix indices
+    full_df.drop(['id', 'start', 'end'], inplace=True, axis=1).reset_index()
 
-    # maybe make a method to validate the matches between the two dataframes? (chrom, start, end, strand?)
-    
-
-    # rearrange, rename, and combine the final df columns
-    new_headers = ['seqid', 'start', 'end', 'name', 'exp_score', 'strand', \
-                   'd_dimer', 'a_dimer', 'd_score_splam', 'a_score_splam']
-    full_df = full_df.reindex(columns=['chrom', 'chromStart(donor)', 'chromEnd(acceptor)', 'name', 'score', \
-                               'strand', 'donorDimer', 'acceptorDimer', 'donorScore', 'acceptorScore'])
-    full_df.columns = new_headers
-    full_df['d_score_spliceai'] = comb_df['donor_score']
-    full_df['a_score_spliceai'] = comb_df['acceptor_score']
+    # reorder and rename the final df columns
+    full_df = full_df.reindex(columns=['chrom', 'chromStart(donor)', 'chromEnd(acceptor)', 'name', 'score', 'strand', 'donorDimer', 'acceptorDimer', 
+                                       'donorScore', 'acceptorScore', 'd_score_spliceai', 'a_score_spliceai'])
+    full_df.columns = ['seqid', 'start', 'end', 'name', 'expected_score', 'strand', 'd_dimer', 'a_dimer', 
+                       'd_score_splam', 'a_score_splam, d_score_spliceai, a_score_spliceai']
 
     print(f'Preview final saved df:\n{full_df}')
 
