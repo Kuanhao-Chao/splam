@@ -31,7 +31,7 @@ def run_plotter(argv, db):
     if not os.path.exists(csvpath):
         score_df, donor_df, acceptor_df = collect_data(d_score_file, a_score_file)
         full_df = index_compare(full_data_score_file, name_file, score_df)
-        write_df(full_df, csvpath)
+        df = write_df(full_df, csvpath)
     else:
         df = pd.read_csv(csvpath)
 
