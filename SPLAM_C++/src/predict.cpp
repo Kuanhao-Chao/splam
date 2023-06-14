@@ -87,7 +87,7 @@ GStr splamPredict() {
     
 
     GStr outfname_junc_score(out_dir + "/junction_score.bed");
-    if (!no_predict) {
+    if (!write_bam) {
         /*********************************************
          * Step 3: SPLAM model prediction
         *********************************************/

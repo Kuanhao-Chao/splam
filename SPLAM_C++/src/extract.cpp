@@ -221,7 +221,7 @@ GStr splamJExtract() {
                 int accYC = 0;
                 accYC = brec->tag_int("YC", 1);
                 addJunction(*brec, accYC, prev_refname);
-                if (COMMAND_MODE == CLEAN || no_predict) {
+                if (COMMAND_MODE == CLEAN || write_bam) {
                     int new_nh = brec->tag_int("NH", 0);
                     if (new_nh <= 1) {
                         outfile_s_uniq_map->write(brec);
@@ -236,10 +236,10 @@ GStr splamJExtract() {
                  * Non-spliced reads
                 *************************/
                 // Non-spliced reads.
-                if (COMMAND_MODE == CLEAN || no_predict) {
+                if (COMMAND_MODE == CLEAN || write_bam) {
                     int new_nh = brec->tag_int("NH", 0);
                     if (new_nh <= 1) {
-                        outfile_cleaned->write(brec);
+                        outfile_ns_uniq_map->write(brec);
                         ALN_COUNT_NSPLICED_UNIQ += 1;
                         ALN_COUNT_GOOD += 1;
                     } else if (new_nh > 1){
@@ -259,7 +259,7 @@ GStr splamJExtract() {
     flushJuncs(joutf);
     fclose(joutf);
     junctions.setCapacity(128);
-    if (COMMAND_MODE == CLEAN || no_predict) {
+    if (COMMAND_MODE == CLEAN || write_bam) {
         delete outfile_ns_multi_map;
         delete outfile_s_uniq_map;
         delete outfile_s_multi_map;
@@ -271,8 +271,8 @@ GStr splamJExtract() {
         }
     }
 
-    if (no_predict) {
-        delete outfile_cleaned;
+    if (write_bam) {
+        delete outfile_ns_uniq_map;
     }
     return outfname_junc_bed;
 }
@@ -350,7 +350,7 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
         int brec_bd_tag = brec_bd.tag_int("NH", 0);
         int brec_bd_p_tag = brec_bd_p.tag_int("NH", 0);
 
-        if (COMMAND_MODE == CLEAN || no_predict) {
+        if (COMMAND_MODE == CLEAN || write_bam) {
             if ( (!brec_bd.hasIntrons() && !brec_bd_p.hasIntrons()) && (brec_bd_tag==1 || brec_bd_p_tag==1)) {
                 // a, b nonspliced, NH == 1
                 outfile_cleaned->write(&brec_bd);
