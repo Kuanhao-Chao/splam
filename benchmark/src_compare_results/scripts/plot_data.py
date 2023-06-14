@@ -5,12 +5,12 @@ import pandas as pd
 import os
 import sys
 from progress.bar import Bar
+import itertools
 
-def run_plotter(argv, db):
+def run_plotter(TYPE, SPLICEAI_VERSION, db):
 
     # define identifiers for this run
-    TYPE = 'noN'
-    SPLICEAI_VERSION = 2
+    print('*'*170)
     print(f'Parsing for type {TYPE}, SpliceAI version {SPLICEAI_VERSION}, database {db}')
 
     # input filepaths
@@ -135,13 +135,14 @@ def index_compare(full_data_file, name_file, score_df):
 def write_df(full_df, csvpath):
 
     # drop unneccesary columns and fix indices
-    full_df.drop(['id', 'start', 'end'], inplace=True, axis=1).reset_index()
+    full_df.drop(['id', 'start', 'end'], inplace=True, axis=1)
+    full_df.reset_index(drop=True, inplace=True)
 
     # reorder and rename the final df columns
     full_df = full_df.reindex(columns=['chrom', 'chromStart(donor)', 'chromEnd(acceptor)', 'name', 'score', 'strand', 'donorDimer', 'acceptorDimer', 
                                        'donorScore', 'acceptorScore', 'd_score_spliceai', 'a_score_spliceai'])
     full_df.columns = ['seqid', 'start', 'end', 'name', 'expected_score', 'strand', 'd_dimer', 'a_dimer', 
-                       'd_score_splam', 'a_score_splam, d_score_spliceai, a_score_spliceai']
+                       'd_score_splam', 'a_score_splam', 'd_score_spliceai', 'a_score_spliceai']
 
     print(f'Preview final saved df:\n{full_df}')
 
@@ -149,15 +150,9 @@ def write_df(full_df, csvpath):
     os.makedirs(os.path.dirname(csvpath), exist_ok=True)
     full_df.to_csv(csvpath, index=False)
     print(f'Saved csv file to {csvpath}.')
-    print('Finished combining into csv')
+    print('Finished writing')
 
     return full_df
-
-
-
-def check_match(id1, id2):
-    pass
-
 
 def make_fig1(df, fig_path):
 
@@ -191,7 +186,6 @@ def make_fig2(df, fig_path, id):
 
     sns.set(font_scale=0.8)
     plt.figure(figsize=(6,8))
-    #sns.violinplot(data=reshaped_df, x='Score', y='Type', palette='viridis')
     sns.violinplot(data=reshaped_df, x='Type', y='Score', hue='Method', hue_order=['SPLAM', 'SpliceAI'],
                     split=True, inner='quart', linewidth=0.9)
     plt.title(f'Score Distributions between SPLAM and SpliceAI for {id[2]} Dataset')
@@ -208,7 +202,9 @@ def make_fig2(df, fig_path, id):
 
 if __name__ == '__main__':
     databases = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    nums = [3]
+    type = 'noN'
+    versions = [3,4,5]
+    db_nums = [0,1,2,3]
 
-    for num in nums:
-        run_plotter(sys.argv[1:], databases[num])
+    for ver, num in itertools.product(versions, db_nums):
+        run_plotter(type, ver, databases[num])
