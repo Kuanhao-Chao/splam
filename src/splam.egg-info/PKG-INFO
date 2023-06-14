@@ -1,0 +1,8 @@
+Metadata-Version: 2.1
+Name: splam
+Version: 0.1.0
+Summary: Splice junction scoring tool
+Home-page: https://github.com/Kuanhao-Chao/SPLAM
+Author: Kuan-Hao Chao
+Author-email: kh.chao@cs.jhu.edu
+Requires-Python: >=3.6
