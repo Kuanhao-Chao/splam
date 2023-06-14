@@ -1,0 +1,3 @@
+torch>=1.12.0
+pandas>=2.0.0
+pybedtools>=0.9.0
