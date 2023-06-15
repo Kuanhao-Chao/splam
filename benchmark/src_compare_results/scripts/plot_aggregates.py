@@ -87,7 +87,6 @@ def get_averages(df, ofp):
 
     return df
 
-
 def handle_duplicate_names(path):
     # pre: path has '/path/to/file(optversion).ext'
     filename, extension = os.path.splitext(path)
@@ -97,6 +96,13 @@ def handle_duplicate_names(path):
         count += 1
     
     return path
+
+
+def save_fig(figpath):
+    fig_path = handle_duplicate_names(figpath)
+    os.makedirs(os.path.dirname(fig_path), exist_ok=True)
+    plt.savefig(fig_path, dpi=500)
+    print(f'Saved figure to {fig_path}.')
 
 
 def make_fig3(df, id):
@@ -118,11 +124,7 @@ def make_fig3(df, id):
     plt.tight_layout()
     plt.show()
 
-    fig_path = handle_duplicate_names(f'./figures/fig3/agg_scores_distribution.{id[0]}.{id[1]}.png')
-    os.makedirs(os.path.dirname(fig_path), exist_ok=True)
-    plt.savefig(fig_path, dpi=500)
-    print(f'Saved figure to {fig_path}.')
-    pass
+    save_fig(f'./figures/fig3/agg_scores_distribution.{id[0]}.{id[1]}.png')
 
 
 def make_fig4(agg_df, id):
@@ -147,26 +149,43 @@ def make_fig4(agg_df, id):
     sns.move_legend(axes[1], 'upper left')
     plt.show()
 
-    fig_path = handle_duplicate_names(f'./figures/fig4/spliceai_versions_distribution.{id[0]}.{id[1]}.png')
-    os.makedirs(os.path.dirname(fig_path), exist_ok=True)
-    plt.savefig(fig_path, dpi=500)
-    print(f'Saved figure to {fig_path}.')
-    pass
+    save_fig(f'./figures/fig4/spliceai_versions_distribution.{id[0]}.{id[1]}.png')
+
 
 def make_fig5(agg_df, id):
     # plot SpliceAI scores across different models against intron length
+
     df = agg_df[['start', 'end', 'd_score_spliceai', 'a_score_spliceai', 'spliceai_version']]
     df = df.apply(pd.Series.explode).astype('float64').reset_index() # explodes the lists into more rows
     df['spliceai_version'] = df['spliceai_version'].astype('int')
-    df.drop('index', axis=1, inplace=True)
+    df['intron_length'] = df['end'] - df['start']
+    df['intron_length'] = df['intron_length'].astype('int')
+    df.drop(['index', 'start', 'end'], axis=1, inplace=True)
     print(df)
 
+    sns.set(font_scale=0.8)
+    plot_params = {'s': 3, 'alpha': 0.3}
+    # f, axes = plt.subplots(1,2, figsize=(12,6), sharey=True)
+    # f.suptitle(f'Intron Length vs. Score across SpliceAI Models for {id[1]} Dataset')
+    # axes[0].set_title('Donor')
+    # axes[1].set_title('Acceptor')
+    # sns.scatterplot(data=df, x='intron_length', y='d_score_spliceai', hue='spliceai_version', ax=axes[0], palette='deep', **plot_params)
+    # sns.scatterplot(data=df, x='intron_length', y='a_score_spliceai', hue='spliceai_version', ax=axes[1], palette='deep', **plot_params)
+    # axes[0].set_xscale('log')
+    # axes[1].set_xscale('log')
+
+    sns.relplot(data=df, x='intron_length', y='a_score_spliceai', hue='spliceai_version', col='spliceai_version', palette='deep', **plot_params)
+    plt.xscale('log')
+
+    plt.show()
+
+    save_fig(f'./figures/fig5/acceptor_len_vs_score_all_sai_vers.{id[0]}.{id[1]}.png')
 
 if __name__ == '__main__':
 
     type = 'noN'
     databases = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    db_nums = [0,1,2,3,0]
+    db_nums = [3]
 
     for num in db_nums:
         run_plotter(type, databases[num])
