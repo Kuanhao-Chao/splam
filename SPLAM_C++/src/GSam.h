@@ -507,8 +507,6 @@ class GSamReader {
 };
 
 //basic BAM/SAM/CRAM writer class
-// limitations: cannot add new reference sequences, just new alignments to
-//  existing reference sequences;
 class GSamWriter {
    htsFile* bam_file;
    sam_hdr_t* hdr;
