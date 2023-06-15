@@ -204,7 +204,7 @@ def make_fig2(df, fig_path, id):
 
 if __name__ == '__main__':
     databases = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    type = 'N'
+    type = 'noN'
     versions = [1,2,3,4,5]
     db_nums = [0,1,2,3]
 
