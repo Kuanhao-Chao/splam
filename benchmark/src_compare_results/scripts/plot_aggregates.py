@@ -3,30 +3,34 @@ import seaborn as sns
 import numpy as np
 import pandas as pd
 import os
-import sys
-import ast
 from progress.bar import Bar
+from pyfaidx import Fasta
 
 def run_plotter(type, db):
 
+    # identifier
+    id = [type, db]
+
     # obtain the aggregated and averaged data from all 5 versions of spliceai and write to file
     agg_ofp = f'./output/aggregate/agg_full_data.{type}.{db}.csv'
+    cnt_ofp = f'./output/aggregate/count_full_data.{type}.{db}.csv'
     avg_ofp = f'./output/aggregate/avg_data.{type}.{db}.csv'
     if not os.path.exists(avg_ofp):
         agg_df = aggregate_data(type, db, agg_ofp)
-        df = get_averages(agg_df, avg_ofp)
+        cnt_df = get_counts(agg_df, id, cnt_ofp)
+        df = get_averages(cnt_df, avg_ofp)
     else:
         agg_df = pd.read_csv(agg_ofp)
         agg_df = revive_list(agg_df, ['d_score_spliceai', 'a_score_spliceai', 'spliceai_version'], ['float64', 'float64', 'int'])
+        cnt_df = pd.read_csv(cnt_ofp)
+        cnt_df = revive_list(cnt_df, ['d_score_spliceai', 'a_score_spliceai', 'spliceai_version'], ['float64', 'float64', 'int'])
         df = pd.read_csv(avg_ofp)
         df = revive_list(df, ['spliceai_version'], ['int'])
 
     # visualize the results
-    id = [type, db]
-
     #make_fig3(df, id)
     #make_fig4(agg_df, id)
-    make_fig5(agg_df, id)
+    #make_fig5(agg_df, id)
 
 
 def revive_list(df, col_names, dtypes):
@@ -72,6 +76,48 @@ def aggregate_data(type, db, ofp):
     return merged_df
 
 
+def get_counts(df, id, ofp):
+
+    # get the fasta file with the sequence used by spliceai
+    fa_file = f'./output/data/{id[1]}_spliceai_seq_{id[0]}.fa'
+    fa = Fasta(fa_file, key_function = lambda x: x[:-2], duplicate_action='first')
+    
+    # iterate over each row and get the nucleotide counts
+    l_set = ['A', 'C', 'T', 'G', 'N', 'R', 'Y', 'K', 'M', 'S', 'W']
+    counts = pd.DataFrame(columns=l_set)
+    pbar = Bar('Getting counts...', max=len(df))
+    for i, row in df.iterrows():
+
+        # the key used to search for the relevant sequence
+        idx = f"{row['seqid']};{row['start']};{row['end']}"
+
+        # this is the sequence from start to end, with 5.2k flanking seq on each side
+        sequence = fa[idx][:].seq
+        length = row['end'] - row['start'] + 10400
+        assert(len(sequence) == length)
+
+        # get the counts
+        l = [letter for letter in sequence]
+        d = {k:l.count(k) for k in l_set}
+        count = pd.DataFrame([d])
+        counts = pd.concat([counts, count], axis=0)
+
+        pbar.next()
+    pbar.finish()
+
+    counts.reset_index(drop=True, inplace=True)
+    df = pd.concat([df, counts], axis=1)
+
+    print(f'Preview of df with counts:\n{df}', flush=True)
+
+    # save to csv
+    os.makedirs(os.path.dirname(ofp), exist_ok=True)
+    df.to_csv(ofp, index=False)
+    print(f'Saved agg with counts csv file to {ofp}.')
+
+    return df
+
+
 def get_averages(df, ofp):
 
     # take the averages of the spliceai score columns
@@ -86,6 +132,7 @@ def get_averages(df, ofp):
     print(f'Saved average csv file to {ofp}.')
 
     return df
+
 
 def handle_duplicate_names(path):
     # pre: path has '/path/to/file(optversion).ext'
@@ -181,11 +228,23 @@ def make_fig5(agg_df, id):
 
     save_fig(f'./figures/fig5/acceptor_len_vs_score_all_sai_vers.{id[0]}.{id[1]}.png')
 
+def make_fig6(avg_df, id):
+    # plot score distribution against N content
+    pass
+
+def make_fig7(avg_df, id):
+    # defining paper figure for comparing SPLAM and SpliceAI in histogram across all species for donor and acceptor
+    
+
+
+    # save_fig(f'./figures/fig7/all_scores_compare.{id[0]}.{id[1]}.png')
+    pass
+
 if __name__ == '__main__':
 
     type = 'noN'
     databases = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    db_nums = [3]
+    db_nums = [0,1,2,3]
 
     for num in db_nums:
         run_plotter(type, databases[num])
