@@ -35,85 +35,20 @@ GStr splamNHUpdate() {
         // }
 
     int processed_aln = 0;
-    /*********************************
-     * Processing multip-mapped spliced temporary alignments (paired)
-    *********************************/
-    GSamReader reader_s_multi_map_tmp(outfname_s_multi_map_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
-
-    progressbar bar_s(ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
-    bar_s.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments\n\t[");
-
-    while ((brec=reader_s_multi_map_tmp.next())!=NULL) {
-        processed_aln += 1;
-        if (verbose) {
-            bar_s.update();
-        }
-        std::string kv = brec->name();
-        kv = kv + "_" + std::to_string(brec->pairOrder());
-        // GMessage("kv: %s\n", kv.c_str());
-        if (rm_hit.find(kv) != rm_hit.end()) {
-            // GMessage("\nkv: %s\n", kv.c_str());
-            // GMessage("rm_hit[kv]: %d\n", rm_hit[kv]);
-            // GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
-            int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
-            brec->add_int_tag("NH", new_nh);
-            // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
-        }
-        if (!g_2_stage_run) {
-            keepAlignment(outfile_cleaned, brec);
-        } else {
-            keepAlignment(outfile_cleaned_2stage, brec);
-        }
-    }
-    reader_s_multi_map_tmp.bclose();
-    GMessage("\n");
-
-    /*********************************
-     * Processing multip-mapped non-spliced alignments (paired)
-    *********************************/
-    GSamReader reader_ns_multi_map(outfname_ns_multi_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
-
-    progressbar bar_ns(ALN_COUNT_NSPLICED_MULTI);
-    bar_ns.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped nonspliced alignments\n\t[");
-
-    while ((brec=reader_ns_multi_map.next())!=NULL) {
-        processed_aln += 1;
-        if (verbose) {
-            bar_ns.update();
-        }
-        std::string kv = brec->name();
-        kv = kv + "_" + std::to_string(brec->pairOrder());
-        // GMessage("kv: %s\n", kv.c_str());
-        if (rm_hit.find(kv) != rm_hit.end()) {
-            // GMessage("\nkv: %s\n", kv.c_str());
-            // GMessage("rm_hit[kv]: %d\n", rm_hit[kv]);
-            // GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
-            int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
-            brec->add_int_tag("NH", new_nh);
-            // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
-        }
-        if (!g_2_stage_run) {
-            keepAlignment(outfile_cleaned, brec);
-        } else {
-            keepAlignment(outfile_cleaned_2stage, brec);
-        }
-    }
-    reader_ns_multi_map.bclose();
-    GMessage("\n");
 
     if (g_paired_removal) {
         /*********************************
-         * Processing multip-mapped spliced temporary alignments (unpaired)
+         * Processing multip-mapped spliced temporary alignments (paired)
         *********************************/
-        GSamReader reader_s_multi_unpair_tmp(outfname_s_multi_unpair_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+        GSamReader reader_s_multi_map_tmp(outfname_s_multi_map_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
-        progressbar bar_s_unpair(ALN_COUNT_SPLICED_MULTI_UNPAIR - ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD);
-        bar_s_unpair.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments (unpaired) \n\t[");
+        progressbar bar_s(ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
+        bar_s.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments\n\t[");
 
-        while ((brec=reader_s_multi_unpair_tmp.next())!=NULL) {
+        while ((brec=reader_s_multi_map_tmp.next())!=NULL) {
             processed_aln += 1;
             if (verbose) {
-                bar_s_unpair.update();
+                bar_s.update();
             }
             std::string kv = brec->name();
             kv = kv + "_" + std::to_string(brec->pairOrder());
@@ -126,27 +61,23 @@ GStr splamNHUpdate() {
                 brec->add_int_tag("NH", new_nh);
                 // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
-            if (!g_2_stage_run) {
-                keepAlignment(outfile_cleaned, brec);
-            } else {
-                keepAlignment(outfile_cleaned_2stage, brec);
-            }
+            keepAlignment(outfile_cleaned, brec);
         }
-        reader_s_multi_unpair_tmp.bclose();
+        reader_s_multi_map_tmp.bclose();
         GMessage("\n");
 
         /*********************************
-         * Processing multip-mapped non-spliced alignments (unpaired)
+         * Processing multip-mapped non-spliced alignments (paired)
         *********************************/
-        GSamReader reader_ns_multi_unpair(outfname_ns_multi_unpair.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+        GSamReader reader_ns_multi_map(outfname_ns_multi_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
-        progressbar bar_ns_unpair(ALN_COUNT_NSPLICED_MULTI_UNPAIR);
-        bar_ns_unpair.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped nonspliced alignments (unpaired) \n\t[");
+        progressbar bar_ns(ALN_COUNT_NSPLICED_MULTI);
+        bar_ns.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped nonspliced alignments\n\t[");
 
-        while ((brec=reader_ns_multi_unpair.next())!=NULL) {
+        while ((brec=reader_ns_multi_map.next())!=NULL) {
             processed_aln += 1;
             if (verbose) {
-                bar_ns_unpair.update();
+                bar_ns.update();
             }
             std::string kv = brec->name();
             kv = kv + "_" + std::to_string(brec->pairOrder());
@@ -159,21 +90,113 @@ GStr splamNHUpdate() {
                 brec->add_int_tag("NH", new_nh);
                 // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
             }
-            if (!g_2_stage_run) {
-                keepAlignment(outfile_cleaned, brec);
-            } else {
-                keepAlignment(outfile_cleaned_2stage, brec);
-            }
+            keepAlignment(outfile_cleaned, brec);
         }
-        reader_ns_multi_unpair.bclose();
+        reader_ns_multi_map.bclose();
+        GMessage("\n");
+
+        /*********************************
+         * Processing uniq-mapped non-spliced alignments (paired)
+        *********************************/
+        GSamReader reader_ns_uniq_map(outfname_ns_uniq_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+
+        progressbar bar_ns_uniq(ALN_COUNT_NSPLICED_UNIQ);
+        bar_ns_uniq.set_opening_bracket_char("[INFO] SPLAM! Processing uniq-mapped nonspliced alignments\n\t[");
+
+        while ((brec=reader_ns_uniq_map.next())!=NULL) {
+            processed_aln += 1;
+            if (verbose) {
+                bar_ns_uniq.update();
+            }
+            keepAlignment(outfile_cleaned, brec);
+        }
+        reader_ns_uniq_map.bclose();
         GMessage("\n");
     }
 
-    if (!g_2_stage_run) {
-        delete outfile_cleaned;
-    } else {
-        delete outfile_cleaned_2stage;
+
+
+
+
+    /*********************************
+     * Processing multip-mapped spliced temporary alignments (unpaired)
+    *********************************/
+    GSamReader reader_s_multi_unpair_tmp(outfname_s_multi_unpair_tmp.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+
+    progressbar bar_s_unpair(ALN_COUNT_SPLICED_MULTI_UNPAIR - ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD);
+    bar_s_unpair.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments (unpaired) \n\t[");
+
+    while ((brec=reader_s_multi_unpair_tmp.next())!=NULL) {
+        processed_aln += 1;
+        if (verbose) {
+            bar_s_unpair.update();
+        }
+        std::string kv = brec->name();
+        kv = kv + "_" + std::to_string(brec->pairOrder());
+        // GMessage("kv: %s\n", kv.c_str());
+        if (rm_hit.find(kv) != rm_hit.end()) {
+            // GMessage("\nkv: %s\n", kv.c_str());
+            // GMessage("rm_hit[kv]: %d\n", rm_hit[kv]);
+            // GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
+            int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
+            brec->add_int_tag("NH", new_nh);
+            // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
+        }
+        keepAlignment(outfile_cleaned, brec);
     }
+    reader_s_multi_unpair_tmp.bclose();
+    GMessage("\n");
+
+
+    /*********************************
+     * Processing multip-mapped non-spliced alignments (unpaired)
+    *********************************/
+    GSamReader reader_ns_multi_unpair(outfname_ns_multi_unpair.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+
+    progressbar bar_ns_unpair(ALN_COUNT_NSPLICED_MULTI_UNPAIR);
+    bar_ns_unpair.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped nonspliced alignments (unpaired) \n\t[");
+
+    while ((brec=reader_ns_multi_unpair.next())!=NULL) {
+        processed_aln += 1;
+        if (verbose) {
+            bar_ns_unpair.update();
+        }
+        std::string kv = brec->name();
+        kv = kv + "_" + std::to_string(brec->pairOrder());
+        // GMessage("kv: %s\n", kv.c_str());
+        if (rm_hit.find(kv) != rm_hit.end()) {
+            // GMessage("\nkv: %s\n", kv.c_str());
+            // GMessage("rm_hit[kv]: %d\n", rm_hit[kv]);
+            // GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
+            int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
+            brec->add_int_tag("NH", new_nh);
+            // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
+        }
+        keepAlignment(outfile_cleaned, brec);
+    }
+    reader_ns_multi_unpair.bclose();
+    GMessage("\n");
+
+
+    /*********************************
+     * Processing uniq-mapped non-spliced alignments (unpaired)
+    *********************************/
+    GSamReader reader_ns_uniq_unpair(outfname_ns_uniq_unpair.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+
+    progressbar bar_ns_uniq_unpair(ALN_COUNT_NSPLICED_UNIQ_UNPAIR);
+    bar_ns_uniq_unpair.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped nonspliced alignments (unpaired) \n\t[");
+
+    while ((brec=reader_ns_uniq_unpair.next())!=NULL) {
+        processed_aln += 1;
+        if (verbose) {
+            bar_ns_uniq_unpair.update();
+        }
+        keepAlignment(outfile_cleaned, brec);
+    }
+    reader_ns_uniq_unpair.bclose();
+    GMessage("\n");
+
+    delete outfile_cleaned;
     if (verbose) {
         GMessage("[INFO] %d alignments processed.\n", 
         ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD + 
