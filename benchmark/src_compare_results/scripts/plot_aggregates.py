@@ -9,23 +9,32 @@ from progress.bar import Bar
 
 def run_plotter(type, db):
 
-    # obtain the aggregated data from all 5 versions of spliceai and write to file
+    # obtain the aggregated and averaged data from all 5 versions of spliceai and write to file
     agg_ofp = f'./output/aggregate/agg_full_data.{type}.{db}.csv'
-    if not os.path.exists(agg_ofp):
-        df = aggregate_data(type, db, agg_ofp)
+    avg_ofp = f'./output/aggregate/avg_data.{type}.{db}.csv'
+    if not os.path.exists(avg_ofp):
+        agg_df = aggregate_data(type, db, agg_ofp)
+        df = get_averages(agg_df, avg_ofp)
     else:
         #df = pd.read_csv(ofp, converters={'d_score_spliceai': ast.literal_eval, 'a_score_spliceai': ast.literal_eval})
-        df = pd.read_csv(agg_ofp)
-        df = parse_list(df)
-    
-    # calculate the averages of all score columns
-    avg_ofp = f'./output/aggregate/avg_data.{type}.{db}.csv'
-    df = get_averages(df, avg_ofp)
+        agg_df = pd.read_csv(agg_ofp)
+        agg_df = revive_list(agg_df, ['d_score_spliceai', 'a_score_spliceai', 'spliceai_version'], ['float64', 'float64', 'int'])
+        df = pd.read_csv(avg_ofp)
+        df = revive_list(df, ['spliceai_version'], ['int'])
 
     # visualize the results
     fig3_path = f'./figures/fig3/agg_scores_distribution.{type}.{db}.png'
 
-    #make_fig3(df, fig3_path, db)
+    make_fig3(df, fig3_path, db)
+
+
+def revive_list(df, col_names, dtypes):
+    
+    for name, dt in zip(col_names, dtypes):
+        # revive the lists in column from string representations into np arrays
+        df[name] = df[name].apply(lambda x: np.array(x.strip('[]').split(','), dtype=dt))
+
+    return df
 
 
 def aggregate_data(type, db, ofp):
@@ -62,16 +71,6 @@ def aggregate_data(type, db, ofp):
     print(f'Saved aggregate csv file to {ofp}.')
 
     return merged_df
-
-
-def parse_list(df):
-
-    # revive the lists from string representations into np arrays
-    df['d_score_spliceai'] = df['d_score_spliceai'].apply(lambda x: np.array(x.strip('[]').split(','), dtype='float64'))
-    df['a_score_spliceai'] = df['a_score_spliceai'].apply(lambda x: np.array(x.strip('[]').split(','), dtype='float64'))
-    df['spliceai_version'] = df['spliceai_version'].apply(lambda x: np.array(x.strip('[]').split(','), dtype='float64'))
-
-    return df
 
 
 def get_averages(df, ofp):
@@ -132,7 +131,7 @@ if __name__ == '__main__':
 
     type = 'noN'
     databases = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    db_nums = [0,1,2,3]
+    db_nums = [3]
 
     for num in db_nums:
         run_plotter(type, databases[num])
