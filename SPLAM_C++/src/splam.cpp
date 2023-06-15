@@ -34,7 +34,7 @@ void optionsOutput(GArgs& args);
 void checkJunction(GArgs& args);
 void optionsJunction(GArgs& args);
 void optionsWriteTMP(GArgs& args);
-void options2StageRun(GArgs& args);
+// void options2StageRun(GArgs& args);
 
 CommandMode COMMAND_MODE = UNSET;
 GStr command_str;
@@ -210,25 +210,21 @@ int main(int argc, char* argv[]) {
         if (write_bam) {
             // Creating the directory
             std::filesystem::create_directories(tmp_dir.chars());
-            
-            // The only two modes that need to write out files.
-            outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
 
             // Paired
             outfile_ns_multi_map = new GSamWriter(outfname_ns_multi_map, in_records.header(), GSamFile_BAM);
-            // outfile_ns_uniq_map = new GSamWriter(outfname_ns_uniq_map, in_records.header(), GSamFile_BAM);
+            outfile_ns_uniq_map = new GSamWriter(outfname_ns_uniq_map, in_records.header(), GSamFile_BAM);
             outfile_s_uniq_map = new GSamWriter(outfname_s_uniq_map, in_records.header(), GSamFile_BAM);
             outfile_s_multi_map = new GSamWriter(outfname_s_multi_map, in_records.header(), GSamFile_BAM);
 
             if (g_paired_removal) {
                 // Unpaired
                 outfile_ns_multi_unpair = new GSamWriter(outfname_ns_multi_unpair, in_records.header(), GSamFile_BAM);
-                // outfile_ns_uniq_unpair = new GSamWriter(outfname_ns_uniq_unpair, in_records.header(), GSamFile_BAM);
+                outfile_ns_uniq_unpair = new GSamWriter(outfname_ns_uniq_unpair, in_records.header(), GSamFile_BAM);
                 outfile_s_multi_unpair = new GSamWriter(outfname_s_multi_unpair, in_records.header(), GSamFile_BAM);
                 outfile_s_uniq_unpair = new GSamWriter(outfname_s_uniq_unpair, in_records.header(), GSamFile_BAM);
             }
-        }
-        
+        }        
     } else if (COMMAND_MODE==CLEAN) {
         // Creating the directory
         std::filesystem::create_directories(discard_dir.chars());
@@ -237,56 +233,15 @@ int main(int argc, char* argv[]) {
         if (g_paired_removal) {
             outfile_s_multi_unpair_tmp = new GSamWriter(outfname_s_multi_unpair_tmp, in_records.header(), GSamFile_BAM);    
         }
-        
+
+        // cleaned BAM file
+        outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
+
         // discarded files
         outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
         outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);   
     }
 
-
-
-    // if ((COMMAND_MODE == CLEAN && !g_2_stage_run)  || (COMMAND_MODE == PREDICT && write_bam)) {
-    //     // Creating the directory
-    //     std::filesystem::create_directories(tmp_dir.chars());
-    //     std::filesystem::create_directories(discard_dir.chars());
-    //     // The only two modes that need to write out files.
-    //     outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
-
-    //     // Paired
-    //     outfile_ns_multi_map = new GSamWriter(outfname_ns_multi_map, in_records.header(), GSamFile_BAM);
-    //     outfile_s_uniq_map = new GSamWriter(outfname_s_uniq_map, in_records.header(), GSamFile_BAM);
-    //     outfile_s_multi_map = new GSamWriter(outfname_s_multi_map, in_records.header(), GSamFile_BAM);
-
-    //     if (g_paired_removal) {
-    //         // Unpaired
-    //         outfile_ns_multi_unpair = new GSamWriter(outfname_ns_multi_unpair, in_records.header(), GSamFile_BAM);
-    //         outfile_s_uniq_unpair = new GSamWriter(outfname_s_uniq_unpair, in_records.header(), GSamFile_BAM);
-    //         outfile_s_multi_unpair = new GSamWriter(outfname_s_multi_unpair, in_records.header(), GSamFile_BAM);
-    //     }
-
-    //     if (COMMAND_MODE == CLEAN && !g_2_stage_run) {
-    //         // The tmp files only for CLEANING
-    //         outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
-    //         if (g_paired_removal) {
-    //             outfile_s_multi_unpair_tmp = new GSamWriter(outfname_s_multi_unpair_tmp, in_records.header(), GSamFile_BAM);    
-    //         }
-    //         // discarded files
-    //         outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
-    //         outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);   
-    //     }
-    // } else if (COMMAND_MODE == CLEAN && g_2_stage_run) {
-    //     GMessage(">> Inside COMMAND_MODE == CLEAN && g_2_stage_run\n");
-    //     // The tmp files only for CLEANING
-    //     outfile_cleaned_2stage = new GSamWriter(outfname_cleaned_2stage, in_records.header(), GSamFile_BAM);
-    //     outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
-    //     if (g_paired_removal) {
-    //         outfile_s_multi_unpair_tmp = new GSamWriter(outfname_s_multi_unpair_tmp, in_records.header(), GSamFile_BAM);    
-    //     }
-    //     // discarded files
-    //     outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
-    //     outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);   
-    // }
-    
     GMessage(">> Finish creating GSamWriter\n");
 
     /*********************
@@ -413,8 +368,8 @@ void processOptions(int argc, char* argv[]) {
 
     if (strcmp(command_str.chars(), "j-extract") == 0) {
         COMMAND_MODE = J_EXTRACT;
-    } else if (strcmp(command_str.chars(), "predict") == 0) {
-        COMMAND_MODE = PREDICT;
+    // } else if (strcmp(command_str.chars(), "predict") == 0) {
+    //     COMMAND_MODE = PREDICT;
     } else if (strcmp(command_str.chars(), "clean") == 0) {
         COMMAND_MODE = CLEAN;
     } else {
@@ -437,13 +392,13 @@ void processOptions(int argc, char* argv[]) {
     *********************************/
     if (COMMAND_MODE == J_EXTRACT) {
         processOptionsJExtract(args);    
-    } else if (COMMAND_MODE == PREDICT) {
-        processOptionsPredict(args);
+    // } else if (COMMAND_MODE == PREDICT) {
+    //     processOptionsPredict(args);
     } else if (COMMAND_MODE == CLEAN) {
         processOptionsClean(args);
     }
 
-#ifdef DEBUG
+// #ifdef DEBUG
     GMessage(">>  command_str      : %s\n", command_str.chars());
     GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
     GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
@@ -456,7 +411,7 @@ void processOptions(int argc, char* argv[]) {
     GMessage(">> g_max_splice      : %d\n", g_max_splice);
     GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
     GMessage(">> verbose           : %d\n", verbose);
-#endif
+// #endif
 
     args.startNonOpt();
 
@@ -498,10 +453,10 @@ void processOptionsPredict(GArgs& args) {
 
 
 void processOptionsClean(GArgs& args) {
-    optionsModel(args);
-    optionsRef(args);
+    // optionsModel(args);
+    // optionsRef(args);
     optionsOutput(args);
-    options2StageRun(args);
+    // options2StageRun(args);
 }
 
 
@@ -616,16 +571,16 @@ void optionsWriteTMP(GArgs& args) {
 }
 
 
-void options2StageRun(GArgs& args) {
-    //--no-write-bam
-    g_2_stage_run = (args.getOpt("2-stage-run")!=NULL);
-    GMessage("g_2_stage_run: %d\n", g_2_stage_run);
-    if (g_2_stage_run) {
-        GMessage(">>  Running 2_stage_run mode\n");
-    } else {
-        GMessage(">>  Running non-2_stage_run mode\n");
-    }
-}
+// void options2StageRun(GArgs& args) {
+//     //--no-write-bam
+//     g_2_stage_run = (args.getOpt("2-stage-run")!=NULL);
+//     GMessage("g_2_stage_run: %d\n", g_2_stage_run);
+//     if (g_2_stage_run) {
+//         GMessage(">>  Running 2_stage_run mode\n");
+//     } else {
+//         GMessage(">>  Running non-2_stage_run mode\n");
+//     }
+// }
 
 
 void checkJunction(GArgs& args) {
