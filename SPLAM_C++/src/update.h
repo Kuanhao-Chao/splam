@@ -7,4 +7,5 @@ GStr splamNHUpdate();
 
 void readnhHitFile(robin_hdd_rm_hit& rm_hit);
 
+void update_NH_tag_write_alignment(GStr outfname, int& processed_aln, robin_hdd_rm_hit rm_hit, int bar_num);
 #endif

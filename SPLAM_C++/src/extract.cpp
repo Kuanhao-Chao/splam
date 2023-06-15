@@ -190,8 +190,6 @@ GStr splamJExtract() {
             CReadAln* alndata = new CReadAln(brec);
             processRead_jext(currentstart, currentend, readlist, *bundle, hashread, alndata);
         } //for each read alignment
-
-
     } else {
         int prev_tid=-1;
         GStr prev_refname;
@@ -224,10 +222,10 @@ GStr splamJExtract() {
                 if (write_bam) {
                     int new_nh = brec->tag_int("NH", 0);
                     if (new_nh <= 1) {
-                        outfile_s_uniq_unpair->write(brec);
+                        outfile_s_uniq_map->write(brec);
                         ALN_COUNT_SPLICED_UNIQ += 1;
                     } else if (new_nh > 1) {
-                        outfile_s_multi_unpair->write(brec);
+                        outfile_s_multi_map->write(brec);
                         ALN_COUNT_SPLICED_MULTI += 1;
                     }
                 }
@@ -239,11 +237,11 @@ GStr splamJExtract() {
                 if (write_bam) {
                     int new_nh = brec->tag_int("NH", 0);
                     if (new_nh <= 1) {
-                        outfile_ns_uniq_unpair->write(brec);
+                        outfile_ns_uniq_map->write(brec);
                         ALN_COUNT_NSPLICED_UNIQ += 1;
                         ALN_COUNT_GOOD += 1;
                     } else if (new_nh > 1){
-                        outfile_ns_multi_unpair->write(brec);
+                        outfile_ns_multi_map->write(brec);
                         ALN_COUNT_NSPLICED_MULTI += 1;
                     }
                 }
@@ -255,6 +253,7 @@ GStr splamJExtract() {
 
         GMessage("[Info] Total number of alignments processed: %d!\n", Read_counter);
     }
+
     in_records.stop();
     flushJuncs(joutf);
     fclose(joutf);
@@ -264,7 +263,6 @@ GStr splamJExtract() {
         delete outfile_ns_uniq_map;
         delete outfile_s_multi_map;
         delete outfile_s_uniq_map;
-
         if (g_paired_removal) {
             delete outfile_ns_multi_unpair;
             delete outfile_ns_uniq_unpair;
@@ -373,8 +371,8 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
             } else {
                 // Execption case
                 GMessage("There are wierd things happening! Check this alignment.\n");
-                outfile_ns_uniq_unpair->write(&brec_bd);
-                outfile_ns_uniq_unpair->write(&brec_bd_p);
+                outfile_ns_uniq_map->write(&brec_bd);
+                outfile_ns_uniq_map->write(&brec_bd_p);
                 ALN_COUNT_GOOD += 2;
             }
         }
