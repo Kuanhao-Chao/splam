@@ -155,6 +155,7 @@ def write_df(full_df, csvpath):
     return full_df
 
 def make_fig1(df, fig_path):
+    # plotting the score distribution for SpliceAI output as violin plot
 
     reshaped_df1 = pd.DataFrame(columns=['Type', 'Score'])
     reshaped_df1['Score'] = df['d_score_spliceai']
@@ -176,6 +177,7 @@ def make_fig1(df, fig_path):
     print(f'Saved figure to {fig_path}.')
 
 def make_fig2(df, fig_path, id):
+    # plotting the comparative score distributions between SpliceAI and SPLAM as a split violin plot
 
     d_melt = pd.melt(df, value_vars=['d_score_spliceai', 'd_score_splam'], var_name='Method', value_name='Score').replace('d_score_spliceai', 'SpliceAI').replace('d_score_splam', 'SPLAM')
     a_melt = pd.melt(df, value_vars=['a_score_spliceai', 'a_score_splam'], var_name='Method', value_name='Score').replace('a_score_spliceai', 'SpliceAI').replace('a_score_splam', 'SPLAM')
