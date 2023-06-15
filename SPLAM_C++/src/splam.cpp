@@ -224,7 +224,7 @@ int main(int argc, char* argv[]) {
                 outfile_s_multi_unpair = new GSamWriter(outfname_s_multi_unpair, in_records.header(), GSamFile_BAM);
                 outfile_s_uniq_unpair = new GSamWriter(outfname_s_uniq_unpair, in_records.header(), GSamFile_BAM);
             }
-        }        
+        }
     } else if (COMMAND_MODE==CLEAN) {
         // Creating the directory
         std::filesystem::create_directories(discard_dir.chars());
