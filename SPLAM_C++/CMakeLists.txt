@@ -54,8 +54,13 @@ ExternalProject_Add(htslib
         INSTALL_COMMAND ""
         )
 
-add_executable(splam
-        src/splam.cpp
+
+############################
+# Target for building splam-clean
+############################
+# Compiling splam-extract
+add_executable(splam-clean
+        src/splam_clean.cpp
         src/junc_func.cpp
         src/extract.cpp
         src/predict.cpp
@@ -74,27 +79,71 @@ add_executable(splam
 
 # target_link_libraries(splam Python::Python)
 
-add_dependencies(splam htslib)
+add_dependencies(splam-clean htslib)
 if(UNIX AND NOT APPLE)
-        target_link_libraries(splam stdc++fs)
+        target_link_libraries(splam-clean stdc++fs)
 endif ()
-target_link_libraries(splam ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+target_link_libraries(splam-clean ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
 # target_link_libraries(splam "${TORCH_LIBRARIES}")
 # target_includlse_directories(splam PRIVATE ${PYTHON_INCLUDE_DIRS})
 
 if(UNIX AND NOT APPLE)
-        target_link_libraries(splam  Python::Python Python::Module)
+        target_link_libraries(splam-clean  Python::Python Python::Module)
 endif()
 
 if(UNIX AND APPLE)
-        target_link_libraries(splam ${PYTHON_LIBRARIES})
+        target_link_libraries(splam-clean ${PYTHON_LIBRARIES})
 endif()
 
-set_property(TARGET splam PROPERTY CXX_STANDARD 17)
+set_property(TARGET splam-clean PROPERTY CXX_STANDARD 17)
+
+
+
+
+
+
+############################
+# Target for building splam-extract
+############################
+# Compiling splam-extract
+add_executable(splam-extract
+        src/splam_extract.cpp
+        src/junc_func.cpp
+        src/util.cpp
+        src/tmerge.cpp
+        src/GSam.cpp
+        ${CMAKE_SOURCE_DIR}/include/gclib/GHash.hh
+        ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h
+        ${CMAKE_SOURCE_DIR}/include/gclib/GStr.cpp
+        ${CMAKE_SOURCE_DIR}/include/gclib/GArgs.h
+        ${CMAKE_SOURCE_DIR}/include/gclib/GArgs.cpp
+        ${CMAKE_SOURCE_DIR}/include/gclib/GBase.h
+        ${CMAKE_SOURCE_DIR}/include/gclib/GBase.cpp)
+
+# target_link_libraries(splam Python::Python)
+
+add_dependencies(splam-extract htslib)
+if(UNIX AND NOT APPLE)
+        target_link_libraries(splam-extract stdc++fs)
+endif ()
+target_link_libraries(splam-extract ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+# target_link_libraries(splam "${TORCH_LIBRARIES}")
+# target_includlse_directories(splam PRIVATE ${PYTHON_INCLUDE_DIRS})
+
+if(UNIX AND NOT APPLE)
+        target_link_libraries(splam-extract  Python::Python Python::Module)
+endif()
+
+if(UNIX AND APPLE)
+        target_link_libraries(splam-extract ${PYTHON_LIBRARIES})
+endif()
+
+set_property(TARGET splam-extract PROPERTY CXX_STANDARD 17)
+
+
 
 message("${CMAKE_CURRENT_SOURCE_DIR}/build/: ")
 message("${CMAKE_CURRENT_SOURCE_DIR}/splam/: ")
-
 message("Printing ${CMAKE_INSTALL_PREFIX}: ")
 
 message("CMAKE_CURRENT_SOURCE_DIR:${CMAKE_CURRENT_SOURCE_DIR}")

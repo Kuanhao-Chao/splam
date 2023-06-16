@@ -15,7 +15,9 @@ void reverse_complement(char *str, const hts_pos_t len);
 
 wchar_t *GetWC(const char *c);
 
-int usage();
+int usage_extract();
+
+int usage_clean();
 
 std::unordered_map<std::string, int> get_hg38_chrom_size(std::string target);
 
