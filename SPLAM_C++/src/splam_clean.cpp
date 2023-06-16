@@ -333,16 +333,16 @@ int main(int argc, char* argv[]) {
 
 void processOptions(int argc, char* argv[]) {
     GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;junction;no-write-bam;2-stage-run;model=;output=;score=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
-    // args.printError(USAGE, true);
+    // args.printError(usage_clean, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
-        usage();
+        usage_clean();
         GERROR("\n[ERROR] No command provide. The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
         exit(1);   
     }
 
     if (args.getOpt('h') || args.getOpt("help")) {
-        usage();
+        usage_clean();
         exit(0);
     }
 
@@ -373,7 +373,7 @@ void processOptions(int argc, char* argv[]) {
     } else if (strcmp(command_str.chars(), "clean") == 0) {
         COMMAND_MODE = CLEAN;
     } else {
-        usage();
+        usage_clean();
         GERROR("\n[ERROR] The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
         exit(1);   
     }
@@ -416,7 +416,7 @@ void processOptions(int argc, char* argv[]) {
     args.startNonOpt();
 
     if (args.getNonOptCount()==1) {
-        usage();
+        usage_clean();
         GMessage("\n[ERROR] no input provided!\n");
         exit(1);
     }
@@ -498,7 +498,7 @@ void optionsModel(GArgs& args) {
     if (infname_model_name.is_empty()) {
         infname_model_name=args.getOpt("model");
         if (infname_model_name.is_empty()) {
-            usage();
+            usage_clean();
             GMessage("\n[ERROR] model file must be provided (-m)!\n");
             exit(1);
         } else {
@@ -519,7 +519,7 @@ void optionsRef(GArgs& args) {
     if (infname_reffa.is_empty()) {
         infname_reffa=args.getOpt("ref");
         if (infname_reffa.is_empty()) {
-            usage();
+            usage_clean();
             GMessage("\n[ERROR] reference fasta file must be provided (-r)!\n");
             exit(1);
         } else {
@@ -540,7 +540,7 @@ void optionsOutput(GArgs& args) {
     if (out_dir.is_empty()) {
         out_dir=args.getOpt("output");
         if (out_dir.is_empty()) {
-            usage();
+            usage_clean();
             GMessage("\n[ERROR] output directory must be provided (-o / --output)!\n");
             exit(1);
         }
@@ -586,7 +586,7 @@ void optionsWriteTMP(GArgs& args) {
 void checkJunction(GArgs& args) {
     infname_juncbed = args.nextNonOpt(); 
     if (infname_juncbed.is_empty()) {
-        usage();
+        usage_clean();
         GMessage("\n[ERROR] junction input bed file must be provided!\n");
         exit(1);
     } else {
