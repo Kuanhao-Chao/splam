@@ -4,7 +4,6 @@ import os
 import gffutils
 global mappings
 
-
 def run_parser(input_filename):
     
     # define output folder
