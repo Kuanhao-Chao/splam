@@ -37,69 +37,6 @@ OUT_MAP = np.asarray([[1, 0, 0],
                       [0, 0, 1],
                       [0, 0, 0]])
 
-
-class ResidualUnit(Module):
-    def __init__(self, l, w, ar, bot_mul=1):
-        super().__init__()
-        bot_channels = int(round(l * bot_mul))
-        self.batchnorm1 = BatchNorm1d(l)
-        self.relu = LeakyReLU(0.1)
-        self.batchnorm2 = BatchNorm1d(l)
-        self.C = bot_channels//CARDINALITY_ITEM
-        self.conv1 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
-        self.conv2 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
-
-    def forward(self, x, y):
-        x1 = self.relu(self.batchnorm1(self.conv1(x)))
-        x2 = self.relu(self.batchnorm2(self.conv2(x1)))
-        # x1 = self.relu(self.batchnorm1(self.conv1(x)))
-        # x2 = self.relu(self.batchnorm1(self.conv1(x1)))
-
-        # print("x : ", x.size())
-        # print("x1: ", x1.size())
-        # print("x2: ", x2.size())
-        return x + x2, y
-
-
-class Skip(Module):
-    def __init__(self, l):
-        super().__init__()
-        self.conv = Conv1d(l, l, 1)
-
-    def forward(self, x, y):
-        return x, self.conv(x) + y
-
-
-class SPLAM(Module):
-    def __init__(self, L=64, W=np.array([11]*8+[21]*4+[41]*4), AR=np.array([1]*4+[4]*4+[10]*4+[25]*4)):
-        super().__init__()
-        self.CL = 2 * (AR * (W - 1)).sum()  # context length
-        self.conv1 = Conv1d(4, L, 1)
-        self.skip1 = Skip(L)
-        self.residual_blocks = ModuleList()
-        for i, (w, r) in enumerate(zip(W, AR)):
-            self.residual_blocks.append(ResidualUnit(L, w, r))
-            if (i+1) % 4 == 0:
-                self.residual_blocks.append(Skip(L))
-        if (len(W)+1) % 4 != 0:
-            self.residual_blocks.append(Skip(L))
-        self.last_cov = Conv1d(L, 3, 1)
-        self.softmax = Softmax(dim=1)
-        # self.flatten = Flatten()
-        # self.drop_out = Dropout2d(0.2)
-        # self.fc = Linear(2400, 1)
-        # self.softmax = Softmax(dim=1)
-        # self.sigmoid = Sigmoid()
-
-    def forward(self, x):
-        x, skip = self.skip1(self.conv1(x), 0)
-        for m in self.residual_blocks:
-            x, skip = m(x, skip)
-        #######################################
-        # predicting pb for every bp
-        #######################################
-        return self.softmax(self.last_cov(skip))
-
 def get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP):
     return D_YL[:, 200], D_YP[:, 200], A_YL[:, 600], A_YP[:, 600]
 
@@ -151,7 +88,6 @@ def get_accuracy(y_prob, y_true):
     y_prob = y_prob > 0.5
     return (y_true == y_prob).sum().item() / y_true.size(0)
 
-
 def model_fn(DNAs, labels, model, criterion):
     outs = model(DNAs)
     loss = categorical_crossentropy_2d(labels, outs, criterion)
@@ -163,7 +99,6 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     return - torch.mean(y_true[:, 0, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 0, :]), gamma ), torch.log(y_pred[:, 0, :]+1e-10) )
                         + SEQ_WEIGHT * y_true[:, 1, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 1, :]), gamma ), torch.log(y_pred[:, 1, :]+1e-10) )
                         + SEQ_WEIGHT * y_true[:, 2, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 2, :]), gamma ), torch.log(y_pred[:, 2, :]+1e-10) ))
-
 
 def split_seq_name(seq):
     return seq[1:]
@@ -228,18 +163,13 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
 
 
 
-
-
-
-
 def splam_prediction(junction_fasta, out_score_f, model_path):
     BATCH_SIZE = 100
     N_WORKERS = None
     device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
     print(f'[Info] Loading model ... ' + model_path, flush = True)
-    #model = torch.jit.load(model_path)
-    model = torch.load(model_path)
-    model = model.to('mps')
+    model = torch.jit.load(model_path)
+    model = model.to(device)
 
     print(f'[Info] Done loading model', flush = True)
     print(f'[Info] Loading data ...', flush = True)
@@ -278,7 +208,9 @@ def splam_prediction(junction_fasta, out_score_f, model_path):
                     fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
                 elif strand == '-':
                     fw_junc_scores.write(chr + '\t'+ str(end) + '\t' + str(start) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
-                junc_counter += 1
+                junc_counter += 1            
+            # increment the progress bar
+            pbar.next()
 
     pbar.finish()
     fw_junc_scores.close()
