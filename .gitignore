@@ -56,5 +56,5 @@ __pycache__/
 splam.egg-info/
 dist/
 build/
-SPLAM_python/extraction/*.gff
-SPLAM_python/extraction/*.gff3
+*.gff
+*.gff3
