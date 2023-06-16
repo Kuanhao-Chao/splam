@@ -20,8 +20,8 @@ from pyfaidx import Fasta
 def run_aggregator(db_name):
 
     # collect the data to be aggregated from multiple sources
-    input_dir = './outputs/' + db_name + '/'
-    #input_dir = './primates/'
+    #input_dir = './outputs/' + db_name + '/'
+    input_dir = './primates/'
     score_file = input_dir + db_name + '.score.bed'
     output_file = input_dir + db_name + '.full_data.csv'
 
@@ -35,7 +35,7 @@ def run_aggregator(db_name):
 
     # CHANGEME select which figures to make
     make_fig1 = True
-    make_fig2 = False
+    make_fig2 = True
 
     if make_fig1:
         # compare the scores to dimer
@@ -245,9 +245,9 @@ def visualize_f2(df, db):
 
 
 if __name__ == '__main__':
-    dbs = ['chess3', 'gencode_all', 'MANE', 'refseq']
-    #dbs = ['Mmul_10', 'NHGRI_mPanTro3', 'GRCm39']
-    nums = [0,1,2,3] # CHANGEME
+    #dbs = ['chess3', 'gencode_all', 'MANE', 'refseq']
+    dbs = ['Mmul_10', 'NHGRI_mPanTro3', 'GRCm39', 'TAIR10']
+    nums = [3] # CHANGEME
 
     for num in nums:
         run_aggregator(dbs[num])

@@ -1,0 +1,35 @@
+# Assembly name:  TAIR10.1
+# Organism name:  Arabidopsis thaliana (thale cress)
+# Infraspecific name:  ecotype=Columbia
+# Taxid:          3702
+# BioSample:      SAMN03081427
+# BioProject:     PRJNA10719
+# Submitter:      The Arabidopsis Information Resource (TAIR)
+# Date:           2018-03-15
+# Assembly type:  haploid
+# Release type:   minor
+# Assembly level: Chromosome
+# Genome representation: full
+# RefSeq category: Reference Genome
+# GenBank assembly accession: GCA_000001735.2
+# RefSeq assembly accession: GCF_000001735.4
+# RefSeq assembly and GenBank assemblies identical: yes
+#
+## Assembly-Units:
+## GenBank Unit Accession	RefSeq Unit Accession	Assembly-Unit name
+## GCA_000000965.1	GCF_000000965.2	Primary Assembly
+## GCA_000001745.1	GCF_000001745.3	non-nuclear
+#
+# Ordered by chromosome/plasmid; the chromosomes/plasmids are followed by
+# unlocalized scaffolds.
+# Unplaced scaffolds are listed at the end.
+# RefSeq is equal or derived from GenBank object.
+#
+# Sequence-Name	Sequence-Role	Assigned-Molecule	Assigned-Molecule-Location/Type	GenBank-Accn	Relationship	RefSeq-Accn	Assembly-Unit	Sequence-Length	UCSC-style-name
+1	assembled-molecule	1	Chromosome	CP002684.1	=	NC_003070.9	Primary Assembly	30427671	na
+2	assembled-molecule	2	Chromosome	CP002685.1	=	NC_003071.7	Primary Assembly	19698289	na
+3	assembled-molecule	3	Chromosome	CP002686.1	=	NC_003074.8	Primary Assembly	23459830	na
+4	assembled-molecule	4	Chromosome	CP002687.1	=	NC_003075.7	Primary Assembly	18585056	na
+5	assembled-molecule	5	Chromosome	CP002688.1	=	NC_003076.8	Primary Assembly	26975502	na
+MT	assembled-molecule	MT	Mitochondrion	BK010421.1	=	NC_037304.1	non-nuclear	367808	na
+Pltd	assembled-molecule	Pltd	Chloroplast	AP000423.1	=	NC_000932.1	non-nuclear	154478	na
