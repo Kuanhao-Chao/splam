@@ -32,5 +32,4 @@ def get_chrom_size(path):
 
             # store the key-value pair in the dictionary
             chrs[refseq_name] = chrom_size
-    
     return chrs
