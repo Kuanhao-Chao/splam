@@ -1,3 +1,5 @@
+# run in /benchmark/src_compare_results/
+
 import matplotlib.pyplot as plt
 import seaborn as sns
 import numpy as np
@@ -5,6 +7,7 @@ import pandas as pd
 import os
 from progress.bar import Bar
 from pyfaidx import Fasta
+
 
 def run_plotter(type, db):
 
@@ -230,14 +233,6 @@ def make_fig5(agg_df, id):
 
 def make_fig6(avg_df, id):
     # plot score distribution against N content
-    pass
-
-def make_fig7(avg_df, id):
-    # defining paper figure for comparing SPLAM and SpliceAI in histogram across all species for donor and acceptor
-    
-
-
-    # save_fig(f'./figures/fig7/all_scores_compare.{id[0]}.{id[1]}.png')
     pass
 
 if __name__ == '__main__':
