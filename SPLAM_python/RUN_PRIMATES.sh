@@ -1,5 +1,5 @@
 SAMPLE=primates
-DATABASE=NHGRI_mPanTro3
+DATABASE=TAIR10
 
 # Step 2
 echo "\n\n>> Step 2"

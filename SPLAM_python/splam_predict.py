@@ -96,7 +96,7 @@ def one_hot_encode(Xd, Yd):
 def create_datapoints(seq, strand):
     # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
     seq = seq.upper().replace('A', '1').replace('C', '2')
-    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0').replace('K', '0').replace('R', '0').replace('Y', '0').replace('W', '0')
+    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0').replace('K', '0').replace('R', '0').replace('Y', '0').replace('W', '0').replace('M', '0').replace('S','0')
     jn_start = JUNC_START
     jn_end = JUNC_END
 
