@@ -11,5 +11,5 @@ setuptools.setup(
 	install_requires=['torch>=1.12.0', 'pandas>=2.0.0', 'pybedtools>=0.9.0'],
 	python_requires='>=3.6',
 	packages=['splam'],
-	entry_points={'console_scripts': ['splam = splam.run_splam:main'], },
+	entry_points={'console_scripts': ['splam = splam.splam:main'], },
 )
