@@ -83,7 +83,7 @@ wchar_t *GetWC(const char *c)
 int usage_extract(){ 
     // GMessage("splam v{}\n\n", VERSION);
     GMessage(
-    "\033[1mUsage\033[0m:   splam j-extract [arguments] BAM-file(s) \n\n\n");
+    "\033[1mUsage\033[0m:   splam-extract [arguments] BAM-file(s) \n\n\n");
     GMessage(
     "\033[1m\033[91mRequired argument:\033[0m\n"
     "\t-o / --output\t\tPath to the output directory\n\n"
