@@ -162,7 +162,6 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
     return test_loader
 
 
-
 def splam_prediction(junction_fasta, out_score_f, model_path):
     BATCH_SIZE = 100
     N_WORKERS = None

@@ -80,36 +80,25 @@ wchar_t *GetWC(const char *c)
 
     return wc;
 }
-int usage(){ 
+int usage_extract(){ 
+    // GMessage("splam v{}\n\n", VERSION);
+    GMessage(
+    "\033[1mUsage\033[0m:   splam j-extract [arguments] BAM-file(s) \n\n\n");
+    GMessage(
+    "\033[1m\033[91mRequired argument:\033[0m\n"
+    "\t-o / --output\t\tPath to the output directory\n\n"
+    "\033[1m\033[94mOptional argument:\033[0m\n"
+    "\t-M / --max-splice:\tThe maximum intron length for the splice site.\n"
+    "\t-g / --bundle-gap:\tMinimum locus gap separation value. Reads that are mapped closer than this distance are merged together in the same processing bundle. Default: 100 (bp).\n\n"        
+    // "\t-t / --threshold:\tThreshold of the number of alignments supporting a junction. Splice sites having less then the threshold are removed. Default: 100 (bp)\n\n"
+    );
+  return 0;
+}
+
+
+int usage_clean(){ 
     // GMessage("splam v{}\n\n", VERSION);
 
-    if (COMMAND_MODE == J_EXTRACT) {
-        GMessage(
-        "\033[1mUsage\033[0m:   splam j-extract [arguments] BAM-file(s) \n\n\n");
-        GMessage(
-        "\033[1m\033[91mRequired argument:\033[0m\n"
-        "\t-o / --output\t\tPath to the output directory\n\n"
-        "\033[1m\033[94mOptional argument:\033[0m\n"
-        "\t-M / --max-splice:\tThe maximum intron length for the splice site.\n"
-        "\t-g / --bundle-gap:\tMinimum locus gap separation value. Reads that are mapped closer than this distance are merged together in the same processing bundle. Default: 100 (bp).\n\n"        
-        // "\t-t / --threshold:\tThreshold of the number of alignments supporting a junction. Splice sites having less then the threshold are removed. Default: 100 (bp)\n\n"
-        );
-    } else if (COMMAND_MODE == PREDICT) {
-        GMessage(
-        "\033[1mUsage\033[0m:   splam predict [arguments] BAM-file(s) | Junction-BED-file\n\n"
-        "\t* BAM-file(s):\t\tThe default mode. Input is the path to a BAM file or a list of BAM files.\n"
-        "\t* Junction-BED-file:\tThe junction mode running with [-J / --junction]. Input is the path to a list of junctions. We highly recommend inputting the BED file generated from the \"j-extract\" step (BED).\n\n\n");
-
-        GMessage(
-        "\033[1m\033[91mRequired argument:\033[0m\n"
-        "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
-        "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
-        "\t-o / --output\t\tPath to the output directory\n\n");
-
-        GMessage(
-        "\033[1m\033[94mOptional argument:\033[0m\n"
-        "\t-J / --junction:\tRun the junction mode taking a junction BED file as input (input: Junction-BED-file).\n");
-    } else if (COMMAND_MODE == CLEAN) {
         GMessage(
         "\033[1mUsage\033[0m:   splam clean [arguments] BAM-file(s) \n\n\n");
         GMessage(
@@ -120,7 +109,8 @@ int usage(){
         "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
         );
-    } else {
+
+
         GMessage(
         "\033[1mUsage\033[0m:\n"
         "        splam -h|--help or \n"
@@ -134,10 +124,13 @@ int usage(){
         GMessage("        clean        : run [j-extract], [predict] steps, clean up the BAM file, and update it's NH tag.\n");
         // GMessage("        nh-update    : update NH tags in the BAM file.\n");
         // GMessage("        all          : run all steps: [j-extract], [predict], [clean], [nh-update] \n");
-    }
+
+
 //   std::cout << helpMsg.str();
   return 0;
 }
+
+
 
 std::unordered_map<std::string, int> get_hg38_chrom_size(std::string target) {
     std::unordered_map<std::string, int> chrs;
