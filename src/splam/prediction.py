@@ -166,14 +166,14 @@ def splam_prediction(junction_fasta, out_score_f, model_path):
     BATCH_SIZE = 100
     N_WORKERS = None
     device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
-    print(f'[Info] Loading model ... ' + model_path, flush = True)
+    print(f'[Info] Loading model ... (' + model_path + ')', flush = True)
     model = torch.jit.load(model_path)
     model = model.to(device)
 
     print(f'[Info] Done loading model', flush = True)
     print(f'[Info] Loading data ...', flush = True)
     test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, junction_fasta, False, str(0))
-    print(f'[Info] Done loading data ...', flush = True)
+    print(f'[Info] Done loading data', flush = True)
     
     criterion = torch.nn.BCELoss()
     fw_junc_scores = open(out_score_f, 'w')

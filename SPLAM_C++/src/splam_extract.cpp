@@ -78,6 +78,8 @@ GSamWriter* outfile_s_multi_unpair = NULL;
 GSamWriter* outfile_s_uniq_unpair = NULL;
 GSamWriter* outfile_s_multi_unpair_tmp = NULL;
 
+FILE* joutf=NULL;
+
 // ALN summary
 int ALN_COUNT = 0;
 int ALN_COUNT_BAD = 0;
@@ -89,6 +91,28 @@ int JUNC_COUNT = 0;
 int JUNC_COUNT_GOOD = 0;
 int JUNC_COUNT_BAD = 0;
 
+// Paired
+int ALN_COUNT_SPLICED = 0;
+int ALN_COUNT_NSPLICED = 0;
+int ALN_COUNT_PAIRED = 0;
+int ALN_COUNT_SPLICED_UNIQ = 0;
+int ALN_COUNT_SPLICED_MULTI = 0;
+int ALN_COUNT_SPLICED_UNIQ_DISCARD = 0;
+int ALN_COUNT_SPLICED_MULTI_DISCARD = 0;
+int ALN_COUNT_NSPLICED_UNIQ = 0;
+int ALN_COUNT_NSPLICED_MULTI = 0;
+
+
+// Unpaired
+int ALN_COUNT_SPLICED_UNPAIR = 0;
+int ALN_COUNT_NSPLICED_UNPAIR = 0;
+int ALN_COUNT_UNPAIR = 0;
+int ALN_COUNT_SPLICED_UNIQ_UNPAIR = 0;
+int ALN_COUNT_SPLICED_MULTI_UNPAIR = 0;
+int ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD = 0;
+int ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD = 0;
+int ALN_COUNT_NSPLICED_UNIQ_UNPAIR = 0;
+int ALN_COUNT_NSPLICED_MULTI_UNPAIR = 0;
 int STEP_COUNTER = 0;
 
 // j-extract parameters:
@@ -125,25 +149,25 @@ int main(int argc, char* argv[]) {
     /*********************
      * For paired uniq- / multi- mapped alignments
     *********************/
-    outfname_ns_multi_map = out_dir + "/TMP/nonsplice_multi_map.bam";
-    outfname_ns_uniq_map = out_dir + "/TMP/nonsplice_uniq_map.bam";
-    outfname_s_multi_map = out_dir + "/TMP/splice_multi_map.bam";
-    outfname_s_uniq_map = out_dir + "/TMP/splice_uniq_map.bam";
-    outfname_s_multi_map_tmp = out_dir + "/TMP/splice_multi_map_tmp.bam";
+    outfname_ns_multi_map = out_dir + "/tmp/nonsplice_multi_map.bam";
+    outfname_ns_uniq_map = out_dir + "/tmp/nonsplice_uniq_map.bam";
+    outfname_s_multi_map = out_dir + "/tmp/splice_multi_map.bam";
+    outfname_s_uniq_map = out_dir + "/tmp/splice_uniq_map.bam";
+    outfname_s_multi_map_tmp = out_dir + "/tmp/splice_multi_map_tmp.bam";
         
     /*********************
      * For unpaired uniq- / multi- mapped alignments
     *********************/
-    outfname_ns_multi_unpair = out_dir + "/TMP/nonsplice_multi_unpair.bam";
-    outfname_ns_multi_unpair = out_dir + "/TMP/nonsplice_uniq_unpair.bam";
-    outfname_s_multi_unpair = out_dir + "/TMP/splice_multi_unpair.bam";
-    outfname_s_uniq_unpair = out_dir + "/TMP/splice_uniq_unpair.bam";
-    outfname_s_multi_unpair_tmp = out_dir + "/TMP/splice_multi_unpair_tmp.bam";
+    outfname_ns_multi_unpair = out_dir + "/tmp/nonsplice_multi_unpair.bam";
+    outfname_ns_multi_unpair = out_dir + "/tmp/nonsplice_uniq_unpair.bam";
+    outfname_s_multi_unpair = out_dir + "/tmp/splice_multi_unpair.bam";
+    outfname_s_uniq_unpair = out_dir + "/tmp/splice_uniq_unpair.bam";
+    outfname_s_multi_unpair_tmp = out_dir + "/tmp/splice_multi_unpair_tmp.bam";
 
     outfname_discard_s_uniq_map = out_dir + "/discard/discard_splice_uniq_map.bam";;
     outfname_discard_s_multi_map = out_dir + "/discard/discard_splice_multi_map.bam";;
 
-    GStr tmp_dir(out_dir + "/TMP");
+    GStr tmp_dir(out_dir + "/tmp");
     std::filesystem::create_directories(out_dir.chars());
     create_CHRS();
     
@@ -172,24 +196,61 @@ int main(int argc, char* argv[]) {
             outfile_s_uniq_unpair = new GSamWriter(outfname_s_uniq_unpair, in_records.header(), GSamFile_BAM);
         }
     }
-    GMessage(">> Finish creating GSamWriter\n");
 
     /*********************
      * Main algorithms
     *********************/
-    // infname_juncbed = splamJExtract();
-    GMessage("\n[INFO] Total number of junctions\t:%d\n", JUNC_COUNT);
+    infname_juncbed = splamJExtract();
+
+    /*********************
+     * Printing results
+    *********************/
+    ALN_COUNT_SPLICED = ALN_COUNT_SPLICED_UNIQ + ALN_COUNT_SPLICED_MULTI;
+    ALN_COUNT_NSPLICED = ALN_COUNT_NSPLICED_UNIQ + ALN_COUNT_NSPLICED_MULTI;
+    ALN_COUNT_SPLICED_UNPAIR = ALN_COUNT_SPLICED_UNIQ_UNPAIR + ALN_COUNT_SPLICED_MULTI_UNPAIR;
+    ALN_COUNT_NSPLICED_UNPAIR = ALN_COUNT_NSPLICED_UNIQ_UNPAIR + ALN_COUNT_NSPLICED_MULTI_UNPAIR;
+
+    ALN_COUNT_UNPAIR = ALN_COUNT_SPLICED_UNPAIR + ALN_COUNT_NSPLICED_UNPAIR;
+
+    ALN_COUNT_BAD = ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD + ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD;
+
+    ALN_COUNT_GOOD_CAL = ALN_COUNT - ALN_COUNT_BAD;
+    if (g_paired_removal) {
+        GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
+
+        // Printing for paired alignment
+        GMessage("           paired alignments\t\t:%10d \n", ALN_COUNT - ALN_COUNT_UNPAIR);
+        GMessage("               spliced alignments\t:%10d \n", ALN_COUNT_SPLICED);
+        GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_SPLICED_UNIQ);
+        GMessage("                   - multi-mapped\t:%10d\n", ALN_COUNT_SPLICED_MULTI);
+        GMessage("               non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
+        GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ);
+        GMessage("                   - multi-mapped\t:%10d\n\n", ALN_COUNT_NSPLICED_MULTI);
+
+        // Printing for unpaired alignment
+        GMessage("           unpaired alignments\t\t:%10d \n", ALN_COUNT_UNPAIR);
+        GMessage("               spliced alignments\t:%10d \n", ALN_COUNT_SPLICED_UNPAIR);
+        GMessage("                   - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ_UNPAIR, ALN_COUNT_SPLICED_UNIQ_UNPAIR-ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD, ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD);
+        GMessage("                   - multi-mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI_UNPAIR, ALN_COUNT_SPLICED_MULTI_UNPAIR-ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD, ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD);
+        GMessage("               non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED_UNPAIR);
+        GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ_UNPAIR);
+        GMessage("                   - multi-mapped\t:%10d\n\n", ALN_COUNT_NSPLICED_MULTI_UNPAIR);
+    } else {
+        GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
+        GMessage("           spliced alignments\t\t:%10d \n", ALN_COUNT_SPLICED);
+        GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ-ALN_COUNT_SPLICED_UNIQ_DISCARD, ALN_COUNT_SPLICED_UNIQ_DISCARD);
+        GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
+        
+        GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
+        GMessage("               - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ);
+        GMessage("               - multi-mapped\t\t:%10d\n", ALN_COUNT_NSPLICED_MULTI);
+    }
+    GMessage("\n[INFO] Total number of junctions\t:%10d\n", JUNC_COUNT);
     return 0;
 }
 
 void processOptions(int argc, char* argv[]) {
     GArgs args(argc, argv, "help;cite;verbose;version;paired;no-write-bam;output=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
-
-    // if (argc == 0) {
-    //     usage_extract();
-    //     GERROR("\n[ERROR] No command provide. The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
-    //     exit(1);   
-    // }
 
     if (args.getOpt('h') || args.getOpt("help")) {
         usage_extract();
@@ -210,10 +271,6 @@ void processOptions(int argc, char* argv[]) {
         g_paired_removal = true;
         GMessage("g_paired_removal: %d\n", g_paired_removal);
     }
-
-    // if (verbose) {
-    //     GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
-    // }
     
     verbose=(args.getOpt("verbose")!=NULL || args.getOpt('V')!=NULL);
     if (verbose) {
@@ -237,16 +294,13 @@ void processOptions(int argc, char* argv[]) {
 // #endif
 
     args.startNonOpt();
-
     if (args.getNonOptCount()==0) {
         usage_extract();
         GMessage("\n[ERROR] no input provided!\n");
         exit(1);
     }
-    args.nextNonOpt(); 
 
     const char* ifn=NULL;
-        GMessage("ifn: %s\n", ifn);
     while ( (ifn=args.nextNonOpt())!=NULL) {
         //input alignment files
         std::string absolute_ifn = get_full_path(ifn);

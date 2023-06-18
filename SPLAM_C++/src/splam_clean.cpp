@@ -176,25 +176,25 @@ int main(int argc, char* argv[]) {
     /*********************
      * For paired uniq- / multi- mapped alignments
     *********************/
-    outfname_ns_multi_map = out_dir + "/TMP/nonsplice_multi_map.bam";
-    outfname_ns_uniq_map = out_dir + "/TMP/nonsplice_uniq_map.bam";
-    outfname_s_multi_map = out_dir + "/TMP/splice_multi_map.bam";
-    outfname_s_uniq_map = out_dir + "/TMP/splice_uniq_map.bam";
-    outfname_s_multi_map_tmp = out_dir + "/TMP/splice_multi_map_tmp.bam";
+    outfname_ns_multi_map = out_dir + "/tmp/nonsplice_multi_map.bam";
+    outfname_ns_uniq_map = out_dir + "/tmp/nonsplice_uniq_map.bam";
+    outfname_s_multi_map = out_dir + "/tmp/splice_multi_map.bam";
+    outfname_s_uniq_map = out_dir + "/tmp/splice_uniq_map.bam";
+    outfname_s_multi_map_tmp = out_dir + "/tmp/splice_multi_map_tmp.bam";
         
     /*********************
      * For unpaired uniq- / multi- mapped alignments
     *********************/
-    outfname_ns_multi_unpair = out_dir + "/TMP/nonsplice_multi_unpair.bam";
-    outfname_ns_multi_unpair = out_dir + "/TMP/nonsplice_uniq_unpair.bam";
-    outfname_s_multi_unpair = out_dir + "/TMP/splice_multi_unpair.bam";
-    outfname_s_uniq_unpair = out_dir + "/TMP/splice_uniq_unpair.bam";
-    outfname_s_multi_unpair_tmp = out_dir + "/TMP/splice_multi_unpair_tmp.bam";
+    outfname_ns_multi_unpair = out_dir + "/tmp/nonsplice_multi_unpair.bam";
+    outfname_ns_multi_unpair = out_dir + "/tmp/nonsplice_uniq_unpair.bam";
+    outfname_s_multi_unpair = out_dir + "/tmp/splice_multi_unpair.bam";
+    outfname_s_uniq_unpair = out_dir + "/tmp/splice_uniq_unpair.bam";
+    outfname_s_multi_unpair_tmp = out_dir + "/tmp/splice_multi_unpair_tmp.bam";
 
     outfname_discard_s_uniq_map = out_dir + "/discard/discard_splice_uniq_map.bam";;
     outfname_discard_s_multi_map = out_dir + "/discard/discard_splice_multi_map.bam";;
 
-    GStr tmp_dir(out_dir + "/TMP");
+    GStr tmp_dir(out_dir + "/tmp");
     GStr discard_dir(out_dir + "/discard");
     std::filesystem::create_directories(out_dir.chars());
     create_CHRS();
@@ -205,69 +205,29 @@ int main(int argc, char* argv[]) {
     /*********************
      * Directory creating + Sam writer creation
     *********************/
-
-    if (COMMAND_MODE==J_EXTRACT) {        
-        if (write_bam) {
-            // Creating the directory
-            std::filesystem::create_directories(tmp_dir.chars());
-
-            // Paired
-            outfile_ns_multi_map = new GSamWriter(outfname_ns_multi_map, in_records.header(), GSamFile_BAM);
-            outfile_ns_uniq_map = new GSamWriter(outfname_ns_uniq_map, in_records.header(), GSamFile_BAM);
-            outfile_s_uniq_map = new GSamWriter(outfname_s_uniq_map, in_records.header(), GSamFile_BAM);
-            outfile_s_multi_map = new GSamWriter(outfname_s_multi_map, in_records.header(), GSamFile_BAM);
-
-            if (g_paired_removal) {
-                // Unpaired
-                outfile_ns_multi_unpair = new GSamWriter(outfname_ns_multi_unpair, in_records.header(), GSamFile_BAM);
-                outfile_ns_uniq_unpair = new GSamWriter(outfname_ns_uniq_unpair, in_records.header(), GSamFile_BAM);
-                outfile_s_multi_unpair = new GSamWriter(outfname_s_multi_unpair, in_records.header(), GSamFile_BAM);
-                outfile_s_uniq_unpair = new GSamWriter(outfname_s_uniq_unpair, in_records.header(), GSamFile_BAM);
-            }
-        }
-    } else if (COMMAND_MODE==CLEAN) {
-        // Creating the directory
-        std::filesystem::create_directories(discard_dir.chars());
-        // The tmp files only for CLEANING
-        outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
-        if (g_paired_removal) {
-            outfile_s_multi_unpair_tmp = new GSamWriter(outfname_s_multi_unpair_tmp, in_records.header(), GSamFile_BAM);    
-        }
-
-        // cleaned BAM file
-        outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
-
-        // discarded files
-        outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
-        outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);   
+    // Creating the directory
+    std::filesystem::create_directories(discard_dir.chars());
+    // The tmp files only for CLEANING
+    outfile_s_multi_map_tmp = new GSamWriter(outfname_s_multi_map_tmp, in_records.header(), GSamFile_BAM);
+    if (g_paired_removal) {
+        outfile_s_multi_unpair_tmp = new GSamWriter(outfname_s_multi_unpair_tmp, in_records.header(), GSamFile_BAM);    
     }
+
+    // cleaned BAM file
+    outfile_cleaned = new GSamWriter(outfname_cleaned, in_records.header(), GSamFile_BAM);
+
+    // discarded files
+    outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, in_records.header(), GSamFile_BAM);
+    outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, in_records.header(), GSamFile_BAM);   
 
     GMessage(">> Finish creating GSamWriter\n");
 
     /*********************
      * Main algorithms
     *********************/
-    if (COMMAND_MODE == J_EXTRACT) {
-        infname_juncbed = splamJExtract();
-        GMessage("\n[INFO] Total number of junctions\t:%d\n", JUNC_COUNT);
-    
-    // } else if (COMMAND_MODE == PREDICT) {
-    //     if (!predict_junc_mode) {
-    //         infname_juncbed = splamJExtract();
-    //     }
-    //     // infname_juncbed = out_dir + "/junction.bed";
-    //     infname_scorebed = splamPredict();        
-    // } else if (COMMAND_MODE == CLEAN && !g_2_stage_run) {
-    //     infname_juncbed = splamJExtract();
-    //     infname_scorebed = splamPredict();
-    //     infname_NH_tag = splamClean();
-    //     splamNHUpdate();
-
-    } else if (COMMAND_MODE == CLEAN) {
-        infname_scorebed = out_dir + "/junction_score.bed";
-        infname_NH_tag = splamClean();
-        splamNHUpdate();
-    }
+    infname_scorebed = out_dir + "/junction_score.bed";
+    infname_NH_tag = splamClean();
+    splamNHUpdate();
 
     /*********************
      * Final statistics printing

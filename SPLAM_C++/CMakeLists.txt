@@ -108,6 +108,7 @@ set_property(TARGET splam-clean PROPERTY CXX_STANDARD 17)
 # Compiling splam-extract
 add_executable(splam-extract
         src/splam_extract.cpp
+        src/extract.cpp
         src/junc_func.cpp
         src/util.cpp
         src/tmerge.cpp
