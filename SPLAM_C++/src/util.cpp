@@ -100,30 +100,27 @@ int usage_clean(){
     // GMessage("splam v{}\n\n", VERSION);
 
         GMessage(
-        "\033[1mUsage\033[0m:   splam clean [arguments] BAM-file(s) \n\n\n");
+        "\033[1mUsage\033[0m:   splam-clean [arguments] \n\n\n");
         GMessage(
         "\033[1m\033[91mRequired argument:\033[0m\n"
         // "\t-b / --bam\t\tPath to the alignment file (BAM)\n"
-        "\t-m / --model\t\tPath to the SPLAM model (PT)\n"
-        // "\t-s / --score\t\tPath to a list of junctions with scores (BED).\n"
-        "\t-r / --ref\t\tPath to the reference file (FASTA)\n"
         "\t-o / --output\t\tPath to the output directory\n\n"
         );
 
 
-        GMessage(
-        "\033[1mUsage\033[0m:\n"
-        "        splam -h|--help or \n"
-        "        splam -v|--version or \n"
-        "        splam -c|--cite or \n"
-        "        splam <COMMAND> [-h | options]\n\n");
-        GMessage(
-        "\033[1mCommands\033[0m:\n");
-        GMessage("        j-extract    : extract junctions from a BAM file / a list of BAM files.\n");
-        GMessage("        predict      : score junctions from (1) a BAM file / a list of BAM files or (2) a junction BED file.\n");
-        GMessage("        clean        : run [j-extract], [predict] steps, clean up the BAM file, and update it's NH tag.\n");
-        // GMessage("        nh-update    : update NH tags in the BAM file.\n");
-        // GMessage("        all          : run all steps: [j-extract], [predict], [clean], [nh-update] \n");
+        // GMessage(
+        // "\033[1mUsage\033[0m:\n"
+        // "        splam -h|--help or \n"
+        // "        splam -v|--version or \n"
+        // "        splam -c|--cite or \n"
+        // "        splam <COMMAND> [-h | options]\n\n");
+        // GMessage(
+        // "\033[1mCommands\033[0m:\n");
+        // GMessage("        j-extract    : extract junctions from a BAM file / a list of BAM files.\n");
+        // GMessage("        predict      : score junctions from (1) a BAM file / a list of BAM files or (2) a junction BED file.\n");
+        // GMessage("        clean        : run [j-extract], [predict] steps, clean up the BAM file, and update it's NH tag.\n");
+        // // GMessage("        nh-update    : update NH tags in the BAM file.\n");
+        // // GMessage("        all          : run all steps: [j-extract], [predict], [clean], [nh-update] \n");
 
 
 //   std::cout << helpMsg.str();
