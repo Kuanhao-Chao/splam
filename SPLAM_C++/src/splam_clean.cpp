@@ -21,18 +21,9 @@
 #include <Python.h>
 
 void processOptions(int argc, char* argv[]);
-void processOptionsJExtract(GArgs& args);
-void processOptionsPredict(GArgs& args);
 void processOptionsClean(GArgs& args);
-void processOptionsNHUpdate(GArgs& args);
 
-void optionsMaxSplice(GArgs& args);
-void optionsBundleGap(GArgs& args);
-void optionsModel(GArgs& args);
-void optionsRef(GArgs& args);
 void optionsOutput(GArgs& args);
-void checkJunction(GArgs& args);
-void optionsJunction(GArgs& args);
 void optionsWriteTMP(GArgs& args);
 // void options2StageRun(GArgs& args);
 
@@ -49,7 +40,6 @@ GStr infname_NH_tag("");
 GStr out_dir;
 
 bool verbose = false;
-bool predict_junc_mode = false;
 TInputFiles in_records;
 TInputRecord* irec=NULL;
 
@@ -59,7 +49,6 @@ GSamRecord* brec=NULL;
 
 // output file names 
 GStr outfname_cleaned;
-GStr outfname_cleaned_2stage;
 
 // Paired
 GStr outfname_ns_multi_map;
@@ -150,7 +139,6 @@ bool write_bam = true;
 
 // clean parameters:
 bool g_paired_removal = false;
-bool g_is_single_end = false;
 bool g_2_stage_run = false;
 
 int main(int argc, char* argv[]) {
@@ -172,7 +160,6 @@ int main(int argc, char* argv[]) {
     processOptions(argc, argv);
 
     outfname_cleaned = out_dir + "/cleaned.bam";
-    outfname_cleaned_2stage = out_dir + "/cleaned_2stage.bam";
     /*********************
      * For paired uniq- / multi- mapped alignments
     *********************/
@@ -191,10 +178,12 @@ int main(int argc, char* argv[]) {
     outfname_s_uniq_unpair = out_dir + "/tmp/splice_uniq_unpair.bam";
     outfname_s_multi_unpair_tmp = out_dir + "/tmp/splice_multi_unpair_tmp.bam";
 
-    outfname_discard_s_uniq_map = out_dir + "/discard/discard_splice_uniq_map.bam";;
-    outfname_discard_s_multi_map = out_dir + "/discard/discard_splice_multi_map.bam";;
+    outfname_discard_s_uniq_map = out_dir + "/discard/discard_splice_uniq_map.bam";
+    outfname_discard_s_multi_map = out_dir + "/discard/discard_splice_multi_map.bam";
 
-    GStr tmp_dir(out_dir + "/tmp");
+    // The junction score file
+    infname_juncbed = out_dir + "/junction_score.bed";
+
     GStr discard_dir(out_dir + "/discard");
     std::filesystem::create_directories(out_dir.chars());
     create_CHRS();
@@ -292,7 +281,7 @@ int main(int argc, char* argv[]) {
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;single-end;paired-removal;junction;no-write-bam;2-stage-run;model=;output=;score=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
+    GArgs args(argc, argv, "help;cite;verbose;version;paired-removal;junction;no-write-bam;2-stage-run;model=;output=;score=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
     // args.printError(usage_clean, true);
     command_str=args.nextNonOpt();
     if (argc == 0) {
@@ -316,27 +305,12 @@ void processOptions(int argc, char* argv[]) {
         exit(0);
     }
 
-    if (args.getOpt('S') || args.getOpt("single-end") ) {
-        g_is_single_end = true;
-        // GMessage("g_is_single_end: %d\n", g_is_single_end);
-    }
-
     if (args.getOpt('P') || args.getOpt("paired-removal") ) {
         g_paired_removal = true;
         GMessage("g_paired_removal: %d\n", g_paired_removal);
     }
 
-    if (strcmp(command_str.chars(), "j-extract") == 0) {
-        COMMAND_MODE = J_EXTRACT;
-    // } else if (strcmp(command_str.chars(), "predict") == 0) {
-    //     COMMAND_MODE = PREDICT;
-    } else if (strcmp(command_str.chars(), "clean") == 0) {
-        COMMAND_MODE = CLEAN;
-    } else {
-        usage_clean();
-        GERROR("\n[ERROR] The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
-        exit(1);   
-    }
+
     if (verbose) {
         GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
     }
@@ -348,15 +322,9 @@ void processOptions(int argc, char* argv[]) {
     }
 
     /********************************
-     * Process arguments by COMMAND_MODE
+     * Process the arguments
     *********************************/
-    if (COMMAND_MODE == J_EXTRACT) {
-        processOptionsJExtract(args);    
-    // } else if (COMMAND_MODE == PREDICT) {
-    //     processOptionsPredict(args);
-    } else if (COMMAND_MODE == CLEAN) {
-        processOptionsClean(args);
-    }
+    processOptionsClean(args);
 
 // #ifdef DEBUG
     GMessage(">>  command_str      : %s\n", command_str.chars());
@@ -366,7 +334,6 @@ void processOptions(int argc, char* argv[]) {
     GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
     GMessage(">> infname_bam       : %s\n", infname_bam.chars());
     GMessage(">> out_dir           : %s\n", out_dir.chars());
-    GMessage(">> g_is_single_end   : %d\n", g_is_single_end);
     GMessage(">> g_paired_removal  : %d\n", g_paired_removal);
     GMessage(">> g_max_splice      : %d\n", g_max_splice);
     GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
@@ -374,123 +341,10 @@ void processOptions(int argc, char* argv[]) {
 // #endif
 
     args.startNonOpt();
-
-    if (args.getNonOptCount()==1) {
-        usage_clean();
-        GMessage("\n[ERROR] no input provided!\n");
-        exit(1);
-    }
-    args.nextNonOpt(); 
-
-    if (!predict_junc_mode) {
-        const char* ifn=NULL;
-        while ( (ifn=args.nextNonOpt())!=NULL) {
-            //input alignment files
-            std::string absolute_ifn = get_full_path(ifn);
-            in_records.addFile(absolute_ifn.c_str());
-        }
-    } else if (predict_junc_mode && COMMAND_MODE == PREDICT) {
-        checkJunction(args);
-    }
 }
-
-
-void processOptionsJExtract(GArgs& args) {
-    optionsOutput(args);
-    optionsMaxSplice(args);
-    optionsBundleGap(args);
-    optionsWriteTMP(args);
-}
-
-
-void processOptionsPredict(GArgs& args) {
-    optionsModel(args);
-    optionsRef(args);
-    optionsOutput(args);
-    optionsJunction(args);
-    optionsWriteTMP(args);
-}
-
 
 void processOptionsClean(GArgs& args) {
-    // optionsModel(args);
-    // optionsRef(args);
     optionsOutput(args);
-    // options2StageRun(args);
-}
-
-
-void optionsMaxSplice(GArgs& args) {
-    // -M / --max-splice
-    GStr s;
-    s = args.getOpt('M');
-    if (!s.is_empty()) {
-        g_max_splice = s.asInt();
-    } else {
-        s=args.getOpt("max-splice");
-        if (!s.is_empty()) {
-            // Use the default max-splice
-            g_max_splice = s.asInt();
-        }
-    }
-}
-
-
-void optionsBundleGap(GArgs& args) {
-    // -g / --bundle-gap
-    GStr s;
-    s = args.getOpt('g');
-    if (!s.is_empty()) {
-        g_bundle_gap = s.asInt();
-    } else {
-        s=args.getOpt("bundle-gap");
-        if (!s.is_empty()) {
-            // Use the default bundle-gap
-            g_bundle_gap = s.asInt();
-        }
-    }
-}
-
-
-void optionsModel(GArgs& args) {
-    // -m / --model
-    infname_model_name=args.getOpt('m');
-    if (infname_model_name.is_empty()) {
-        infname_model_name=args.getOpt("model");
-        if (infname_model_name.is_empty()) {
-            usage_clean();
-            GMessage("\n[ERROR] model file must be provided (-m)!\n");
-            exit(1);
-        } else {
-            if (fileExists(infname_model_name.chars())>1) {
-                // guided=true;
-            } else {
-                GError("[ERROR] model file (%s) not found.\n",
-                    infname_model_name.chars());
-            }
-        }
-    }
-} 
-
-
-void optionsRef(GArgs& args) {
-    // -r / --ref
-    infname_reffa=args.getOpt('r');        
-    if (infname_reffa.is_empty()) {
-        infname_reffa=args.getOpt("ref");
-        if (infname_reffa.is_empty()) {
-            usage_clean();
-            GMessage("\n[ERROR] reference fasta file must be provided (-r)!\n");
-            exit(1);
-        } else {
-            if (fileExists(infname_reffa.chars())>1) {
-                // guided=true;
-            } else {
-                GError("[ERROR] reference fasta file (%s) not found.\n",
-                    infname_reffa.chars());
-            }
-        }
-    }
 }
 
 
@@ -508,17 +362,6 @@ void optionsOutput(GArgs& args) {
 }
 
 
-void optionsJunction(GArgs& args) {
-    // -J / --junction
-    predict_junc_mode = (args.getOpt("junction")!=NULL || args.getOpt('J')!=NULL);
-    // if (predict_junc_mode) {
-    //     GMessage(">>  SPLAM predict [Junction mode]\n");
-    // } else {
-    //     GMessage(">>  SPLAM predict [Default mode]\n");
-    // }
-}
-
-
 void optionsWriteTMP(GArgs& args) {
     //--no-write-bam
     write_bam = (args.getOpt("no-write-bam")==NULL);
@@ -531,30 +374,9 @@ void optionsWriteTMP(GArgs& args) {
 }
 
 
-// void options2StageRun(GArgs& args) {
-//     //--no-write-bam
-//     g_2_stage_run = (args.getOpt("2-stage-run")!=NULL);
-//     GMessage("g_2_stage_run: %d\n", g_2_stage_run);
-//     if (g_2_stage_run) {
-//         GMessage(">>  Running 2_stage_run mode\n");
-//     } else {
-//         GMessage(">>  Running non-2_stage_run mode\n");
-//     }
+// if (fileExists(infname_juncbed.chars())>1) {
+//     // guided=true;
+// } else {
+//     GError("[ERROR] junction bed file (%s) not found.\n",
+//         infname_juncbed.chars());
 // }
-
-
-void checkJunction(GArgs& args) {
-    infname_juncbed = args.nextNonOpt(); 
-    if (infname_juncbed.is_empty()) {
-        usage_clean();
-        GMessage("\n[ERROR] junction input bed file must be provided!\n");
-        exit(1);
-    } else {
-        if (fileExists(infname_juncbed.chars())>1) {
-            // guided=true;
-        } else {
-            GError("[ERROR] junction bed file (%s) not found.\n",
-                infname_juncbed.chars());
-        }
-    }
-}

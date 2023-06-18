@@ -37,7 +37,6 @@ extern GSamRecord* brec;
 
 // output file names 
 extern GStr outfname_cleaned;
-extern GStr outfname_cleaned_2stage;
 
 // Paired
 extern GStr outfname_ns_multi_map;
@@ -127,7 +126,6 @@ extern bool write_bam;
 
 // clean parameters
 extern bool g_paired_removal;
-extern bool g_is_single_end;
 extern bool g_2_stage_run;
 
 #endif /* TIEBRUSH_TMERGE_H_ */
