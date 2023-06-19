@@ -124,6 +124,8 @@ int ALN_COUNT_NSPLICED = 0;
 int ALN_COUNT_PAIRED = 0;
 int ALN_COUNT_SPLICED_UNIQ = 0;
 int ALN_COUNT_SPLICED_MULTI = 0;
+int ALN_COUNT_SPLICED_UNIQ_KEEP = 0;
+int ALN_COUNT_SPLICED_MULTI_KEEP = 0;
 int ALN_COUNT_SPLICED_UNIQ_DISCARD = 0;
 int ALN_COUNT_SPLICED_MULTI_DISCARD = 0;
 int ALN_COUNT_NSPLICED_UNIQ = 0;
@@ -136,6 +138,8 @@ int ALN_COUNT_NSPLICED_UNPAIR = 0;
 int ALN_COUNT_UNPAIR = 0;
 int ALN_COUNT_SPLICED_UNIQ_UNPAIR = 0;
 int ALN_COUNT_SPLICED_MULTI_UNPAIR = 0;
+int ALN_COUNT_SPLICED_UNIQ_UNPAIR_KEEP = 0;
+int ALN_COUNT_SPLICED_MULTI_UNPAIR_KEEP = 0;
 int ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD = 0;
 int ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD = 0;
 int ALN_COUNT_NSPLICED_UNIQ_UNPAIR = 0;
@@ -244,6 +248,7 @@ int main(int argc, char* argv[]) {
      * Creating GSamWriter
     *********************/
     outfile_cleaned = new GSamWriter(outfname_cleaned, bam_reader.header(), GSamFile_BAM);
+
     outfile_ns_multi_map_nh_updated = new GSamWriter(outfname_ns_multi_map_nh_updated, bam_reader.header(), GSamFile_BAM);
     outfile_s_uniq_map_cleaned = new GSamWriter(outfname_s_uniq_map_cleaned, bam_reader.header(), GSamFile_BAM);
     outfile_s_multi_map_cleaned = new GSamWriter(outfname_s_multi_map_cleaned, bam_reader.header(), GSamFile_BAM);
@@ -260,11 +265,10 @@ int main(int argc, char* argv[]) {
     outfile_discard_s_uniq_map = new GSamWriter(outfname_discard_s_uniq_map, bam_reader.header(), GSamFile_BAM);
     outfile_discard_s_multi_map = new GSamWriter(outfname_discard_s_multi_map, bam_reader.header(), GSamFile_BAM);   
 
-    GMessage(">> Finish creating GSamWriter\n");
-
     /*********************
      * Main algorithms
     *********************/
+    infname_juncbed = out_dir + "/junction.bed";
     infname_scorebed = out_dir + "/junction_score.bed";
     infname_NH_tag = splamClean();
     splamNHUpdate();
@@ -324,49 +328,34 @@ int main(int argc, char* argv[]) {
     ALN_COUNT_UNPAIR = ALN_COUNT_SPLICED_UNPAIR + ALN_COUNT_NSPLICED_UNPAIR;
 
     ALN_COUNT_BAD = ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD + ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD;
-
+    ALN_COUNT_GOOD = ALN_COUNT_SPLICED_UNIQ_KEEP + ALN_COUNT_SPLICED_MULTI_KEEP + ALN_COUNT_SPLICED_UNIQ_UNPAIR_KEEP + ALN_COUNT_SPLICED_MULTI_UNPAIR_KEEP;
     ALN_COUNT_GOOD_CAL = ALN_COUNT - ALN_COUNT_BAD;
     if (g_paired_removal) {
         GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
 
         // Printing for paired alignment
-        GMessage("           paired alignments\t\t:%10d \n", ALN_COUNT - ALN_COUNT_UNPAIR);
-        GMessage("               spliced alignments\t:%10d \n", ALN_COUNT_SPLICED);
-        GMessage("                   - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ-ALN_COUNT_SPLICED_UNIQ_DISCARD, ALN_COUNT_SPLICED_UNIQ_DISCARD);
-        GMessage("                   - multi-mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
-        GMessage("               non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
-        GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ);
-        GMessage("                   - multi-mapped\t:%10d\n\n", ALN_COUNT_NSPLICED_MULTI);
+        GMessage("           paired spliced alignments\t:%10d \n", ALN_COUNT_SPLICED);
+        GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ_KEEP, ALN_COUNT_SPLICED_UNIQ_DISCARD);
+        GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI_KEEP, ALN_COUNT_SPLICED_MULTI_DISCARD);
 
         // Printing for unpaired alignment
-        GMessage("           unpaired alignments\t\t:%10d \n", ALN_COUNT_UNPAIR);
-        GMessage("               spliced alignments\t:%10d \n", ALN_COUNT_SPLICED_UNPAIR);
-        GMessage("                   - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ_UNPAIR, ALN_COUNT_SPLICED_UNIQ_UNPAIR-ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD, ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD);
-        GMessage("                   - multi-mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI_UNPAIR, ALN_COUNT_SPLICED_MULTI_UNPAIR-ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD, ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD);
-        GMessage("               non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED_UNPAIR);
-        GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ_UNPAIR);
-        GMessage("                   - multi-mapped\t:%10d\n\n", ALN_COUNT_NSPLICED_MULTI_UNPAIR);
+        GMessage("           unpaired spliced alignments\t:%10d \n", ALN_COUNT_SPLICED_UNPAIR);
+        GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ_UNPAIR, ALN_COUNT_SPLICED_UNIQ_UNPAIR_KEEP, ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD);
+        GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI_UNPAIR, ALN_COUNT_SPLICED_MULTI_UNPAIR_KEEP, ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD);
 
         GMessage("\n[INFO] Number of junctions\t\t:%10d   (good: %d / bad: %d / unstranded: %d)\n", JUNC_COUNT, JUNC_COUNT_GOOD, JUNC_COUNT_BAD, JUNC_COUNT-JUNC_COUNT_GOOD-JUNC_COUNT_BAD);
-        GMessage("\n[INFO] Number of removed alignments\t:%10d \n", ALN_COUNT_BAD);
-        GMessage("[INFO] Number of kept alignments\t:%10d \n", ALN_COUNT_GOOD);
-
-        if (ALN_COUNT_GOOD_CAL != ALN_COUNT_GOOD) GMessage("Num of cleaned alignments do not agree with each other. Calculated: %d; iter: %d\n", ALN_COUNT_GOOD_CAL, ALN_COUNT_GOOD);
+        GMessage("\n[INFO] Number of removed spliced alignments\t:%10d \n", ALN_COUNT_BAD);
+        GMessage("[INFO] Number of kept spliced alignments\t:%10d \n", ALN_COUNT_GOOD);
     } else {
         GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
         GMessage("           spliced alignments\t\t:%10d \n", ALN_COUNT_SPLICED);
-        GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ-ALN_COUNT_SPLICED_UNIQ_DISCARD, ALN_COUNT_SPLICED_UNIQ_DISCARD);
-        GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
-        
-        GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
-        GMessage("               - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ);
-        GMessage("               - multi-mapped\t\t:%10d\n", ALN_COUNT_NSPLICED_MULTI);
+        GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ_KEEP, ALN_COUNT_SPLICED_UNIQ_DISCARD);
+        GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI_KEEP, ALN_COUNT_SPLICED_MULTI_DISCARD);
+
 
         GMessage("\n[INFO] Number of junctions\t\t:%10d   (good: %d / bad: %d / unstranded: %d)\n", JUNC_COUNT, JUNC_COUNT_GOOD, JUNC_COUNT_BAD, JUNC_COUNT-JUNC_COUNT_GOOD-JUNC_COUNT_BAD);
-        GMessage("\n[INFO] Number of removed alignments\t:%10d \n", ALN_COUNT_BAD);
-        GMessage("[INFO] Number of kept alignments\t:%10d \n", ALN_COUNT_GOOD);
-
-        if (ALN_COUNT_GOOD_CAL != ALN_COUNT_GOOD) GMessage("Num of cleaned alignments do not agree with each other. Calculated: %d; iter: %d\n", ALN_COUNT_GOOD_CAL, ALN_COUNT_GOOD);
+        GMessage("\n[INFO] Number of removed spliced alignments\t:%10d \n", ALN_COUNT_BAD);
+        GMessage("[INFO] Number of kept spliced alignments\t:%10d \n", ALN_COUNT_GOOD);
     }
     return 0;
 }
@@ -416,7 +405,7 @@ void processOptions(int argc, char* argv[]) {
     *********************************/
     processOptionsClean(args);
 
-// #ifdef DEBUG
+#ifdef DEBUG
     GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
     GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
     GMessage(">> infname_scorebed  : %s\n", infname_scorebed.chars());
@@ -428,7 +417,7 @@ void processOptions(int argc, char* argv[]) {
     GMessage(">> g_max_splice      : %d\n", g_max_splice);
     GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
     GMessage(">> verbose           : %d\n", verbose);
-// #endif
+#endif
 
     args.startNonOpt();
 }
@@ -496,16 +485,16 @@ void splam_clean_valid_precheck () {
 
     bool infname_juncbed_bool = fileExists(infname_juncbed.chars())>1;
 
-    GMessage("ns_multi_map_bool: %d\n", ns_multi_map_bool);
-    GMessage("ns_uniq_map_bool: %d\n", ns_uniq_map_bool);
-    GMessage("s_multi_map_bool: %d\n", s_multi_map_bool);
-    GMessage("s_uniq_map_bool: %d\n", s_uniq_map_bool);
-    GMessage("ns_multi_unpair_bool: %d\n", ns_multi_unpair_bool);
-    GMessage("ns_uniq_unpair_bool: %d\n", ns_uniq_unpair_bool);
-    GMessage("s_multi_unpair_bool: %d\n", s_multi_unpair_bool);
-    GMessage("s_uniq_unpair_bool: %d\n", s_uniq_unpair_bool);
+    // GMessage("ns_multi_map_bool: %d\n", ns_multi_map_bool);
+    // GMessage("ns_uniq_map_bool: %d\n", ns_uniq_map_bool);
+    // GMessage("s_multi_map_bool: %d\n", s_multi_map_bool);
+    // GMessage("s_uniq_map_bool: %d\n", s_uniq_map_bool);
+    // GMessage("ns_multi_unpair_bool: %d\n", ns_multi_unpair_bool);
+    // GMessage("ns_uniq_unpair_bool: %d\n", ns_uniq_unpair_bool);
+    // GMessage("s_multi_unpair_bool: %d\n", s_multi_unpair_bool);
+    // GMessage("s_uniq_unpair_bool: %d\n", s_uniq_unpair_bool);
 
-    GMessage("infname_juncbed_bool: %d\n", infname_juncbed_bool);
+    // GMessage("infname_juncbed_bool: %d\n", infname_juncbed_bool);
 
     if (g_paired_removal) {
         if (!ns_multi_map_bool || !ns_uniq_map_bool || !s_multi_map_bool || !s_uniq_map_bool || 
