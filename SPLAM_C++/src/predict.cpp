@@ -167,13 +167,9 @@ GStr splamCreateFasta(GStr outfname_junc_bed, robin_hdd_rm_hit &doner_dimers, ro
 
     
     progressbar bar(JUNC_COUNT);
-    if (COMMAND_MODE == CLEAN) {
-        bar.set_opening_bracket_char("[INFO] SPLAM! Writing junction BED file \n\t[");
-    }
+    bar.set_opening_bracket_char("[INFO] SPLAM! Writing junction BED file \n\t[");
     while(getline(fr_junc, line)){
-        if (verbose && COMMAND_MODE == CLEAN) {
-            bar.update();
-        }
+        bar.update();
 
         std::string chromosome;
         int start = 0, end = 0;

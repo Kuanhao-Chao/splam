@@ -224,7 +224,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
 
 
     } else {
-        fprintf(stderr, ">> Insider filterSpurJuncs:wq!");
+        fprintf(stderr, ">> Insider filterSpurJuncs:wq!\n");
         /*********************************************
          * Cleaning up alignments by individuals (not-paired).
         *********************************************/
@@ -232,8 +232,9 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
         /*********************************
          * Processing spliced unique alignments
         *********************************/
+        fprintf(stderr, ">> Process spliced unique alignments\n");
         GSamReader reader_s_uniq_map(outfname_s_uniq_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
-        progressbar bar_uniq(ALN_COUNT_SPLICED_UNIQ);
+        progressbar bar_uniq(100);
         bar_uniq.set_opening_bracket_char("[INFO] SPLAM! Filtering unique spliced alignments \n\t[");
         while ( (brec = reader_s_uniq_map.next())!=NULL ) {
             ALN_COUNT_SPLICED_UNIQ += 1;
@@ -257,7 +258,7 @@ GStr filterSpurJuncs(GStr outfname_junc_score) {
          * Processing spliced multi-mapped alignments
         *********************************/
         GSamReader reader_s_multi_map(outfname_s_multi_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
-        progressbar bar_multi(ALN_COUNT_SPLICED_MULTI);
+        progressbar bar_multi(100);
         bar_multi.set_opening_bracket_char("[INFO] SPLAM! Filtering multi-mapped spliced alignments \n\t[");
         while ( (brec = reader_s_multi_map.next())!=NULL ) {
             ALN_COUNT_SPLICED_MULTI += 1;
