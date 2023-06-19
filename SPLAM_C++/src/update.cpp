@@ -117,7 +117,6 @@ GStr splamNHUpdate() {
          * Processing multip-mapped non-spliced alignments (unpaired)
         *********************************/
         update_NH_tag_write_alignment(outfname_ns_multi_map, outfile_ns_multi_map_nh_updated, processed_aln, rm_hit, ALN_COUNT_NSPLICED_MULTI);
-        ALN_COUNT_NSPLICED_MULTI += 1;
 
         /*********************************
          * Processing uniq-mapped non-spliced alignments (unpaired)
@@ -173,7 +172,8 @@ void update_NH_tag_write_alignment(GStr infname, GSamWriter *outfile, int& proce
             brec->add_int_tag("NH", new_nh);
             // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
         }
-        keepAlignment(outfile, brec);
+        int tmp = 0;
+        keepAlignment(outfile, brec, tmp);
     }
     reader.bclose();
     delete outfile;

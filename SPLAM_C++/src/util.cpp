@@ -25,9 +25,10 @@ std::string get_full_path(std::string fname){
     }
 }
 
-void keepAlignment(GSamWriter* outfile_target, GSamRecord* brec) {
+void keepAlignment(GSamWriter* outfile_target, GSamRecord* brec, int& counter) {
     outfile_target->write(brec);
-    ALN_COUNT_GOOD++;
+    counter += 1;
+    // if (count) ALN_COUNT_GOOD++;
 }
 
 static unsigned char comp_base[256] = {
