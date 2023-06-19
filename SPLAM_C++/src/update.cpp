@@ -72,16 +72,15 @@ GStr splamNHUpdate() {
 // int ALN_COUNT_NSPLICED_MULTI_UNPAIR = 0;
 
     if (g_paired_removal) {
-        // /*********************************
-        //  * Processing multip-mapped spliced temporary alignments (paired)
-        // *********************************/
-        // update_NH_tag_write_alignment(outfname_s_multi_map_cleaned, processed_aln, rm_hit, ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
+        /*********************************
+         * Processing multip-mapped spliced temporary alignments (paired)
+        *********************************/
+        update_NH_tag_write_alignment(outfname_s_multi_map_cleaned, outfile_s_multi_map_cleaned_nh_updated, processed_aln, rm_hit, "multi-mapped spliced alignments (paired)");
 
-        // /*********************************
-        //  * Processing multip-mapped non-spliced alignments (paired)
-        // *********************************/
-        // update_NH_tag_write_alignment(outfname_ns_multi_map, processed_aln, rm_hit, ALN_COUNT_NSPLICED_MULTI);
-        // ALN_COUNT_NSPLICED_MULTI += 1;
+        /*********************************
+         * Processing multip-mapped non-spliced alignments (paired)
+        *********************************/
+        update_NH_tag_write_alignment(outfname_ns_multi_map, outfile_ns_multi_map_nh_updated, processed_aln, rm_hit, "multi-mapped non-spliced alignments (paired)");
 
         // /*********************************
         //  * Processing uniq-mapped non-spliced alignments (paired)
@@ -89,17 +88,15 @@ GStr splamNHUpdate() {
         // update_NH_tag_write_alignment(outfname_ns_uniq_map, processed_aln, rm_hit, ALN_COUNT_NSPLICED_UNIQ);
         // ALN_COUNT_NSPLICED_UNIQ += 1;
 
-        // /*********************************
-        //  * Processing multip-mapped spliced temporary alignments (unpaired)
-        // *********************************/
-        // update_NH_tag_write_alignment(outfname_s_multi_unpair_cleaned, processed_aln, rm_hit, ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
-        // ALN_COUNT_NSPLICED_MULTI_UNPAIR += 1;
+        /*********************************
+         * Processing multip-mapped spliced temporary alignments (unpaired)
+        *********************************/
+        update_NH_tag_write_alignment(outfname_s_multi_unpair_cleaned, outfile_s_multi_unpair_cleaned_nh_updated, processed_aln, rm_hit, "multi-mapped spliced alignments (unpaired)");
 
-        // /*********************************
-        //  * Processing multip-mapped non-spliced alignments (unpaired)
-        // *********************************/
-        // update_NH_tag_write_alignment(outfname_ns_multi_unpair, processed_aln, rm_hit, ALN_COUNT_NSPLICED_MULTI);
-        // ALN_COUNT_NSPLICED_MULTI_UNPAIR += 1;
+        /*********************************
+         * Processing multip-mapped non-spliced alignments (unpaired)
+        *********************************/
+        update_NH_tag_write_alignment(outfname_ns_multi_unpair, outfile_ns_multi_unpair_nh_updated, processed_aln, rm_hit, "multi-mapped non-spliced alignments (unpaired)");
 
         // /*********************************
         //  * Processing uniq-mapped non-spliced alignments (unpaired)
@@ -111,12 +108,12 @@ GStr splamNHUpdate() {
         /*********************************
          * Processing multip-mapped spliced temporary alignments (unpaired)
         *********************************/
-        update_NH_tag_write_alignment(outfname_s_multi_map_cleaned, outfile_s_multi_map_cleaned_nh_updated, processed_aln, rm_hit, ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
+        update_NH_tag_write_alignment(outfname_s_multi_map_cleaned, outfile_s_multi_map_cleaned_nh_updated, processed_aln, rm_hit, "multi-mapped spliced alignments");
 
         /*********************************
          * Processing multip-mapped non-spliced alignments (unpaired)
         *********************************/
-        update_NH_tag_write_alignment(outfname_ns_multi_map, outfile_ns_multi_map_nh_updated, processed_aln, rm_hit, ALN_COUNT_NSPLICED_MULTI);
+        update_NH_tag_write_alignment(outfname_ns_multi_map, outfile_ns_multi_map_nh_updated, processed_aln, rm_hit, "multi-mapped non-spliced alignments");
 
         /*********************************
          * Processing uniq-mapped non-spliced alignments (unpaired)
@@ -150,17 +147,20 @@ void readnhHitFile(robin_hdd_rm_hit& rm_hit) {
     }   
 }
 
-void update_NH_tag_write_alignment(GStr infname, GSamWriter *outfile, int& processed_aln, robin_hdd_rm_hit rm_hit, int bar_num) {
+void update_NH_tag_write_alignment(GStr infname, GSamWriter *outfile, int& processed_aln, robin_hdd_rm_hit rm_hit, GStr log) {
     GSamReader reader(infname.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+    // fprintf(stderr, "infname: %s\n", infname.chars());
+    // progressbar bar(bar_num);
 
-    progressbar bar(bar_num);
-    bar.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments\n\t[");
+    GStr msg = "[INFO] SPLAM! Processing " + log + "\n";
+    fprintf(stderr, msg);
+    // bar.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments\n\t[");
 
     while ((brec=reader.next())!=NULL) {
         processed_aln += 1;
-        if (verbose) {
-            bar.update();
-        }
+        // if (verbose) {
+        //     bar.update();
+        // }
         std::string kv = brec->name();
         kv = kv + "_" + std::to_string(brec->pairOrder());
         // GMessage("kv: %s\n", kv.c_str());
@@ -177,5 +177,4 @@ void update_NH_tag_write_alignment(GStr infname, GSamWriter *outfile, int& proce
     }
     reader.bclose();
     delete outfile;
-    GMessage("\n");
 }
