@@ -25,7 +25,7 @@ void optionsMaxSplice(GArgs& args);
 void optionsBundleGap(GArgs& args);
 void optionsOutput(GArgs& args);
 void checkJunction(GArgs& args);
-void optionsWriteTMP(GArgs& args);
+void optionsWriteJuncOnly(GArgs& args);
 // void options2StageRun(GArgs& args);
 
 CommandMode COMMAND_MODE = UNSET;
@@ -70,7 +70,7 @@ GSamWriter* outfile_ns_multi_map = NULL;
 GSamWriter* outfile_ns_uniq_map = NULL;
 GSamWriter* outfile_s_multi_map = NULL;
 GSamWriter* outfile_s_uniq_map = NULL;
-GSamWriter* outfile_s_multi_map_tmp = NULL;
+GSamWriter* outfile_s_multi_map_cleaned = NULL;
 // Unpaired
 GSamWriter* outfile_ns_multi_unpair = NULL;
 GSamWriter* outfile_ns_uniq_unpair = NULL;
@@ -149,23 +149,18 @@ int main(int argc, char* argv[]) {
     /*********************
      * For paired uniq- / multi- mapped alignments
     *********************/
-    outfname_ns_multi_map = out_dir + "/tmp/nonsplice_multi_map.bam";
-    outfname_ns_uniq_map = out_dir + "/tmp/nonsplice_uniq_map.bam";
-    outfname_s_multi_map = out_dir + "/tmp/splice_multi_map.bam";
-    outfname_s_uniq_map = out_dir + "/tmp/splice_uniq_map.bam";
-    outfname_s_multi_map_tmp = out_dir + "/tmp/splice_multi_map_tmp.bam";
-        
+    outfname_ns_uniq_map = out_dir + "/tmp/ns_uniq.bam";
+    outfname_ns_multi_map = out_dir + "/tmp/ns_multi.bam";
+    outfname_s_uniq_map = out_dir + "/tmp/s_uniq.bam";
+    outfname_s_multi_map = out_dir + "/tmp/s_multi.bam";
+
     /*********************
      * For unpaired uniq- / multi- mapped alignments
     *********************/
-    outfname_ns_multi_unpair = out_dir + "/tmp/nonsplice_multi_unpair.bam";
-    outfname_ns_multi_unpair = out_dir + "/tmp/nonsplice_uniq_unpair.bam";
-    outfname_s_multi_unpair = out_dir + "/tmp/splice_multi_unpair.bam";
-    outfname_s_uniq_unpair = out_dir + "/tmp/splice_uniq_unpair.bam";
-    outfname_s_multi_unpair_tmp = out_dir + "/tmp/splice_multi_unpair_tmp.bam";
-
-    outfname_discard_s_uniq_map = out_dir + "/discard/discard_splice_uniq_map.bam";;
-    outfname_discard_s_multi_map = out_dir + "/discard/discard_splice_multi_map.bam";;
+    outfname_ns_uniq_unpair = out_dir + "/tmp/ns_uniq_unpair.bam";
+    outfname_ns_multi_unpair = out_dir + "/tmp/ns_multi_unpair.bam";
+    outfname_s_uniq_unpair = out_dir + "/tmp/s_uniq_unpair.bam";
+    outfname_s_multi_unpair = out_dir + "/tmp/s_multi_unpair.bam";
 
     GStr tmp_dir(out_dir + "/tmp");
     std::filesystem::create_directories(out_dir.chars());
@@ -250,7 +245,7 @@ int main(int argc, char* argv[]) {
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;paired;no-write-bam;output=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
+    GArgs args(argc, argv, "help;cite;verbose;version;paired;write-junctions-only;output=;max-splice=;bundle-gap=;hvcPVno:M:g:");
 
     if (args.getOpt('h') || args.getOpt("help")) {
         usage_extract();
@@ -272,7 +267,7 @@ void processOptions(int argc, char* argv[]) {
         GMessage("g_paired_removal: %d\n", g_paired_removal);
     }
     
-    verbose=(args.getOpt("verbose")!=NULL || args.getOpt('V')!=NULL);
+    verbose=(args.getOpt('V')!=NULL || args.getOpt("verbose")!=NULL);
     if (verbose) {
         // fprintf(stderr, "Running SPLAM " VERSION ". Command line:\n");
         args.printCmdLine(stderr);
@@ -283,7 +278,7 @@ void processOptions(int argc, char* argv[]) {
     *********************************/
     processOptionsJExtract(args);    
 
-// #ifdef DEBUG
+#ifdef DEBUG
     GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
     GMessage(">> infname_bam       : %s\n", infname_bam.chars());
     GMessage(">> out_dir           : %s\n", out_dir.chars());
@@ -291,7 +286,7 @@ void processOptions(int argc, char* argv[]) {
     GMessage(">> g_max_splice      : %d\n", g_max_splice);
     GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
     GMessage(">> verbose           : %d\n", verbose);
-// #endif
+#endif
 
     args.startNonOpt();
     if (args.getNonOptCount()==0) {
@@ -315,7 +310,7 @@ void processOptionsJExtract(GArgs& args) {
     optionsOutput(args);
     optionsMaxSplice(args);
     optionsBundleGap(args);
-    optionsWriteTMP(args);
+    optionsWriteJuncOnly(args);
 }
 
 
@@ -364,15 +359,11 @@ void optionsOutput(GArgs& args) {
     }
 }
 
-void optionsWriteTMP(GArgs& args) {
-    //--no-write-bam
-    write_bam = (args.getOpt("no-write-bam")==NULL);
-    GMessage("write_bam: %d\n", write_bam);
-    if (write_bam) {
-        GMessage(">>  Running write_bam mode\n");
-    } else {
-        GMessage(">>  Running predict mode\n");
-    }
+void optionsWriteJuncOnly(GArgs& args) {
+    //--write-junctions-only
+	if (args.getOpt('n') || args.getOpt("write-junctions-only")) {
+        write_bam = false;
+	}
 }
 
 void checkJunction(GArgs& args) {

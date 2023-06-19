@@ -61,6 +61,11 @@ ExternalProject_Add(htslib
 # Compiling splam-extract
 add_executable(splam-clean
         src/splam_clean.cpp
+        src/bam_sort.c
+        src/bam.c
+        src/sam_utils.c
+        src/sam_opts.c
+        src/bedidx.c
         src/junc_func.cpp
         src/extract.cpp
         src/predict.cpp
@@ -140,6 +145,85 @@ if(UNIX AND APPLE)
 endif()
 
 set_property(TARGET splam-extract PROPERTY CXX_STANDARD 17)
+
+
+
+
+
+
+
+############################
+# Target for building splam-test
+############################
+# Compiling splam-test
+add_executable(splam-test
+        src/splam_test.cpp
+        src/bam_sort.c
+        src/bam.c
+        src/sam_utils.c
+        src/sam_opts.c
+        src/bedidx.c)
+
+
+# target_link_libraries(splam Python::Python)
+
+add_dependencies(splam-test htslib)
+if(UNIX AND NOT APPLE)
+        target_link_libraries(splam-test stdc++fs)
+endif ()
+target_link_libraries(splam-test ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+# target_link_libraries(splam "${TORCH_LIBRARIES}")
+# target_includlse_directories(splam PRIVATE ${PYTHON_INCLUDE_DIRS})
+
+if(UNIX AND NOT APPLE)
+        target_link_libraries(splam-test  Python::Python Python::Module)
+endif()
+
+if(UNIX AND APPLE)
+        target_link_libraries(splam-test ${PYTHON_LIBRARIES})
+endif()
+
+set_property(TARGET splam-test PROPERTY CXX_STANDARD 14)
+
+
+
+
+
+# ############################
+# # Target for building splam-merge
+# ############################
+# # Compiling splam-merge
+# add_executable(splam-merge
+#         src/bam_sort.c
+#         src/bam.c
+#         src/sam_utils.c
+#         src/sam_opts.c
+#         src/bedidx.c)
+
+# # target_link_libraries(splam Python::Python)
+
+# add_dependencies(splam-merge htslib)
+# if(UNIX AND NOT APPLE)
+#         target_link_libraries(splam-merge stdc++fs)
+# endif ()
+# target_link_libraries(splam-merge ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+# # target_link_libraries(splam "${TORCH_LIBRARIES}")
+# # target_includlse_directories(splam PRIVATE ${PYTHON_INCLUDE_DIRS})
+
+# if(UNIX AND NOT APPLE)
+#         target_link_libraries(splam-merge  Python::Python Python::Module)
+# endif()
+
+# if(UNIX AND APPLE)
+#         target_link_libraries(splam-merge ${PYTHON_LIBRARIES})
+# endif()
+
+# set_property(TARGET splam-merge PROPERTY CXX_STANDARD 17)
+
+
+
+
+
 
 
 

@@ -88,8 +88,8 @@ int usage_extract(){
     "\033[1m\033[91mRequired argument:\033[0m\n"
     "\t-o / --output\t\tPath to the output directory\n\n"
     "\033[1m\033[94mOptional argument:\033[0m\n"
-    "\t-M / --max-splice:\tThe maximum intron length for the splice site.\n"
-    "\t-g / --bundle-gap:\tMinimum locus gap separation value. Reads that are mapped closer than this distance are merged together in the same processing bundle. Default: 100 (bp).\n\n"        
+    "\t-M / --max-splice <INT>:\tThe maximum intron length for the splice site.\n"
+    "\t-g / --bundle-gap <INT>:\tMinimum locus gap separation value. Reads that are mapped closer than this distance are merged together in the same processing bundle. Default: 100 (bp).\n\n"        
     // "\t-t / --threshold:\tThreshold of the number of alignments supporting a junction. Splice sites having less then the threshold are removed. Default: 100 (bp)\n\n"
     );
   return 0;
