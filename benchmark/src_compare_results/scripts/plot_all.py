@@ -60,21 +60,32 @@ def make_fig7(type):
     # calculate quartiles
     quartiles = all_species_df.quantile([0.25, 0.50, 0.75], axis=0)
     print(quartiles)
-    cols = ['b','b','b', 'r','r','r']
 
-    # iterative plotting for each column of dataframe
+    # traverse subplots column-major (top-down, left-right)
     axs = axs.flatten(order='F')
     for i in range(0,16,2):
         data = all_species_df.iloc[:,i:i+2]
         ax = axs[i//2]
-
-        sns.kdeplot(data=data, ax=ax, clip=(0.0, 1.0), fill=True, alpha=0.5).legend_.remove()
+        lines = sns.kdeplot(data=data, ax=ax, clip=(0.0, 1.0)).get_lines()
+        x1, y1 = lines[0].get_data() # SpliceAI - orange
+        x2, y2 = lines[1].get_data() # SPLAM - blue
+        #print(max(y1), max(y2))
+        p = sns.kdeplot({'SPLAM': data.iloc[:,0], 'SpliceAI-10k-noN': data.iloc[:,1]}, ax=ax, clip=(0.0, 1.0), fill=True, alpha=0.35)#.get_legend().remove()
+        #ax.legend(['SpliceAI-10k-noN', 'SPLAM'], loc='upper left', fontsize=10)
+        sns.move_legend(p, 'upper left')
         ax.tick_params(axis='x', labelsize=10)
 
-        # plot quarts
-        quarts = quartiles.iloc[:,i:i+2].values.flatten(order='F')
-        for xc, c in zip(quarts, cols):
-            ax.axvline(x=xc, c=c, alpha=0.5)
+        # plot quartiles
+        quarts = quartiles.iloc[:,i:i+2].values.flatten()
+        print(quarts)
+        for j in range(0,6,2):
+            splam_max = np.interp(quarts[j], x2, y2)
+            spliceai_max = np.interp(quarts[j+1], x1, y1)
+            ax.vlines(quarts[j], 0, splam_max, colors='b', alpha=0.4, linestyles='dashed')
+            ax.vlines(quarts[j+1], 0, spliceai_max, colors='r', alpha=0.4, linestyles='dashed')
+            if j == 2:
+                ax.vlines(quarts[j], 0, splam_max, colors='navy', alpha=1, linestyles='solid')
+                ax.vlines(quarts[j+1], 0, spliceai_max, colors='r', alpha=1, linestyles='solid')
     
         if i % 2 == 0 and i < 8:
             # x-axis species label
@@ -86,11 +97,9 @@ def make_fig7(type):
     axs[0].tick_params(axis='y', labelsize=12, width=12)
     axs[1].tick_params(axis='y', labelsize=12, width=12)
 
-    
-
     # move the legend out of the plot
-    plt.legend(['SpliceAI-10k-noN', 'SPLAM'], bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0, fontsize=10)
-    
+    #plt.legend(['SpliceAI-10k-noN', 'SPLAM'], bbox_to_anchor=(1.05, 1), loc='upper left', borderaxespad=0, fontsize=10)
+
     # display and save
     plt.tight_layout()
     plt.show()
