@@ -35,44 +35,58 @@ extern float threshold;
 extern GSamRecord* brec;
 
 
-// output file names 
+
+/*********************
+ * File name
+*********************/
 extern GStr outfname_cleaned;
-
 // Paired
-extern GStr outfname_ns_multi_map;
 extern GStr outfname_ns_uniq_map;
-extern GStr outfname_s_multi_map;
+extern GStr outfname_ns_multi_map;
+extern GStr outfname_ns_multi_map_nh_updated;
 extern GStr outfname_s_uniq_map;
-extern GStr outfname_s_multi_map_tmp;
+extern GStr outfname_s_uniq_map_cleaned;
+extern GStr outfname_s_multi_map;
+extern GStr outfname_s_multi_map_cleaned;
+extern GStr outfname_s_multi_map_cleaned_nh_updated;
 // Unpaired
-extern GStr outfname_ns_multi_unpair;
 extern GStr outfname_ns_uniq_unpair;
-extern GStr outfname_s_multi_unpair;
+extern GStr outfname_ns_multi_unpair;
+extern GStr outfname_ns_multi_unpair_nh_updated;
 extern GStr outfname_s_uniq_unpair;
-extern GStr outfname_s_multi_unpair_tmp;
-
+extern GStr outfname_s_uniq_unpair_cleaned;
+extern GStr outfname_s_multi_unpair;
+extern GStr outfname_s_multi_unpair_cleaned;
+extern GStr outfname_s_multi_unpair_cleaned_nh_updated;
+// Discarded
 extern GStr outfname_discard_s_uniq_map;
 extern GStr outfname_discard_s_multi_map;
 
-// GSamWriter 
+/*********************
+ * GSamWriter
+*********************/
 extern GSamWriter* outfile_cleaned;
-extern GSamWriter* outfile_cleaned_2stage;
 // Paired
-extern GSamWriter* outfile_ns_multi_map;
 extern GSamWriter* outfile_ns_uniq_map;
-extern GSamWriter* outfile_s_multi_map;
+extern GSamWriter* outfile_ns_multi_map;
+extern GSamWriter* outfile_ns_multi_map_nh_updated;
 extern GSamWriter* outfile_s_uniq_map;
-extern GSamWriter* outfile_s_multi_map_tmp;
+extern GSamWriter* outfile_s_uniq_map_cleaned;
+extern GSamWriter* outfile_s_multi_map;
+extern GSamWriter* outfile_s_multi_map_cleaned;
+extern GSamWriter* outfile_s_multi_map_cleaned_nh_updated;
 // Unpaired
-extern GSamWriter* outfile_ns_multi_unpair;
 extern GSamWriter* outfile_ns_uniq_unpair;
-extern GSamWriter* outfile_s_multi_unpair;
+extern GSamWriter* outfile_ns_multi_unpair;
+extern GSamWriter* outfile_ns_multi_unpair_nh_updated;
 extern GSamWriter* outfile_s_uniq_unpair;
-extern GSamWriter* outfile_s_multi_unpair_tmp;
-
+extern GSamWriter* outfile_s_uniq_unpair_cleaned;
+extern GSamWriter* outfile_s_multi_unpair;
+extern GSamWriter* outfile_s_multi_unpair_cleaned;
+extern GSamWriter* outfile_s_multi_unpair_cleaned_nh_updated;
+// Discarded
 extern GSamWriter* outfile_discard_s_uniq_map;
 extern GSamWriter* outfile_discard_s_multi_map;
-
 
 extern FILE* joutf;
 
