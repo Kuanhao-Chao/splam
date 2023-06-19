@@ -225,16 +225,16 @@ int main(int argc, char* argv[]) {
         // Printing for unpaired alignment
         GMessage("           unpaired alignments\t\t:%10d \n", ALN_COUNT_UNPAIR);
         GMessage("               spliced alignments\t:%10d \n", ALN_COUNT_SPLICED_UNPAIR);
-        GMessage("                   - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ_UNPAIR, ALN_COUNT_SPLICED_UNIQ_UNPAIR-ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD, ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD);
-        GMessage("                   - multi-mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI_UNPAIR, ALN_COUNT_SPLICED_MULTI_UNPAIR-ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD, ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD);
+        GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_SPLICED_UNIQ_UNPAIR);
+        GMessage("                   - multi-mapped\t:%10d\n", ALN_COUNT_SPLICED_MULTI_UNPAIR);
         GMessage("               non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED_UNPAIR);
         GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ_UNPAIR);
         GMessage("                   - multi-mapped\t:%10d\n\n", ALN_COUNT_NSPLICED_MULTI_UNPAIR);
     } else {
         GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
         GMessage("           spliced alignments\t\t:%10d \n", ALN_COUNT_SPLICED);
-        GMessage("               - uniquely mapped\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_UNIQ, ALN_COUNT_SPLICED_UNIQ-ALN_COUNT_SPLICED_UNIQ_DISCARD, ALN_COUNT_SPLICED_UNIQ_DISCARD);
-        GMessage("               - multi-mapped\t\t:%10d   (kept: %d / removed: %d )\n", ALN_COUNT_SPLICED_MULTI, ALN_COUNT_SPLICED_MULTI-ALN_COUNT_SPLICED_MULTI_DISCARD, ALN_COUNT_SPLICED_MULTI_DISCARD);
+        GMessage("               - uniquely mapped\t:%10d\n", ALN_COUNT_SPLICED_UNIQ);
+        GMessage("               - multi-mapped\t\t:%10d\n", ALN_COUNT_SPLICED_MULTI);
         
         GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
         GMessage("               - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ);

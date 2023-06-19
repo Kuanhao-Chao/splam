@@ -3156,11 +3156,6 @@ static void complain_about_memory_setting(size_t max_mem) {
 
 int bam_sort(int argc, char *argv[])
 {
-    for (int i = 0; i < argc; i++) {
-        fprintf(stderr, "Argument : %s\n", argv[i]);
-    }
-
-
     size_t max_mem = SORT_DEFAULT_MEGS_PER_THREAD << 20;
     int c, nargs, ret, o_seen = 0, level = -1, no_pg = 0;
     SamOrder sam_order = Coordinate;

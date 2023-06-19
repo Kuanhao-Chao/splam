@@ -30,11 +30,11 @@ void processOptions(int argc, char* argv[]);
 void processOptionsClean(GArgs& args);
 
 void optionsOutput(GArgs& args);
+void optionsThreads(GArgs& args);
 void optionsWriteTMP(GArgs& args);
 // void options2StageRun(GArgs& args);
 
-CommandMode COMMAND_MODE = UNSET;
-GStr command_str;
+GStr thread_num = 1;
 
 // input file names 
 GStr infname_model_name("");
@@ -221,38 +221,6 @@ int main(int argc, char* argv[]) {
     outfname_discard_s_uniq_map = out_dir + "/discard/discard_splice_uniq_map.bam";
     outfname_discard_s_multi_map = out_dir + "/discard/discard_splice_multi_map.bam";
 
-    /*********************
-     * Paired GSamWriter
-    *********************/
-    GSamWriter* outfile_cleaned = NULL;
-    // None
-    // GSamWriter* outfile_ns_uniq_map = NULL;
-    // (1) NH updated
-    // GSamWriter* outfile_ns_multi_map = NULL;
-    GSamWriter* outfile_ns_multi_map_nh_updated = NULL;
-    // (1) cleaned
-    // GSamWriter* outfile_s_uniq_map = NULL;
-    GSamWriter* outfile_s_uniq_map_cleaned = NULL;
-    // (1) cleaned, (2) NH updated
-    // GSamWriter* outfile_s_multi_map = NULL;
-    GSamWriter* outfile_s_multi_map_cleaned = NULL;
-    GSamWriter* outfile_s_multi_map_cleaned_nh_updated = NULL;
-    /*********************
-     * Unpaired GSamWriter
-    *********************/
-    // None
-    // GSamWriter* outfile_ns_uniq_unpair = NULL;
-    // (1) NH updated
-    // GSamWriter* outfile_ns_multi_unpair = NULL;
-    GSamWriter* outfile_ns_multi_unpair_nh_updated = NULL;
-    // (1) cleaned
-    // GSamWriter* outfile_s_uniq_unpair = NULL;
-    GSamWriter* outfile_s_uniq_unpair_cleaned = NULL;
-    // (1) cleaned, (2) NH updated
-    // GSamWriter* outfile_s_multi_unpair = NULL;
-    GSamWriter* outfile_s_multi_unpair_cleaned = NULL;
-    GSamWriter* outfile_s_multi_unpair_cleaned_nh_updated = NULL;
-
     // The junction score file
     infname_juncbed = out_dir + "/junction_score.bed";
 
@@ -305,12 +273,14 @@ int main(int argc, char* argv[]) {
     /*********************
      * Merging all files into a clean BAM file
     *********************/
-
-
-    // char *test[] = {"-f", outfname_ns_uniq_map.chars(), outfname_ns_multi_map.chars(), outfname_s_};
-    // bam_sort(10, test);
-    // bam_merge(10, test);
-
+    if (g_paired_removal) {
+        
+    } else {
+        int argc_merge = 9;
+        char *test[] = {"samtools", "merge", "-@", (char*)thread_num.chars(), "-f", "-o", (char*)outfname_cleaned.chars(), (char*)outfname_ns_uniq_map.chars(), (char*)outfname_ns_multi_map_nh_updated.chars(), (char*)outfname_s_uniq_map_cleaned.chars(), (char*)outfname_s_multi_map_cleaned_nh_updated.chars()};
+        // bam_sort(10, test);
+        bam_merge(argc_merge-1, test+1);
+    }
     // int argc_merge = 2;
     // char* argv_merge = new char[2];
 
@@ -377,8 +347,6 @@ int main(int argc, char* argv[]) {
         GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ_UNPAIR);
         GMessage("                   - multi-mapped\t:%10d\n\n", ALN_COUNT_NSPLICED_MULTI_UNPAIR);
 
-
-
         GMessage("\n[INFO] Number of junctions\t\t:%10d   (good: %d / bad: %d / unstranded: %d)\n", JUNC_COUNT, JUNC_COUNT_GOOD, JUNC_COUNT_BAD, JUNC_COUNT-JUNC_COUNT_GOOD-JUNC_COUNT_BAD);
         GMessage("\n[INFO] Number of removed alignments\t:%10d \n", ALN_COUNT_BAD);
         GMessage("[INFO] Number of kept alignments\t:%10d \n", ALN_COUNT_GOOD);
@@ -404,9 +372,8 @@ int main(int argc, char* argv[]) {
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;paired-removal;junction;no-write-bam;2-stage-run;model=;output=;score=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
+    GArgs args(argc, argv, "help;cite;verbose;version;paired-removal;no-write-bam;output=;threads=;hvcVSPJo:N:Q:m:r:s:M:g:@:");
     // args.printError(usage_clean, true);
-    command_str=args.nextNonOpt();
     if (argc == 0) {
         usage_clean();
         GERROR("\n[ERROR] No command provide. The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
@@ -450,13 +417,13 @@ void processOptions(int argc, char* argv[]) {
     processOptionsClean(args);
 
 // #ifdef DEBUG
-    GMessage(">>  command_str      : %s\n", command_str.chars());
     GMessage(">> infname_model_name: %s\n", infname_model_name.chars());
     GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
     GMessage(">> infname_scorebed  : %s\n", infname_scorebed.chars());
     GMessage(">> infname_reffa     : %s\n", infname_reffa.chars());
     GMessage(">> infname_bam       : %s\n", infname_bam.chars());
     GMessage(">> out_dir           : %s\n", out_dir.chars());
+    GMessage(">> thread_num        : %s\n", thread_num.chars());
     GMessage(">> g_paired_removal  : %d\n", g_paired_removal);
     GMessage(">> g_max_splice      : %d\n", g_max_splice);
     GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
@@ -468,6 +435,7 @@ void processOptions(int argc, char* argv[]) {
 
 void processOptionsClean(GArgs& args) {
     optionsOutput(args);
+    optionsThreads(args);
 }
 
 
@@ -487,6 +455,21 @@ void optionsOutput(GArgs& args) {
     }
 }
 
+
+void optionsThreads(GArgs& args) {
+    // -@ / --threads
+    GStr s;
+    s = args.getOpt('@');
+    if (!s.is_empty()) {
+        thread_num = s;
+    } else {
+        s=args.getOpt("threads");
+        if (!s.is_empty()) {
+            // Use the default bundle-gap
+            thread_num = s;
+        }
+    }
+}
 
 void optionsWriteTMP(GArgs& args) {
     //--no-write-bam

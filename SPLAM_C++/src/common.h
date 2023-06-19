@@ -17,7 +17,7 @@ extern robin_hood::unordered_map<std::string, int>  CHRS;
 extern TInputFiles in_records;
 extern TInputRecord* irec;
 
-extern CommandMode COMMAND_MODE;
+extern GStr thread_num;
 
 extern GStr infname_model_name;
 extern GStr infname_reffa;

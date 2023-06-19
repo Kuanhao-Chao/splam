@@ -72,51 +72,51 @@ GStr splamNHUpdate() {
 // int ALN_COUNT_NSPLICED_MULTI_UNPAIR = 0;
 
     if (g_paired_removal) {
-        /*********************************
-         * Processing multip-mapped spliced temporary alignments (paired)
-        *********************************/
-        update_NH_tag_write_alignment(outfname_s_multi_map_cleaned, processed_aln, rm_hit, ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
+        // /*********************************
+        //  * Processing multip-mapped spliced temporary alignments (paired)
+        // *********************************/
+        // update_NH_tag_write_alignment(outfname_s_multi_map_cleaned, processed_aln, rm_hit, ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
 
-        /*********************************
-         * Processing multip-mapped non-spliced alignments (paired)
-        *********************************/
-        update_NH_tag_write_alignment(outfname_ns_multi_map, processed_aln, rm_hit, ALN_COUNT_NSPLICED_MULTI);
-        ALN_COUNT_NSPLICED_MULTI += 1;
+        // /*********************************
+        //  * Processing multip-mapped non-spliced alignments (paired)
+        // *********************************/
+        // update_NH_tag_write_alignment(outfname_ns_multi_map, processed_aln, rm_hit, ALN_COUNT_NSPLICED_MULTI);
+        // ALN_COUNT_NSPLICED_MULTI += 1;
 
-        /*********************************
-         * Processing uniq-mapped non-spliced alignments (paired)
-        *********************************/
-        update_NH_tag_write_alignment(outfname_ns_uniq_map, processed_aln, rm_hit, ALN_COUNT_NSPLICED_UNIQ);
-        ALN_COUNT_NSPLICED_UNIQ += 1;
+        // /*********************************
+        //  * Processing uniq-mapped non-spliced alignments (paired)
+        // *********************************/
+        // update_NH_tag_write_alignment(outfname_ns_uniq_map, processed_aln, rm_hit, ALN_COUNT_NSPLICED_UNIQ);
+        // ALN_COUNT_NSPLICED_UNIQ += 1;
 
-        /*********************************
-         * Processing multip-mapped spliced temporary alignments (unpaired)
-        *********************************/
-        update_NH_tag_write_alignment(outfname_s_multi_unpair_cleaned, processed_aln, rm_hit, ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
-        ALN_COUNT_NSPLICED_MULTI_UNPAIR += 1;
+        // /*********************************
+        //  * Processing multip-mapped spliced temporary alignments (unpaired)
+        // *********************************/
+        // update_NH_tag_write_alignment(outfname_s_multi_unpair_cleaned, processed_aln, rm_hit, ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
+        // ALN_COUNT_NSPLICED_MULTI_UNPAIR += 1;
 
-        /*********************************
-         * Processing multip-mapped non-spliced alignments (unpaired)
-        *********************************/
-        update_NH_tag_write_alignment(outfname_ns_multi_unpair, processed_aln, rm_hit, ALN_COUNT_NSPLICED_MULTI);
-        ALN_COUNT_NSPLICED_MULTI_UNPAIR += 1;
+        // /*********************************
+        //  * Processing multip-mapped non-spliced alignments (unpaired)
+        // *********************************/
+        // update_NH_tag_write_alignment(outfname_ns_multi_unpair, processed_aln, rm_hit, ALN_COUNT_NSPLICED_MULTI);
+        // ALN_COUNT_NSPLICED_MULTI_UNPAIR += 1;
 
-        /*********************************
-         * Processing uniq-mapped non-spliced alignments (unpaired)
-        *********************************/
-        update_NH_tag_write_alignment(outfname_ns_uniq_unpair, processed_aln, rm_hit, ALN_COUNT_NSPLICED_UNIQ);
-        ALN_COUNT_NSPLICED_UNIQ_UNPAIR += 1;
+        // /*********************************
+        //  * Processing uniq-mapped non-spliced alignments (unpaired)
+        // *********************************/
+        // update_NH_tag_write_alignment(outfname_ns_uniq_unpair, processed_aln, rm_hit, ALN_COUNT_NSPLICED_UNIQ);
+        // ALN_COUNT_NSPLICED_UNIQ_UNPAIR += 1;
 
     } else {
         /*********************************
          * Processing multip-mapped spliced temporary alignments (unpaired)
         *********************************/
-        update_NH_tag_write_alignment(outfname_s_multi_map_cleaned_nh_updated, processed_aln, rm_hit, ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
+        update_NH_tag_write_alignment(outfname_s_multi_map_cleaned, outfile_s_multi_map_cleaned_nh_updated, processed_aln, rm_hit, ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD);
 
         /*********************************
          * Processing multip-mapped non-spliced alignments (unpaired)
         *********************************/
-        update_NH_tag_write_alignment(outfname_ns_multi_map_nh_updated, processed_aln, rm_hit, ALN_COUNT_NSPLICED_MULTI);
+        update_NH_tag_write_alignment(outfname_ns_multi_map, outfile_ns_multi_map_nh_updated, processed_aln, rm_hit, ALN_COUNT_NSPLICED_MULTI);
         ALN_COUNT_NSPLICED_MULTI += 1;
 
         /*********************************
@@ -126,7 +126,6 @@ GStr splamNHUpdate() {
         // ALN_COUNT_NSPLICED_UNIQ += 1;
     }
 
-    delete outfile_cleaned;
     if (verbose) {
         GMessage("[INFO] %d alignments processed.\n", 
         ALN_COUNT_SPLICED_MULTI - ALN_COUNT_SPLICED_MULTI_DISCARD + 
@@ -152,8 +151,8 @@ void readnhHitFile(robin_hdd_rm_hit& rm_hit) {
     }   
 }
 
-void update_NH_tag_write_alignment(GStr outfname, int& processed_aln, robin_hdd_rm_hit rm_hit, int bar_num) {
-    GSamReader reader(outfname.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
+void update_NH_tag_write_alignment(GStr infname, GSamWriter *outfile, int& processed_aln, robin_hdd_rm_hit rm_hit, int bar_num) {
+    GSamReader reader(infname.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
 
     progressbar bar(bar_num);
     bar.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments\n\t[");
@@ -174,8 +173,9 @@ void update_NH_tag_write_alignment(GStr outfname, int& processed_aln, robin_hdd_
             brec->add_int_tag("NH", new_nh);
             // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
         }
-        keepAlignment(outfile_cleaned, brec);
+        keepAlignment(outfile, brec);
     }
     reader.bclose();
+    delete outfile;
     GMessage("\n");
 }
