@@ -101,12 +101,12 @@ GStr filterSpurJuncs(GStr outfname_junc, GStr outfname_junc_score) {
         *********************************/
         GSamReader reader_s_uniq_map(outfname_s_uniq_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
         GSamRecord* uniq_brec_1st;
-        progressbar bar_uniq(ALN_COUNT_SPLICED_UNIQ);
-        bar_uniq.set_opening_bracket_char("[INFO] SPLAM! Filtering unique spliced alignments (paired) \n\t[");
+        // progressbar bar_uniq(ALN_COUNT_SPLICED_UNIQ);
+        fprintf(stderr, "[INFO] SPLAM! Filtering spliced unique alignments (paired) \n");
         while ( (brec = reader_s_uniq_map.next())!=NULL ) {
-            if (verbose) {
-                bar_uniq.update();
-            }
+            // if (verbose) {
+            //     bar_uniq.update();
+            // }
             bool spur = alignmentAssessment(brec, rm_juncs);
             uniq_brec_1st = new GSamRecord(*brec);
             brec = reader_s_uniq_map.next();
@@ -132,7 +132,6 @@ GStr filterSpurJuncs(GStr outfname_junc, GStr outfname_junc_score) {
         }
         ALN_COUNT_SPLICED_UNIQ = ALN_COUNT_SPLICED_UNIQ_KEEP + ALN_COUNT_SPLICED_UNIQ_DISCARD;
         reader_s_uniq_map.bclose();
-        if (verbose) GMessage("\n");
 
 
         /*********************************
@@ -140,12 +139,13 @@ GStr filterSpurJuncs(GStr outfname_junc, GStr outfname_junc_score) {
         *********************************/
         GSamReader reader_s_multi_map(outfname_s_multi_map.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
         GSamRecord* multi_brec_1st;
-        progressbar bar_multi(ALN_COUNT_SPLICED_MULTI);
-        bar_multi.set_opening_bracket_char("[INFO] SPLAM! Filtering multi-mapped spliced alignments (paired) \n\t[");
+        // progressbar bar_multi(ALN_COUNT_SPLICED_MULTI);
+        // bar_multi.set_opening_bracket_char("[INFO] SPLAM! Filtering spliced multi-mapped alignments (paired) \n\t[");
+        fprintf(stderr, "[INFO] SPLAM! Filtering spliced multi-mapped alignments (paired) \n");
         while ( (brec = reader_s_multi_map.next())!=NULL ) {
-            if (verbose) {
-                bar_multi.update();
-            }
+            // if (verbose) {
+            //     bar_multi.update();
+            // }
 
             bool spur = alignmentAssessment(brec, rm_juncs);
             multi_brec_1st = new GSamRecord(*brec);
@@ -171,19 +171,18 @@ GStr filterSpurJuncs(GStr outfname_junc, GStr outfname_junc_score) {
         }
         ALN_COUNT_SPLICED_MULTI = ALN_COUNT_SPLICED_MULTI_KEEP + ALN_COUNT_SPLICED_MULTI_DISCARD;
         reader_s_multi_map.bclose();
-        if (verbose) GMessage("\n");
 
 
         /*********************************
          * Processing spliced uniq unpaired alignments
         *********************************/
-        clean_BAM_one(outfname_s_uniq_unpair, outfile_s_uniq_unpair_cleaned, outfile_discard_s_uniq_map, ALN_COUNT_SPLICED_UNIQ_UNPAIR_KEEP, ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD,  "unique spliced alignments (unpaired)", rm_juncs, rm_hit);
+        clean_BAM_one(outfname_s_uniq_unpair, outfile_s_uniq_unpair_cleaned, outfile_discard_s_uniq_map, ALN_COUNT_SPLICED_UNIQ_UNPAIR_KEEP, ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD,  "spliced unique alignments (unpaired)", rm_juncs, rm_hit);
         ALN_COUNT_SPLICED_UNIQ_UNPAIR = ALN_COUNT_SPLICED_UNIQ_UNPAIR_KEEP + ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD;
 
         /*********************************
          * Processing spliced multi unpaired alignments
         *********************************/
-        clean_BAM_one(outfname_s_multi_unpair, outfile_s_multi_unpair_cleaned, outfile_discard_s_multi_map, ALN_COUNT_SPLICED_MULTI_UNPAIR_KEEP, ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD, "multi-mapped spliced alignments (unpaired)", rm_juncs, rm_hit);
+        clean_BAM_one(outfname_s_multi_unpair, outfile_s_multi_unpair_cleaned, outfile_discard_s_multi_map, ALN_COUNT_SPLICED_MULTI_UNPAIR_KEEP, ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD, "spliced multi-mapped alignments (unpaired)", rm_juncs, rm_hit);
         ALN_COUNT_SPLICED_MULTI_UNPAIR = ALN_COUNT_SPLICED_MULTI_UNPAIR_KEEP + ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD;
     } else {
         /*********************************************
@@ -192,13 +191,13 @@ GStr filterSpurJuncs(GStr outfname_junc, GStr outfname_junc_score) {
         /*********************************
          * Processing spliced unique alignments
         *********************************/
-        clean_BAM_one(outfname_s_uniq_map, outfile_s_uniq_map_cleaned, outfile_discard_s_uniq_map, ALN_COUNT_SPLICED_UNIQ_KEEP, ALN_COUNT_SPLICED_UNIQ_DISCARD, "unique spliced alignments", rm_juncs, rm_hit);
+        clean_BAM_one(outfname_s_uniq_map, outfile_s_uniq_map_cleaned, outfile_discard_s_uniq_map, ALN_COUNT_SPLICED_UNIQ_KEEP, ALN_COUNT_SPLICED_UNIQ_DISCARD, "spliced unique alignments", rm_juncs, rm_hit);
         ALN_COUNT_SPLICED_UNIQ = ALN_COUNT_SPLICED_UNIQ_KEEP + ALN_COUNT_SPLICED_UNIQ_DISCARD;
 
         /*********************************
          * Processing spliced multi-mapped alignments
         *********************************/
-        clean_BAM_one(outfname_s_multi_map, outfile_s_multi_map_cleaned, outfile_discard_s_multi_map, ALN_COUNT_SPLICED_MULTI_KEEP, ALN_COUNT_SPLICED_MULTI_DISCARD, "multi-mapped spliced alignments", rm_juncs, rm_hit);
+        clean_BAM_one(outfname_s_multi_map, outfile_s_multi_map_cleaned, outfile_discard_s_multi_map, ALN_COUNT_SPLICED_MULTI_KEEP, ALN_COUNT_SPLICED_MULTI_DISCARD, "spliced multi-mapped alignments", rm_juncs, rm_hit);
         ALN_COUNT_SPLICED_MULTI = ALN_COUNT_SPLICED_MULTI_KEEP + ALN_COUNT_SPLICED_MULTI_DISCARD;
     }
 
@@ -209,6 +208,10 @@ GStr filterSpurJuncs(GStr outfname_junc, GStr outfname_junc_score) {
 
     delete outfile_s_uniq_map_cleaned;
     delete outfile_s_multi_map_cleaned;
+    if (g_paired_removal) {
+        delete outfile_s_uniq_unpair_cleaned;
+        delete outfile_s_multi_unpair_cleaned;
+    }
     delete outfile_discard_s_uniq_map;
     delete outfile_discard_s_multi_map;
 
@@ -528,7 +531,7 @@ void clean_BAM_one(GStr outfname, GSamWriter* outfile_kept, GSamWriter* outfile_
     GSamReader reader(outfname.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
     // progressbar bar(counter);
     GStr msg = "[INFO] SPLAM! Filtering "+log + "\n";
-    GMessage(msg.chars());
+    fprintf(stderr, msg.chars());
     // bar.set_opening_bracket_char(msg.chars());
     while ( (brec = reader.next())!=NULL ) {
         // if (verbose) {
@@ -543,5 +546,4 @@ void clean_BAM_one(GStr outfname, GSamWriter* outfile_kept, GSamWriter* outfile_
         }
     }
     reader.bclose();
-    if (verbose) GMessage("\n");
 }
