@@ -88,12 +88,10 @@ def write_donor_acceptor_fasta(bed_file, reference_genome):
     sequences = bed_f.sequence(fi=reference_genome, s=True)
 
     fasta_f = os.path.splitext(bed_file)[0]+ ".fasta"
-    print("fasta_f: ", fasta_f)
-
     b = sequences.save_seqs(fasta_f)
     return fasta_f
 
-def concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta):
+def concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta, verbose):
     output_file = os.path.dirname(donor_fasta) + "/junction.fa"
     fw = open(output_file, "w")
     fr_donor = open(donor_fasta, "r")
@@ -126,12 +124,6 @@ def concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta):
         a_splits = lines_a[idx].split(":")[1].split("(")
         a_start, a_end = a_splits[0].split("-")
         a_strand = a_splits[1][0]
-
-        # print("donor   : ", d_start, d_end)
-        # print("d_strand: ", d_strand)
-
-        # print("Acceptor   : ", a_start, a_end)
-        # print("a_strand: ", a_strand)
 
         if strand == "+":
             donor_pos = int(d_start) + config.QUARTER_SEQ_LEN
@@ -196,20 +188,21 @@ def concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta):
             noncanonical_a_count += 1
 
     # output stats
-    print("Number of skips due to N in dimer: ", num_skipped)
+    # print("Number of skips due to N in dimer: ", num_skipped)
 
-    print("Canonical donor count: ", canonical_d_count)
-    print("Noncanonical donor count: ", noncanonical_d_count)
-    print("Canonical acceptor count: ", canonical_a_count)
-    print("Noncanonical acceptor count: ", noncanonical_a_count)
-    for key, value in donors.items():
-        print("Donor   : ", key, " (", value, ")")
-    for key, value in acceptors.items():
-        print("Acceptor: ", key, " (", value, ")")
+    if verbose:
+        print("[Info] Loading splice site statistics ...")
+        print("[Info] Canonical donor count: ", canonical_d_count)
+        print("[Info] Noncanonical donor count: ", noncanonical_d_count)
+        print("[Info] Canonical acceptor count: ", canonical_a_count)
+        print("[Info] Noncanonical acceptor count: ", noncanonical_a_count)
+        for key, value in donors.items():
+            print("\tDonor   : ", key, " (", value, ")")
+        for key, value in acceptors.items():
+            print("\tAcceptor: ", key, " (", value, ")")
 
     fw.close()
     fr_acceptor.close()
     fr_donor.close()
 
     return output_file
-

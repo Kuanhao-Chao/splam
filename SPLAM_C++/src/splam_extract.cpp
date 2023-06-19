@@ -25,18 +25,14 @@ void optionsMaxSplice(GArgs& args);
 void optionsBundleGap(GArgs& args);
 void optionsOutput(GArgs& args);
 void checkJunction(GArgs& args);
-void optionsJunction(GArgs& args);
-void optionsWriteTMP(GArgs& args);
+void optionsWriteJuncOnly(GArgs& args);
 // void options2StageRun(GArgs& args);
 
 CommandMode COMMAND_MODE = UNSET;
-GStr command_str;
 
 // input file names 
 GStr infname_bam("");
 GStr infname_juncbed("");
-GStr infname_scorebed("");
-GStr infname_NH_tag("");
 GStr out_dir;
 
 bool verbose = false;
@@ -50,7 +46,6 @@ GSamRecord* brec=NULL;
 
 // output file names 
 GStr outfname_cleaned;
-GStr outfname_cleaned_2stage;
 
 // Paired
 GStr outfname_ns_multi_map;
@@ -70,22 +65,18 @@ GStr outfname_discard_s_multi_map;
 
 // GSamWriter 
 GSamWriter* outfile_cleaned = NULL;
-GSamWriter* outfile_cleaned_2stage = NULL;
 // Paired
 GSamWriter* outfile_ns_multi_map = NULL;
 GSamWriter* outfile_ns_uniq_map = NULL;
 GSamWriter* outfile_s_multi_map = NULL;
 GSamWriter* outfile_s_uniq_map = NULL;
-GSamWriter* outfile_s_multi_map_tmp = NULL;
+GSamWriter* outfile_s_multi_map_cleaned = NULL;
 // Unpaired
 GSamWriter* outfile_ns_multi_unpair = NULL;
 GSamWriter* outfile_ns_uniq_unpair = NULL;
 GSamWriter* outfile_s_multi_unpair = NULL;
 GSamWriter* outfile_s_uniq_unpair = NULL;
 GSamWriter* outfile_s_multi_unpair_tmp = NULL;
-
-GSamWriter* outfile_discard_s_uniq_map = NULL;
-GSamWriter* outfile_discard_s_multi_map = NULL;
 
 FILE* joutf=NULL;
 
@@ -100,24 +91,41 @@ int JUNC_COUNT = 0;
 int JUNC_COUNT_GOOD = 0;
 int JUNC_COUNT_BAD = 0;
 
-robin_hood::unordered_map<std::string, int>  CHRS;
+// Paired
+int ALN_COUNT_SPLICED = 0;
+int ALN_COUNT_NSPLICED = 0;
+int ALN_COUNT_PAIRED = 0;
+int ALN_COUNT_SPLICED_UNIQ = 0;
+int ALN_COUNT_SPLICED_MULTI = 0;
+int ALN_COUNT_SPLICED_UNIQ_DISCARD = 0;
+int ALN_COUNT_SPLICED_MULTI_DISCARD = 0;
+int ALN_COUNT_NSPLICED_UNIQ = 0;
+int ALN_COUNT_NSPLICED_MULTI = 0;
 
+
+// Unpaired
+int ALN_COUNT_SPLICED_UNPAIR = 0;
+int ALN_COUNT_NSPLICED_UNPAIR = 0;
+int ALN_COUNT_UNPAIR = 0;
+int ALN_COUNT_SPLICED_UNIQ_UNPAIR = 0;
+int ALN_COUNT_SPLICED_MULTI_UNPAIR = 0;
+int ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD = 0;
+int ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD = 0;
+int ALN_COUNT_NSPLICED_UNIQ_UNPAIR = 0;
+int ALN_COUNT_NSPLICED_MULTI_UNPAIR = 0;
 int STEP_COUNTER = 0;
 
 // j-extract parameters:
 int g_max_splice = 100000;
 int g_bundle_gap = 100000;
-GSamWriter* outfile_above_spliced = NULL;
-GSamWriter* outfile_below_spliced = NULL;
-FILE* joutf_above=NULL;
-FILE* joutf_below=NULL;
 
 // predict parameters:
 bool write_bam = true;
 
 // clean parameters:
 bool g_paired_removal = false;
-bool g_2_stage_run = false;
+
+robin_hood::unordered_map<std::string, int>  CHRS;
 
 int main(int argc, char* argv[]) {
     GMessage(
@@ -125,12 +133,12 @@ int main(int argc, char* argv[]) {
             "An accurate spliced alignment pruner and spliced junction predictor.\n"
             "==========================================================================================\n");
     const char *banner = R"""(
-  ███████╗██████╗ ██╗      █████╗ ███╗   ███╗    ██╗
-  ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║    ██║
-  ███████╗██████╔╝██║     ███████║██╔████╔██║    ██║
-  ╚════██║██╔═══╝ ██║     ██╔══██║██║╚██╔╝██║    ╚═╝
-  ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║    ██╗
-  ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝    ╚═╝
+  ███████╗██████╗ ██╗      █████╗ ███╗   ███╗
+  ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║
+  ███████╗██████╔╝██║     ███████║██╔████╔██║
+  ╚════██║██╔═══╝ ██║     ██╔══██║██║╚██╔╝██║
+  ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║
+  ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
     )""";
     std::cout << banner << std::endl;
     
@@ -138,30 +146,23 @@ int main(int argc, char* argv[]) {
     processOptions(argc, argv);
 
     outfname_cleaned = out_dir + "/cleaned.bam";
-    outfname_cleaned_2stage = out_dir + "/cleaned_2stage.bam";
     /*********************
      * For paired uniq- / multi- mapped alignments
     *********************/
-    outfname_ns_multi_map = out_dir + "/TMP/nonsplice_multi_map.bam";
-    outfname_ns_uniq_map = out_dir + "/TMP/nonsplice_uniq_map.bam";
-    outfname_s_multi_map = out_dir + "/TMP/splice_multi_map.bam";
-    outfname_s_uniq_map = out_dir + "/TMP/splice_uniq_map.bam";
-    outfname_s_multi_map_tmp = out_dir + "/TMP/splice_multi_map_tmp.bam";
-        
+    outfname_ns_uniq_map = out_dir + "/tmp/ns_uniq.bam";
+    outfname_ns_multi_map = out_dir + "/tmp/ns_multi.bam";
+    outfname_s_uniq_map = out_dir + "/tmp/s_uniq.bam";
+    outfname_s_multi_map = out_dir + "/tmp/s_multi.bam";
+
     /*********************
      * For unpaired uniq- / multi- mapped alignments
     *********************/
-    outfname_ns_multi_unpair = out_dir + "/TMP/nonsplice_multi_unpair.bam";
-    outfname_ns_multi_unpair = out_dir + "/TMP/nonsplice_uniq_unpair.bam";
-    outfname_s_multi_unpair = out_dir + "/TMP/splice_multi_unpair.bam";
-    outfname_s_uniq_unpair = out_dir + "/TMP/splice_uniq_unpair.bam";
-    outfname_s_multi_unpair_tmp = out_dir + "/TMP/splice_multi_unpair_tmp.bam";
+    outfname_ns_uniq_unpair = out_dir + "/tmp/ns_uniq_unpair.bam";
+    outfname_ns_multi_unpair = out_dir + "/tmp/ns_multi_unpair.bam";
+    outfname_s_uniq_unpair = out_dir + "/tmp/s_uniq_unpair.bam";
+    outfname_s_multi_unpair = out_dir + "/tmp/s_multi_unpair.bam";
 
-    outfname_discard_s_uniq_map = out_dir + "/discard/discard_splice_uniq_map.bam";;
-    outfname_discard_s_multi_map = out_dir + "/discard/discard_splice_multi_map.bam";;
-
-    GStr tmp_dir(out_dir + "/TMP");
-    GStr discard_dir(out_dir + "/discard");
+    GStr tmp_dir(out_dir + "/tmp");
     std::filesystem::create_directories(out_dir.chars());
     create_CHRS();
     
@@ -191,25 +192,60 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    GMessage(">> Finish creating GSamWriter\n");
-
     /*********************
      * Main algorithms
     *********************/
-    // infname_juncbed = splamJExtract();
-    GMessage("\n[INFO] Total number of junctions\t:%d\n", JUNC_COUNT);
+    infname_juncbed = splamJExtract();
+
+    /*********************
+     * Printing results
+    *********************/
+    ALN_COUNT_SPLICED = ALN_COUNT_SPLICED_UNIQ + ALN_COUNT_SPLICED_MULTI;
+    ALN_COUNT_NSPLICED = ALN_COUNT_NSPLICED_UNIQ + ALN_COUNT_NSPLICED_MULTI;
+    ALN_COUNT_SPLICED_UNPAIR = ALN_COUNT_SPLICED_UNIQ_UNPAIR + ALN_COUNT_SPLICED_MULTI_UNPAIR;
+    ALN_COUNT_NSPLICED_UNPAIR = ALN_COUNT_NSPLICED_UNIQ_UNPAIR + ALN_COUNT_NSPLICED_MULTI_UNPAIR;
+
+    ALN_COUNT_UNPAIR = ALN_COUNT_SPLICED_UNPAIR + ALN_COUNT_NSPLICED_UNPAIR;
+
+    ALN_COUNT_BAD = ALN_COUNT_SPLICED_UNIQ_DISCARD + ALN_COUNT_SPLICED_MULTI_DISCARD + ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD + ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD;
+
+    ALN_COUNT_GOOD_CAL = ALN_COUNT - ALN_COUNT_BAD;
+    if (g_paired_removal) {
+        GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
+
+        // Printing for paired alignment
+        GMessage("           paired alignments\t\t:%10d \n", ALN_COUNT - ALN_COUNT_UNPAIR);
+        GMessage("               spliced alignments\t:%10d \n", ALN_COUNT_SPLICED);
+        GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_SPLICED_UNIQ);
+        GMessage("                   - multi-mapped\t:%10d\n", ALN_COUNT_SPLICED_MULTI);
+        GMessage("               non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
+        GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ);
+        GMessage("                   - multi-mapped\t:%10d\n\n", ALN_COUNT_NSPLICED_MULTI);
+
+        // Printing for unpaired alignment
+        GMessage("           unpaired alignments\t\t:%10d \n", ALN_COUNT_UNPAIR);
+        GMessage("               spliced alignments\t:%10d \n", ALN_COUNT_SPLICED_UNPAIR);
+        GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_SPLICED_UNIQ_UNPAIR);
+        GMessage("                   - multi-mapped\t:%10d\n", ALN_COUNT_SPLICED_MULTI_UNPAIR);
+        GMessage("               non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED_UNPAIR);
+        GMessage("                   - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ_UNPAIR);
+        GMessage("                   - multi-mapped\t:%10d\n\n", ALN_COUNT_NSPLICED_MULTI_UNPAIR);
+    } else {
+        GMessage("\n[INFO] Total number of alignments\t:%10d \n", ALN_COUNT);
+        GMessage("           spliced alignments\t\t:%10d \n", ALN_COUNT_SPLICED);
+        GMessage("               - uniquely mapped\t:%10d\n", ALN_COUNT_SPLICED_UNIQ);
+        GMessage("               - multi-mapped\t\t:%10d\n", ALN_COUNT_SPLICED_MULTI);
+        
+        GMessage("           non-spliced alignments\t:%10d \n", ALN_COUNT_NSPLICED);
+        GMessage("               - uniquely mapped\t:%10d\n", ALN_COUNT_NSPLICED_UNIQ);
+        GMessage("               - multi-mapped\t\t:%10d\n", ALN_COUNT_NSPLICED_MULTI);
+    }
+    GMessage("\n[INFO] Total number of junctions\t:%10d\n", JUNC_COUNT);
     return 0;
 }
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;paired-removal;junction;no-write-bam;model=;output=;score=;max-splice=;bundle-gap=;hvcVSPJo:N:Q:m:r:s:M:g:");
-
-    command_str=args.nextNonOpt();
-    if (argc == 0) {
-        usage_extract();
-        GERROR("\n[ERROR] No command provide. The subcommand must be 'j-extract', 'predict', or 'clean'.\n");
-        exit(1);   
-    }
+    GArgs args(argc, argv, "help;cite;verbose;version;paired;write-junctions-only;output=;max-splice=;bundle-gap=;hvcPVno:M:g:");
 
     if (args.getOpt('h') || args.getOpt("help")) {
         usage_extract();
@@ -226,16 +262,12 @@ void processOptions(int argc, char* argv[]) {
         exit(0);
     }
 
-    if (args.getOpt('P') || args.getOpt("paired-removal") ) {
+    if (args.getOpt('P') || args.getOpt("paired") ) {
         g_paired_removal = true;
         GMessage("g_paired_removal: %d\n", g_paired_removal);
     }
-
-    // if (verbose) {
-    //     GMessage("[INFO] Running in '%s' mode\n\n", argv[1]);
-    // }
     
-    verbose=(args.getOpt("verbose")!=NULL || args.getOpt('V')!=NULL);
+    verbose=(args.getOpt('V')!=NULL || args.getOpt("verbose")!=NULL);
     if (verbose) {
         // fprintf(stderr, "Running SPLAM " VERSION ". Command line:\n");
         args.printCmdLine(stderr);
@@ -246,34 +278,31 @@ void processOptions(int argc, char* argv[]) {
     *********************************/
     processOptionsJExtract(args);    
 
-// #ifdef DEBUG
-    GMessage(">>  command_str      : %s\n", command_str.chars());
+#ifdef DEBUG
     GMessage(">> infname_juncbed   : %s\n", infname_juncbed.chars());
-    GMessage(">> infname_scorebed  : %s\n", infname_scorebed.chars());
     GMessage(">> infname_bam       : %s\n", infname_bam.chars());
     GMessage(">> out_dir           : %s\n", out_dir.chars());
     GMessage(">> g_paired_removal  : %d\n", g_paired_removal);
     GMessage(">> g_max_splice      : %d\n", g_max_splice);
     GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
     GMessage(">> verbose           : %d\n", verbose);
-// #endif
+#endif
 
     args.startNonOpt();
-
-    if (args.getNonOptCount()==1) {
+    if (args.getNonOptCount()==0) {
         usage_extract();
         GMessage("\n[ERROR] no input provided!\n");
         exit(1);
     }
-    args.nextNonOpt(); 
 
     const char* ifn=NULL;
     while ( (ifn=args.nextNonOpt())!=NULL) {
         //input alignment files
         std::string absolute_ifn = get_full_path(ifn);
+        GMessage("absolute_ifn: %s\n", absolute_ifn.c_str());
         in_records.addFile(absolute_ifn.c_str());
     }
-    checkJunction(args);
+    // checkJunction(args);
 }
 
 
@@ -281,20 +310,7 @@ void processOptionsJExtract(GArgs& args) {
     optionsOutput(args);
     optionsMaxSplice(args);
     optionsBundleGap(args);
-    optionsWriteTMP(args);
-}
-
-
-void processOptionsPredict(GArgs& args) {
-    optionsOutput(args);
-    optionsJunction(args);
-    optionsWriteTMP(args);
-}
-
-
-void processOptionsClean(GArgs& args) {
-    optionsOutput(args);
-    // options2StageRun(args);
+    optionsWriteJuncOnly(args);
 }
 
 
@@ -343,27 +359,11 @@ void optionsOutput(GArgs& args) {
     }
 }
 
-
-void optionsJunction(GArgs& args) {
-    // -J / --junction
-    predict_junc_mode = (args.getOpt("junction")!=NULL || args.getOpt('J')!=NULL);
-    // if (predict_junc_mode) {
-    //     GMessage(">>  SPLAM predict [Junction mode]\n");
-    // } else {
-    //     GMessage(">>  SPLAM predict [Default mode]\n");
-    // }
-}
-
-
-void optionsWriteTMP(GArgs& args) {
-    //--no-write-bam
-    write_bam = (args.getOpt("no-write-bam")==NULL);
-    GMessage("write_bam: %d\n", write_bam);
-    if (write_bam) {
-        GMessage(">>  Running write_bam mode\n");
-    } else {
-        GMessage(">>  Running predict mode\n");
-    }
+void optionsWriteJuncOnly(GArgs& args) {
+    //--write-junctions-only
+	if (args.getOpt('n') || args.getOpt("write-junctions-only")) {
+        write_bam = false;
+	}
 }
 
 void checkJunction(GArgs& args) {
