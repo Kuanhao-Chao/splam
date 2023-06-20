@@ -9,7 +9,7 @@
 
 std::string get_full_path(std::string fname);
 
-void keepAlignment(GSamWriter* outfile_target, GSamRecord* brec);
+void keepAlignment(GSamWriter* outfile_target, GSamRecord* brec, int& counter);
 
 void reverse_complement(char *str, const hts_pos_t len);
 

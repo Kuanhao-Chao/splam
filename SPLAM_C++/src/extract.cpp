@@ -334,7 +334,7 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
             }
             continue;
         }
-        hash_processed.insert(pair_idx);
+        // fprintf(stderr, ">> idx: %d;  pair_idx: %d\n", idx, pair_idx);
 
         /***********************************
          * Processing paired reads.
@@ -347,37 +347,50 @@ void processBundle_jext(BundleData* bundle, GList<CReadAln>& readlist, int& bund
         int brec_bd_p_tag = brec_bd_p.tag_int("NH", 0);
 
         if (write_bam) {
-            if ( (!brec_bd.hasIntrons() && !brec_bd_p.hasIntrons()) && (brec_bd_tag==1 || brec_bd_p_tag==1)) {
-                // a, b nonspliced, NH == 1
-                outfile_ns_uniq_map->write(&brec_bd);
-                outfile_ns_uniq_map->write(&brec_bd_p);
-                ALN_COUNT_NSPLICED_UNIQ +=2;
-                ALN_COUNT_GOOD += 2;
-            } else if ( (!brec_bd.hasIntrons() && !brec_bd_p.hasIntrons()) && (brec_bd_tag>1 || brec_bd_p_tag>1)) {
-                // a, b nonspliced, NH > 1
-                outfile_ns_multi_map->write(&brec_bd);
-                outfile_ns_multi_map->write(&brec_bd_p);
-                ALN_COUNT_NSPLICED_MULTI+=2;
-            } else if ( (brec_bd.hasIntrons() || brec_bd_p.hasIntrons()) && (brec_bd_tag==1 || brec_bd_p_tag==1)) {
-                // a, b spliced, NH = 1
-                outfile_s_uniq_map->write(&brec_bd);
-                outfile_s_uniq_map->write(&brec_bd_p);
-                ALN_COUNT_SPLICED_UNIQ+=2;
-            } else if ( (brec_bd.hasIntrons() || brec_bd_p.hasIntrons()) && (brec_bd_tag>1 || brec_bd_p_tag>1)) {
-                // a, b spliced, NH > 1
-                outfile_s_multi_map->write(&brec_bd);
-                outfile_s_multi_map->write(&brec_bd_p);
-                ALN_COUNT_SPLICED_MULTI+=2;
-            } else {
-                // Execption case
-                GMessage("There are wierd things happening! Check this alignment.\n");
-                outfile_ns_uniq_map->write(&brec_bd);
-                outfile_ns_uniq_map->write(&brec_bd_p);
-                ALN_COUNT_GOOD += 2;
+            if ((!brec_bd.hasIntrons() && !brec_bd_p.hasIntrons())) {
+                /***********************************
+                 * Both alignment does not have introns.
+                ************************************/
+                if ((brec_bd_tag==1 || brec_bd_p_tag==1)) {
+                    // a, b nonspliced, NH == 1
+                    outfile_ns_uniq_map->write(&brec_bd);
+                    ALN_COUNT_NSPLICED_UNIQ +=1;
+                } else if ((brec_bd_tag>1 || brec_bd_p_tag>1)) {
+                    // a, b nonspliced, NH > 1
+                    outfile_ns_multi_map->write(&brec_bd);
+                    ALN_COUNT_NSPLICED_MULTI+=1;
+                }
+                if (pair_idx < idx) {
+                    brec_bd.clear();
+                    brec_bd_p.clear();
+                } 
+            } else if ((brec_bd.hasIntrons() || brec_bd_p.hasIntrons()))  {
+                /***********************************
+                 * Any of the alignment has introns.
+                ************************************/
+                if ((brec_bd_tag==1 || brec_bd_p_tag==1)) {
+                    // a, b spliced, NH = 1
+                    outfile_s_uniq_map->write(&brec_bd);
+                    outfile_s_uniq_map->write(&brec_bd_p);
+                    ALN_COUNT_SPLICED_UNIQ+=2;
+                } else if ((brec_bd_tag>1 || brec_bd_p_tag>1)) {
+                    // a, b spliced, NH > 1
+                    outfile_s_multi_map->write(&brec_bd);
+                    outfile_s_multi_map->write(&brec_bd_p);
+                    ALN_COUNT_SPLICED_MULTI+=2;
+                }
+                hash_processed.insert(pair_idx);
+                brec_bd.clear();
+                brec_bd_p.clear();
             }
+            // else {
+            //     // Execption case
+            //     GMessage("There are wierd things happening! Check this alignment.\n");
+            //     outfile_ns_uniq_map->write(&brec_bd);
+            //     outfile_ns_uniq_map->write(&brec_bd_p);
+            //     ALN_COUNT_GOOD += 2;
+            // }
         }
-        brec_bd.clear();
-        brec_bd_p.clear();
     }
 
     GMessage("\t* # alignments processed: %d!\n", Read_counter);
