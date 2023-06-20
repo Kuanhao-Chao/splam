@@ -20,11 +20,11 @@ splam is a deep learning-based splice junction predictor. It takes read alignmen
 
 ## <a name="junction_extract"></a>Scoring splice junctions 
 
-## <a name="junction_extract"></a>Scoring splice junctions 
+## <a name="junction_extract"></a>Cleaning up BAM file 
 
 
 # <a name="m_architecture"></a>Model Architecture
-![My Image](https://github.com/Kuanhao-Chao/SPLAM/splam_architecture.png)
+![My Image](https://github.com/Kuanhao-Chao/SPLAM/blob/main/splam_architecture.png)
 
 
 # <a name="installation"></a>Publications
