@@ -13,6 +13,7 @@ def run_plotter(type, db):
 
     # identifier
     id = [type, db]
+    print(f'Running for type: {type}, database: {db}')
 
     # obtain the aggregated and averaged data from all 5 versions of spliceai and write to file
     agg_ofp = f'./output/aggregate/agg_full_data.{type}.{db}.csv'
@@ -21,20 +22,21 @@ def run_plotter(type, db):
     if not os.path.exists(avg_ofp):
         agg_df = aggregate_data(type, db, agg_ofp)
         cnt_df = get_counts(agg_df, id, cnt_ofp)
-        df = get_averages(cnt_df, avg_ofp)
+        avg_df = get_averages(cnt_df, avg_ofp)
     else:
         agg_df = pd.read_csv(agg_ofp)
         agg_df = revive_list(agg_df, ['d_score_spliceai', 'a_score_spliceai', 'spliceai_version'], ['float64', 'float64', 'int'])
         cnt_df = pd.read_csv(cnt_ofp)
         cnt_df = revive_list(cnt_df, ['d_score_spliceai', 'a_score_spliceai', 'spliceai_version'], ['float64', 'float64', 'int'])
-        df = pd.read_csv(avg_ofp)
-        df = revive_list(df, ['spliceai_version'], ['int'])
+        avg_df = pd.read_csv(avg_ofp)
+        avg_df = revive_list(avg_df, ['spliceai_version'], ['int'])
 
     # visualize the results
-    #make_fig3(df, id)
+    #make_fig3(avg_df, id)
     #make_fig4(agg_df, id)
     #make_fig5(agg_df, id)
-
+    #make_fig6(avg_df, id)
+    make_fig8(avg_df, id)
 
 def revive_list(df, col_names, dtypes):
     
@@ -232,8 +234,131 @@ def make_fig5(agg_df, id):
     save_fig(f'./figures/fig5/acceptor_len_vs_score_all_sai_vers.{id[0]}.{id[1]}.png')
 
 def make_fig6(avg_df, id):
-    # plot score distribution against N content
+    # plot scores against N content
+
+    # calculate N contents
+    df = pd.DataFrame()
+    df['Intron Length'] = avg_df['end'] - avg_df['start']
+    df['ACTG'] = avg_df.iloc[:,13:17].sum(axis=1)
+    df['N'] = avg_df.iloc[:,17:].sum(axis=1)
+    df['N Content'] = df['N'] / (df['Intron Length'] + 10400)
+    df['d_score_splam'] = avg_df['d_score_splam']
+    df['a_score_splam'] = avg_df['a_score_splam']
+    df['d_score_spliceai'] = avg_df['d_score_spliceai']
+    df['a_score_spliceai'] = avg_df['a_score_spliceai']
+    print(df)
+    d_df = pd.melt(df, value_vars=['d_score_spliceai', 'd_score_splam'], var_name='Method', value_name='Score', id_vars='N Content').replace('d_score_spliceai', 'SpliceAI').replace('d_score_splam', 'SPLAM')
+    a_df = pd.melt(df, value_vars=['a_score_spliceai', 'a_score_splam'], var_name='Method', value_name='Score', id_vars='N Content').replace('a_score_spliceai', 'SpliceAI').replace('a_score_splam', 'SPLAM')
+    d_df = d_df[d_df['N Content'] > 0]
+    a_df = a_df[a_df['N Content'] > 0]
+    print(d_df, a_df)
+
+
+    sns.set(font_scale=0.8)
+    sns.set_palette('deep')
+    f, axs = plt.subplots(1, 2)
+    plot_params = {'s': 10, 'alpha': 0.7}
+    f.suptitle(f'N Content vs. Score for {id[1]} Dataset')
+    sns.scatterplot(data=d_df, x='N Content', y='Score', hue='Method', ax=axs[0], **plot_params).set(title='Donor')
+    sns.scatterplot(data=a_df, x='N Content', y='Score', hue='Method', ax=axs[1], **plot_params).set(title='Acceptor')
+    plt.show()
+
+    save_fig(f'./figures/fig6/N_content_vs_score.{id[0]}.{id[1]}.png')
+
+
+def make_fig8(avg_df, id):
+    # investigating TAIR scores spliceai vs. splam 
+
+    # getting chrom sizes
+    chrs = {}
+    with open(f'./Dataset/{id[1]}_assembly_report.txt', 'r') as file:       
+        # skip header
+        next(file)
+
+        # read the file line by line
+        for line in file:  
+            # split by tabs
+            columns = line.strip().split('\t')
+            refseq_name = columns[6]
+            chrom_size = int(columns[8])
+
+            # store the key-value pair in the dictionary
+            chrs[refseq_name] = chrom_size
+
+    df = avg_df.drop(['name', 'expected_score', 'strand', 'd_dimer', 'a_dimer', 'spliceai_version'], axis=1)
+    df['ACTG Content'] = df.iloc[:,7:11].sum(axis=1)
+    df['N Content'] = df.iloc[:,11:18].sum(axis=1)
+    df.drop(df.columns[7:18], axis=1, inplace=True)
+    df['Intron Length'] = df['end'] - df['start']
+    df['dist_to_start'] = df['start'] - 0
+    df['dist_to_end'] = df['seqid'].map(chrs) - df['end']
+    df['Distance to Ending'] = df[['dist_to_start', 'dist_to_end']].min(axis=1)
+    df['ACTG Content'] = df['ACTG Content'] / (df['Intron Length'] + 10400)
+    df['N Content'] = df['N Content'] / (df['Intron Length'] + 10400)
+    print(df)
+
+    d_df = pd.melt(df, value_vars=['d_score_spliceai', 'd_score_splam'], var_name='Method', value_name='Score', 
+                   id_vars=['N Content', 'Intron Length', 'Distance to Ending']).replace('d_score_spliceai', 'SpliceAI').replace('d_score_splam', 'SPLAM')
+    a_df = pd.melt(df, value_vars=['a_score_spliceai', 'a_score_splam'], var_name='Method', value_name='Score', 
+                   id_vars=['N Content', 'Intron Length', 'Distance to Ending']).replace('a_score_spliceai', 'SpliceAI').replace('a_score_splam', 'SPLAM')
+    print(d_df, a_df)
+
+    # # pairplot for all pairwise comparisons
+    # sns.set(font_scale=0.8)
+    # sns.set_palette('deep')
+    # g = sns.pairplot(data=a_df, hue='Method', plot_kws={'s': 4, 'alpha': 0.35})
+    # g.fig.suptitle(f'Acceptor Stats for {id[1]} Dataset', y=1.08)
+    # plt.show()
+    # save_fig(f'./figures/fig8/acceptor_stats.{id[0]}.{id[1]}.png')
+
+    # # investigating distance to ending specifically lower end
+    # threshold = 500000
+    # d_df = d_df[d_df['Distance to Ending'] < threshold]
+    # a_df = a_df[a_df['Distance to Ending'] < threshold]
+    # sns.set(font_scale=0.8)
+    # sns.set_palette('deep')
+    # f, axs = plt.subplots(1, 2, sharey=True, figsize=(12,6))
+    # plot_params = {'s': 9, 'alpha': 0.7}
+    # f.suptitle(f'N Content vs. Score for {id[1]} Dataset')
+    # sns.scatterplot(data=d_df, x='Distance to Ending', y='Score', hue='Method', ax=axs[0], legend=False, **plot_params).set(title='Donor')
+    # ax = sns.scatterplot(data=a_df, x='Distance to Ending', y='Score', hue='Method', ax=axs[1], **plot_params)
+    # ax.set_title('Acceptor')
+    # sns.move_legend(ax, loc='center left', bbox_to_anchor=(1.05, 0.5))
+    # plt.show()
+    # save_fig(f'./figures/fig8/distance_to_endings_vs_score.{id[0]}.{id[1]}.png')
+
+    # investigating intron len specifically lower end
+    threshold = 400
+    d_df = d_df[d_df['Intron Length'] > threshold]
+    a_df = a_df[a_df['Intron Length'] > threshold]
+    sns.set(font_scale=0.8)
+    sns.set_palette('deep')
+    f, axs = plt.subplots(1, 2, sharey=True, figsize=(12,6))
+    plot_params = {'s': 8, 'alpha': 0.6}
+    f.suptitle(f'N Content vs. Score for {id[1]} Dataset')
+    sns.scatterplot(data=d_df, x='Intron Length', y='Score', hue='Method', ax=axs[0], legend=False, **plot_params).set(title='Donor')
+    ax = sns.scatterplot(data=a_df, x='Intron Length', y='Score', hue='Method', ax=axs[1], **plot_params)
+    ax.set_title('Acceptor')
+    sns.move_legend(ax, loc='center left', bbox_to_anchor=(1.05, 0.5))
+    plt.show()
+
+    save_fig(f'./figures/fig8/above_intron_len_vs_score.{id[0]}.{id[1]}.png')
+
     pass
+
+
+'''
+Other Figure Ideas:
+- plot against N content -> how does higher N content affect the scores of both models? [x] there is no significant correlation
+- investigate how intron length affects score distribution? above or below 400 bp []
+- investigate TAIR further to elucidate how it is performing on different levels? []
+- compare noN with N vers, how does the use of the 5k flanking sequence affect on animal level? [x] N seems to perform better
+- create a comprehensive visualization with SPLAM, SpliceAI noN and SpliceAI N to compare 5k sequence may confuse result []
+
+
+'''
+
+
 
 if __name__ == '__main__':
 
