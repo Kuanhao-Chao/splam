@@ -37,22 +37,10 @@ ExternalProject_Add(htslib
         )
 
 
-
-
-
-
-
-
-
-
 ############################
-# Target for building splam_jextract
+# pybind11 for building splam_extract 
 ############################
-# find_package(pybind11 REQUIRED)  # or add_subdirectory(pybind11)
-
-# add_executable(example main.cpp)
-pybind11_add_module(splam_jextract 
-# add_executable(splam_jextract 
+pybind11_add_module(splam_extract 
         src/splam_extract.cpp
         src/GSam.h
         src/extract.cpp
@@ -67,29 +55,19 @@ pybind11_add_module(splam_jextract
         ${CMAKE_SOURCE_DIR}/include/gclib/GArgs.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.cpp)
-        # ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a)
-target_link_libraries(splam_jextract PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
-# set_property(TARGET splam_jextract PROPERTY CXX_STANDARD 17)
+target_link_libraries(splam_extract PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+# set_property(TARGET splam_extract PROPERTY CXX_STANDARD 17)
 # EXAMPLE_VERSION_INFO is defined by setup.py and passed into the C++ code as a
 # define (VERSION_INFO) here.
-target_compile_definitions(splam_jextract
+target_compile_definitions(splam_extract
            PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
 
 
-
-
-
-
-
-
-
-
-
 ############################
-# Target for building splam-clean
+# pybind11 for building splam-clean
 ############################
-# Compiling splam-extract
-add_executable(splam-clean
+# Compiling splam-clean
+pybind11_add_module(splam_clean
         src/splam_clean.cpp
         src/bam_sort.c
         src/bam.c
@@ -111,18 +89,14 @@ add_executable(splam-clean
         ${CMAKE_SOURCE_DIR}/include/gclib/GArgs.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.cpp)
-
 # target_link_libraries(splam Python::Python)
-
-add_dependencies(splam-clean htslib)
-if(UNIX AND NOT APPLE)
-        target_link_libraries(splam-clean stdc++fs)
-endif ()
-target_link_libraries(splam-clean ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
-# target_link_libraries(splam "${TORCH_LIBRARIES}")
-# target_includlse_directories(splam PRIVATE ${PYTHON_INCLUDE_DIRS})
-
-set_property(TARGET splam-clean PROPERTY CXX_STANDARD 17)
+# add_dependencies(splam-clean htslib)
+# if(UNIX AND NOT APPLE)
+#         target_link_libraries(splam-clean stdc++fs)
+# endif ()
+target_link_libraries(splam_clean PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+target_compile_definitions(splam_clean
+           PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
 
 
 

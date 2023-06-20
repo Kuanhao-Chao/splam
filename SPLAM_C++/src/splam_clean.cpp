@@ -19,7 +19,9 @@
 #include <gclib/GBase.h>
 #include <gclib/GStr.h>
 #include <robin_hood/robin_hood.h>
-// #include <Python.h>
+
+#include <pybind11/pybind11.h>
+#include <pybind11/stl.h>
 
 // Include htslib
 #include <htslib/htslib/sam.h>
@@ -174,8 +176,25 @@ int array_size(char *test[]) {
   // 'size' now contains the size of the array
 }
 
+namespace py = pybind11;
 
-int splam_clean(int argc, char* argv[]) {
+int splam_clean(py::list args_pyls) {
+    std::vector<std::string> args;
+    // Convert each element of the py::list to std::string
+    for (const auto& item : args_pyls) {
+        std::string str = py::cast<std::string>(item);
+        args.push_back(str);
+    }
+    int argc = args.size();
+    char** argv = new char*[args.size() + 1]; // +1 for the null terminator
+    // Convert each string to a C-style string and copy it to argv
+    for (size_t i = 0; i < args.size(); ++i) {
+        argv[i] = new char[args[i].size() + 1]; // +1 for the null terminator
+        std::strcpy(argv[i], args[i].c_str());
+    }
+    // Add a null terminator at the end
+    argv[args.size()] = nullptr;
+
     GMessage(
             "==========================================================================================\n"
             "An accurate spliced alignment pruner and spliced junction predictor.\n"
@@ -426,6 +445,37 @@ int splam_clean(int argc, char* argv[]) {
     return 0;
 }
 
+#define STRINGIFY(x) #x
+#define MACRO_STRINGIFY(x) STRINGIFY(x)
+
+
+PYBIND11_MODULE(splam_clean, m) {
+    // m.doc() = R"pbdoc(
+    //     Pybind11 example plugin
+    //     -----------------------
+
+    //     .. currentmodule:: bind_test
+
+    //     .. autosummary::
+    //        :toctree: _generate
+
+    //        add
+    //        subtract
+    // )pbdoc";
+
+    m.def("splam_clean", &splam_clean, R"pbdoc(
+        Extracting splice junctions
+    )pbdoc");
+
+
+#ifdef VERSION_INFO
+    m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
+#else
+    m.attr("__version__") = "dev";
+#endif
+}
+
+
 void processOptions(int argc, char* argv[]) {
     GArgs args(argc, argv, "help;cite;verbose;version;paired-removal;no-write-bam;output=;threads=;hvcVSPJo:N:Q:m:r:s:M:g:@:");
     // args.printError(usage_clean, true);
@@ -590,9 +640,4 @@ void splam_clean_valid_precheck () {
             GError("[Error] file missing.\n");            
         }
     }
-}
-
-
-int main(int argc, char* argv[]) {
-    splam_clean(argc, argv);
 }
