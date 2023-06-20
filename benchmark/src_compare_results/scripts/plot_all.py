@@ -70,7 +70,7 @@ def make_fig7(type):
         x1, y1 = lines[0].get_data() # SpliceAI - orange
         x2, y2 = lines[1].get_data() # SPLAM - blue
         #print(max(y1), max(y2))
-        p = sns.kdeplot({'SPLAM': data.iloc[:,0], 'SpliceAI-10k-noN': data.iloc[:,1]}, ax=ax, clip=(0.0, 1.0), fill=True, alpha=0.35)#.get_legend().remove()
+        p = sns.kdeplot({'SPLAM': data.iloc[:,0], 'SpliceAI-10k-N': data.iloc[:,1]}, ax=ax, clip=(0.0, 1.0), fill=True, alpha=0.35)#.get_legend().remove()
         #ax.legend(['SpliceAI-10k-noN', 'SPLAM'], loc='upper left', fontsize=10)
         sns.move_legend(p, 'upper left')
         ax.tick_params(axis='x', labelsize=10)
@@ -108,6 +108,6 @@ def make_fig7(type):
 
 if __name__ == '__main__':
 
-    type = 'noN'
+    type = 'N'
 
     make_fig7(type)
