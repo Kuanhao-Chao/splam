@@ -16,7 +16,9 @@
 #include <gclib/GBase.h>
 #include <gclib/GStr.h>
 #include <robin_hood/robin_hood.h>
-#include <Python.h>
+
+#include <pybind11/pybind11.h>
+// #include <Python.h>
 
 void processOptions(int argc, char* argv[]);
 void processOptionsJExtract(GArgs& args);
@@ -127,23 +129,7 @@ bool g_paired_removal = false;
 
 robin_hood::unordered_map<std::string, int>  CHRS;
 
-int main(int argc, char* argv[]) {
-    GMessage(
-            "==========================================================================================\n"
-            "An accurate spliced alignment pruner and spliced junction predictor.\n"
-            "==========================================================================================\n");
-    const char *banner = R"""(
-  ███████╗██████╗ ██╗      █████╗ ███╗   ███╗
-  ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║
-  ███████╗██████╔╝██║     ███████║██╔████╔██║
-  ╚════██║██╔═══╝ ██║     ██╔══██║██║╚██╔╝██║
-  ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║
-  ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
-    )""";
-    std::cout << banner << std::endl;
-    
-    in_records.setup(VERSION, argc, argv);
-    processOptions(argc, argv);
+int splam_extract() {
 
     outfname_cleaned = out_dir + "/cleaned.bam";
     /*********************
@@ -243,6 +229,44 @@ int main(int argc, char* argv[]) {
     GMessage("\n[INFO] Total number of junctions\t:%10d\n", JUNC_COUNT);
     return 0;
 }
+
+
+#define STRINGIFY(x) #x
+#define MACRO_STRINGIFY(x) STRINGIFY(x)
+
+namespace py = pybind11;
+
+PYBIND11_MODULE(splam_jextract, m) {
+    m.doc() = R"pbdoc(
+        Pybind11 example plugin
+        -----------------------
+
+        .. currentmodule:: bind_test
+
+        .. autosummary::
+           :toctree: _generate
+
+           add
+           subtract
+    )pbdoc";
+
+    m.def("splam_extract", &splam_extract, R"pbdoc(
+        Add two numbers
+
+        Some other explanation about the add function.
+    )pbdoc");
+
+
+#ifdef VERSION_INFO
+    m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
+#else
+    m.attr("__version__") = "dev";
+#endif
+}
+
+
+
+
 
 void processOptions(int argc, char* argv[]) {
     GArgs args(argc, argv, "help;cite;verbose;version;paired;write-junctions-only;output=;max-splice=;bundle-gap=;hvcPVno:M:g:");
@@ -381,3 +405,25 @@ void checkJunction(GArgs& args) {
         }
     }
 }
+
+
+int main(int argc, char* argv[]) {
+    GMessage(
+            "==========================================================================================\n"
+            "An accurate spliced alignment pruner and spliced junction predictor.\n"
+            "==========================================================================================\n");
+    const char *banner = R"""(
+  ███████╗██████╗ ██╗      █████╗ ███╗   ███╗
+  ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║
+  ███████╗██████╔╝██║     ███████║██╔████╔██║
+  ╚════██║██╔═══╝ ██║     ██╔══██║██║╚██╔╝██║
+  ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║
+  ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
+    )""";
+    std::cout << banner << std::endl;
+    
+    in_records.setup(VERSION, argc, argv);
+    processOptions(argc, argv);
+    splam_extract();
+}
+

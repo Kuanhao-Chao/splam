@@ -14,7 +14,7 @@
 #include <gclib/GBase.h>
 #include <htslib/htslib/faidx.h>
 
-#include <Python.h>
+// #include <Python.h>
 
 /****************************
 * Input : (1)Junction bed files, (2) SPLAM model
@@ -98,14 +98,14 @@ GStr splamPredict() {
             GMessage("## Step %d: SPLAM model prediction\n", STEP_COUNTER);
             GMessage("###########################################\n");
         }
-        Py_Initialize();
-        // GStr python_f = "./script/splam.py";
+        // Py_Initialize();
+        // // GStr python_f = "./script/splam.py";
 
-        wchar_t *argvv[] = {GetWC("."), GetWC("-f"), GetWC(outfname_junc_fa.chars()), GetWC("-o"), GetWC(outfname_junc_score.chars()), GetWC("-m"), GetWC(infname_model_name.chars())};
-        PySys_SetArgv(7, argvv);
+        // wchar_t *argvv[] = {GetWC("."), GetWC("-f"), GetWC(outfname_junc_fa.chars()), GetWC("-o"), GetWC(outfname_junc_score.chars()), GetWC("-m"), GetWC(infname_model_name.chars())};
+        // PySys_SetArgv(7, argvv);
 
-        PyRun_SimpleString(python_script.c_str());
-        Py_Finalize();
+        // PyRun_SimpleString(python_script.c_str());
+        // Py_Finalize();
     }
     return outfname_junc_score;
 }

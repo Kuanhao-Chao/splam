@@ -1,0 +1,1 @@
+int splam_extract();

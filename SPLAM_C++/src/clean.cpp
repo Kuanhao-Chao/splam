@@ -15,7 +15,6 @@
 #include <sstream>
 #include <filesystem>
 #include <htslib/htslib/faidx.h>
-#include <Python.h>
 #include <gclib/GStr.h>
 
 /****************************
