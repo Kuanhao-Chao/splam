@@ -4,6 +4,7 @@ import argparse
 import sys
 
 from splam import prediction, config, parse, chr_size
+import splam_extract
 
 def parse_args(args):
     parser = argparse.ArgumentParser(description='score splice junctions from a BED file')
@@ -32,37 +33,39 @@ def parse_args(args):
     return args_r
 
 def main(argv=None):
-    chrs = chr_size.chrs
-    args = parse_args(argv)
-    verbose =args.verbose
-    outdir = args.outdir
-
-    junction_bed = args.junction_BED
-    junction_score_bed = os.path.join(outdir, "junction_score.bed")
-    reference_genome = args.reference_genome
-    splam_model = args.model
+    splam_extract.splam_extract()
     
-    #################################
-    # Step 1: creating donor acceptor bed file.
-    #################################
-    donor_bed, acceptor_bed = parse.create_donor_acceptor_bed(junction_bed, outdir, chrs)
+    # chrs = chr_size.chrs
+    # args = parse_args(argv)
+    # verbose =args.verbose
+    # outdir = args.outdir
 
-    #################################
-    # Step 2: write donor acceptor fasta file.
-    #################################
-    donor_fasta = parse.write_donor_acceptor_fasta(donor_bed, reference_genome)
-    acceptor_fasta = parse.write_donor_acceptor_fasta(acceptor_bed, reference_genome)
+    # junction_bed = args.junction_BED
+    # junction_score_bed = os.path.join(outdir, "junction_score.bed")
+    # reference_genome = args.reference_genome
+    # splam_model = args.model
 
-    #################################
-    # Step 3: concatenate donor and acceptor into a fasta
-    #################################
-    junction_fasta = parse.concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta, verbose)
+    # #################################
+    # # Step 1: creating donor acceptor bed file.
+    # #################################
+    # donor_bed, acceptor_bed = parse.create_donor_acceptor_bed(junction_bed, outdir, chrs)
+
+    # #################################
+    # # Step 2: write donor acceptor fasta file.
+    # #################################
+    # donor_fasta = parse.write_donor_acceptor_fasta(donor_bed, reference_genome)
+    # acceptor_fasta = parse.write_donor_acceptor_fasta(acceptor_bed, reference_genome)
+
+    # #################################
+    # # Step 3: concatenate donor and acceptor into a fasta
+    # #################################
+    # junction_fasta = parse.concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta, verbose)
     
-    #################################
-    # Step 4: splam score junctions
-    #################################
-    out_score_f = os.path.dirname(junction_fasta) + "/junction_score.bed"
-    junction_fasta = prediction.splam_prediction(junction_fasta, junction_score_bed, splam_model)
+    # #################################
+    # # Step 4: splam score junctions
+    # #################################
+    # out_score_f = os.path.dirname(junction_fasta) + "/junction_score.bed"
+    # junction_fasta = prediction.splam_prediction(junction_fasta, junction_score_bed, splam_model)
 
 if __name__ == "__main__":
     main()
