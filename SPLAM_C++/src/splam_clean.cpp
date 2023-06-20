@@ -165,6 +165,16 @@ bool write_bam = true;
 bool g_paired_removal = false;
 bool g_2_stage_run = false;
 
+int array_size(char *test[]) {
+  int size = 0;
+  while (test[size] != NULL) {
+    size++;
+  }
+  return size;
+  // 'size' now contains the size of the array
+}
+
+
 int main(int argc, char* argv[]) {
     GMessage(
             "==========================================================================================\n"
@@ -247,7 +257,7 @@ int main(int argc, char* argv[]) {
     /*********************
      * Creating GSamWriter
     *********************/
-    outfile_cleaned = new GSamWriter(outfname_cleaned, bam_reader.header(), GSamFile_BAM);
+    // outfile_cleaned = new GSamWriter(outfname_cleaned, bam_reader.header(), GSamFile_BAM);
 
     outfile_ns_multi_map_nh_updated = new GSamWriter(outfname_ns_multi_map_nh_updated, bam_reader.header(), GSamFile_BAM);
     outfile_s_uniq_map_cleaned = new GSamWriter(outfname_s_uniq_map_cleaned, bam_reader.header(), GSamFile_BAM);
@@ -279,52 +289,68 @@ int main(int argc, char* argv[]) {
     *********************/
     if (g_paired_removal) {
         // Step 1: Sort BAM file
-        int argc_sort = 7;
-        GStr outfname_sort;
-        int res = 100;
-        /************************
-        * ns_uniq.bam (paired)
-        ************************/ 
-        outfname_sort = out_dir + "/tmp/ns_uniq.sort.bam";
-        fprintf(stderr, "outfname_sort: %s\n", outfname_sort.chars());
-        char *ns_uniq_argv[] = {"samtools", "sort", "-@", (char*)thread_num.chars(), (char*)outfname_ns_uniq_map.chars(), "-o", (char*)outfname_sort.chars()};
-        res = bam_sort(argc_sort-1, ns_uniq_argv+1);
-        fprintf(stderr, ">> bam_sort res: %d\n", res);
+        int argc_sort = 0;
+        int res = -1;
 
-        /************************
-        * ns_multi_nh_updated.bam (paired)
-        ************************/ 
-        outfname_sort = out_dir + "/tmp/ns_multi_nh_updated.sort.bam";
-        fprintf(stderr, "outfname_sort: %s\n", outfname_sort.chars());
-        char *ns_multi_argv[] = {"samtools", "sort", "-@", (char*)thread_num.chars(), (char*)outfname_ns_multi_map_nh_updated.chars(), "-o", (char*)outfname_sort.chars()};
-        res = bam_sort(argc_sort-1, ns_multi_argv+1);
-        fprintf(stderr, ">> bam_sort res: %d\n", res);
-
-
-        /************************
-        * s_uniq_cleaned.bam (paired)
-        ************************/ 
-        outfname_sort = out_dir + "/tmp/s_uniq_cleaned.sort.bam";
-        fprintf(stderr, "outfname_sort: %s\n", outfname_sort.chars());
-        char *s_uniq_argv[] = {"samtools", "sort", "-@", (char*)thread_num.chars(), (char*)outfname_s_uniq_map_cleaned.chars(), "-o", (char*)outfname_sort.chars()};
-        res = bam_sort(argc_sort-1, s_uniq_argv+1);
-        fprintf(stderr, ">> bam_sort res: %d\n", res);
+        // I do not need to sort the nonsplice alignment
+        // /************************
+        // * ns_uniq.bam (paired)
+        // ************************/        
+        // outfname_sort = out_dir + "/tmp/ns_uniq.sort.bam";
+        // fprintf(stderr, "outfname_sort: %s\n", outfname_sort.chars());
+        // char *ns_uniq_argv[] = {"samtools", "sort", "-@", (char*)thread_num.chars(), (char*)outfname_ns_uniq_map.chars(), "-o", (char*)outfname_sort.chars()};
+        // res =bam_sort(argc_sort-1, ns_uniq_argv+1);
+        // fprintf(stderr, ">> bam_sort res: %d\n", res);
 
         // /************************
-        // * s_multi_cleaned_nh_updated.bam (paired)
+        // * ns_multi_nh_updated.bam (paired)
         // ************************/ 
-        // outfname_sort = out_dir + "/tmp/s_multi_cleaned_nh_updated.sort.bam";
+        // outfname_sort = out_dir + "/tmp/ns_multi_nh_updated.sort.bam";
         // fprintf(stderr, "outfname_sort: %s\n", outfname_sort.chars());
-        // char *s_multi_argv[] = {"samtools", "sort", "-@", (char*)thread_num.chars(), (char*)outfname_s_multi_map_cleaned_nh_updated.chars(), "-o", (char*)outfname_sort.chars()};
-        // bam_sort(argc_sort-1, s_multi_argv+1);
+        // char *ns_multi_argv[] = {"samtools", "sort", "-@", (char*)thread_num.chars(), (char*)outfname_ns_multi_map_nh_updated.chars(), "-o", (char*)outfname_sort.chars()};
+        // res = bam_sort(argc_sort-1, ns_multi_argv+1);
+        // fprintf(stderr, ">> bam_sort res: %d\n", res);
 
 
+        /************************
+        * Sorting s_uniq_cleaned.bam (paired)
+        ************************/ 
+        GStr outfname_s_uniq_map_cleaned_sort = out_dir + "/tmp/s_uniq_cleaned.sort.bam";
+        char *s_uniq_argv[] = {"samtools", "sort", "-@", (char*)thread_num.chars(), (char*)outfname_s_uniq_map_cleaned.chars(), "-o", (char*)outfname_s_uniq_map_cleaned_sort.chars()};
+        argc_sort = sizeof(s_uniq_argv) / sizeof(s_uniq_argv[0]);
+        res = bam_sort(argc_sort-1, s_uniq_argv+1);
+        // fprintf(stderr, ">> bam_sort res: %d\n\n\n", res);
+        // Reset argument
+        optind = 1;
+        
+        /************************
+        * Sorting s_multi_cleaned_nh_updated.bam (paired)
+        ************************/ 
+        GStr outfname_s_multi_map_cleaned_nh_updated_sort = out_dir + "/tmp/s_multi_cleaned_nh_updated.sort.bam";
+        char *s_multi_argv[] = {"samtools", "sort", "-@", (char*)thread_num.chars(), (char*)outfname_s_multi_map_cleaned_nh_updated.chars(), "-o", (char*)outfname_s_multi_map_cleaned_nh_updated_sort.chars()};
+        argc_sort = sizeof(s_multi_argv) / sizeof(s_multi_argv[0]);
+        res = bam_sort(argc_sort-1, s_multi_argv+1);
+        // fprintf(stderr, ">> bam_sort res: %d\n\n\n", res);
+        // Reset argument
+        optind = 1;
 
         // Step 2: Merge BAM file
+        char *merge_argv[] = {"samtools", "merge", "-f", "-@", (char*)thread_num.chars(), "-o", (char*)outfname_cleaned.chars(), 
+        (char*)outfname_ns_uniq_map.chars(), 
+        (char*)outfname_ns_multi_map_nh_updated.chars(), 
+        (char*)outfname_s_uniq_map_cleaned_sort.chars(), 
+        (char*)outfname_s_multi_map_cleaned_nh_updated_sort.chars(), 
+        (char*)outfname_ns_uniq_unpair.chars(), 
+        (char*)outfname_ns_multi_unpair_nh_updated.chars(), 
+        (char*)outfname_s_uniq_unpair_cleaned.chars(), 
+        (char*)outfname_s_multi_unpair_cleaned_nh_updated.chars()};
+        int argc_merge = sizeof(merge_argv) / sizeof(merge_argv[0]);
+        // fprintf(stderr, "argc_merge: %d\n", argc_merge);
+        bam_merge(argc_merge-1, merge_argv+1);
 
     } else {
         int argc_merge = 9;
-        char *test[] = {"samtools", "merge", "-@", (char*)thread_num.chars(), "-f", "-o", (char*)outfname_cleaned.chars(), (char*)outfname_ns_uniq_map.chars(), (char*)outfname_ns_multi_map_nh_updated.chars(), (char*)outfname_s_uniq_map_cleaned.chars(), (char*)outfname_s_multi_map_cleaned_nh_updated.chars()};
+        char *test[] = {"samtools", "merge", "-f", "-@", (char*)thread_num.chars(), "-o", (char*)outfname_cleaned.chars(), (char*)outfname_ns_uniq_map.chars(), (char*)outfname_ns_multi_map_nh_updated.chars(), (char*)outfname_s_uniq_map_cleaned.chars(), (char*)outfname_s_multi_map_cleaned_nh_updated.chars()};
         // bam_sort(10, test);
         bam_merge(argc_merge-1, test+1);
     }
@@ -566,3 +592,5 @@ void splam_clean_valid_precheck () {
         }
     }
 }
+
+
