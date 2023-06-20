@@ -1,1 +1,0 @@
-int splam_clean(int argc, char* argv[]);

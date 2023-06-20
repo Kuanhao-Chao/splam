@@ -12,13 +12,15 @@
 #include "junc.h"
 #include "update.h"
 
+#include <string>
+#include <vector>
 #include <gclib/GArgs.h>
 #include <gclib/GBase.h>
 #include <gclib/GStr.h>
 #include <robin_hood/robin_hood.h>
 
 #include <pybind11/pybind11.h>
-// #include <Python.h>
+#include <pybind11/stl.h>
 
 void processOptions(int argc, char* argv[]);
 void processOptionsJExtract(GArgs& args);
@@ -129,7 +131,42 @@ bool g_paired_removal = false;
 
 robin_hood::unordered_map<std::string, int>  CHRS;
 
-int splam_extract() {
+namespace py = pybind11;
+
+int splam_extract(py::list args_pyls) {
+    std::vector<std::string> args;
+    // Convert each element of the py::list to std::string
+    for (const auto& item : args_pyls) {
+        std::string str = py::cast<std::string>(item);
+        args.push_back(str);
+    }
+    int argc = args.size();
+    char** argv = new char*[args.size() + 1]; // +1 for the null terminator
+    // Convert each string to a C-style string and copy it to argv
+    for (size_t i = 0; i < args.size(); ++i) {
+        argv[i] = new char[args[i].size() + 1]; // +1 for the null terminator
+        std::strcpy(argv[i], args[i].c_str());
+    }
+    // Add a null terminator at the end
+    argv[args.size()] = nullptr;
+
+
+    GMessage(
+            "==========================================================================================\n"
+            "An accurate spliced alignment pruner and spliced junction predictor.\n"
+            "==========================================================================================\n");
+    const char *banner = R"""(
+  ███████╗██████╗ ██╗      █████╗ ███╗   ███╗
+  ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║
+  ███████╗██████╔╝██║     ███████║██╔████╔██║
+  ╚════██║██╔═══╝ ██║     ██╔══██║██║╚██╔╝██║
+  ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║
+  ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
+    )""";
+    std::cout << banner << std::endl;
+    
+    in_records.setup(VERSION, argc, argv);
+    processOptions(argc, argv);
 
     outfname_cleaned = out_dir + "/cleaned.bam";
     /*********************
@@ -234,26 +271,23 @@ int splam_extract() {
 #define STRINGIFY(x) #x
 #define MACRO_STRINGIFY(x) STRINGIFY(x)
 
-namespace py = pybind11;
 
-PYBIND11_MODULE(splam_jextract, m) {
-    m.doc() = R"pbdoc(
-        Pybind11 example plugin
-        -----------------------
+PYBIND11_MODULE(splam_extract, m) {
+    // m.doc() = R"pbdoc(
+    //     Pybind11 example plugin
+    //     -----------------------
 
-        .. currentmodule:: bind_test
+    //     .. currentmodule:: bind_test
 
-        .. autosummary::
-           :toctree: _generate
+    //     .. autosummary::
+    //        :toctree: _generate
 
-           add
-           subtract
-    )pbdoc";
+    //        add
+    //        subtract
+    // )pbdoc";
 
     m.def("splam_extract", &splam_extract, R"pbdoc(
-        Add two numbers
-
-        Some other explanation about the add function.
+        Extracting splice junctions
     )pbdoc");
 
 
@@ -405,25 +439,3 @@ void checkJunction(GArgs& args) {
         }
     }
 }
-
-
-int main(int argc, char* argv[]) {
-    GMessage(
-            "==========================================================================================\n"
-            "An accurate spliced alignment pruner and spliced junction predictor.\n"
-            "==========================================================================================\n");
-    const char *banner = R"""(
-  ███████╗██████╗ ██╗      █████╗ ███╗   ███╗
-  ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║
-  ███████╗██████╔╝██║     ███████║██╔████╔██║
-  ╚════██║██╔═══╝ ██║     ██╔══██║██║╚██╔╝██║
-  ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║
-  ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
-    )""";
-    std::cout << banner << std::endl;
-    
-    in_records.setup(VERSION, argc, argv);
-    processOptions(argc, argv);
-    splam_extract();
-}
-
