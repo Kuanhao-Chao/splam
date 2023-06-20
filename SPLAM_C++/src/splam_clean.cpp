@@ -19,7 +19,7 @@
 #include <gclib/GBase.h>
 #include <gclib/GStr.h>
 #include <robin_hood/robin_hood.h>
-#include <Python.h>
+// #include <Python.h>
 
 // Include htslib
 #include <htslib/htslib/sam.h>
@@ -175,7 +175,7 @@ int array_size(char *test[]) {
 }
 
 
-int main(int argc, char* argv[]) {
+int splam_clean(int argc, char* argv[]) {
     GMessage(
             "==========================================================================================\n"
             "An accurate spliced alignment pruner and spliced junction predictor.\n"
@@ -537,7 +537,6 @@ void optionsWriteTMP(GArgs& args) {
     }
 }
 
-
 void splam_clean_valid_precheck () {
     bool ns_multi_map_bool = fileExists(outfname_ns_multi_map.chars())>1;
     bool ns_uniq_map_bool = fileExists(outfname_ns_uniq_map.chars())>1;
@@ -594,3 +593,6 @@ void splam_clean_valid_precheck () {
 }
 
 
+int main(int argc, char* argv[]) {
+    splam_clean(argc, argv);
+}
