@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 add_subdirectory(pybind11)
 
 
-# pybind11_add_module(bind_test src/bind_test.cpp)
+# pybind11_add_module(bind_test splam/module/bind_test.cpp)
 # target_compile_definitions(bind_test
 #                            PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
 
@@ -41,13 +41,13 @@ ExternalProject_Add(htslib
 # pybind11 for building splam_extract 
 ############################
 pybind11_add_module(splam_extract 
-        src/splam_extract.cpp
-        src/GSam.h
-        src/extract.cpp
-        src/junc_func.cpp
-        src/util.cpp
-        src/tmerge.cpp
-        src/GSam.cpp
+        splam/module/splam_extract.cpp
+        splam/module/GSam.h
+        splam/module/extract.cpp
+        splam/module/junc_func.cpp
+        splam/module/util.cpp
+        splam/module/tmerge.cpp
+        splam/module/GSam.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GHash.hh
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.cpp
@@ -68,20 +68,20 @@ target_compile_definitions(splam_extract
 ############################
 # Compiling splam-clean
 pybind11_add_module(splam_clean
-        src/splam_clean.cpp
-        src/bam_sort.c
-        src/bam.c
-        src/sam_utils.c
-        src/sam_opts.c
-        src/bedidx.c
-        src/junc_func.cpp
-        src/extract.cpp
-        src/predict.cpp
-        src/clean.cpp
-        src/update.cpp
-        src/util.cpp
-        src/tmerge.cpp
-        src/GSam.cpp
+        splam/module/splam_clean.cpp
+        splam/module/bam_sort.c
+        splam/module/bam.c
+        splam/module/sam_utils.c
+        splam/module/sam_opts.c
+        splam/module/bedidx.c
+        splam/module/junc_func.cpp
+        splam/module/extract.cpp
+        splam/module/predict.cpp
+        splam/module/clean.cpp
+        splam/module/update.cpp
+        splam/module/util.cpp
+        splam/module/tmerge.cpp
+        splam/module/GSam.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GHash.hh
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.cpp
@@ -108,12 +108,12 @@ target_compile_definitions(splam_clean
 # ############################
 # # Compiling splam-extract
 # add_executable(splam-extract
-#         src/splam_extract.cpp
-#         src/extract.cpp
-#         src/junc_func.cpp
-#         src/util.cpp
-#         src/tmerge.cpp
-#         src/GSam.cpp
+#         splam/module/splam_extract.cpp
+#         splam/module/extract.cpp
+#         splam/module/junc_func.cpp
+#         splam/module/util.cpp
+#         splam/module/tmerge.cpp
+#         splam/module/GSam.cpp
 #         ${CMAKE_SOURCE_DIR}/include/gclib/GHash.hh
 #         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h
 #         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.cpp
@@ -145,12 +145,12 @@ target_compile_definitions(splam_clean
 # ############################
 # # Compiling splam-test
 # add_executable(splam-test
-#         src/splam_test.cpp
-#         src/bam_sort.c
-#         src/bam.c
-#         src/sam_utils.c
-#         src/sam_opts.c
-#         src/bedidx.c)
+#         splam/module/splam_test.cpp
+#         splam/module/bam_sort.c
+#         splam/module/bam.c
+#         splam/module/sam_utils.c
+#         splam/module/sam_opts.c
+#         splam/module/bedidx.c)
 
 # # target_link_libraries(splam Python::Python)
 # add_dependencies(splam-test htslib)
@@ -172,11 +172,11 @@ target_compile_definitions(splam_clean
 # ############################
 # # Compiling splam-merge
 # add_executable(splam-merge
-#         src/bam_sort.c
-#         src/bam.c
-#         src/sam_utils.c
-#         src/sam_opts.c
-#         src/bedidx.c)
+#         splam/module/bam_sort.c
+#         splam/module/bam.c
+#         splam/module/sam_utils.c
+#         splam/module/sam_opts.c
+#         splam/module/bedidx.c)
 
 # # target_link_libraries(splam Python::Python)
 
@@ -215,12 +215,12 @@ target_compile_definitions(splam_clean
 # ############################
 # # Compiling splam-extract
 # add_executable(splam-extract
-#         src/splam_extract.cpp
-#         src/extract.cpp
-#         src/junc_func.cpp
-#         src/util.cpp
-#         src/tmerge.cpp
-#         src/GSam.cpp
+#         splam/module/splam_extract.cpp
+#         splam/module/extract.cpp
+#         splam/module/junc_func.cpp
+#         splam/module/util.cpp
+#         splam/module/tmerge.cpp
+#         splam/module/GSam.cpp
 #         ${CMAKE_SOURCE_DIR}/include/gclib/GHash.hh
 #         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.h
 #         ${CMAKE_SOURCE_DIR}/include/gclib/GStr.cpp
@@ -243,7 +243,7 @@ target_compile_definitions(splam_clean
 
 
 # add_subdirectory(pybind11)
-# pybind11_add_module(bind_test src/bind_test.cpp)
+# pybind11_add_module(bind_test splam/module/bind_test.cpp)
 
 # target_compile_definitions(bind_test
 #                            PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
