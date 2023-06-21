@@ -1,9 +1,11 @@
-<h1 align="center">splam</h1>
+<!-- <h1 align="center">splam</h1> --> 
+![Splam Logo](./logo.png) 
+
 splam is a deep learning-based splice junction predictor. It takes read alignments in BAM or CRAM format and predict highly accurate exon/intron boundaries.
 
 
-<!-- 
-# Table of Contents
+
+<!-- # Table of Contents
 - [Table of Contents](#table-of-contents)
 - [User's Guide](#users-guide)
   - [Installation](#installation)

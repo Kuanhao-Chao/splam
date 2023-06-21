@@ -295,13 +295,13 @@ def make_fig8(avg_df, id):
     df['Distance to Ending'] = df[['dist_to_start', 'dist_to_end']].min(axis=1)
     df['ACTG Content'] = df['ACTG Content'] / (df['Intron Length'] + 10400)
     df['N Content'] = df['N Content'] / (df['Intron Length'] + 10400)
-    print(df)
+    print(df, '\nStats:\n', df[['Intron Length', 'Distance to Ending', 'ACTG Content', 'N Content']].mean(axis=0).astype('float64'))
 
     d_df = pd.melt(df, value_vars=['d_score_spliceai', 'd_score_splam'], var_name='Method', value_name='Score', 
                    id_vars=['N Content', 'Intron Length', 'Distance to Ending']).replace('d_score_spliceai', 'SpliceAI').replace('d_score_splam', 'SPLAM')
     a_df = pd.melt(df, value_vars=['a_score_spliceai', 'a_score_splam'], var_name='Method', value_name='Score', 
                    id_vars=['N Content', 'Intron Length', 'Distance to Ending']).replace('a_score_spliceai', 'SpliceAI').replace('a_score_splam', 'SPLAM')
-    print(d_df, a_df)
+    #print(d_df, a_df)
 
     # # pairplot for all pairwise comparisons
     # sns.set(font_scale=0.8)
@@ -319,7 +319,7 @@ def make_fig8(avg_df, id):
     # sns.set_palette('deep')
     # f, axs = plt.subplots(1, 2, sharey=True, figsize=(12,6))
     # plot_params = {'s': 9, 'alpha': 0.7}
-    # f.suptitle(f'N Content vs. Score for {id[1]} Dataset')
+    # f.suptitle(f'Distance to Endings vs. Score for {id[1]} Dataset')
     # sns.scatterplot(data=d_df, x='Distance to Ending', y='Score', hue='Method', ax=axs[0], legend=False, **plot_params).set(title='Donor')
     # ax = sns.scatterplot(data=a_df, x='Distance to Ending', y='Score', hue='Method', ax=axs[1], **plot_params)
     # ax.set_title('Acceptor')
@@ -327,24 +327,24 @@ def make_fig8(avg_df, id):
     # plt.show()
     # save_fig(f'./figures/fig8/distance_to_endings_vs_score.{id[0]}.{id[1]}.png')
 
-    # investigating intron len specifically lower end
-    threshold = 400
-    d_df = d_df[d_df['Intron Length'] > threshold]
-    a_df = a_df[a_df['Intron Length'] > threshold]
-    sns.set(font_scale=0.8)
-    sns.set_palette('deep')
-    f, axs = plt.subplots(1, 2, sharey=True, figsize=(12,6))
-    plot_params = {'s': 8, 'alpha': 0.6}
-    f.suptitle(f'N Content vs. Score for {id[1]} Dataset')
-    sns.scatterplot(data=d_df, x='Intron Length', y='Score', hue='Method', ax=axs[0], legend=False, **plot_params).set(title='Donor')
-    ax = sns.scatterplot(data=a_df, x='Intron Length', y='Score', hue='Method', ax=axs[1], **plot_params)
-    ax.set_title('Acceptor')
-    sns.move_legend(ax, loc='center left', bbox_to_anchor=(1.05, 0.5))
-    plt.show()
+    # # investigating intron len specifically lower end
+    # threshold = 400
+    # d_df = d_df[d_df['Intron Length'] < threshold]
+    # a_df = a_df[a_df['Intron Length'] < threshold]
+    # sns.set(font_scale=0.8)
+    # sns.set_palette('deep')
+    # #f, axs = plt.subplots(1, 2, sharey=True, figsize=(12,6))
+    # plot_params = {'s': 8, 'alpha': 0.6}
+    # # sns.scatterplot(data=d_df, x='Intron Length', y='Score', hue='Method', ax=axs[0], legend=False, **plot_params).set(title='Donor')
+    # # ax = sns.scatterplot(data=a_df, x='Intron Length', y='Score', hue='Method', ax=axs[1], **plot_params)
+    # # ax.set_title('Acceptor')
+    # #sns.jointplot(data=d_df, x='Intron Length', y='Score', hue='Method', height=8, ratio=4, **plot_params)
+    # sns.jointplot(data=a_df, x='Intron Length', y='Score', hue='Method', height=8, ratio=4, **plot_params)
+    # plt.title(f'Intron Length (<400) vs. Score for {id[1]} Dataset')
+    # plt.show()
+    # save_fig(f'./figures/fig8/acceptor_jointplot_len_vs_score.{id[0]}.{id[1]}.png')
 
-    save_fig(f'./figures/fig8/above_intron_len_vs_score.{id[0]}.{id[1]}.png')
 
-    pass
 
 
 '''
