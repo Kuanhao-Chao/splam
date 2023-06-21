@@ -33,7 +33,9 @@ def parse_args(args):
     return args_r
 
 def main(argv=None):
-    splam_extract.splam_extract()
+    print("Hello world!")
+
+    splam_extract.splam_extract(["splam-extract", "-o", "SRR1352129_chr9_sub", "--paired", "../../Dataset/SRR1352129_chr9_sub/SRR1352129_chr9_sub.bam"])
     
     # chrs = chr_size.chrs
     # args = parse_args(argv)
