@@ -59,7 +59,10 @@ def make_fig7(type):
 
     # calculate quartiles
     quartiles = all_species_df.quantile([0.25, 0.50, 0.75], axis=0)
+    # diff = pd.DataFrame(quartiles.loc[0.75] - quartiles.loc[0.25]).T
+    # quartiles = pd.concat([quartiles, diff])
     print(quartiles)
+    # quartiles.to_csv(f'./output/quartiles_{type}.csv')
 
     # traverse subplots column-major (top-down, left-right)
     axs = axs.flatten(order='F')
@@ -104,10 +107,10 @@ def make_fig7(type):
     plt.tight_layout()
     plt.show()
 
-    save_fig(f'./figures/fig7/all_scores_compare.{type}.png')
+    #save_fig(f'./figures/fig7/all_scores_compare.{type}.png')
 
 if __name__ == '__main__':
 
-    type = 'N'
+    type = 'noN'
 
     make_fig7(type)
