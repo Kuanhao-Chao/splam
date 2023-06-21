@@ -84,7 +84,7 @@ wchar_t *GetWC(const char *c)
 int usage_extract(){ 
     // GMessage("splam v{}\n\n", VERSION);
     GMessage(
-    "\033[1mUsage\033[0m:   splam-extract [arguments] BAM-file(s) \n\n\n");
+    "usage:   splam-extract [arguments] BAM-file(s) \n\n\n");
     GMessage(
     "\033[1m\033[91mRequired argument:\033[0m\n"
     "\t-o / --output\t\tPath to the output directory\n\n"
@@ -101,7 +101,7 @@ int usage_clean(){
     // GMessage("splam v{}\n\n", VERSION);
 
         GMessage(
-        "\033[1mUsage\033[0m:   splam-clean [arguments] \n\n\n");
+        "usage:   splam-clean [arguments] \n\n\n");
         GMessage(
         "\033[1m\033[91mRequired argument:\033[0m\n"
         // "\t-b / --bam\t\tPath to the alignment file (BAM)\n"
