@@ -140,31 +140,28 @@ target_compile_definitions(splam_clean
 
 
 
-############################
-# Target for building splam-test
-############################
-# Compiling splam-test
-add_executable(splam-test
-        src/splam_test.cpp
-        src/bam_sort.c
-        src/bam.c
-        src/sam_utils.c
-        src/sam_opts.c
-        src/bedidx.c)
+# ############################
+# # Target for building splam-test
+# ############################
+# # Compiling splam-test
+# add_executable(splam-test
+#         src/splam_test.cpp
+#         src/bam_sort.c
+#         src/bam.c
+#         src/sam_utils.c
+#         src/sam_opts.c
+#         src/bedidx.c)
 
+# # target_link_libraries(splam Python::Python)
+# add_dependencies(splam-test htslib)
+# if(UNIX AND NOT APPLE)
+#         target_link_libraries(splam-test stdc++fs)
+# endif ()
+# target_link_libraries(splam-test ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+# # target_link_libraries(splam "${TORCH_LIBRARIES}")
+# # target_includlse_directories(splam PRIVATE ${PYTHON_INCLUDE_DIRS})
 
-# target_link_libraries(splam Python::Python)
-
-add_dependencies(splam-test htslib)
-if(UNIX AND NOT APPLE)
-        target_link_libraries(splam-test stdc++fs)
-endif ()
-target_link_libraries(splam-test ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
-# target_link_libraries(splam "${TORCH_LIBRARIES}")
-# target_includlse_directories(splam PRIVATE ${PYTHON_INCLUDE_DIRS})
-
-
-set_property(TARGET splam-test PROPERTY CXX_STANDARD 14)
+# set_property(TARGET splam-test PROPERTY CXX_STANDARD 14)
 
 
 
@@ -252,6 +249,7 @@ set_property(TARGET splam-test PROPERTY CXX_STANDARD 14)
 #                            PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
 
 
+message("${CMAKE_SOURCE_DIR}")
 message("${CMAKE_CURRENT_SOURCE_DIR}/build/: ")
 message("${CMAKE_CURRENT_SOURCE_DIR}/splam/: ")
 message("Printing ${CMAKE_INSTALL_PREFIX}: ")
