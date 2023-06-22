@@ -410,10 +410,11 @@ void optionsOutput(GArgs& args) {
     if (out_dir.is_empty()) {
         out_dir=args.getOpt("output");
         if (out_dir.is_empty()) {
-            usage_extract();
-            GMessage("\n[ERROR] output directory must be provided (-o / --output)!\n");
-            exit(1);
+            out_dir = "tmp_splam_out";
         }
+    }
+    if (out_dir[out_dir.length()-1] == '/' ) {
+		out_dir.cut(out_dir.length()-1, 1);
     }
 }
 
