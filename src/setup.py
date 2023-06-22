@@ -126,12 +126,12 @@ class CMakeBuild(build_ext):
 
 setup(
 	name="splam",
-	version="0.1.0",
+	version="0.2.0",
 	author="Kuan-Hao Chao",
 	author_email="kh.chao@cs.jhu.edu",
 	description="Splice junction scoring tool",
 	url="https://github.com/Kuanhao-Chao/SPLAM",
-	install_requires=['torch>=1.12.0', 'pandas>=2.0.0', 'pybedtools>=0.9.0'],
+	install_requires=['torch>=1.12.0', 'pybedtools>=0.9.0'],
 	python_requires='>=3.6',
 	packages=['splam'],
     ext_modules=[CMakeExtension("splam_extract"),
