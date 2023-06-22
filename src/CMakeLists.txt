@@ -31,8 +31,8 @@ include(ExternalProject)
 ExternalProject_Add(htslib
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/include/htslib/
         BUILD_IN_SOURCE 1
-        CONFIGURE_COMMAND autoreconf -i COMMAND ./configure --without-libdeflate --disable-libcurl --disable-lzma COMMAND make
-        BUILD_COMMAND ${MAKE}
+        CONFIGURE_COMMAND autoreconf -i COMMAND ./configure --without-libdeflate --disable-libcurl --disable-lzma
+        BUILD_COMMAND make
         INSTALL_COMMAND ""
         )
 
@@ -249,7 +249,7 @@ target_compile_definitions(splam_clean
 #                            PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
 
 
-message("${CMAKE_SOURCE_DIR}")
+message("MAKE!!${MAKE}")
 message("${CMAKE_CURRENT_SOURCE_DIR}/build/: ")
 message("${CMAKE_CURRENT_SOURCE_DIR}/splam/: ")
 message("Printing ${CMAKE_INSTALL_PREFIX}: ")

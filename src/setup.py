@@ -7,6 +7,7 @@ from pathlib import Path
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 
+VERSION = 0.2.0
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
     "win32": "Win32",
@@ -126,7 +127,7 @@ class CMakeBuild(build_ext):
 
 setup(
 	name="splam",
-	version="0.2.0",
+	version=VERSION,
 	author="Kuan-Hao Chao",
 	author_email="kh.chao@cs.jhu.edu",
 	description="Splice junction scoring tool",
