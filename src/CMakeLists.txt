@@ -31,7 +31,7 @@ include(ExternalProject)
 ExternalProject_Add(htslib
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/include/htslib/
         BUILD_IN_SOURCE 1
-        CONFIGURE_COMMAND autoconf -i COMMAND ./configure  --without-libdeflate --disable-libcurl --disable-lzma
+        CONFIGURE_COMMAND autoreconf -i COMMAND ./configure --without-libdeflate --disable-libcurl --disable-lzma COMMAND make
         BUILD_COMMAND ${MAKE}
         INSTALL_COMMAND ""
         )
