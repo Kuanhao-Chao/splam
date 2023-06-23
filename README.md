@@ -9,6 +9,7 @@ There are two main use case scenarios:
 1. Evaluating all splice sites in an annotation file or assembled transcripts [[Link](#annotation_splam)].
 2. Evaluating all splice junctions in an alignment file and remove spliced alignment containing spurious splice sites [[Link](#alignment_splam)]. Removing spurious splice alignments surprisingly improves transcriptome assembly.
 
+<br>
 
 
 <!-- # Table of Contents
@@ -38,11 +39,13 @@ or with pip
 pip install splam
 ```
 
+<br>
+
 
 
 ## <a name="usage"></a>Usage
 
-### <a name="annotation_splam"></a>Evaluating splice junctions in an annotation file.
+### <a name="annotation_splam"></a>I. Evaluating splice junctions in an annotation file.
 
 The first use case scenario is to evaluate all splice junctions in an annotation file or transcripts assembled by assemblers such as StringTie and Scallop. The acceptable file formats for this analysis are `GFF` and `GTF`. Users can execute this mode in two steps: `extract` and `score`.
 
@@ -65,7 +68,7 @@ chr9    14954   15080   JUNC00000003    3       -
 In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need three essential files. Firstly, you should have the BED file that was generated in the previous step. Additionally, you will require two additional files: (1) the reference genome, which shares coordinates with the junction BED file [[example link](https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa)], and (2) the splam model, accessible at [`model/splam_script.pt`](https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt). Once you have these files in place, you can proceed to score all the splice junctions by executing the following command:
 
 ```
-splam score -G chr9.fa -m ../model/splam_script.pt -o tmp_splam_out tmp_splam_out/junction.bed
+splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out tmp_out/junction.bed
 ```
 
 After this step, a new BED file is produced, featuring eight columns. Two extra columns, namely `DONOR_SCORE` and `ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (p.s. they might be from unstranded transcripts assembled by StringTie).
@@ -78,7 +81,7 @@ chr9    15347   16025   JUNC_4  1       -       5.2404507e-09   1.0171946e-08
 ```
 
 
-### <a name="alignment_splam"></a> Improving spliced alignment
+### <a name="alignment_splam"></a> II. Improving spliced alignment
 
 #### <a name="alignment_splam_extract"></a> Extracting splice junctions
 Like in the [previous section](#annotation_splam_extract), the initial step involves extracting all splice junctions from an alignment file. The input alignment file must be in `BAM` format, and it is crucial that the input file is sorted.
@@ -91,21 +94,26 @@ By default, splam processes alignments without pairing them. If your RNA-Seq sam
 The primary outputs for this step is a `BED` file containing the coordinates of each junction and some temporary files. If you only want to extract splice junctions from the BAM file without running the subsequent cleaning step, you can use the `-n / --write-junctions-only` argument to skip writing out temporary files.
 
 ```
-splam extract -P SRR1352129_chr9_sub.bam
+splam extract -P -o tmp_out SRR1352129_chr9_sub.bam
 ```
-
 
 #### <a name="alignment_splam_score"></a>Scoring splice junctions
 It is the same as [this section](#annotation_splam_score). 
-
+```
+splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out tmp_out/junction.bed
+```
 
 #### <a name="alignment_splam_clean"></a>Cleaning up alignment file
-After scoring every splice junction in your alignment file, the final step of this analysis is to remove alignments with low-quality splice junctions, update 'NH' tag and flags for multi-mapped reads. You can pass the directory path to splam using the `clean` mode, which will output a new cleaned and sorted BAM file. 
+After scoring every splice junction in your alignment file, the final step of this analysis is to remove alignments with low-quality splice junctions and update 'NH' tag and flags for multi-mapped reads. You can pass the directory path to splam using the `clean` mode, which will output a new cleaned and sorted BAM file. 
+
+```
+splam clean -o tmp_out
+```
+
+<br>
 
 
-
-
-## <a name="usage"></a>splam usage
+# <a name="manual"></a>splam manual
 
 There are three mode of splam, which are `extract`, `score`, and `clean`. 
 
@@ -176,29 +184,34 @@ optional arguments:
   -o DIR, --outdir DIR  the directory where the output file is written to. Default output filename is "junction_score.bed"
 ```
 
+<br>
 
 
-## <a name="example"></a>Example
-
+# <a name="example"></a>Example
 Here is a simple reproducible example with toy data:
 
 ```
 cd test
 
-splam extract -P SRR1352129_chr9_sub.bam
+splam extract -P -o tmp_out SRR1352129_chr9_sub.bam 
 
-splam score -G chr9.fa -m ../model/splam_script.pt -o tmp_splam_out tmp_splam_out/junction.bed
+splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out tmp_out/junction.bed
 
-splam clean -o tmp_splam_out
+splam clean -o tmp_out
 ```
 
+
+<br>
 
 
 # <a name="m_architecture"></a>Model Architecture
 ![model_architecture](./splam_architecture.png)
 
 
-# <a name="installation"></a>Publications
+<br>
+
+
+# <a name="publication"></a>Publications
 
 
 **Here is the link to the Colab directory: https://colab.research.google.com/drive/1y5q_OjZcjVRwZB78cZ9xLCwRODOiG_eB**
