@@ -2,21 +2,12 @@
 ![Splam Logo](./logo.png) 
 
 
-<<<<<<< HEAD
 splam is a splice junction recognition model based on a deep residual convolutional neural network. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
 
 There are two main use case scenarios:
 
 1. Evaluating all splice sites in an annotation file or assembled transcripts [[Link](#annotation_splam)].
 2. Evaluating all splice junctions in an alignment file and remove spliced alignment containing spurious splice sites [[Link](#alignment_splam)]. Removing spurious splice alignments surprisingly improves transcriptome assembly.
-=======
-splam model is a splice junction recognition model based on a deep residual convolutional neural network. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
-
-There are two main use case scenarios:
-
-1. Evaluating all splice sites in an annotation file or assembled transcripts ([Link](#annotation_splam)).
-2. Evaluating all splice junctions in an alignment file and remove spliced alignment containing spurious splice sites ([Link](#alignment_splam)). Removing spurious splice alignments surprisingly improves transcriptome assembly.
->>>>>>> 8ff7af1c92989855610d311511f82314ac7863fc
 
 
 
@@ -53,11 +44,7 @@ pip install splam
 
 ### <a name="annotation_splam"></a>Evaluating splice junctions in an annotation file.
 
-<<<<<<< HEAD
 The first use case scenario is to evaluate all splice junctions in an annotation file or transcripts assembled by assemblers such as StringTie and Scallop. The acceptable file formats for this analysis are `GFF` and `GTF`. Users can execute this mode in two steps: `extract` and `score`.
-=======
-The first use case scenario is to evaluate all splice junctions in an annotation file or transcripts assembled by assemblers for instance StringTie, scallop, etc. Acceptable file formats are `GFF` and `GTF`. Users run this mode with two steps, `extract` and `score`.
->>>>>>> 8ff7af1c92989855610d311511f82314ac7863fc
 
 #### <a name="annotation_splam_extract"></a> Extracting splice junctions
 In this example, given a `GFF` file, you first run 
@@ -65,14 +52,8 @@ In this example, given a `GFF` file, you first run
 ```
 splam extract input.gff
 ```
-<<<<<<< HEAD
 splam iterates through the GFF file, extracts all introns in transcripts, and writes their coordinates into a `BED` file. The BED file consists of six columns: `CHROM`, `START`, `END`, `JUNC_NAME`, `INTRON_NUM`, and `STRAND`. Here are a few entries from the BED file:
 
-=======
-
-splam iterates through the gff file, extracts all introns in transcripts, and writes their coordinates into a `BED` file, with six columns, `CHROM`, `START`, `END`, `JUNC_NAME`, `INTRON_NUM`, and `STRAND`. Following is a few entries of the BED file.
-
->>>>>>> 8ff7af1c92989855610d311511f82314ac7863fc
 ```
 chr9    14940   15080   JUNC00000001    251     -
 chr9    14940   15040   JUNC00000002    4       -
@@ -81,13 +62,13 @@ chr9    14954   15080   JUNC00000003    3       -
 
 
 #### <a name="annotation_splam_score"></a>Scoring splice junctions
-The next step is to score all the extracted splice junctions. For this step, you need the BED file generated from the previous step, and two additional files which are (1) the reference genome which its coordinates the junction BED file shared with and (2) splam model which you can find in `model/splam_script.pt`. After you have all these files, you can run the following command to score all splice junctions:
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need three essential files. Firstly, you should have the BED file that was generated in the previous step. Additionally, you will require two additional files: (1) the reference genome, which shares coordinates with the junction BED file [[example link](https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa)], and (2) the splam model, accessible at [`model/splam_script.pt`](https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt). Once you have these files in place, you can proceed to score all the splice junctions by executing the following command:
 
 ```
 splam score -G chr9.fa -m ../model/splam_script.pt -o tmp_splam_out tmp_splam_out/junction.bed
 ```
 
-This step outputs a new BED file with eigth columns. Two new appended columns are `DONOR_SCORE` and `ACCEPTOR_SCORE`. Note that any unstranded introns are excluded (p.s. they might be from unstranded transcripts assembled by StringTie).
+After this step, a new BED file is produced, featuring eight columns. Two extra columns, namely `DONOR_SCORE` and `ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (p.s. they might be from unstranded transcripts assembled by StringTie).
 
 ```
 chr9    14940   15080   JUNC_0  1       -       0.9999496       0.99997985
@@ -97,26 +78,29 @@ chr9    15347   16025   JUNC_4  1       -       5.2404507e-09   1.0171946e-08
 ```
 
 
-
-
-
 ### <a name="alignment_splam"></a> Improving spliced alignment
 
 #### <a name="alignment_splam_extract"></a> Extracting splice junctions
+Like in the [previous section](#annotation_splam_extract), the initial step involves extracting all splice junctions from an alignment file. The input alignment file must be in `BAM` format, and it is crucial that the input file is sorted.
 
-Similar to the [previous section](#annotation_splam_extract), the first step is to extract all splice junctions from an alignment file. The required input format of the alignment file is `BAM`, and the input file is <b>required to be sorted</b>. 
-
-There are two types of RNA sequencing read types: single-read and paired-end sequencing. You can read [this page](https://www.illumina.com/science/technology/next-generation-sequencing/plan-experiments/paired-end-vs-single-read.html) for more detailed explaination.
-
-One important argument for users to choose from is `-P / --paired`. By default, splam process alignments without pairing them. If your RNA-Seq sample is single-read, you do not need to set this argument; however, if your RNA-Seq sample is paired-end sequencing, we highly suggest to run splam with the `-P, --paired` argument or otherwise, if an alignment is removed, the flag of its mate will not be updated. Pairing alignments in BAM file takes longer time, but it outputs alignments with more accurate flags. 
-
-Additionally, if you simply want to extract splice junctions in the BAM file without running the following steps, you can run with the `-n /--write-junctions-only` argument to skip writing out temporary files.
-
-The main output file for this step is a BED file with the coordinates of every junction. 
+One important argument is `-P / --paired`.  This argument should be selected based on the RNA sequencing read type. There are two types of RNA sequencing read types: single-read and paired-end sequencing. For a more detailed explanation, you can refer to [this page](https://www.illumina.com/science/technology/next-generation-sequencing/plan-experiments/paired-end-vs-single-read.html).
 
 
+By default, splam processes alignments without pairing them. If your RNA-Seq sample is single-read, there is no need to set this argument. However, if your RNA-Seq sample is from paired-end sequencing, it is highly recommended to run splam with the `-P / --paired` argument. Otherwise, if an alignment is removed, the flag of its mate will not be unpaired. It is worth noting that it takes longer to pair alignments in the BAM file, but it produces more accurate flags.
+
+The primary outputs for this step is a `BED` file containing the coordinates of each junction and some temporary files. If you only want to extract splice junctions from the BAM file without running the subsequent cleaning step, you can use the `-n / --write-junctions-only` argument to skip writing out temporary files.
+
+```
+splam extract -P SRR1352129_chr9_sub.bam
+```
 
 
+#### <a name="alignment_splam_score"></a>Scoring splice junctions
+It is the same as [this section](#annotation_splam_score). 
+
+
+#### <a name="alignment_splam_clean"></a>Cleaning up alignment file
+After scoring every splice junction in your alignment file, the final step of this analysis is to remove alignments with low-quality splice junctions, update 'NH' tag and flags for multi-mapped reads. You can pass the directory path to splam using the `clean` mode, which will output a new cleaned and sorted BAM file. 
 
 
 
@@ -145,10 +129,6 @@ Commands:
 
 ## <a name="junction_extract"></a>Extracting splice junctions
 
-In this step, you input a sorted BAM file. SPLAM extracts all splice junctions from the alignments and writes out a BED file with the coordinates of every junction. You can run it with or without alignment pairing by setting the argument '-P'. The latter option unpairs the alignment's mate if it gets removed.
-
-If you simply want to extract splice junctions in the BAM file without running the following steps, you can run with the `--write-junctions-only` argument to skip writing out temporary files.
-
 ```
 usage: splam extract [-h] [-V] [-P] [-n] [-o DIR] [-M DIST] [-g GAP] BAM_INPUT
 
@@ -170,8 +150,6 @@ optional arguments:
 
 ## <a name="score_splam"></a>Scoring splice junctions 
 
-After extracting splice junctions, you can run splam with the `score` mode to score each splice junction in the BED file generated from the previous step. Stranded splice junctions will be scored using splam's deep convolutional neural network in batches, and the result of this process will be a new BED file containing the donor and acceptor scores.
-
 ```
 usage: splam score [-h] [-V] [-o DIR] -G REF.fasta -m MODEL.pt junction_BED
 
@@ -189,8 +167,6 @@ optional arguments:
 ```
 
 ## <a name="clean_splam"></a>Cleaning up BAM file 
-
-Finally, you can pass the directory path to splam using the `clean` mode, which will output a new cleaned and sorted BAM file. Alignments with low-quality splice junctions are removed and flags are updated.
 
 ```
 usage: splam clean [-h] -o DIR
