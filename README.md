@@ -6,8 +6,8 @@ splam model is a splice junction recognition model based on a deep residual conv
 
 There are two main use case scenarios:
 
-1. Evaluating all splice sites in an annotation file or assembled transcripts.
-2. Evaluating all splice junctions in an alignment file and remove spliced alignment containing spurious splice sites. 
+1. Evaluating all splice sites in an annotation file or assembled transcripts ([Link](#annotation_splam)).
+2. Evaluating all splice junctions in an alignment file and remove spliced alignment containing spurious splice sites ([Link](#alignment_splam)). Removing spurious splice alignments surprisingly improves transcriptome assembly.
 
 
 
@@ -62,7 +62,7 @@ chr9    14954   15080   JUNC00000003    3       -
 ```
 
 
-### <a name="annotation_splam_score"></a>Scoring splice junctions
+#### <a name="annotation_splam_score"></a>Scoring splice junctions
 The next step is to score all the extracted splice junctions. For this step, you need the BED file generated from the previous step, and two additional files which are (1) the reference genome which its coordinates the junction BED file shared with and (2) splam model which you can find in `model/splam_script.pt`. After you have all these files, you can run the following command to score all splice junctions:
 
 ```
@@ -77,6 +77,28 @@ chr9    14940   15040   JUNC_1  1       -       0.9967939       0.9991217
 chr9    14954   15080   JUNC_2  1       -       0.9030796       0.9573919
 chr9    15347   16025   JUNC_4  1       -       5.2404507e-09   1.0171946e-08
 ```
+
+
+
+
+
+### <a name="alignment_splam"></a> Improving spliced alignment
+
+#### <a name="alignment_splam_extract"></a> Extracting splice junctions
+
+Similar to the [previous section](#annotation_splam_extract), the first step is to extract all splice junctions from an alignment file. The required input format of the alignment file is `BAM`, and the input file is <b>required to be sorted</b>. 
+
+There are two types of RNA sequencing read types: single-read and paired-end sequencing. You can read [this page](https://www.illumina.com/science/technology/next-generation-sequencing/plan-experiments/paired-end-vs-single-read.html) for more detailed explaination.
+
+One important argument for users to choose from is `-P / --paired`. By default, splam process alignments without pairing them. If your RNA-Seq sample is single-read, you do not need to set this argument; however, if your RNA-Seq sample is paired-end sequencing, we highly suggest to run splam with the `-P, --paired` argument or otherwise, if an alignment is removed, the flag of its mate will not be updated. Pairing alignments in BAM file takes longer time, but it outputs alignments with more accurate flags. 
+
+Additionally, if you simply want to extract splice junctions in the BAM file without running the following steps, you can run with the `-n /--write-junctions-only` argument to skip writing out temporary files.
+
+The main output file for this step is a BED file with the coordinates of every junction. 
+
+
+
+
 
 
 
