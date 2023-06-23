@@ -18,7 +18,6 @@ There are two main use case scenarios:
   - [Installation](#installation)
 - [Model Architecture](#model-architecture) -->
 
-# <a name="getting_started"></a>Getting started
 
 ## <a name="installation"></a>Installation
 
@@ -43,7 +42,7 @@ pip install splam
 
 
 
-## <a name="usage"></a>Usage
+## <a name="getting_started"></a>Getting started
 
 ### <a name="annotation_splam"></a>I. Evaluating splice junctions in an annotation file.
 
@@ -113,7 +112,7 @@ splam clean -o tmp_out
 <br>
 
 
-# <a name="manual"></a>splam manual
+## <a name="manual"></a>splam manual
 
 There are three mode of splam, which are `extract`, `score`, and `clean`. 
 
@@ -135,7 +134,7 @@ Commands:
 ```
 
 
-## <a name="junction_extract"></a>Extracting splice junctions
+### <a name="junction_extract"></a>Extracting splice junctions
 
 ```
 usage: splam extract [-h] [-V] [-P] [-n] [-o DIR] [-M DIST] [-g GAP] BAM_INPUT
@@ -156,7 +155,7 @@ optional arguments:
                         minimum gap between bundles
 ```
 
-## <a name="score_splam"></a>Scoring splice junctions 
+### <a name="score_splam"></a>Scoring splice junctions 
 
 ```
 usage: splam score [-h] [-V] [-o DIR] -G REF.fasta -m MODEL.pt junction_BED
@@ -187,7 +186,7 @@ optional arguments:
 <br>
 
 
-# <a name="example"></a>Example
+## <a name="example"></a>Example
 Here is a simple reproducible example with toy data:
 
 ```
@@ -204,14 +203,14 @@ splam clean -o tmp_out
 <br>
 
 
-# <a name="m_architecture"></a>Model Architecture
+## <a name="m_architecture"></a>Model Architecture
 ![model_architecture](./splam_architecture.png)
 
 
 <br>
 
 
-# <a name="publication"></a>Publications
+## <a name="publication"></a>Publications
 
 
 **Here is the link to the Colab directory: https://colab.research.google.com/drive/1y5q_OjZcjVRwZB78cZ9xLCwRODOiG_eB**
