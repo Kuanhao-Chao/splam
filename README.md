@@ -1,14 +1,14 @@
 <!-- <h1 align="center">splam</h1> --> 
 ![Splam Logo](./logo.png) 
 
-splam is a deep learning-based splice junction recognition model. It was trained on MANE and alternate
 
-It has two main use case scenarios:
+splam model is a splice junction recognition model based on a deep residual convolutional neural network. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
 
-1. The first use case scenario is to evaluate all the splice sites in the annotation file.
-2. The second one is to evaluate splice junctions in the alignment file and remove spurious spliced alignment. 
+There are two main use case scenarios:
 
-It takes read alignments in BAM or CRAM format and predict highly accurate exon/intron boundaries.
+1. Evaluating all splice sites in an annotation file or assembled transcripts.
+2. Evaluating all splice junctions in an alignment file and remove spliced alignment containing spurious splice sites. 
+
 
 
 <!-- # Table of Contents
@@ -44,14 +44,44 @@ pip install splam
 
 ### <a name="annotation_splam"></a>Evaluating splice junctions in an annotation file.
 
+The first use case scenario is to evaluate all splice junctions in an annotation file or transcripts assembled by assemblers for instance StringTie, scallop, etc. Acceptable file formats are `GFF` and `GTF`. Users run this mode with two steps, `extract` and `score`.
+
+#### <a name="annotation_splam_extract"></a> Extracting splice junctions
+In this example, given a `GFF` file, you first run 
+
+```
+splam extract input.gff
+```
+
+splam iterates through the gff file, extracts all introns in transcripts, and writes their coordinates into a `BED` file, with six columns, `CHROM`, `START`, `END`, `JUNC_NAME`, `INTRON_NUM`, and `STRAND`. Following is a few entries of the BED file.
+
+```
+chr9    14940   15080   JUNC00000001    251     -
+chr9    14940   15040   JUNC00000002    4       -
+chr9    14954   15080   JUNC00000003    3       -
+```
+
+
+### <a name="annotation_splam_score"></a>Scoring splice junctions
+The next step is to score all the extracted splice junctions. For this step, you need the BED file generated from the previous step, and two additional files which are (1) the reference genome which its coordinates the junction BED file shared with and (2) splam model which you can find in `model/splam_script.pt`. After you have all these files, you can run the following command to score all splice junctions:
+
+```
+splam score -G chr9.fa -m ../model/splam_script.pt -o tmp_splam_out tmp_splam_out/junction.bed
+```
+
+This step outputs a new BED file with eigth columns. Two new appended columns are `DONOR_SCORE` and `ACCEPTOR_SCORE`. Note that any unstranded introns are excluded (p.s. they might be from unstranded transcripts assembled by StringTie).
+
+```
+chr9    14940   15080   JUNC_0  1       -       0.9999496       0.99997985
+chr9    14940   15040   JUNC_1  1       -       0.9967939       0.9991217
+chr9    14954   15080   JUNC_2  1       -       0.9030796       0.9573919
+chr9    15347   16025   JUNC_4  1       -       5.2404507e-09   1.0171946e-08
+```
 
 
 
-### <a name="alignment_splam"></a>Evaluating splice junctions in an alignment file.
 
-
-
-
+## <a name="usage"></a>splam usage
 
 There are three mode of splam, which are `extract`, `score`, and `clean`. 
 
@@ -129,6 +159,7 @@ optional arguments:
   -h, --help            show this help message and exit
   -o DIR, --outdir DIR  the directory where the output file is written to. Default output filename is "junction_score.bed"
 ```
+
 
 
 ## <a name="example"></a>Example
