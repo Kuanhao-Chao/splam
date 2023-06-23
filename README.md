@@ -2,12 +2,12 @@
 ![Splam Logo](./logo.png) 
 
 
-splam model is a splice junction recognition model based on a deep residual convolutional neural network. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
+splam is a splice junction recognition model based on a deep residual convolutional neural network. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
 
 There are two main use case scenarios:
 
-1. Evaluating all splice sites in an annotation file or assembled transcripts ([Link](#annotation_splam)).
-2. Evaluating all splice junctions in an alignment file and remove spliced alignment containing spurious splice sites ([Link](#alignment_splam)). Removing spurious splice alignments surprisingly improves transcriptome assembly.
+1. Evaluating all splice sites in an annotation file or assembled transcripts [[Link](#annotation_splam)].
+2. Evaluating all splice junctions in an alignment file and remove spliced alignment containing spurious splice sites [[Link](#alignment_splam)]. Removing spurious splice alignments surprisingly improves transcriptome assembly.
 
 
 
@@ -44,7 +44,7 @@ pip install splam
 
 ### <a name="annotation_splam"></a>Evaluating splice junctions in an annotation file.
 
-The first use case scenario is to evaluate all splice junctions in an annotation file or transcripts assembled by assemblers for instance StringTie, scallop, etc. Acceptable file formats are `GFF` and `GTF`. Users run this mode with two steps, `extract` and `score`.
+The first use case scenario is to evaluate all splice junctions in an annotation file or transcripts assembled by assemblers such as StringTie and Scallop. The acceptable file formats for this analysis are `GFF` and `GTF`. Users can execute this mode in two steps: `extract` and `score`.
 
 #### <a name="annotation_splam_extract"></a> Extracting splice junctions
 In this example, given a `GFF` file, you first run 
@@ -52,8 +52,7 @@ In this example, given a `GFF` file, you first run
 ```
 splam extract input.gff
 ```
-
-splam iterates through the gff file, extracts all introns in transcripts, and writes their coordinates into a `BED` file, with six columns, `CHROM`, `START`, `END`, `JUNC_NAME`, `INTRON_NUM`, and `STRAND`. Following is a few entries of the BED file.
+splam iterates through the GFF file, extracts all introns in transcripts, and writes their coordinates into a `BED` file. The BED file consists of six columns: `CHROM`, `START`, `END`, `JUNC_NAME`, `INTRON_NUM`, and `STRAND`. Here are a few entries from the BED file:
 
 ```
 chr9    14940   15080   JUNC00000001    251     -

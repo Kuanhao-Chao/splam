@@ -5,7 +5,6 @@ train/src/Conformer/.git/
 train/src/block-recurrent-transformer/
 Dataset/
 .DS_Store
-*.fa
 *.bed
 train/src/MODEL
 train/src/INPUTS/Intersection/
