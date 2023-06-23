@@ -1,8 +1,14 @@
 <!-- <h1 align="center">splam</h1> --> 
 ![Splam Logo](./logo.png) 
 
-splam is a deep learning-based splice junction predictor. It takes read alignments in BAM or CRAM format and predict highly accurate exon/intron boundaries.
+splam is a deep learning-based splice junction recognition model. It was trained on MANE and alternate
 
+It has two main use case scenarios:
+
+1. The first use case scenario is to evaluate all the splice sites in the annotation file.
+2. The second one is to evaluate splice junctions in the alignment file and remove spurious spliced alignment. 
+
+It takes read alignments in BAM or CRAM format and predict highly accurate exon/intron boundaries.
 
 
 <!-- # Table of Contents
@@ -15,13 +21,37 @@ splam is a deep learning-based splice junction predictor. It takes read alignmen
 
 ## <a name="installation"></a>Installation
 
+You can install splam with conda package manager. This is the easiest approach.
+```
+TBC
+```
+
+You can also install splam from source
 ```
 git clone https://github.com/Kuanhao-Chao/splam --recursive
 cd splam/src/
 python setup.py install
 ```
 
+or with pip
+```
+pip install splam
+```
+
+
+
 ## <a name="usage"></a>Usage
+
+### <a name="annotation_splam"></a>Evaluating splice junctions in an annotation file.
+
+
+
+
+### <a name="alignment_splam"></a>Evaluating splice junctions in an alignment file.
+
+
+
+
 
 There are three mode of splam, which are `extract`, `score`, and `clean`. 
 
@@ -112,7 +142,7 @@ splam extract -P SRR1352129_chr9_sub.bam
 
 splam score -G chr9.fa -m ../model/splam_script.pt -o tmp_splam_out tmp_splam_out/junction.bed
 
-splam clean -o tmp_splam_out%
+splam clean -o tmp_splam_out
 ```
 
 
