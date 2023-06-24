@@ -162,14 +162,15 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
     )
     return test_loader
 
-def splam_prediction(junction_fasta, out_score_f, model_path, batch_size):
+def splam_prediction(junction_fasta, out_score_f, model_path, batch_size, device_str):
     BATCH_SIZE = int(batch_size)
     N_WORKERS = None
-    device_str = 'cpu'
-    if torch.cuda.is_available(): 
-        device_str = 'cuda'
-    elif torch.backends.mps.is_available():
-        device_str = 'mps'
+    if device_str == "NONE":
+        device_str = 'cpu'
+        if torch.cuda.is_available(): 
+            device_str = 'cuda'
+        elif torch.backends.mps.is_available():
+            device_str = 'mps'
     device = torch.device(device_str)
 
     print(f'[Info] Running model in "'+ device_str+'" mode')

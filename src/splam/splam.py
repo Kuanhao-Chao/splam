@@ -7,7 +7,7 @@ from splam import prediction, config, parse, chr_size, extract_gff
 import splam_extract
 import splam_clean
 
-VERSION = "0.2.3"
+VERSION = "0.2.5"
 
 CITATION = "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, \033[1m\x1B[3mSPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments\x1B[0m\033[0m, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM"
 
@@ -70,8 +70,12 @@ def parse_args(args):
         help='the directory where the output file is written to. Default output filename is "junction_score.bed"',
     )
     parser_score.add_argument(
-        '-b', '--batch-size', metavar='BATCH',
-        help='the number of samples that will be propagated through the network. By default, the batch size is set to 100.'
+        '-b', '--batch-size', default=10, metavar='BATCH',
+        help='the number of samples that will be propagated through the network. By default, the batch size is set to 10.'
+    )
+    parser_score.add_argument(
+        '-d', '--device', default="NONE", metavar='pytorch_dev',
+        help='the computing device that is used to perform computations on tensors and execute operations in the PyTorch framework. By default, this parameter is detectd automatically.'
     )
     parser_score.add_argument(
         '-G', '--reference-genome',  metavar='REF.fasta',
@@ -165,7 +169,7 @@ def main(argv=None):
         reference_genome = args.reference_genome
         splam_model = args.model
         batch_size = args.batch_size
-
+        device = args.device
         #################################
         # Step 1: creating donor acceptor bed file.
         #################################
@@ -185,7 +189,7 @@ def main(argv=None):
         #################################
         # Step 4: splam score junctions
         #################################
-        junction_fasta = prediction.splam_prediction(junction_fasta, junction_score_bed, splam_model, batch_size)
+        junction_fasta = prediction.splam_prediction(junction_fasta, junction_score_bed, splam_model, batch_size, device)
 
     elif args.subcommand == "clean":
         argv_clean = sys.argv
