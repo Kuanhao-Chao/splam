@@ -28,9 +28,7 @@ void processOptionsJExtract(GArgs& args);
 void optionsMaxSplice(GArgs& args);
 void optionsBundleGap(GArgs& args);
 void optionsOutput(GArgs& args);
-void checkJunction(GArgs& args);
 void optionsWriteJuncOnly(GArgs& args);
-// void options2StageRun(GArgs& args);
 
 CommandMode COMMAND_MODE = UNSET;
 
@@ -149,22 +147,6 @@ int splam_extract(py::list args_pyls) {
     }
     // Add a null terminator at the end
     argv[args.size()] = nullptr;
-
-
-//     GMessage(
-//             "==========================================================================================\n"
-//             "An accurate spliced alignment pruner and spliced junction predictor.\n"
-//             "==========================================================================================\n");
-//     const char *banner = R"""(
-//   ███████╗██████╗ ██╗      █████╗ ███╗   ███╗
-//   ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║
-//   ███████╗██████╔╝██║     ███████║██╔████╔██║
-//   ╚════██║██╔═══╝ ██║     ██╔══██║██║╚██╔╝██║
-//   ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║
-//   ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
-//     )""";
-//     std::cout << banner << std::endl;
-    
     in_records.setup(VERSION, argc, argv);
     processOptions(argc, argv);
 
@@ -303,15 +285,10 @@ PYBIND11_MODULE(splam_extract, m) {
 
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;paired;write-junctions-only;output=;max-splice=;bundle-gap=;hvcPVno:M:g:");
+    GArgs args(argc, argv, "help;cite;verbose;paired;write-junctions-only;output=;max-splice=;bundle-gap=;hcPVno:M:g:");
 
     if (args.getOpt('h') || args.getOpt("help")) {
         usage_extract();
-        exit(0);
-    }
-
-    if (args.getOpt('v') || args.getOpt("version")) {
-        fprintf(stdout,"SPLAM v.%s\n", VERSION);
         exit(0);
     }
 
@@ -357,10 +334,9 @@ void processOptions(int argc, char* argv[]) {
     while ( (ifn=args.nextNonOpt())!=NULL) {
         //input alignment files
         std::string absolute_ifn = get_full_path(ifn);
-        GMessage("absolute_ifn: %s\n", absolute_ifn.c_str());
+        // GMessage("absolute_ifn: %s\n", absolute_ifn.c_str());
         in_records.addFile(absolute_ifn.c_str());
     }
-    // checkJunction(args);
 }
 
 
@@ -410,7 +386,7 @@ void optionsOutput(GArgs& args) {
     if (out_dir.is_empty()) {
         out_dir=args.getOpt("output");
         if (out_dir.is_empty()) {
-            out_dir = "tmp_splam_out";
+            out_dir = "tmp_out";
         }
     }
     if (out_dir[out_dir.length()-1] == '/' ) {
@@ -423,20 +399,4 @@ void optionsWriteJuncOnly(GArgs& args) {
 	if (args.getOpt('n') || args.getOpt("write-junctions-only")) {
         write_bam = false;
 	}
-}
-
-void checkJunction(GArgs& args) {
-    infname_juncbed = args.nextNonOpt(); 
-    if (infname_juncbed.is_empty()) {
-        usage_extract();
-        GMessage("\n[ERROR] junction input bed file must be provided!\n");
-        exit(1);
-    } else {
-        if (fileExists(infname_juncbed.chars())>1) {
-            // guided=true;
-        } else {
-            GError("[ERROR] junction bed file (%s) not found.\n",
-                infname_juncbed.chars());
-        }
-    }
 }

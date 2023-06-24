@@ -8,6 +8,7 @@ import math
 import random
 import numpy as np
 import warnings
+import os
 from progress.bar import Bar
 
 warnings.filterwarnings('ignore')
@@ -161,11 +162,17 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
     )
     return test_loader
 
-
-def splam_prediction(junction_fasta, out_score_f, model_path):
-    BATCH_SIZE = 100
+def splam_prediction(junction_fasta, out_score_f, model_path, batch_size):
+    BATCH_SIZE = int(batch_size)
     N_WORKERS = None
-    device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
+    device_str = 'cpu'
+    if torch.cuda.is_available(): 
+        device_str = 'cuda'
+    elif torch.backends.mps.is_available():
+        device_str = 'mps'
+    device = torch.device(device_str)
+
+    print(f'[Info] Running model in "'+ device_str+'" mode')
     print(f'[Info] Loading model ... (' + model_path + ')', flush = True)
     model = torch.jit.load(model_path)
     model = model.to(device)
@@ -183,7 +190,6 @@ def splam_prediction(junction_fasta, out_score_f, model_path):
     pbar = Bar('[Info] SPLAM! ', max=len(test_loader))
     with torch.no_grad():
         for batch_idx, data in enumerate(test_loader):
-            # print('batch_idx: ', batch_idx)
             # DNAs:  torch.Size([40, 800, 4])
             # labels:  torch.Size([40, 1, 800, 3])
             DNAs, labels, seqname = data

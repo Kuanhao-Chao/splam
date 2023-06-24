@@ -7,7 +7,7 @@ from splam import prediction, config, parse, chr_size
 import splam_extract
 import splam_clean
 
-VERSION = "0.1.0"
+VERSION = "0.2.1"
 
 CITATION = "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, \033[1m\x1B[3mSPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments\x1B[0m\033[0m, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM"
 
@@ -15,15 +15,13 @@ CITATION = "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, \033[1m\x1B[3mSP
 def parse_args(args):
 
     parser = argparse.ArgumentParser(prog='splam', description='\033[1;37msplice junction predictor to improve alignment files (BAM / CRAM)\033[0;0m')
-    
-    # parser.add_argument('-V', '--verbose',
-    #                 action='store_true')  # on/off flag
     parser.add_argument('-v', '--version',
                         action='store_true')  # on/off flag
     parser.add_argument('-c', '--citation', 
                         action='store_true')
-    
-    subparsers = parser.add_subparsers(title='Commands', dest='subcommand')#, required=True)
+
+    # Adding subcommand
+    subparsers = parser.add_subparsers(title='Commands', dest='subcommand')
 
 
     #############################
@@ -43,7 +41,7 @@ def parse_args(args):
         help='only write out splice junction bed file without other temporary files.'
     )
     parser_extract.add_argument(
-        '-o', '--outdir', default="tmp_splam_out", metavar='DIR',
+        '-o', '--outdir', default="tmp_out", metavar='DIR',
         help='the directory where the output file is written to. Default output filename is "junction_score.bed"',
     )
     parser_extract.add_argument(
@@ -64,7 +62,7 @@ def parse_args(args):
     parser_score.add_argument('-V', '--verbose',
                     action='store_true')  # on/off flag
     parser_score.add_argument(
-        '-o', '--outdir', default="tmp_splam_out", metavar='DIR',
+        '-o', '--outdir', default="tmp_out", metavar='DIR',
         help='the directory where the output file is written to. Default output filename is "junction_score.bed"',
     )
     parser_score.add_argument(
@@ -75,6 +73,10 @@ def parse_args(args):
         '-m', '--model', metavar='MODEL.pt', 
         required=True, help='the path to the SPLAM! model'
     )
+    parser_score.add_argument(
+        '-b', '--batch-size', metavar='BATCH',
+        help='the number of samples that will be propagated through the network. By default, the batch size is set to 100.'
+    )
     
     
     #############################
@@ -82,9 +84,13 @@ def parse_args(args):
     #############################
     parser_clean = subparsers.add_parser('clean', help='Cleaning up spurious splice alignment')
     parser_clean.add_argument(
-        '-o', '--outdir', default="tmp_splam_out", metavar='DIR',
-        help='the directory where the output file is written to. Default output filename is "junction_score.bed"',
+        '-o', '--outdir', default="tmp_out", metavar='DIR',
+        help='the directory where the output file is written to. Default output filename is "junction_score.bed".',
         required=True
+    )
+    parser_clean.add_argument(
+        '-@', '--threads', default="1", metavar='THREADS',
+        help='Set number of sorting, compression and merging threads. By default, operation is single-threaded.'
     )
 
     args_r = parser.parse_args()
@@ -129,6 +135,7 @@ def main(argv=None):
         junction_score_bed = os.path.join(outdir, "junction_score.bed")
         reference_genome = args.reference_genome
         splam_model = args.model
+        batch_size = args.batch_size
 
         #################################
         # Step 1: creating donor acceptor bed file.
@@ -149,8 +156,7 @@ def main(argv=None):
         #################################
         # Step 4: splam score junctions
         #################################
-        out_score_f = os.path.join(outdir, "/junction_score.bed")
-        junction_fasta = prediction.splam_prediction(junction_fasta, junction_score_bed, splam_model)
+        junction_fasta = prediction.splam_prediction(junction_fasta, junction_score_bed, splam_model, batch_size)
 
     elif args.subcommand == "clean":
         argv_clean = sys.argv

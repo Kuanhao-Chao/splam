@@ -33,8 +33,6 @@ void processOptionsClean(GArgs& args);
 
 void optionsOutput(GArgs& args);
 void optionsThreads(GArgs& args);
-void optionsWriteTMP(GArgs& args);
-// void options2StageRun(GArgs& args);
 
 GStr thread_num = 1;
 
@@ -148,7 +146,6 @@ int ALN_COUNT_NSPLICED_UNIQ_UNPAIR = 0;
 int ALN_COUNT_NSPLICED_MULTI_UNPAIR = 0;
 
 robin_hood::unordered_map<std::string, int>  CHRS;
-// robin_hood::unordered_map<std::string, GSamRecordList> read_hashmap;
 
 int STEP_COUNTER = 0;
 
@@ -160,25 +157,25 @@ GSamWriter* outfile_below_spliced = NULL;
 FILE* joutf_above=NULL;
 FILE* joutf_below=NULL;
 
+// clean parameters:
+bool g_paired_removal = false;
 // predict parameters:
 bool write_bam = true;
 
-// clean parameters:
-bool g_paired_removal = false;
-bool g_2_stage_run = false;
-
 int array_size(char *test[]) {
-  int size = 0;
-  while (test[size] != NULL) {
-    size++;
-  }
-  return size;
-  // 'size' now contains the size of the array
+    int size = 0;
+    while (test[size] != NULL) {
+        size++;
+    }
+    return size;
 }
 
 namespace py = pybind11;
 
 int splam_clean(py::list args_pyls) {
+    /*********************
+     * Creating argv
+    *********************/
     std::vector<std::string> args;
     // Convert each element of the py::list to std::string
     for (const auto& item : args_pyls) {
@@ -194,22 +191,6 @@ int splam_clean(py::list args_pyls) {
     }
     // Add a null terminator at the end
     argv[args.size()] = nullptr;
-
-//     GMessage(
-//             "==========================================================================================\n"
-//             "An accurate spliced alignment pruner and spliced junction predictor.\n"
-//             "==========================================================================================\n");
-//     const char *banner = R"""(
-//   ███████╗██████╗ ██╗      █████╗ ███╗   ███╗
-//   ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║
-//   ███████╗██████╔╝██║     ███████║██╔████╔██║
-//   ╚════██║██╔═══╝ ██║     ██╔══██║██║╚██╔╝██║
-//   ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║
-//   ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
-//     )""";
-//     std::cout << banner << std::endl;
-    
-    // in_records.setup(VERSION, argc, argv);
 
     /*********************
      * Process options.
@@ -276,8 +257,6 @@ int splam_clean(py::list args_pyls) {
     /*********************
      * Creating GSamWriter
     *********************/
-    // outfile_cleaned = new GSamWriter(outfname_cleaned, bam_reader.header(), GSamFile_BAM);
-
     outfile_ns_multi_map_nh_updated = new GSamWriter(outfname_ns_multi_map_nh_updated, bam_reader.header(), GSamFile_BAM);
     outfile_s_uniq_map_cleaned = new GSamWriter(outfname_s_uniq_map_cleaned, bam_reader.header(), GSamFile_BAM);
     outfile_s_multi_map_cleaned = new GSamWriter(outfname_s_multi_map_cleaned, bam_reader.header(), GSamFile_BAM);
@@ -338,8 +317,7 @@ int splam_clean(py::list args_pyls) {
         char *s_uniq_argv[] = {"samtools", "sort", "-@", (char*)thread_num.chars(), (char*)outfname_s_uniq_map_cleaned.chars(), "-o", (char*)outfname_s_uniq_map_cleaned_sort.chars()};
         argc_sort = sizeof(s_uniq_argv) / sizeof(s_uniq_argv[0]);
         res = bam_sort(argc_sort-1, s_uniq_argv+1);
-        // fprintf(stderr, ">> bam_sort res: %d\n\n\n", res);
-        // Reset argument
+        // [Important!] Reset argument
         optind = 1;
         
         /************************
@@ -349,8 +327,7 @@ int splam_clean(py::list args_pyls) {
         char *s_multi_argv[] = {"samtools", "sort", "-@", (char*)thread_num.chars(), (char*)outfname_s_multi_map_cleaned_nh_updated.chars(), "-o", (char*)outfname_s_multi_map_cleaned_nh_updated_sort.chars()};
         argc_sort = sizeof(s_multi_argv) / sizeof(s_multi_argv[0]);
         res = bam_sort(argc_sort-1, s_multi_argv+1);
-        // fprintf(stderr, ">> bam_sort res: %d\n\n\n", res);
-        // Reset argument
+        // [Important!] Reset argument
         optind = 1;
 
         // Step 2: Merge BAM file
@@ -364,40 +341,13 @@ int splam_clean(py::list args_pyls) {
         (char*)outfname_s_uniq_unpair_cleaned.chars(), 
         (char*)outfname_s_multi_unpair_cleaned_nh_updated.chars()};
         int argc_merge = sizeof(merge_argv) / sizeof(merge_argv[0]);
-        // fprintf(stderr, "argc_merge: %d\n", argc_merge);
         bam_merge(argc_merge-1, merge_argv+1);
 
     } else {
         int argc_merge = 9;
         char *test[] = {"samtools", "merge", "-f", "-@", (char*)thread_num.chars(), "-o", (char*)outfname_cleaned.chars(), (char*)outfname_ns_uniq_map.chars(), (char*)outfname_ns_multi_map_nh_updated.chars(), (char*)outfname_s_uniq_map_cleaned.chars(), (char*)outfname_s_multi_map_cleaned_nh_updated.chars()};
-        // bam_sort(10, test);
         bam_merge(argc_merge-1, test+1);
     }
-    // int argc_merge = 2;
-    // char* argv_merge = new char[2];
-
-    // htsFile* input = hts_open(out_dir+"/clean.bam", "r");
-    // htsFile* output = hts_open(out_dir+"/final_clean.bam", "wb");
-    
-    // samFile* sam_input = hts_get_samfile(input);
-
-    // bam1_t* record = bam_init1();
-    // bam1_t* sorted_record = bam_init1();
-
-    // const char* temp_prefix = "sorted_temp";
-    // htsFile* sorted_temp = hts_open_tmp(temp_prefix, "wb+");
-
-
-    // while (sam_read1(sam_input, bam_reader.header(), record) >= 0) {
-    //     sam_write1(sorted_temp, bam_reader.header(), record);
-    // }
-
-    // hts_idx_t* index = sam_index_load(sorted_temp, temp_prefix); // Load the index
-    // hts_idx_sort(index); // Sort the index
-    // sam_hdr_sort(bam_reader.header()); // Sort the header
-    // sam_write1(output, bam_reader.header(), sorted_record); // Write the sorted header to the output file
-
-    // hts_idx_destroy(index); // Destroy the index
     /*********************
      * End of merging all files into a clean BAM file
     *********************/
@@ -477,7 +427,7 @@ PYBIND11_MODULE(splam_clean, m) {
 
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;version;paired-removal;no-write-bam;output=;threads=;hvcVSPJo:N:Q:m:r:s:M:g:@:");
+    GArgs args(argc, argv, "help;cite;verbose;paired-removal;no-write-bam;output=;threads=;hcVSPJo:N:Q:m:r:s:M:g:@:");
     // args.printError(usage_clean, true);
     if (argc == 0) {
         usage_clean();
@@ -487,11 +437,6 @@ void processOptions(int argc, char* argv[]) {
 
     if (args.getOpt('h') || args.getOpt("help")) {
         usage_clean();
-        exit(0);
-    }
-
-    if (args.getOpt('v') || args.getOpt("version")) {
-        fprintf(stdout,"SPLAM v.%s\n", VERSION);
         exit(0);
     }
 
@@ -512,7 +457,6 @@ void processOptions(int argc, char* argv[]) {
     
     verbose=(args.getOpt("verbose")!=NULL || args.getOpt('V')!=NULL);
     if (verbose) {
-        // fprintf(stderr, "Running SPLAM " VERSION ". Command line:\n");
         args.printCmdLine(stderr);
     }
 
@@ -550,7 +494,7 @@ void optionsOutput(GArgs& args) {
     if (out_dir.is_empty()) {
         out_dir=args.getOpt("output");
         if (out_dir.is_empty()) {
-            out_dir = "tmp_splam_out";
+            out_dir = "tmp_out";
         }
     }
     if (out_dir[out_dir.length()-1] == '/' ) {
@@ -574,16 +518,6 @@ void optionsThreads(GArgs& args) {
     }
 }
 
-void optionsWriteTMP(GArgs& args) {
-    //--no-write-bam
-    write_bam = (args.getOpt("no-write-bam")==NULL);
-    GMessage("write_bam: %d\n", write_bam);
-    if (write_bam) {
-        GMessage(">>  Running write_bam mode\n");
-    } else {
-        GMessage(">>  Running predict mode\n");
-    }
-}
 
 void splam_clean_valid_precheck () {
     bool ns_multi_map_bool = fileExists(outfname_ns_multi_map.chars())>1;
@@ -595,19 +529,7 @@ void splam_clean_valid_precheck () {
     bool ns_uniq_unpair_bool = fileExists(outfname_ns_uniq_unpair.chars())>1;
     bool s_multi_unpair_bool = fileExists(outfname_s_multi_unpair.chars())>1;
     bool s_uniq_unpair_bool = fileExists(outfname_s_uniq_unpair.chars())>1;
-
     bool infname_juncbed_bool = fileExists(infname_juncbed.chars())>1;
-
-    // GMessage("ns_multi_map_bool: %d\n", ns_multi_map_bool);
-    // GMessage("ns_uniq_map_bool: %d\n", ns_uniq_map_bool);
-    // GMessage("s_multi_map_bool: %d\n", s_multi_map_bool);
-    // GMessage("s_uniq_map_bool: %d\n", s_uniq_map_bool);
-    // GMessage("ns_multi_unpair_bool: %d\n", ns_multi_unpair_bool);
-    // GMessage("ns_uniq_unpair_bool: %d\n", ns_uniq_unpair_bool);
-    // GMessage("s_multi_unpair_bool: %d\n", s_multi_unpair_bool);
-    // GMessage("s_uniq_unpair_bool: %d\n", s_uniq_unpair_bool);
-
-    // GMessage("infname_juncbed_bool: %d\n", infname_juncbed_bool);
 
     if (g_paired_removal) {
         if (!ns_multi_map_bool || !ns_uniq_map_bool || !s_multi_map_bool || !s_uniq_map_bool || 
