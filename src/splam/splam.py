@@ -7,7 +7,7 @@ from splam import prediction, config, parse, chr_size, extract_gff
 import splam_extract
 import splam_clean
 
-VERSION = "0.2.5"
+VERSION = "0.2.6"
 
 CITATION = "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, \033[1m\x1B[3mSPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments\x1B[0m\033[0m, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM"
 
@@ -27,7 +27,7 @@ def parse_args(args):
     #############################
     # Mode 1: splam extract subcommands
     #############################
-    parser_extract = subparsers.add_parser('extract', help='Extracting all splice junctions from a BAM file')
+    parser_extract = subparsers.add_parser('extract', help='Extracting all splice junctions from an alignment or annotation file')
     parser_extract.add_argument("INPUT", help="target alignment file in BAM format or annotation file in GFF format.")
     parser_extract.add_argument('-V', '--verbose',
                     action='store_true',
@@ -41,7 +41,7 @@ def parse_args(args):
         help='writing out splice junction bed file only without other temporary files.'
     )
     parser_extract.add_argument(
-        '-f', '--file-type', default="BAM",
+        '-f', '--file-format', default="NONE",
         help='the file type for SPLAM to process. It can only be "BAM", "GFF", or "GTF". The default value is "BAM".'
     )
     parser_extract.add_argument(
@@ -134,28 +134,26 @@ def main(argv=None):
         print(CITATION)
         exit()
 
-
-
-
-# gff_file = '../../../ref_genome/homo_sapiens/RefSeq_MANE/MANE.GRCh38.v1.1.ensembl_genomic.gff'
-# bed_file = 'introns.bed'
-
-# # Call the function to extract introns and save them to the BED file
-# extract_introns(gff_file, bed_file)
-
     if args.subcommand == "extract":
-        file_type = args.file_type
-        print("file_type: ", file_type)
-        if file_type == "GFF" or file_type == "GTF":
-            gff_intput = args.INPUT
+        file_format = args.file_format
+        input = args.INPUT
+        if file_format == "NONE":
+            filename, file_extension = os.path.splitext(input)
+            if file_extension == ".GTF" or file_extension == ".gtf":
+                file_format = "GTF"
+            elif file_extension == ".GFF" or file_extension == ".gff":
+                file_format = "GFF"
+            elif file_extension == ".BAM" or file_extension == ".bam":
+                file_format = "BAM"
+
+        if file_format == "GFF" or file_format == "GTF":
             outdir = args.outdir
             junction_bed = os.path.join(outdir, "junction.bed")
             gff_db = os.path.join(outdir, "annotation.db")
             if not os.path.exists(outdir):
                 os.makedirs(outdir, exist_ok=True)
-            extract_gff.extract_introns(gff_intput, gff_db, junction_bed)
-
-        else:
+            extract_gff.extract_introns(input, gff_db, junction_bed)
+        elif file_format == "BAM":
             argv_extract = sys.argv
             argv_extract.pop(0)
             argv_extract[0] = 'splam-extract'
@@ -170,6 +168,7 @@ def main(argv=None):
         splam_model = args.model
         batch_size = args.batch_size
         device = args.device
+
         #################################
         # Step 1: creating donor acceptor bed file.
         #################################

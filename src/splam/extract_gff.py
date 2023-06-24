@@ -13,6 +13,7 @@ def extract_introns(gff_file, gff_db, bed_file):
 
     genes = db.features_of_type("gene")
 
+    junc_count = 0 
     with open(bed_file, 'w') as fw:
         for gene in genes:
             # Retrieve child features
@@ -26,6 +27,7 @@ def extract_introns(gff_file, gff_db, bed_file):
 
                     if (prev_exon != ""):
                         # print(exon[0] + "\t" + str(prev_exon.end-1) + "\t" + str(exon.start))
-                        fw.write(exon[0] + "\t" + str(prev_exon.end-1) + "\t" + str(exon.start) + "\t.\t" + exon.strand +"\n")
+                        fw.write(exon[0] + "\t" + str(prev_exon.end-1) + "\t" + str(exon.start) + "\t" + f'JUNC{junc_count:08}' + "\t.\t" + exon.strand +"\n")
+                        junc_count += 1
 
                     prev_exon = exon

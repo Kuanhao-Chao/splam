@@ -160,7 +160,7 @@ def concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta, verbose):
             continue
         
         # write the final fasta entry as two lines
-        fw.write(chromosome + ";" + str(donor_pos) +";"+ str(acceptor_pos) + ";" + d_strand + ";1\n")
+        fw.write(chromosome + ";" + str(donor_pos) +";"+ str(acceptor_pos) + ";" + d_strand + ";.\n")
         fw.write(x + "\n")
 
         # get stats on the dimers 

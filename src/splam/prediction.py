@@ -132,7 +132,7 @@ class myDataset(Dataset):
                     self.data.append([X, Y, seq_name])
                 pidx += 1
                 if pidx %100000 == 0:
-                    print('\t', pidx, ' junctions loaded.')
+                    print('\t', pidx//2, ' junctions loaded.')
 
         index_shuf = list(range(len(self.data)))
         if shuffle:
@@ -140,7 +140,7 @@ class myDataset(Dataset):
         list_shuf = [self.data[i] for i in index_shuf]
         self.data = list_shuf
         self.indices = index_shuf
-        print('\t', pidx, ' junctions loaded.')
+        print('\t', pidx//2, ' junctions loaded.')
 
     def __len__(self):
         return len(self.data)
@@ -211,9 +211,9 @@ def splam_prediction(junction_fasta, out_score_f, model_path, batch_size, device
                 chr, start, end, strand, aln_num = seqname[idx].split(';')
                 # print('seqname[idx]')
                 if strand == '+':
-                    fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
+                    fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + f'\tJUNC{junc_counter:08}\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
                 elif strand == '-':
-                    fw_junc_scores.write(chr + '\t'+ str(end) + '\t' + str(start) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
+                    fw_junc_scores.write(chr + '\t'+ str(end) + '\t' + str(start) + f'\tJUNC{junc_counter:08}\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
                 junc_counter += 1            
             # increment the progress bar
             pbar.next()
