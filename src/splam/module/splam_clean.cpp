@@ -33,6 +33,7 @@ void processOptionsClean(GArgs& args);
 
 void optionsOutput(GArgs& args);
 void optionsThreads(GArgs& args);
+void optionsThreshold(GArgs& args);
 
 GStr thread_num = 1;
 
@@ -281,7 +282,6 @@ int splam_clean(py::list args_pyls) {
     infname_NH_tag = splamClean();
     splamNHUpdate();
 
-
     /*********************
      * Merging all files into a clean BAM file
     *********************/
@@ -427,7 +427,7 @@ PYBIND11_MODULE(splam_clean, m) {
 
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;paired-removal;no-write-bam;output=;threads=;hcVSPJo:N:Q:m:r:s:M:g:@:");
+    GArgs args(argc, argv, "help;cite;verbose;paired-removal;no-write-bam;output=;threads=;threshold=;hcVSPJo:N:Q:m:r:s:M:g:@:t:");
     // args.printError(usage_clean, true);
     if (argc == 0) {
         usage_clean();
@@ -485,6 +485,7 @@ void processOptions(int argc, char* argv[]) {
 void processOptionsClean(GArgs& args) {
     optionsOutput(args);
     optionsThreads(args);
+    optionsThreshold(args);
 }
 
 
@@ -514,6 +515,22 @@ void optionsThreads(GArgs& args) {
         if (!s.is_empty()) {
             // Use the default bundle-gap
             thread_num = s;
+        }
+    }
+}
+
+
+void optionsThreshold(GArgs& args) {
+    // -t / --threshold
+    GStr s;
+    s = args.getOpt('t');
+    if (!s.is_empty()) {
+        threshold = std::atof(s.chars());
+        s.asInt();
+    } else {
+        s=args.getOpt("threshold");
+        if (!s.is_empty()) {
+            threshold = std::atof(s.chars());
         }
     }
 }

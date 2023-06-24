@@ -7,7 +7,7 @@ from splam import prediction, config, parse, chr_size
 import splam_extract
 import splam_clean
 
-VERSION = "0.2.1"
+VERSION = "0.2.2"
 
 CITATION = "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, \033[1m\x1B[3mSPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments\x1B[0m\033[0m, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM"
 
@@ -31,14 +31,14 @@ def parse_args(args):
     parser_extract.add_argument("BAM_INPUT", help="target alignment file in BAM format.")
     parser_extract.add_argument('-V', '--verbose',
                     action='store_true',
-                    help='running splam in verbose mode')  # on/off flag
+                    help='running splam in verbose mode.')  # on/off flag
     parser_extract.add_argument('-P', '--paired',
                     action='store_true',
-                    help='paired-end bundling alignments')  # on/off flag
+                    help='bundling alignments in "paired-end" mode.')  # on/off flag
     parser_extract.add_argument(
         '-n', '--write-junctions-only',
         action='store_true',
-        help='only write out splice junction bed file without other temporary files.'
+        help='writing out splice junction bed file only without other temporary files.'
     )
     parser_extract.add_argument(
         '-o', '--outdir', default="tmp_out", metavar='DIR',
@@ -66,16 +66,16 @@ def parse_args(args):
         help='the directory where the output file is written to. Default output filename is "junction_score.bed"',
     )
     parser_score.add_argument(
+        '-b', '--batch-size', metavar='BATCH',
+        help='the number of samples that will be propagated through the network. By default, the batch size is set to 100.'
+    )
+    parser_score.add_argument(
         '-G', '--reference-genome',  metavar='REF.fasta',
         required=True, help='The path to the reference genome.'
     )
     parser_score.add_argument(
         '-m', '--model', metavar='MODEL.pt', 
         required=True, help='the path to the SPLAM! model'
-    )
-    parser_score.add_argument(
-        '-b', '--batch-size', metavar='BATCH',
-        help='the number of samples that will be propagated through the network. By default, the batch size is set to 100.'
     )
     
     
@@ -84,13 +84,17 @@ def parse_args(args):
     #############################
     parser_clean = subparsers.add_parser('clean', help='Cleaning up spurious splice alignment')
     parser_clean.add_argument(
+        '-@', '--threads', default="1", metavar='threads',
+        help='Set number of sorting, compression and merging threads. By default, operation is single-threaded.'
+    )
+    parser_clean.add_argument(
+        '-t', '--threshold', default="0.1", metavar='threshold',
+        help='The cutoff threshold for identifying spurious splice junctions.'
+    )
+    parser_clean.add_argument(
         '-o', '--outdir', default="tmp_out", metavar='DIR',
         help='the directory where the output file is written to. Default output filename is "junction_score.bed".',
         required=True
-    )
-    parser_clean.add_argument(
-        '-@', '--threads', default="1", metavar='THREADS',
-        help='Set number of sorting, compression and merging threads. By default, operation is single-threaded.'
     )
 
     args_r = parser.parse_args()
