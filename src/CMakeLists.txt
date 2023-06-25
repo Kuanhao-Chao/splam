@@ -23,14 +23,15 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 
 include_directories("${CMAKE_SOURCE_DIR}/include/")
 link_directories("${CMAKE_SOURCE_DIR}/include/htslib")
-# include_directories(${PYTHON_INCLUDE_DIRS})
+message("${CMAKE_SOURCE_DIR}/include/htslib")
 
 
 include(ExternalProject)
 ExternalProject_Add(htslib
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/include/htslib/
         BUILD_IN_SOURCE 1
-        CONFIGURE_COMMAND autoreconf -i COMMAND ./configure --without-libdeflate --disable-libcurl --disable-lzma
+        CONFIGURE_COMMAND autoreconf -i 
+        COMMAND ./configure --without-libdeflate --disable-libcurl --disable-lzma
         BUILD_COMMAND make
         INSTALL_COMMAND ""
         )
