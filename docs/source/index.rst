@@ -7,7 +7,7 @@ splam's tutorial
    :scale:   20 %
 
 
-Why splam
+Why splam?
 ==================
 
 splam is a splice junction recognition model based on a deep residual convolutional neural network that provides fast and accurate evaluation of splice junctions. There are two main applications of splam: 
@@ -68,22 +68,19 @@ splam deep residual convolutional neural network was trained using Pytorch frame
 
 |
 
-Documentation
-=============
+Table of content
+==================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    content/installation
    content/quickstart
    content/annotation_evaluation
    content/alignment_evaluation
+   content/conclusion
    content/how_to_page
    content/function_manual
-   content/frequent_questions
-   content/conclusion
    content/license
    content/contact
    content/help
-
-   .. content/beginner
