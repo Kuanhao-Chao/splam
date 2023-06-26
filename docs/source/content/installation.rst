@@ -3,68 +3,46 @@ Installation
 
 System requirements
 -------------------
-* R >= 4.0.0 (current)
-* `Rstudio (recommended) <https://rstudio.com>`_
+* Python >= 3.6.0 (current)
+* torch >= 1.12.0
+* pybedtools >= 0.9.0
+* gffutils >= 0.10.0
 
 |
 
-Install from Bioconductor
+Install through pip
 -------------------------
 
-sangeranalyseR is on `Bioconductor 3.12 development <https://bioconductor.org/packages/devel/bioc/html/sangeranalyseR.html>`_ now.
+splam is on `Bioconductor 3.12 development <https://bioconductor.org/packages/devel/bioc/html/sangeranalyseR.html>`_ now.
 
-.. _sangeranalyseR_bioconductor:
-.. figure::  ../image/bioconductor.png
-   :align:   center
-
-   Figure 1. sangeranalyseR on Bioconductor 3.12 development.
-
-To install this package, start R (version "4.0") and enter:
-
-.. code-block:: R
-
-    if (!requireNamespace("BiocManager", quietly = TRUE))
-        install.packages("BiocManager")
-
-    # The following initializes usage of Bioc devel
-    BiocManager::install(version='devel')
-
-    BiocManager::install("sangeranalyseR")
+.. code-block:: Python
+   
+   pip install splam
 
 |
 
-Install the development version
+Install from source
+-------------------------
+
+You can also install splam from source
+
+.. code-block:: Python
+   
+   git clone https://github.com/Kuanhao-Chao/splam --recursive
+   cd splam/src/
+   python setup.py install
+
+|
+
+Install through conda
 -------------------------------
 
-If you haven't installed the :code:`devtools` package before, please install it first:
+Install splam through conda is the easiest way to go
 
-.. code-block:: R
-
-   install.packages("devtools")
-
-
-Then run the following code in your R console to install the newest version from Github.
-
-
-.. code-block:: R
-
-   library(devtools)
-
-   ## Install the release version 
-   install_github("roblanf/sangeranalyseR", ref = "master")
+.. code-block:: Python
    
-   ## Install the development version
-   install_github("roblanf/sangeranalyseR", ref = "develop")
-   library(sangeranalyseR)
+   TBC
 
-
-|
-
-After installing :code:`sangeranalyseR`, load it in R console.
-
-.. code-block:: R
-
-   library(sangeranalyseR)
 
 Now, you are ready to go !
 

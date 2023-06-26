@@ -18,8 +18,8 @@ import sphinx_rtd_theme
 
 # -- Project information -----------------------------------------------------
 master_doc = 'index'
-project = 'sangeranalyseR'
-copyright = '2019, Kuan-Hao Chao'
+project = 'splam'
+copyright = '2023, Kuan-Hao Chao'
 author = 'Kuan-Hao Chao'
 
 

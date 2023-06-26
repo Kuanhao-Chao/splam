@@ -30,7 +30,7 @@ include(ExternalProject)
 ExternalProject_Add(htslib
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/include/htslib/
         BUILD_IN_SOURCE 1
-        CONFIGURE_COMMAND autoreconf -i 
+        CONFIGURE_COMMAND autoreconf -i
         COMMAND ./configure --without-libdeflate --disable-libcurl --disable-lzma
         BUILD_COMMAND make
         INSTALL_COMMAND ""
@@ -38,9 +38,9 @@ ExternalProject_Add(htslib
 
 
 ############################
-# pybind11 for building splam_extract 
+# pybind11 for building splam_extract
 ############################
-pybind11_add_module(splam_extract 
+pybind11_add_module(splam_extract
         splam/module/splam_extract.cpp
         splam/module/GSam.h
         splam/module/extract.cpp
