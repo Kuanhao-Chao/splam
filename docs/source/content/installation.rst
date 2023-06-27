@@ -10,6 +10,21 @@ System requirements
 
 |
 
+There are three ways that you can install splam:
+
+|
+
+Install through conda
+-------------------------------
+
+Install splam through conda is the easiest way to go
+
+.. code-block:: Python
+   
+   TBC
+
+|
+
 Install through pip
 -------------------------
 
@@ -33,16 +48,6 @@ You can also install splam from source
    python setup.py install
 
 |
-
-Install through conda
--------------------------------
-
-Install splam through conda is the easiest way to go
-
-.. code-block:: Python
-   
-   TBC
-
 
 Now, you are ready to go !
 

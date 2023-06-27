@@ -1,12 +1,82 @@
 Q & A ...
 ==========
 
-What is a regular expression?
--------------------------------
-A regular expression (sometimes shortened as regex or regexp) is a sequence of characters that define a sequence pattern matching rule, mainly used for searching and replacing. It is used in all programming languages like C++, Python, Javascript, and in our case, R.
++++++
 
-How to deal with secondary peaks
+Q: What is splam? Why do we need splam?
+-------------------------------------------
+
+|
+
+Q: What makes splam different from spliceAI?
+-------------------------------------------
+
+.. raw:: html
+
+    <details>
+    <summary style="font-size:25px; font-weight: bold; padding-left:20px">Ans:</summary>
+    <pre style="padding-left:20px">lots_of_code = "this text block"</pre>
+    </details>
+
+
+| 
+
+Q: What is the model architecture of splam?
+-----------------------------------------
+
+.. raw:: html
+
+    <details>
+    <summary style="font-size:25px; font-weight: bold; padding-left:20px">Ans:</summary>
+    <pre style="padding-left:20px">lots_of_code = "this text block"</pre>
+    </details>
+
+| 
+
+Q: How is splam trained?
 --------------------------------
 
-How to work with FASTA files for input
---------------------------------------
+.. raw:: html
+
+    <details>
+    <summary style="font-size:25px; font-weight: bold; padding-left:20px">Ans:</summary>
+    <pre style="padding-left:20px">lots_of_code = "this text block"</pre>
+    </details>
+
+| 
+
+Q: Which mode should I run splam, :code:`cpu`, :code:`cuda`, or :code:`mps`?
+-------------------------------------------------------------------------------
+
+.. raw:: html
+
+    <details>
+    <summary style="font-size:25px; font-weight: bold; padding-left:20px">Ans:</summary>
+    <pre style="padding-left:20px">lots_of_code = "this text block"</pre>
+    </details>
+
+| 
+
+Q: How do I interpret splam scores?
+-------------------------------------
+
+.. raw:: html
+
+    <details>
+    <summary style="font-size:25px; font-weight: bold; padding-left:20px">Ans:</summary>
+    <pre style="padding-left:20px">lots_of_code = "this text block"</pre>
+    </details>
+
+|
+
+Q: What is canonical transcripts? 
+------------------------------------------
+
+
+|
+
+Q: What is alternative splicing?
+------------------------------------------
+
+|
+|

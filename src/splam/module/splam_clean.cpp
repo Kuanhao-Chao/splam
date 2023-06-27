@@ -285,6 +285,8 @@ int splam_clean(py::list args_pyls) {
     /*********************
      * Merging all files into a clean BAM file
     *********************/
+
+    fprintf(stderr, "Outside of merging all files into a clean BAM file!\n");
     if (g_paired_removal) {
         // Step 1: Sort BAM file
         int argc_sort = 0;
@@ -334,13 +336,17 @@ int splam_clean(py::list args_pyls) {
         char *merge_argv[] = {"samtools", "merge", "-f", "-@", (char*)thread_num.chars(), "-o", (char*)outfname_cleaned.chars(), 
         (char*)outfname_ns_uniq_map.chars(), 
         (char*)outfname_ns_multi_map_nh_updated.chars(), 
+
         (char*)outfname_s_uniq_map_cleaned_sort.chars(), 
         (char*)outfname_s_multi_map_cleaned_nh_updated_sort.chars(), 
+
         (char*)outfname_ns_uniq_unpair.chars(), 
         (char*)outfname_ns_multi_unpair_nh_updated.chars(), 
         (char*)outfname_s_uniq_unpair_cleaned.chars(), 
         (char*)outfname_s_multi_unpair_cleaned_nh_updated.chars()};
+
         int argc_merge = sizeof(merge_argv) / sizeof(merge_argv[0]);
+        fprintf(stderr, "Numver of input argument!: %d\n", argc_merge);
         bam_merge(argc_merge-1, merge_argv+1);
 
     } else {
@@ -351,8 +357,6 @@ int splam_clean(py::list args_pyls) {
     /*********************
      * End of merging all files into a clean BAM file
     *********************/
-
-
 
 
     /*********************
@@ -427,7 +431,7 @@ PYBIND11_MODULE(splam_clean, m) {
 
 
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;paired-removal;no-write-bam;output=;threads=;threshold=;hcVSPJo:N:Q:m:r:s:M:g:@:t:");
+    GArgs args(argc, argv, "help;cite;verbose;paired;no-write-bam;output=;threads=;threshold=;hcVSPJo:N:Q:m:r:s:M:g:@:t:");
     // args.printError(usage_clean, true);
     if (argc == 0) {
         usage_clean();
@@ -445,7 +449,7 @@ void processOptions(int argc, char* argv[]) {
         exit(0);
     }
 
-    if (args.getOpt('P') || args.getOpt("paired-removal") ) {
+    if (args.getOpt('P') || args.getOpt("paired") ) {
         g_paired_removal = true;
         GMessage("g_paired_removal: %d\n", g_paired_removal);
     }
@@ -547,6 +551,16 @@ void splam_clean_valid_precheck () {
     bool s_multi_unpair_bool = fileExists(outfname_s_multi_unpair.chars())>1;
     bool s_uniq_unpair_bool = fileExists(outfname_s_uniq_unpair.chars())>1;
     bool infname_juncbed_bool = fileExists(infname_juncbed.chars())>1;
+
+    if (ns_multi_map_bool && ns_uniq_map_bool && s_multi_map_bool && s_uniq_map_bool && 
+        ns_multi_unpair_bool && ns_uniq_unpair_bool && s_multi_unpair_bool && s_uniq_unpair_bool && 
+        infname_juncbed_bool) {
+        g_paired_removal = true;
+    } else if (ns_multi_map_bool && ns_uniq_map_bool && s_multi_map_bool && s_uniq_map_bool && 
+        !ns_multi_unpair_bool && !ns_uniq_unpair_bool && !s_multi_unpair_bool && !s_uniq_unpair_bool && 
+        infname_juncbed_bool) {
+        g_paired_removal = false;
+    }
 
     if (g_paired_removal) {
         if (!ns_multi_map_bool || !ns_uniq_map_bool || !s_multi_map_bool || !s_uniq_map_bool || 

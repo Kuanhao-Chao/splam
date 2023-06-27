@@ -7,7 +7,7 @@ splam's tutorial
    :scale:   20 %
 
 
-Why splam
+Why splam?
 ==================
 
 splam is a splice junction recognition model based on a deep residual convolutional neural network that provides fast and accurate evaluation of splice junctions. There are two main applications of splam: 
@@ -16,9 +16,10 @@ splam is a splice junction recognition model based on a deep residual convolutio
 
 splam is useful if you want to :
 
-1. know the quality of splice junctions in your **annotation file or assembled transcripts**.
+1. improve your **alignmnet file**. splam evaluates the quality of splice alignments and cleans up those that include spurious splice junctions. It significantly improves the quality of the downstream transcriptome assembly [:ref:`Link <alignment-detailed-section>`].
 
-2. improve your **alignmnet file**. splam evaluates the quality of splice alignments and cleans up those that include spurious splice junctions. It significantly improves the quality of the downstream transcriptome assembly.
+2. know the quality of introns in your **annotation file or assembled transcripts** [:ref:`Link <annotation-detailed-section>`].
+
 
 
 
@@ -68,22 +69,19 @@ splam deep residual convolutional neural network was trained using Pytorch frame
 
 |
 
-Documentation
-=============
+Table of content
+==================
 
 .. toctree::
-   :maxdepth: 3
+   :maxdepth: 2
 
    content/installation
    content/quickstart
-   content/annotation_evaluation
    content/alignment_evaluation
+   content/annotation_evaluation
+   content/conclusion
    content/how_to_page
    content/function_manual
-   content/frequent_questions
-   content/conclusion
    content/license
    content/contact
    content/help
-
-   .. content/beginner
