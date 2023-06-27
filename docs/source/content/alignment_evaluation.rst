@@ -23,6 +23,7 @@ splam solves of problem and gives us solutions of:
 
 Before diving into details of each step, this is the overview figure of the alignment file cleanup ideogram:
 
+|
 
 .. _alignment-prepareintput:
 
@@ -37,27 +38,73 @@ The first step is to prepare three files for splam analysis:
 
 |
 
+.. _alignment-extract-introns:
 Step 2: Extracting splice junctions in your alignment file
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+In this step, you take :ref:`an alignment file (1) <alignment-prepareintput>` and run
 
 .. code-block:: bash
 
     splam extract -P SRR1352129_chr9_sub.bam
+
+The primary outputs for this step is a BED file containing the coordinates of each junction and some temporary files. If you only want to extract splice junctions from the BAM file without running the subsequent cleaning step, you can use the :code:`-n / --write-junctions-only` argument to skip writing out temporary files.
+
+splam iterates through the :code:`BAM` file, extracts all splice junctions in alignments, and writes their coordinates into a :code:`BED` file. By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :code:`BED` file consists of six columns: :code:`CHROM`, :code:`START`, :code:`END`, :code:`JUNC_NAME`, :code:`INTRON_NUM`, and :code:`STRAND`. Here are a few entries from the :code:`BED` file:
+
+* **Output**
+
+.. code-block:: text
+
+   chr9    4849549 4860125 JUNC00000007    3       +
+   chr9    5923308 5924658 JUNC00000008    6       -
+   chr9    5924844 5929044 JUNC00000009    8       -
+
+
+
+Note that in this command, we run with the argument :code:`-P / --paired`. This argument should be selected based on the RNA sequencing read type. There are two types of RNA sequencing read types: single-read and paired-end sequencing. For a more detailed explanation, you can refer to this `page <https://www.illumina.com/science/technology/next-generation-sequencing/plan-experiments/paired-end-vs-single-read.html>`_.
+
+By default, splam processes alignments without pairing and bundling them. If your RNA-Seq sample is single-read, there is no need to set this argument. However, if your RNA-Seq sample is from paired-end sequencing, it is highly recommended to run splam with the :code:`-P / --paired` argument. Otherwise, if an alignment is removed, the flag of its mate will not be unpaired. It is worth noting that it takes longer to pair alignments in the BAM file, but it produces more accurate flags. 
+
+In addition, when running in paired mode, the default gap between bundles is 10000bp. If you set the :code:`-g / --bundle-gap` argument to set the minimum gap betwen bundles. 
 
 |
 
 Step 3: Scoring extracted splice junctions
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need three essential files. Firstly, you should have the BED file that was generated in :ref:`Step 2 <alignment-extract-introns>`. Additionally, you will require two additional files: (1) :ref:`the reference genome (2) <alignment-prepareintput>`, which shares coordinates with the junction BED file, and (2) :ref:`the splam model (3) <alignment-prepareintput>`. Once you have these files in place, you can run the following command:
+
 .. code-block:: bash
 
     splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out tmp_out/junction.bed
+
+
+By default, splam automatically detects your environment and runs in :code:`cuda` mode if CUDA is available. However, if your computer is running macOS, splam will check if :code:`mps` mode is available. If neither :code:`cuda` nor :code:`mps` are available, splam will run in :code:`cpu` mode. You can manually specify the mode using the :code:`-d / --device` argument.
+
+Additionally, you can adjust the batch size using the :code:`-b / --batch-size` argument. We recommend setting a small batch size (default is 10) when running splam in :code:`cpu` mode.
+
+
+After this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (p.s. they might be from unstranded transcripts assembled by StringTie).
+
+* **Output**
+
+.. code-block:: text
+
+   chr9    4849549 4860125 JUNC00000007    3       +       0.7723698       0.5370769
+   chr9    5923308 5924658 JUNC00000008    6       -       0.9999831       0.9999958
+   chr9    5924844 5929044 JUNC00000009    8       -       0.9999883       0.9999949
+
+
 
 |
 
 
 Step 4: Cleaning up your alignment file
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+After scoring every splice junction in your alignment file, the final step of this analysis is to remove alignments with low-quality splice junctions and update 'NH' tag and flags for multi-mapped reads. You can pass the directory path to splam using the clean mode, which will output a new cleaned and sorted BAM file. The implementation of this step utilizes the core functions of :code:`samtools sort` and :code:`samtools merge`. If you want to run this step with multiple threads, you can set the :code:`-@ / --threads` argument accordingly.
+
 
 .. code-block:: bash
 
