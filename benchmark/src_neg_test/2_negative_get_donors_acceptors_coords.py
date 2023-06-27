@@ -3,11 +3,11 @@ import random
 import os
 from progress.bar import Bar
 import time
-import pyfaidx
+from pyfaidx import Fasta
 
 SEQ_LENGTH = "800"
 QUARTER_SEQ_LEN = int(SEQ_LENGTH) // 4
-EACH_JUNC_PER_LOCUS = 5
+EACH_JUNC_PER_LOCUS = 15
 MIN_JUNC = 200
 MAX_JUNC = 20000
 THRESHOLD = "100"   
@@ -167,17 +167,14 @@ def main(db):
     fw_acceptor = open(f'{OUTPUT_DIR}{db}/acceptor.bed', 'w')
     fw_da = open(f'{OUTPUT_DIR}{db}/d_a.bed', 'w')
 
-    with open(fasta_file, 'r') as handle, open(bed_file) as f:
+    with open(bed_file) as f:
 
-        record_dict = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
+        record_dict = Fasta(fasta_file, sequence_always_upper=True)
         #print(record_dict)
 
         lines = f.read().splitlines()
         pbar = Bar('Generating negative samples... ', max=len(lines))
         for line in lines:
-            
-            s = time.time()
-
             eles = line.split("\t")
 
             chr = eles[0]
@@ -187,19 +184,11 @@ def main(db):
             record = record_dict[chr]
 
             # Extract individual parts of the FASTA record
-            chromosome = record.description
-            sequence = record.seq
-            e = time.time()
-            sequence = str(sequence).upper()
-
+            chromosome = record.name
+            sequence = record
             
-
             #print(f'Searching in: {chromosome}:{start}-{end};{strand}')
-            s1 = time.time()
             task(chromosome, sequence, start, end, strand, fw_donor, fw_acceptor, fw_da)
-            s2 = time.time()
-
-            print(f'Compare: {e-s}, task {s2-s1}')
 
             pbar.next()
         pbar.finish()
@@ -213,8 +202,8 @@ if __name__ == "__main__":
     if os.getcwd() != 'src_neg_test':
         os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test')
 
-    datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10.1']
-    idxs = [0] #CHANGEME
+    datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
+    idxs = [3] #CHANGEME
 
     for idx in idxs:
         main(datasets[idx])

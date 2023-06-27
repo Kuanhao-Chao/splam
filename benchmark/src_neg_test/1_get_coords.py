@@ -92,7 +92,7 @@ if __name__ == '__main__':
         os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test')
 
     # define filenames
-    annotation_files = ['GRCm39.gff', 'Mmul_10.gff', 'NHGRI_mPanTro3.gff', 'TAIR10.1.gff']
+    annotation_files = ['GRCm39.gff', 'Mmul_10.gff', 'NHGRI_mPanTro3.gff', 'TAIR10.gff']
     file_idxs = [0,1,2,3] #CHANGEME
     
     for idx in file_idxs:       
