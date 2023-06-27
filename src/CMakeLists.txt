@@ -13,6 +13,8 @@ include_directories("${CMAKE_SOURCE_DIR}/include/")
 link_directories("${CMAKE_SOURCE_DIR}/include/htslib")
 message("${CMAKE_SOURCE_DIR}/include/htslib")
 
+message("LIBRARY_OUTPUT_DIRECTORY: ${LIBRARY_OUTPUT_DIRECTORY}")
+
 
 include(ExternalProject)
 ExternalProject_Add(htslib
@@ -23,7 +25,6 @@ ExternalProject_Add(htslib
         BUILD_COMMAND make
         INSTALL_COMMAND ""
         )
-
 
 ############################
 # pybind11 for building splam_extract
@@ -59,7 +60,6 @@ target_compile_definitions(splam_extract
 ############################
 # pybind11 for building splam-clean
 ############################
-# Compiling splam-clean
 pybind11_add_module(splam_clean
         splam/module/splam_clean.cpp
         splam/module/bam_sort.c
@@ -92,3 +92,12 @@ elseif (APPLE)
 endif ()
 target_compile_definitions(splam_clean
            PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
+
+
+
+# Move the build libhts.so / libhts.a
+if(UNIX AND NOT APPLE)
+        configure_file(${CMAKE_SOURCE_DIR}/include/htslib/libhts.so libhts.so COPYONLY)
+elseif (APPLE)
+        configure_file(${CMAKE_SOURCE_DIR}/include/htslib/libhts.a libhts.a COPYONLY)
+endif ()
