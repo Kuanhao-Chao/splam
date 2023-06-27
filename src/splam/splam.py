@@ -7,7 +7,7 @@ from splam import prediction, config, parse, chr_size, extract_gff
 import splam_extract
 import splam_clean
 
-VERSION = "0.2.6"
+VERSION = "0.2.7"
 
 CITATION = "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, \033[1m\x1B[3mSPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments\x1B[0m\033[0m, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM"
 
@@ -99,6 +99,9 @@ def parse_args(args):
         '-t', '--threshold', default="0.1", metavar='threshold',
         help='The cutoff threshold for identifying spurious splice junctions.'
     )
+    parser_clean.add_argument('-P', '--paired',
+                    action='store_true',
+                    help='cleaning up the alignment file in "paired-end" mode.')  # on/off flag
     parser_clean.add_argument(
         '-o', '--outdir', default="tmp_out", metavar='DIR',
         help='the directory where the output file is written to. Default output filename is "junction_score.bed".',
