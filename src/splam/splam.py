@@ -7,7 +7,7 @@ from splam import prediction, config, parse, chr_size, extract_gff
 import splam_extract
 import splam_clean
 
-VERSION = "0.2.11"
+VERSION = "0.2.12"
 
 CITATION = "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, \033[1m\x1B[3mSPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments\x1B[0m\033[0m, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM"
 

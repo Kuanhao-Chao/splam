@@ -26,13 +26,6 @@ ExternalProject_Add(htslib
         INSTALL_COMMAND ""
         )
 
-# Move the build libhts.so / libhts.a
-if(UNIX AND NOT APPLE)
-        configure_file(${CMAKE_SOURCE_DIR}/include/htslib/libhts.so libhts.so COPYONLY)
-elseif (APPLE)
-        configure_file(${CMAKE_SOURCE_DIR}/include/htslib/libhts.a libhts.a COPYONLY)
-endif ()
-
 ############################
 # pybind11 for building splam_extract
 ############################
@@ -99,3 +92,12 @@ elseif (APPLE)
 endif ()
 target_compile_definitions(splam_clean
            PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
+
+
+
+# Move the build libhts.so / libhts.a
+if(UNIX AND NOT APPLE)
+        configure_file(${CMAKE_SOURCE_DIR}/include/htslib/libhts.so libhts.so COPYONLY)
+elseif (APPLE)
+        configure_file(${CMAKE_SOURCE_DIR}/include/htslib/libhts.a libhts.a COPYONLY)
+endif ()
