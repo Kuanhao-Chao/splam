@@ -4,29 +4,47 @@ import os
 from pathlib import Path
 from concurrent.futures import ThreadPoolExecutor
 
-SEQ_LENGTH="800"
-QUATER_SEQ_LEN = int(SEQ_LENGTH) // 4
+SEQ_LENGTH = "800"
+QUARTER_SEQ_LEN = int(SEQ_LENGTH) // 4
 EACH_JUNC_PER_LOCUS = 500
 MIN_JUNC = 200
 MAX_JUNC = 20000
+THRESHOLD = "100"   
+OUTPUT_DIR = f'./2_output/{SEQ_LENGTH}bp/'
 
-THRESHOLD = "100"
-hg38_ref = "../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa"
-output_bed = "./NEG_rev_junctions/"+SEQ_LENGTH+"bp/neg_junctions.bed"
-output_file = "../INPUTS/"+SEQ_LENGTH+"bp/input_can_neg.fa"
+# hg38_ref = "../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa"
+# output_bed = "./NEG_rev_junctions/"+SEQ_LENGTH+"bp/neg_junctions.bed"
+# output_file = "../INPUTS/"+SEQ_LENGTH+"bp/input_can_neg.fa"
 
-os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/", exist_ok=True)
-os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/", exist_ok=True)
-os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/d_a/", exist_ok=True)
-os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/donor/", exist_ok=True)
-os.makedirs("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/acceptor/", exist_ok=True)
+'''Make the directory(ies) needed for the given path'''
+dir = lambda path : os.makedirs(os.path.dirname(path), exist_ok=True)
 
+'''Obtains the chromosome sizes'''
+def get_chrom_size(path):
+    chrs = {}
+    with open(path, 'r') as file:       
+        # skip header
+        next(file)
 
-fw_donor = open("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/donor/donor.bed", "w")
-fw_acceptor = open("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/acceptor/acceptor.bed", "w")
-fw_da = open("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/d_a/d_a.bed", "w")
+        # read the file line by line
+        for line in file:  
+            # split by tabs
+            columns = line.strip().split('\t')
+            refseq_name = columns[6]
+            chrom_size = int(columns[8])
 
-def task(chromosome, sequence, start, end ,strand):
+            # store the key-value pair in the dictionary
+            chrs[refseq_name] = chrom_size
+    
+    return chrs
+
+'''Obtain the negative sequence'''
+def task(chromosome, sequence, start, end, strand):
+
+    fw_donor = open(f'{OUTPUT_DIR}donor.bed', 'w')
+    fw_acceptor = open(f'{OUTPUT_DIR}acceptor.bed', 'w')
+    fw_da = open(f'{OUTPUT_DIR}d_a.bed', 'w')
+
     idx = 0
     JUNC_BASE = 0
     while True:
@@ -115,33 +133,29 @@ def task(chromosome, sequence, start, end ,strand):
 
         if has_donor and has_acceptor:
 
-
-
             # print("donor_1   : ", sequence[base_num+donor_idx])
             # print("donor_2   : ", sequence[base_num+donor_idx+1])
             # print("acceptor_1: ", sequence[base_num+donor_idx+acceptor_idx-2])
             # print("acceptor_2: ", sequence[base_num+donor_idx+acceptor_idx-1])
 
-
             splice_junc_len = acceptor_idx + 1
 
-
-            flanking_size = QUATER_SEQ_LEN
-            if splice_junc_len < QUATER_SEQ_LEN:
+            flanking_size = QUARTER_SEQ_LEN
+            if splice_junc_len < QUARTER_SEQ_LEN:
                 flanking_size = splice_junc_len
 
             donor = base_num+donor_idx
             acceptor = base_num+donor_idx+acceptor_idx
             if (strand_select == "+"):
-                donor_s = donor - QUATER_SEQ_LEN
+                donor_s = donor - QUARTER_SEQ_LEN
                 donor_e = donor + flanking_size
                 acceptor_s = acceptor - flanking_size
-                acceptor_e = acceptor + QUATER_SEQ_LEN
+                acceptor_e = acceptor + QUARTER_SEQ_LEN
 
             elif (strand_select == "-"):
                 donor_s = donor - flanking_size
-                donor_e = donor + QUATER_SEQ_LEN
-                acceptor_s = acceptor - QUATER_SEQ_LEN
+                donor_e = donor + QUARTER_SEQ_LEN
+                acceptor_s = acceptor - QUARTER_SEQ_LEN
                 acceptor_e = acceptor + flanking_size
 
             ######################################################
@@ -160,41 +174,53 @@ def task(chromosome, sequence, start, end ,strand):
             elif (strand_select == "-"):
                 fw_acceptor.write(chromosome + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + "JUNC_donor\t1\t"+strand_select+"\n")
                 fw_donor.write(chromosome + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + "JUNC_donor\t1\t"+strand_select+"\n")
+        
+    fw_donor.close()
+    fw_acceptor.close()
+    fw_da.close()
 
 
 
-def main():
+def main(db):
 
-    with open(hg38_ref, 'r') as handle:
+    dir(OUTPUT_DIR)
+
+    fasta_file = f'../SPLAM_python/extraction/primates/{db}_genomic.fa'
+
+    with open(fasta_file, 'r') as handle, open("./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.merge.sort.bed") as f:
         Path("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/donor/").mkdir(parents=True, exist_ok=True)
         Path("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/acceptor/").mkdir(parents=True, exist_ok=True)
         Path("./NEG_rev_junctions/"+SEQ_LENGTH+"bp/d_a/").mkdir(parents=True, exist_ok=True)
 
         record_dict = SeqIO.to_dict(SeqIO.parse(handle, 'fasta'))
 
-        with open("./NEG_rev_junctions/MANE.GRCh38.v1.0.ensembl_genomic.merge.merge.sort.bed") as f:
-            lines = f.read().splitlines()
-            for line in lines:
-                eles = line.split("\t")
-                print(eles)
+        lines = f.read().splitlines()
+        for line in lines:
+            eles = line.split("\t")
+            print(eles)
 
-                chr = eles[0]
-                start = int(eles[1])
-                end = int(eles[2])
-                strand = eles[3]
-                record = record_dict[chr]
+            chr = eles[0]
+            start = int(eles[1])
+            end = int(eles[2])
+            strand = eles[3]
+            record = record_dict[chr]
 
-                # Extract individual parts of the FASTA record
-                identifier = record.id
-                chromosome = record.description
-                sequence = record.seq
-                sequence = str(sequence).upper()
-                # if (chromosome in targets.keys()):
-                task(chromosome, sequence, start, end ,strand)
+            # Extract individual parts of the FASTA record
+            identifier = record.id
+            chromosome = record.description
+            sequence = record.seq
+            sequence = str(sequence).upper()
+            # if (chromosome in targets.keys()):
+            task(chromosome, sequence, start, end ,strand)
 
-    fw_donor.close()
-    fw_acceptor.close()
-    fw_da.close()
 
 if __name__ == "__main__":
-    main()
+
+    if os.getcwd() != 'src_neg_test':
+        os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test')
+
+    datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10.1']
+    idxs = [0,1,2,3] #CHANGEME
+
+    for idx in idxs:
+        main(datasets[idx])

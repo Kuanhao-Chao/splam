@@ -61,3 +61,4 @@ dist/
 build/
 *.gff
 *.gff3
+*.db

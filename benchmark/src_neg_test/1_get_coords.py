@@ -1,20 +1,17 @@
 # gets the gene loci start, end, and strand from all the src_neg
 
 import os
-import numpy as np
 import gffutils
-import pandas as pd
-from progress.bar import Bar
 
 def run(input_filename):
     
     # define output folder
-    output_folder = './output/'
-    input_folder = '../Annotations/primates/'
-    title = input_filename.split('.')[0]
+    output_folder = './1_output/'
+    input_folder = '../SPLAM_python/extraction/primates/'
+    db = input_filename.split('.')[0]
     input_filename = input_folder + input_filename
-    db_filename = output_folder + 'databases/' + title + '.db'
-    output_filename = output_folder + title + '_parsed.bed'
+    db_filename = output_folder + 'databases/' + db + '.db'
+    output_filename = output_folder + db + '_genes.bed'
 
     # create database
     create_database(input_filename, db_filename, output_filename)
@@ -24,7 +21,7 @@ def run(input_filename):
     print('Successfully connected to database')
     
     # write db file into bed format
-    output_filename = parse_database(db, output_filename)
+    output_filename = collect_genes(db, output_filename)
     print(f'Complete.\nDatabase file at {db_filename}\nBED file at {output_filename}')
 
 
@@ -53,69 +50,50 @@ def handle_duplicate_names(path):
     return path
 
 
-def parse_database(db, output_filename):
+def collect_genes(db, output_filename):
     print('Parsing file...')
     print(f'Feature types: {list(db.featuretypes())}')
 
-    # handling duplicate output files to avoid overwrite
-    output_filename = handle_duplicate_names(output_filename)
+    # PRINT DEBUGGING
+    # limit = 1000
+    # for i, feature in enumerate(db.features_of_type('gene')):
+    #     if i > limit:
+    #         break
+    #     if feature['gene_biotype'] != ['protein_coding']:
+    #         print('.'*120)
+    #         continue
+    #     print(feature)
+    #     try:
+    #         print(db.bed12(feature))
+    #     except ValueError as e: # end of last exon does not match end of feature
+    #         print('Exception: ', str(e))
+    #         line = [feature.seqid, feature.start-1, feature.end, feature.id, feature.score, feature.strand]
+    #         print('\t'.join(map(str, line)))
+    #     print('-'*120)
 
-    with open(output_filename, 'w') as bed_file:        
-        # obtain list of all exons, then obtain a list of all parents of these exons
-        pbar = Bar('Generating list of parents...', max=len(list(db.features_of_type('exon'))))
-        parent_features = set()
-        for exon in db.features_of_type('exon'):
-            parents = db.parents(exon, level=1)
-            parent_features.update(parent for parent in parents)
-            pbar.next()
-        pbar.finish()
-        print(f'Found {len(parent_features)} parents.')
-
-        # ordering the list of parents by seqid
-        print('Sorting parent list...')
-        parent_features = sorted(list(parent_features), key=lambda x: x.seqid)
-
-        # parse through child exons of each parent
-        pbar = Bar('Parsing children...', max=len(parent_features))
-        cur_chr = ''
-        for parent_feature in parent_features:
-            # print current chromosome status
-            if (cur_chr != parent_feature.seqid):
-                cur_chr = parent_feature.seqid
-                print(f'\tReading {cur_chr}')
-
-            # obtain the child exons and sort them by start/end
-            child_exons = db.children(parent_feature, level=1, featuretype='exon')
-            sorted_exons = sorted(child_exons, key=lambda x: (x.start, x.end))
-
-            # iterate over consecutive exons to get introns in between
-            count = 1
-            for ex1, ex2 in zip(sorted_exons[:-1], sorted_exons[1:]):
-                # filter out overlapping exons and invalid ids
-                if int(ex1.end) > int(ex2.start):
-                    print(f'ERROR: Exon {ex1.seqid}:{ex1.start}-{ex1.end} overlaps Exon {ex2.seqid}:{ex2.start}-{ex2.end}. Skipping first exon.')
-                    continue #TODO: if this produces a lot of error, switch to while loop and skip second exon instead of first
-
-                intron_chrom = ex1.seqid
-                intron_start = ex1.end # BED is 0-indexed
-                intron_end = ex2.start - 1 # BED is half-open interval
-                name = parent_feature.id + '__' + str(count)
-                
-                # write intron to BED file
-                bed_file.write(f'{intron_chrom}\t{intron_start}\t{intron_end}\t{name}\t{parent_feature.score}\t{parent_feature.strand}\n')
-
-                count += 1
-            
-            pbar.next()
-        pbar.finish()
-        
-        return output_filename
+    with open(output_filename, 'w') as bed_file:
+        for i, feature in enumerate(db.features_of_type('gene')):
+            if feature['gene_biotype'] != ['protein_coding']:
+                continue
+            try:
+                bed_file.write(db.bed12(feature))
+            except ValueError as e: # end of last exon does not match end of feature
+                print(f'Exception on line {i}: {str(e)}')
+                line = [feature.seqid, feature.start-1, feature.end, feature.id, feature.score, feature.strand]
+                bed_file.write('\t'.join(map(str, line)))
+            bed_file.write('\n')
+    
+    return output_filename
 
 
 if __name__ == '__main__':
+
+    if os.getcwd() != 'src_neg_test':
+        os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test')
+
     # define filenames
-    annotation_files = ['Mmul_10.gff', 'NHGRI_mPanTro3.gff', 'GRCm39.gff', 'TAIR10.1.gff']
-    file_idxs = [3] #CHANGEME
+    annotation_files = ['GRCm39.gff', 'Mmul_10.gff', 'NHGRI_mPanTro3.gff', 'TAIR10.1.gff']
+    file_idxs = [0,1,2,3] #CHANGEME
     
     for idx in file_idxs:       
         run(annotation_files[idx])
