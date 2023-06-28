@@ -1,16 +1,20 @@
-THRESHOLD="random"
+import os
+
 SEQ_LEN = "800"
 HALF_SEQ_LEN = int(SEQ_LEN) // 2
-QUATER_SEQ_LEN = int(SEQ_LEN) // 4
-def main():
-    fw = open("../INPUTS/"+SEQ_LEN+"bp/input_neg_"+str(THRESHOLD)+".fa", "w")
-    fr_donor = open("./NEG_rev_junctions/"+SEQ_LEN+"bp/donor/donor_seq.fa", "r")
-    fr_acceptor = open("./NEG_rev_junctions/"+SEQ_LEN+"bp/acceptor/acceptor_seq.fa", "r")
+QUARTER_SEQ_LEN = int(SEQ_LEN) // 4
+
+def main(db):
+    os.makedirs(f'./4_output/{SEQ_LEN}bp/{db}/', exist_ok=True)
+    fw = open(f'./4_output/{SEQ_LEN}bp/{db}/input_neg_random.fa', "w")
+    fw_d_a = open(f"./4_output/{SEQ_LEN}bp/{db}/d_a_type.tsv", "w")
+    fr_donor = open(f"./3_output/{SEQ_LEN}bp/{db}/donor_seq.fa", "r")
+    fr_acceptor = open(f"./3_output/{SEQ_LEN}bp/{db}/acceptor_seq.fa", "r")
 
     lines_d = fr_donor.read().splitlines()
     lines_a = fr_acceptor.read().splitlines()
 
-    line_num = len(lines_d)
+    line_num = min(len(lines_d), len(lines_a))
 
     canonical_d_count = 0
     noncanonical_d_count = 0
@@ -40,16 +44,14 @@ def main():
                 # y = (200, 602)
             
             x = x.upper()
-            if x[QUATER_SEQ_LEN] == "N" or x[QUATER_SEQ_LEN+1] == "N" or x[QUATER_SEQ_LEN*3-1] == "N" or x[QUATER_SEQ_LEN*3] == "N":
+            if x[QUARTER_SEQ_LEN] == "N" or x[QUARTER_SEQ_LEN+1] == "N" or x[QUARTER_SEQ_LEN*3-1] == "N" or x[QUARTER_SEQ_LEN*3] == "N":
                 continue
 
             fw.write(chr_name)
             fw.write(x + "\n")
 
-            donor_dimer = x[QUATER_SEQ_LEN:QUATER_SEQ_LEN+2]
-            acceptor_dimer = x[QUATER_SEQ_LEN*3-2:QUATER_SEQ_LEN*3]
-            # acceptor_dimer = x[QUATER_SEQ_LEN*3:QUATER_SEQ_LEN*3+2]
-
+            donor_dimer = x[QUARTER_SEQ_LEN:QUARTER_SEQ_LEN+2]
+            acceptor_dimer = x[QUARTER_SEQ_LEN*3-2:QUARTER_SEQ_LEN*3]
 
             if donor_dimer not in donors.keys():
                 donors[donor_dimer] = 1
@@ -79,15 +81,25 @@ def main():
     acceptors = sorted(acceptors.items(), key=lambda x: x[1], reverse=True)
     
     
-    fw_d_a = open("d_a_type.tsv", "w")
     for key, value in donors[:5]:
         print("Donor   : ", key, " (", str(value), ")")
-        fw_d_a.write(key + "\t" + str(value) + "\n")
+        fw_d_a.write("Donor   : " + key + "\t" + str(value) + "\n")
     for key, value in acceptors[:5]:
         print("Acceptor: ", key, " (", str(value), ")")
-        fw_d_a.write(key + "\t" + str(value) + "\n")
+        fw_d_a.write("Acceptor: " + key + "\t" + str(value) + "\n")
+
     fw_d_a.close()
     fw.close()
+    fr_donor.close()
+    fr_acceptor.close()
 
 if __name__ == "__main__":
-    main()
+
+    if os.getcwd() != 'src_neg_test':
+        os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test')
+
+    datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
+    idxs = [3] #CHANGEME
+
+    for idx in idxs:
+        main(datasets[idx])

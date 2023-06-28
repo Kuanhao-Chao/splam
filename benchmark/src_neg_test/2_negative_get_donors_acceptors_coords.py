@@ -7,17 +7,36 @@ from pyfaidx import Fasta
 
 SEQ_LENGTH = "800"
 QUARTER_SEQ_LEN = int(SEQ_LENGTH) // 4
-EACH_JUNC_PER_LOCUS = 15
+EACH_JUNC_PER_LOCUS = 15 #15 for mammalian
 MIN_JUNC = 200
 MAX_JUNC = 20000
-THRESHOLD = "100"   
 OUTPUT_DIR = f'./2_output/{SEQ_LENGTH}bp/'
 
 '''Make the directory(ies) needed for the given path'''
 dir = lambda path : os.makedirs(os.path.dirname(path), exist_ok=True)
 
+ 
+'''Obtain chromosome size'''
+def get_chrom_size(path):
+    chrs = {}
+    with open(path, 'r') as file:       
+        # read the file line by line
+        for line in file:  
+            if line.startswith('#'):
+                continue
+            # split by tabs
+            columns = line.strip().split('\t')
+            refseq_name = columns[6]
+            chrom_size = int(columns[8])
+
+            # store the key-value pair in the dictionary
+            chrs[refseq_name] = chrom_size
+    
+    return chrs
+
+
 '''Obtain the negative sequence'''
-def task(chromosome, sequence, start, end, strand, fw_donor, fw_acceptor, fw_da):
+def task(chromosome, sequence, start, end, name, strand, size, fw_donor, fw_acceptor, fw_da):
 
     junc_count = 0
     # does EACH_JUNC_PER_LOCUS number of seed generations
@@ -32,11 +51,11 @@ def task(chromosome, sequence, start, end, strand, fw_donor, fw_acceptor, fw_da)
         ################################
         # Finding the first and second dimers
         ################################
-        donor_idx = 0
-        acceptor_idx = JUNC_BASE
+        first_idx = base_num
+        second_idx = JUNC_BASE
         
-        has_donor = False
-        has_acceptor = False
+        has_first = False
+        has_second = False
 
         # select the opposite strand
         strand_select = "."
@@ -50,104 +69,110 @@ def task(chromosome, sequence, start, end, strand, fw_donor, fw_acceptor, fw_da)
 
         if strand_select == "-":
             # I need to find junctions on the reverse strand (CT-AC pairs).
-            donor_dimer = 'CT'
-            acceptor_dimer = 'AC'
+            first_dimer = 'CT' # acceptor
+            second_dimer = 'AC' # donor
 
         elif strand_select == "+":
             # I need to find junctions on the forward strand (GT-AG pairs).
-            donor_dimer = 'GT'
-            acceptor_dimer = 'AG'
+            first_dimer = 'GT' # donor
+            second_dimer = 'AG' # acceptor
 
         
         ################################
-        # Finding the donor dimer
+        # Finding the first dimer
         ################################
-        has_donor = False
-        while has_donor == False:
-            # (1) Found the donor dimer
-            cur_dimer = sequence[base_num+donor_idx:base_num+donor_idx+2]
+        has_first = False
+        while has_first == False:
+            # (1) Found the first (leftmost) dimer
+            cur_dimer = sequence[first_idx:first_idx+2]
             #print(f'Donor dimer: {cur_dimer}')
-            if (cur_dimer == donor_dimer):
-                has_donor = True
+            if (cur_dimer == first_dimer):
+                has_first = True
+                break
 
-            # (2) Donor is out of range
-            if base_num+donor_idx+2 > end:
+            # (2) Dimer is out of range
+            if first_idx+2 > end:
                 #print('\tDonor out of range.')
                 break
 
-            donor_idx += 1
+            first_idx += 1
 
-        if not has_donor:
+        if not has_first:
             continue
         
 
         ################################
-        # Finding the acceptor dimer
+        # Finding the second dimer
         ################################
-        has_acceptor = False
-        while has_acceptor == False:
-            # (1) Found the acceptor dimer
-            cur_dimer = sequence[base_num+donor_idx+acceptor_idx-2:base_num+donor_idx+acceptor_idx]
+        has_second = False
+        while has_second == False:
+            # (1) Found the second (rightmost) dimer
+            cur_dimer = sequence[first_idx+second_idx-2:first_idx+second_idx]
             #print(f'Acceptor dimer: {cur_dimer}')
-            if (cur_dimer == acceptor_dimer):
-                has_acceptor = True
+            if (cur_dimer == second_dimer):
+                has_second = True
+                break
 
-            # (2) Acceptor is out of range.
-            if base_num+donor_idx+acceptor_idx > end:
+            # (2) Dimer is out of range.
+            if first_idx+second_idx > end:
                 #print('\tAcceptor out of range.')
                 break
 
-            acceptor_idx += 1
+            second_idx += 1
 
-        if not has_acceptor:
+        if not has_second:
             continue
 
 
-        ########################################
-        # Found both donor and acceptor dimers
-        ########################################
-        if has_donor and has_acceptor:
+        ####################
+        # Found both dimers
+        ####################
+        if has_first and has_second:
 
-            # print(f'Donor   : {sequence[base_num+donor_idx:base_num+donor_idx+2]}')
-            # print(f'Acceptor: {sequence[base_num+donor_idx+acceptor_idx-2:base_num+donor_idx+acceptor_idx]}')
+            # print(f'Donor   : {sequence[first_idx:first_idx+2]}')
+            # print(f'Acceptor: {sequence[first_idx+second_idx-2:first_idx+second_idx]}')
 
-            # generate the 200bp flanking sequence each side
-            splice_junc_len = acceptor_idx + 1
+            # generate the 200bp flanking sequence each side (decreased if fully overlaps)
+            splice_junc_len = second_idx
             flanking_size = QUARTER_SEQ_LEN
 
             if splice_junc_len < QUARTER_SEQ_LEN:
                 flanking_size = splice_junc_len
 
-            donor = base_num+donor_idx
-            acceptor = base_num+donor_idx+acceptor_idx
+            first_pos = first_idx
+            second_pos = first_idx+second_idx
 
-            if (strand_select == "+"):
-                donor_s = donor - QUARTER_SEQ_LEN
-                donor_e = donor + flanking_size
-                acceptor_s = acceptor - flanking_size
-                acceptor_e = acceptor + QUARTER_SEQ_LEN
+            first_s = first_pos - QUARTER_SEQ_LEN
+            first_e = first_pos + flanking_size
+            second_s = second_pos - flanking_size
+            second_e = second_pos + QUARTER_SEQ_LEN
 
-            elif (strand_select == "-"):
-                donor_s = donor - flanking_size
-                donor_e = donor + QUARTER_SEQ_LEN
-                acceptor_s = acceptor - QUARTER_SEQ_LEN
-                acceptor_e = acceptor + flanking_size
-
-            ######################################################
-            # Check if the donors and acceptors are in range.
-            ######################################################
-            if acceptor_s >= end:
+            ###################################
+            # Check if the dimers are in range
+            ###################################
+            if second_e >= size or first_s < 0:
                 continue
 
-            fw_da.write(chromosome + "\t" + str(base_num+donor_idx) + "\t" + str(base_num+donor_idx+acceptor_idx+1) + "\t" + "JUNC_" + str(junc_count) + "\t1\t"+strand_select+"\n")
+            # sanity checks
+            assert(first_e > first_s)
+            assert(second_e > second_s)
+            assert(second_e > first_s)
+            if strand_select == '+':
+                assert(sequence[first_pos:first_pos+2] == 'GT')
+                assert(sequence[second_pos-2:second_pos] == 'AG')
+            if strand_select == '-':
+                assert(sequence[first_pos:first_pos+2] == 'CT')
+                assert(sequence[second_pos-2:second_pos] == 'AC')
+
+            fw_da.write(f'{chromosome}\t{first_idx}\t{first_idx+second_idx}\t{name}__{junc_count}\t0\t{strand_select}\n')
             
             if (strand_select == "+"):
-                fw_donor.write(chromosome + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + "JUNC_" + str(junc_count) + "\t1\t"+strand_select+"\n")
-                fw_acceptor.write(chromosome + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + "JUNC_" + str(junc_count) + "\t1\t"+strand_select+"\n")
+                fw_donor.write(f'{chromosome}\t{first_s}\t{first_e}\t{name}__{junc_count}_donor\t0\t{strand_select}\n')
+                fw_acceptor.write(f'{chromosome}\t{second_s}\t{second_e}\t{name}__{junc_count}_acceptor\t0\t{strand_select}\n')
 
             elif (strand_select == "-"):
-                fw_acceptor.write(chromosome + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + "JUNC_" + str(junc_count) + "\t1\t"+strand_select+"\n")
-                fw_donor.write(chromosome + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + "JUNC_" + str(junc_count) + "\t1\t"+strand_select+"\n")
+                fw_acceptor.write(f'{chromosome}\t{first_s}\t{first_e}\t{name}__{junc_count}_donor\t0\t{strand_select}\n')
+                fw_donor.write(f'{chromosome}\t{second_s}\t{second_e}\t{name}__{junc_count}_acceptor\t0\t{strand_select}\n')
             
             junc_count += 1
 
@@ -171,24 +196,27 @@ def main(db):
 
         record_dict = Fasta(fasta_file, sequence_always_upper=True)
         #print(record_dict)
+        size_dict = get_chrom_size(f'../SPLAM_python/extraction/primates/{db}_assembly_report.txt')
 
         lines = f.read().splitlines()
         pbar = Bar('Generating negative samples... ', max=len(lines))
         for line in lines:
             eles = line.split("\t")
+            #print(eles)
 
             chr = eles[0]
             start = int(eles[1])
             end = int(eles[2])
+            name = eles[3]
             strand = eles[5]
-            record = record_dict[chr]
+            sequence = record_dict[chr]
+            size = size_dict[chr]
+            #chromosome = sequence.long_name
 
             # Extract individual parts of the FASTA record
-            chromosome = record.name
-            sequence = record
-            
+        
             #print(f'Searching in: {chromosome}:{start}-{end};{strand}')
-            task(chromosome, sequence, start, end, strand, fw_donor, fw_acceptor, fw_da)
+            task(chr, sequence, start, end, name, strand, size, fw_donor, fw_acceptor, fw_da)
 
             pbar.next()
         pbar.finish()
@@ -196,6 +224,7 @@ def main(db):
     fw_donor.close()
     fw_acceptor.close()
     fw_da.close()
+
 
 if __name__ == "__main__":
 
