@@ -61,6 +61,7 @@ splam iterates through the :code:`GFF` file, extracts all introns in transcripts
 * **Output**
 
 .. code-block:: text
+   :linenos:
 
    chr9    4849549 4860125 JUNC00000007    3       +
    chr9    5923308 5924658 JUNC00000008    6       -
@@ -90,7 +91,8 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
 * **Output**
 
 .. code-block:: text
-
+   :linenos:
+   
    chr9    4849549 4860125 JUNC00000007    3       +       0.7723698       0.5370769
    chr9    5923308 5924658 JUNC00000008    6       -       0.9999831       0.9999958
    chr9    5924844 5929044 JUNC00000009    8       -       0.9999883       0.9999949

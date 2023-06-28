@@ -3,44 +3,58 @@ Q & A ...
 
 +++++
 
-Q: What is splam? Why do we need splam?
+Q: What is splam?
 -------------------------------------------
 
-.. raw:: html
+.. <div style="padding-left:20px">
 
-    <details>
-    <summary style="font-size:25px; font-weight: bold; padding-left:50px">Ans:</summary>
-    <p style="padding-left:50px">splam means two things: (1) splam is a deep residual convolutional neural networks that accurately predict splice junctions based solely on an input DNA sequence, and (2) it also stands for the software that evaluates the annotation files and clean up the alignment files. </p>
+.. collapse:: <span style="font-size:25px; padding-left:10px; ">Ans:</span>
 
-    <p style="padding-left:50px">We need a good way to evaluate the annotation file and the alignment file. </p>
+        splam means two things: (1) splam is a deep residual convolutional neural networks that accurately predict splice junctions based solely on an input DNA sequence, and (2) it also stands for this software that evaluates the annotation files and clean up the alignment files. 
 
-    </details>
+|
+
+Q: Why do we need splam?
+-------------------------------------------
+
+.. <div style="padding-left:20px">
+
+.. collapse:: <span style="font-size:25px; padding-left:10px; ">Ans:</span>
+
+    Given an alignment file, 
+
+    1. We need a good way to evaluate the annotation file and the alignment file.
+
+    2. SpliceAI is biased toward canonical transcript.
+    
+    3. We designed a biologically realistic model. 
+
 
 |
 
 Q: What makes splam different from spliceAI?
 -------------------------------------------
 
-.. collapse:: Details
+.. collapse:: <span style="font-size:25px; padding-left:10px; ">Ans:</span>
 
     SPLAM and SpliceAI are both frameworks used for predicting splice junctions in DNA sequences, but they have some key differences.
 
 
-    #. Input constraints:
+       #. **Input constraints:**
     
-    * **splam**: It follows the design principle of using biologically realistic input constraints. It uses a window limited to 200 base pairs on each side of the donor and acceptor sites, totaling 800 base pairs. Furthermore, we pair each donor and acceptor
-        .. figure::  ../image/splam_input.png
-            :align:   center
-            :scale:   40 %
+           * **splam**: It follows the design principle of using biologically realistic input constraints. It uses a window limited to 200 base pairs on each side of the donor and acceptor sites, totaling 800 base pairs.     Furthermore, we pair each donor and acceptor
+           .. figure::  ../image/splam_input.png
+                :align:   center
+                :scale:   40 %
         
-    * **SpliceAI**: The previous state-of-the-art CNN-based system, SpliceAI, relies on a window of 10,000 base pairs flanking each splice site to obtain maximal accuracy. However, this window size is much larger than what the splicing machinery in cells can recognize.
+           * **SpliceAI**: The previous state-of-the-art CNN-based system, SpliceAI, relies on a window of 10,000 base pairs flanking each splice site to obtain maximal accuracy. However, this window size is much larger than what the splicing machinery in cells can recognize.
 
 
-    #. Training data: 
-    
-    * **splam** was trained using a high-quality dataset of human donor and acceptor sites. We curated
-    
-    * **SpliceAI** was trained with canonical transcripts only, and it does not consider alternative splicing.
+       #. **Training data:**
+       
+           * **splam** was trained using a high-quality dataset of human donor and acceptor sites. We curated
+       
+           * **SpliceAI** was trained with canonical transcripts only, and it does not consider alternative splicing.
 
 
 

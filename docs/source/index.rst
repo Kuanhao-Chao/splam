@@ -79,9 +79,10 @@ Table of content
    content/quickstart
    content/alignment_evaluation
    content/annotation_evaluation
-   content/conclusion
    content/how_to_page
    content/function_manual
    content/license
    content/contact
    content/help
+
+
