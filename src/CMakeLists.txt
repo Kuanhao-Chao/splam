@@ -10,7 +10,7 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/opt/zlib/include")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -I/usr/local/opt/bzip2/include")
 
 include_directories("${CMAKE_SOURCE_DIR}/include/")
-link_directories("${CMAKE_SOURCE_DIR}/include/htslib")
+# link_directories("${CMAKE_SOURCE_DIR}/include/htslib")
 message("${CMAKE_SOURCE_DIR}/include/htslib")
 
 message("LIBRARY_OUTPUT_DIRECTORY: ${LIBRARY_OUTPUT_DIRECTORY}")
@@ -20,6 +20,7 @@ include(ExternalProject)
 ExternalProject_Add(htslib
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/include/htslib/
         BUILD_IN_SOURCE 1
+        # CMAKE_ARGS -DBUILD_SHARED_LIBS=OFF
         CONFIGURE_COMMAND autoreconf -i 
         COMMAND ./configure --without-libdeflate --disable-libcurl --disable-lzma
         BUILD_COMMAND make
@@ -45,6 +46,12 @@ pybind11_add_module(splam_extract
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.cpp)
 
+
+
+# Add include directories
+target_include_directories(splam_extract PRIVATE ${CMAKE_SOURCE_DIR}/include/)
+
+# Link the library to your program
 add_dependencies(splam_extract htslib)
 if(UNIX AND NOT APPLE)
         target_link_libraries(splam_extract PRIVATE stdc++fs)
@@ -82,8 +89,12 @@ pybind11_add_module(splam_clean
         ${CMAKE_SOURCE_DIR}/include/gclib/GArgs.cpp
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.cpp)
-add_dependencies(splam_clean htslib)
 
+# Add include directories
+target_include_directories(splam_clean PRIVATE ${CMAKE_SOURCE_DIR}/include/)
+
+# Link the library to your program
+add_dependencies(splam_clean htslib)
 if(UNIX AND NOT APPLE)
         target_link_libraries(splam_clean PRIVATE stdc++fs)
         target_link_libraries(splam_clean PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.so z lzma bz2 pthread)
@@ -93,11 +104,12 @@ endif ()
 target_compile_definitions(splam_clean
            PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
 
+message("EXAMPLE_VERSION_INFO: ${EXAMPLE_VERSION_INFO}")
 
 
-# Move the build libhts.so / libhts.a
-if(UNIX AND NOT APPLE)
-        configure_file(${CMAKE_SOURCE_DIR}/include/htslib/libhts.so libhts.so COPYONLY)
-elseif (APPLE)
-        configure_file(${CMAKE_SOURCE_DIR}/include/htslib/libhts.a libhts.a COPYONLY)
-endif ()
+# # Move the build ${CMAKE_SOURCE_DIR}/include/htslib/libhts.so / ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a
+# if(UNIX AND NOT APPLE)
+#         configure_file(${CMAKE_SOURCE_DIR}/include/htslib/libhts.so ${CMAKE_SOURCE_DIR}/include/htslib/libhts.so COPYONLY)
+# elseif (APPLE)
+#         configure_file(${CMAKE_SOURCE_DIR}/include/htslib/libhts.a ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a COPYONLY)
+# endif ()
