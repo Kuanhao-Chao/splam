@@ -21,33 +21,27 @@ Q: What is splam? Why do we need splam?
 Q: What makes splam different from spliceAI?
 -------------------------------------------
 
-.. raw:: html
+.. collapse:: Details
 
-    <details>
-    <summary style="font-size:25px; font-weight: bold; padding-left:50px">Ans:</summary>
-    <p style="padding-left:50px"> 
     SPLAM and SpliceAI are both frameworks used for predicting splice junctions in DNA sequences, but they have some key differences.
-    </p>
-    <ul style="padding-left:50px">
-        <li>Input constraints: </li>
-        <ul>
-            <li>splam It follows the design principle of using biologically realistic input constraints. It uses a window limited to 200 base pairs on each side of the donor and acceptor sites, totaling 800 base pairs. Furthermore, we pair each donor and acceptor </li>
-        </ul>
-        <ul>
-            <li> SpliceAI: The previous state-of-the-art CNN-based system, SpliceAI, relies on a window of 10,000 base pairs flanking each splice site to obtain maximal accuracy. However, this window size is much larger than what the splicing machinery in cells can recognize.</li>
-        </ul>
-    </ul>
 
-    <ul style="padding-left:50px">
-        <li>Training data: </li>
-        <ul>
-            <li>splam was trained using a high-quality dataset of human donor and acceptor sites. We curated </li>
-        </ul>
-        <ul>
-            <li> SpliceAI was trained with canonical transcripts only, and it does not consider alternative splicing.</li>
-        </ul>
-    </ul>
-    </details>
+
+    #. Input constraints:
+    
+    * **splam**: It follows the design principle of using biologically realistic input constraints. It uses a window limited to 200 base pairs on each side of the donor and acceptor sites, totaling 800 base pairs. Furthermore, we pair each donor and acceptor
+        .. figure::  ../image/splam_input.png
+            :align:   center
+            :scale:   40 %
+        
+    * **SpliceAI**: The previous state-of-the-art CNN-based system, SpliceAI, relies on a window of 10,000 base pairs flanking each splice site to obtain maximal accuracy. However, this window size is much larger than what the splicing machinery in cells can recognize.
+
+
+    #. Training data: 
+    
+    * **splam** was trained using a high-quality dataset of human donor and acceptor sites. We curated
+    
+    * **SpliceAI** was trained with canonical transcripts only, and it does not consider alternative splicing.
+
 
 
 | 

@@ -30,7 +30,8 @@ author = 'Kuan-Hao Chao'
 # ones.
 extensions = ['recommonmark',
               'sphinx_rtd_theme',
-              'sphinx.ext.autosectionlabel'
+              'sphinx.ext.autosectionlabel',
+              'sphinx_toolbox.collapse'
               ]
 
 # Add any paths that contain templates here, relative to this directory.
