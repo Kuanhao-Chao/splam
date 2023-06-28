@@ -11,7 +11,7 @@ MIN_JUNC = 200
 MAX_JUNC = 20000
 
 THRESHOLD = "100"
-hg38_ref = "../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa"
+hg38_ref = "../../../Dataset/hg38_p12_ucsc.no_alts.no_fixs.fa"
 output_bed = "./NEG_rev_junctions/"+SEQ_LENGTH+"bp/neg_junctions.bed"
 output_file = "../INPUTS/"+SEQ_LENGTH+"bp/input_can_neg.fa"
 
@@ -143,6 +143,9 @@ def task(chromosome, sequence, start, end ,strand):
                 donor_e = donor + QUATER_SEQ_LEN
                 acceptor_s = acceptor - QUATER_SEQ_LEN
                 acceptor_e = acceptor + flanking_size
+
+                if (flanking_size < 200 ):
+                    print(donor_s, donor, donor_e, acceptor_s, acceptor_e)
 
             ######################################################
             # Check if the donors and acceptors are in range.

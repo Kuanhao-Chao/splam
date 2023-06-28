@@ -1,5 +1,4 @@
-import pandas as pd
-import os 
+import os
 import argparse
 import sys
 
@@ -17,7 +16,7 @@ def parse_args(args):
     parser = argparse.ArgumentParser(prog='splam', description='\033[1;37msplice junction predictor to improve alignment files (BAM / CRAM)\033[0;0m')
     parser.add_argument('-v', '--version',
                         action='store_true')  # on/off flag
-    parser.add_argument('-c', '--citation', 
+    parser.add_argument('-c', '--citation',
                         action='store_true')
 
     # Adding subcommand
@@ -82,11 +81,11 @@ def parse_args(args):
         required=True, help='The path to the reference genome.'
     )
     parser_score.add_argument(
-        '-m', '--model', metavar='MODEL.pt', 
+        '-m', '--model', metavar='MODEL.pt',
         required=True, help='the path to the SPLAM! model'
     )
-    
-    
+
+
     #############################
     # Mode 3: splam clean subcommands
     #############################
@@ -112,7 +111,7 @@ def parse_args(args):
     # args_r = parser.parse_args()
     return args_r, parser, parser_score
 
-def main(argv=None):    
+def main(argv=None):
 
     print(
             "====================================================================\n"
@@ -132,7 +131,7 @@ def main(argv=None):
     if args.version:
         print(VERSION)
         exit()
-    
+
     if args.citation:
         print(CITATION)
         exit()
@@ -187,7 +186,7 @@ def main(argv=None):
         # Step 3: concatenate donor and acceptor into a fasta
         #################################
         junction_fasta = parse.concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta, verbose)
-        
+
         #################################
         # Step 4: splam score junctions
         #################################

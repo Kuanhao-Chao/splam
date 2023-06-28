@@ -7,6 +7,16 @@ splam's tutorial
    :scale:   20 %
 
 
+.. image:: https://img.shields.io/badge/License-MIT-yellow.svg
+
+
+.. image:: https://img.shields.io/badge/version-v.0.2.6-blue
+
+.. image:: https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download
+
+.. image:: https://img.shields.io/badge/platform-macOS_/Linux_/Windows-green.svg
+
+
 Why splam?
 ==================
 
