@@ -13,7 +13,6 @@
 # import os
 # import sys
 # sys.path.insert(0, os.path.abspath('.'))
-import sphinx_rtd_theme
 
 
 # -- Project information -----------------------------------------------------
@@ -31,7 +30,8 @@ author = 'Kuan-Hao Chao'
 extensions = ['recommonmark',
               'sphinx_rtd_theme',
               'sphinx.ext.autosectionlabel',
-              'sphinx_toolbox.collapse'
+              'sphinx_toolbox.collapse',
+              'sphinx_panels'
               ]
 
 # Add any paths that contain templates here, relative to this directory.

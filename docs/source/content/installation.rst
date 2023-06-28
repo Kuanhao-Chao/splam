@@ -19,7 +19,9 @@ Install through conda
 
 Install splam through conda is the easiest way to go
 
-.. code-block:: Python
+.. code-block:: bash
+   
+   $ conda install -c bioconda liftoff
    
    TBC
 
@@ -28,11 +30,11 @@ Install splam through conda is the easiest way to go
 Install through pip
 -------------------------
 
-splam is on `Bioconductor 3.12 development <https://bioconductor.org/packages/devel/bioc/html/sangeranalyseR.html>`_ now.
+splam is on `PyPi 3.12 <https://pypi.org/project/splam/>`_ now. Check out all the release `here <https://pypi.org/manage/project/splam/releases/>`_.
 
-.. code-block:: Python
+.. code-block:: bash
    
-   pip install splam
+   $ pip install splam
 
 |
 
@@ -41,19 +43,17 @@ Install from source
 
 You can also install splam from source
 
-.. code-block:: Python
-   
-   git clone https://github.com/Kuanhao-Chao/splam --recursive
-   cd splam/src/
-   python setup.py install
+.. code-block:: bash
+
+   $ git clone https://github.com/Kuanhao-Chao/splam --recursive
+
+   $ cd splam/src/
+
+   $ python setup.py install
 
 |
+
 
 Now, you are ready to go !
-
-|
-
-
-Where to go from here ?
------------------------
-Please continue to the :ref:`Quick Start Guide` or the more detailed :ref:`Beginners Guide`.
+--------------------------
+Please continue to the :ref:`Quick Start Guide`.
