@@ -79,6 +79,7 @@ Table of content
    content/quickstart
    content/alignment_evaluation
    content/annotation_evaluation
+   content/splam_model
    content/how_to_page
    content/function_manual
    content/license

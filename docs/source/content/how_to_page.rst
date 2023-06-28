@@ -50,7 +50,7 @@ Q: What makes splam different from spliceAI?
            * **SpliceAI**: The previous state-of-the-art CNN-based system, SpliceAI, relies on a window of 10,000 base pairs flanking each splice site to obtain maximal accuracy. However, this window size is much larger than what the splicing machinery in cells can recognize.
 
 
-       #. **Training data:**
+       #. **Training data**
        
            * **splam** was trained using a high-quality dataset of human donor and acceptor sites. We curated
        
