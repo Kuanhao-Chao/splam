@@ -21,9 +21,9 @@ ExternalProject_Add(htslib
         SOURCE_DIR ${CMAKE_SOURCE_DIR}/include/htslib/
         BUILD_IN_SOURCE 1
         # CMAKE_ARGS -DBUILD_SHARED_LIBS=OFF
-        CONFIGURE_COMMAND autoreconf -i 
+        CONFIGURE_COMMAND autoreconf -i
         COMMAND ./configure --without-libdeflate --disable-libcurl --disable-lzma
-        BUILD_COMMAND make
+        BUILD_COMMAND make CFLAGS=-fPIC
         INSTALL_COMMAND ""
         )
 
@@ -55,10 +55,13 @@ target_include_directories(splam_extract PRIVATE ${CMAKE_SOURCE_DIR}/include/)
 add_dependencies(splam_extract htslib)
 if(UNIX AND NOT APPLE)
         target_link_libraries(splam_extract PRIVATE stdc++fs)
-        target_link_libraries(splam_extract PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.so z lzma bz2 pthread)
-elseif (APPLE)
-        target_link_libraries(splam_extract PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+#         target_link_libraries(splam_extract PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+# elseif (APPLE)
+#         target_link_libraries(splam_extract PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
 endif ()
+target_link_libraries(splam_extract PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+
+
 # define (VERSION_INFO) here.
 target_compile_definitions(splam_extract
            PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
@@ -97,10 +100,11 @@ target_include_directories(splam_clean PRIVATE ${CMAKE_SOURCE_DIR}/include/)
 add_dependencies(splam_clean htslib)
 if(UNIX AND NOT APPLE)
         target_link_libraries(splam_clean PRIVATE stdc++fs)
-        target_link_libraries(splam_clean PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.so z lzma bz2 pthread)
-elseif (APPLE)
-        target_link_libraries(splam_clean PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+# elseif (APPLE)
 endif ()
+target_link_libraries(splam_clean PRIVATE ${CMAKE_SOURCE_DIR}/include/htslib/libhts.a z lzma bz2 pthread)
+
+
 target_compile_definitions(splam_clean
            PRIVATE VERSION_INFO=${EXAMPLE_VERSION_INFO})
 
