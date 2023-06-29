@@ -267,5 +267,5 @@ def test_model():
     pbar.finish()
     fw_junc_scores.close()
 
-if __name__ == '__main__':
+if __name__ == '__main__': 
     test_model()
