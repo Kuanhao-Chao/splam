@@ -5,10 +5,7 @@ train/src/Conformer/.git/
 train/src/block-recurrent-transformer/
 Dataset/
 .DS_Store
-<<<<<<< HEAD
-=======
 *.fa
->>>>>>> 8ff7af1c92989855610d311511f82314ac7863fc
 *.bed
 train/src/MODEL
 train/src/INPUTS/Intersection/
@@ -51,8 +48,8 @@ Figure/*.pptx
 benchmark/src_tools_evaluation/1st_res_noparalog/
 test/src_reimplementation_keras_pytorch/
 benchmark/src_tools_evaluation/splam_result_prev/
-benchmark/src_compare_results/spliceai_result*
-benchmark/src_compare_results/save/
+benchmark/src_pos_test/spliceai_result*
+benchmark/src_pos_test/save/
 benchmark/src_splam_cleanup/results/*
 benchmark/src_splam_cleanup_STAR/results/*
 __pycache__/
