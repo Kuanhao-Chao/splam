@@ -38,9 +38,11 @@ def main(argv):
         if (row['start'] < 0):
             #df.at[index, 'start'] = 0
             df.drop(index, axis=0, inplace=True)
+            continue
         if (row['end'] > chrs[chrom]):
             #df.at[index, 'end'] = chrs[chrom]
             df.drop(index, axis=0, inplace=True)
+            continue
 
     # obtain a random sample (reproducible) for further analysis
     n = 50000

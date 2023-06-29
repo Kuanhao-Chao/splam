@@ -38,17 +38,17 @@ def main(argv):
     print(">> output_file\t: ", output_file)
     model = load_model(resource_filename('spliceai', path), compile=False)
     print(repr(model))
-    os.makedirs("../spliceai_result_"+spliceai_version+"/", exist_ok=True)
+    os.makedirs("./4_output/spliceai_result_"+spliceai_version+"/", exist_ok=True)
     all_lines = []
     label = '+'
 
-    da_faf = "../output/data/"+output_file+"_spliceai_seq_"+TYPE+".fa"
-    os.makedirs("../spliceai_result_"+spliceai_version+"/"+output_file, exist_ok=True)
+    da_faf = "./3_output/"+output_file+"_spliceai_seq_"+TYPE+".fa"
+    os.makedirs("./4_output/spliceai_result_"+spliceai_version+"/"+output_file, exist_ok=True)
 
-    d_score_tsv_f = "../spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
-    a_score_tsv_f = "../spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
-    n_score_tsv_f = "../spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
-    name_tsv_f = "../spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.name."+TYPE+"."+output_file+".tsv"
+    d_score_tsv_f = "./4_output/spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.score.d."+TYPE+"."+output_file+".tsv"
+    a_score_tsv_f = "./4_output/spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.score.a."+TYPE+"."+output_file+".tsv"
+    n_score_tsv_f = "./4_output/spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.score.n."+TYPE+"."+output_file+".tsv"
+    name_tsv_f = "./4_output/spliceai_result_"+spliceai_version+"/"+output_file+"/spliceai_all_seq.name."+TYPE+"."+output_file+".tsv"
 
     d_score_fw = open(d_score_tsv_f, "a")
     a_score_fw = open(a_score_tsv_f, "a") 

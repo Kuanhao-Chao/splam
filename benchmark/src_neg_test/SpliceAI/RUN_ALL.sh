@@ -1,4 +1,4 @@
-DATABASE=TAIR10
+DATABASE=Mmul_10
 BASE_LEN=800
 
 # Step 1
@@ -15,6 +15,3 @@ echo ./2_extract_sequences.sh $DATABASE
 echo "\n\n>> Step 3"
 echo python 3_concatenate_spliceai_input.py $DATABASE
 python 3_concatenate_spliceai_input.py $DATABASE
-
-# Step 4 (technically 6)
-# do this manually...cl
