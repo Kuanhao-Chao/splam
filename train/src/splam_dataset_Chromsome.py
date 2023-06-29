@@ -67,13 +67,10 @@ class myDataset(Dataset):
                     elif type == "test":
                         if pidx >= 3000:
                             break
-                    # if pidx > CONSTANT_SIZE:
-                    #     break
 
             print("pidx: ", pidx)
 
             CONSTANT_SIZE = pidx
-            # CONSTANT_SIZE_NEG = math.ceil(CONSTANT_SIZE*2/3)
             CONSTANT_SIZE_NEG = CONSTANT_SIZE*3
             print("\033[1m[INFO] CONSTANT_SIZE     : ", CONSTANT_SIZE, "\033[0m")
             print("\033[1m[INFO] CONSTANT_SIZE_NEG : ", CONSTANT_SIZE_NEG, "\033[0m")

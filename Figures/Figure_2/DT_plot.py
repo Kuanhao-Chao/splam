@@ -34,27 +34,27 @@ def main():
     MANE_OR_ALTS = "ALTS"
     for SPLICEAI_VERSION in ["1", "2", "3", "4", "5", "AVERAGE"]:
 
-        with open("../../src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da.N.merged.BOTH.pkl", "rb") as fr:
-            spliceai_N_d_label = pickle.load(fr)
-            spliceai_N_d_pred = pickle.load(fr)
-            spliceai_N_a_label = pickle.load(fr)
-            spliceai_N_a_pred = pickle.load(fr)
+        # with open("../../src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da.N.merged.BOTH.pkl", "rb") as fr:
+        #     spliceai_N_d_label = pickle.load(fr)
+        #     spliceai_N_d_pred = pickle.load(fr)
+        #     spliceai_N_a_label = pickle.load(fr)
+        #     spliceai_N_a_pred = pickle.load(fr)
 
-            # j_pred_prob = [x.numpy() for x in j_pred_prob]
-            # j_pred_prob = [x.numpy() for x in j_pred_prob]
+        #     # j_pred_prob = [x.numpy() for x in j_pred_prob]
+        #     # j_pred_prob = [x.numpy() for x in j_pred_prob]
 
-            print("\tspliceai_N_d_label : ", len(spliceai_N_d_label))
-            print("\tspliceai_N_d_pred: ", len(spliceai_N_d_pred))
-            print("\tspliceai_N_d_label : ", len(spliceai_N_d_label[spliceai_N_d_label == 1]))
-            print("\tspliceai_N_d_pred: ", spliceai_N_d_pred)
-            print("")
-            print("\tspliceai_N_a_label : ", len(spliceai_N_a_label))
-            print("\tspliceai_N_a_pred: ", len(spliceai_N_a_pred))
-            print("\tspliceai_N_a_pred: ", len(spliceai_N_a_label[spliceai_N_a_label == 1]))
-            print("\tspliceai_N_a_pred: ", spliceai_N_a_pred)
-            print("")
+        #     print("\tspliceai_N_d_label : ", len(spliceai_N_d_label))
+        #     print("\tspliceai_N_d_pred: ", len(spliceai_N_d_pred))
+        #     print("\tspliceai_N_d_label : ", len(spliceai_N_d_label[spliceai_N_d_label == 1]))
+        #     print("\tspliceai_N_d_pred: ", spliceai_N_d_pred)
+        #     print("")
+        #     print("\tspliceai_N_a_label : ", len(spliceai_N_a_label))
+        #     print("\tspliceai_N_a_pred: ", len(spliceai_N_a_pred))
+        #     print("\tspliceai_N_a_pred: ", len(spliceai_N_a_label[spliceai_N_a_label == 1]))
+        #     print("\tspliceai_N_a_pred: ", spliceai_N_a_pred)
+        #     print("")
 
-        with open("../../src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da.noN.merged.BOTH.pkl", "rb") as fr:
+        with open("../../benchmark/src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da.noN.merged.BOTH.pkl", "rb") as fr:
             spliceai_noN_d_label = pickle.load(fr)
             spliceai_noN_d_pred = pickle.load(fr)
             spliceai_noN_a_label = pickle.load(fr)
@@ -78,9 +78,9 @@ def main():
             #####################################
             os.makedirs("./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/DT_plot/", exist_ok=True)
 
-            predict_probabilities = np.minimum(spliceai_N_d_pred, spliceai_N_a_pred)
-            true_labels = spliceai_N_a_label
-            plot_DT_plot(true_labels, predict_probabilities, SPLAM_VERSION, "spliceai_N", SPLICEAI_VERSION)
+            # predict_probabilities = np.minimum(spliceai_N_d_pred, spliceai_N_a_pred)
+            # true_labels = spliceai_N_a_label
+            # plot_DT_plot(true_labels, predict_probabilities, SPLAM_VERSION, "spliceai_N", SPLICEAI_VERSION)
 
             predict_probabilities = np.minimum(spliceai_noN_d_pred, spliceai_noN_a_pred)
             true_labels = spliceai_noN_a_label
