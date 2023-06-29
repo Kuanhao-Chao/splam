@@ -63,6 +63,12 @@ def main():
             if splice_junc_len < QUATER_SEQ_LEN:
                 flanking_size = splice_junc_len
 
+
+            # donor_s = donor - QUATER_SEQ_LEN
+            # donor_e = donor + flanking_size
+            # acceptor_s = acceptor - flanking_size
+            # acceptor_e = acceptor + QUATER_SEQ_LEN
+
             if (strand == "+"):
                 donor_s = donor - QUATER_SEQ_LEN
                 donor_e = donor + flanking_size
@@ -70,6 +76,10 @@ def main():
                 acceptor_e = acceptor + QUATER_SEQ_LEN
 
             elif (strand == "-"):
+                # donor_s = donor - QUATER_SEQ_LEN
+                # donor_e = donor + flanking_size
+                # acceptor_s = acceptor - flanking_size
+                # acceptor_e = acceptor + QUATER_SEQ_LEN 
                 donor_s = donor - flanking_size
                 donor_e = donor + QUATER_SEQ_LEN
                 acceptor_s = acceptor - QUATER_SEQ_LEN
@@ -84,8 +94,13 @@ def main():
                 continue
             else:
                 JUNCS.add(new_junc)
+
+                # if (strand == "+"):
                 fw_donor.write(chr + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + junc_name+"_donor" + "\t" + score + "\t" + strand + "\n")
                 fw_acceptor.write(chr + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + score + "\t" + strand + "\n")
+                # elif (strand == "-"):
+                #     fw_acceptor.write(chr + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + junc_name+"_donor" + "\t" + score + "\t" + strand + "\n")
+                #     fw_donor.write(chr + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + score + "\t" + strand + "\n")
     fw_donor.close()
     fw_acceptor.close()
 

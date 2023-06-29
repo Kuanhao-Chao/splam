@@ -43,9 +43,14 @@ def main():
             if len_d != len_a:
                 print("seq_d: ", len_d)
                 print("seq_a: ", len_a)
+
+            
+            if strand == "+":
+                continue
             if len_d == HALF_SEQ_LEN and len_a == HALF_SEQ_LEN:
                 x = seq_d + seq_a
                 # y = (250, 750)
+                continue
             else:
                 x = seq_d + (HALF_SEQ_LEN - len_d) * 'N' + (HALF_SEQ_LEN - len_a) * 'N' + seq_a
                 # y = (250, 750)
