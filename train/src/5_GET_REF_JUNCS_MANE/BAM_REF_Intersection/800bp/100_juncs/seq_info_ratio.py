@@ -29,7 +29,7 @@ print("spliceai_noN_seq_len / splam_seq_len : ", spliceai_10k_noN / splam_seq_le
 print("spliceai_N_seq_len / splam_seq_len   : ", spliceai_10k_N / splam_seq_len)
 ratio = [1, spliceai_10k_noN/splam_seq_len, spliceai_10k_N/splam_seq_len]
 height = [splam_seq_len, spliceai_10k_noN, spliceai_10k_N]
-tools = ["SPLAM", "SpliceAI-10k", "SpliceAI-10k-Ns"]
+tools = ["SPLAM", "SpliceAI", "SpliceAI-10k-Ns"]
 fig, ax = plt.subplots()
 ax.bar(tools, intron_len, label="intronic_sequence", linewidth = 1, edgecolor = "black", width=0.7)
 ax.bar(tools, flanking_len, bottom=intron_len, label="flanking_sequence", linewidth = 1, edgecolor = "black", width=0.7)
