@@ -54,7 +54,7 @@ def main():
         #     print("\tspliceai_N_a_pred: ", spliceai_N_a_pred)
         #     print("")
 
-        with open("../../benchmark/src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da.noN.merged.BOTH.pkl", "rb") as fr:
+        with open("../../src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da.noN.merged.BOTH.pkl", "rb") as fr:
             spliceai_noN_d_label = pickle.load(fr)
             spliceai_noN_d_pred = pickle.load(fr)
             spliceai_noN_a_label = pickle.load(fr)
@@ -68,7 +68,7 @@ def main():
             print("\tspliceai_noN_a_pred: ", len(spliceai_noN_a_pred))
             print("\tspliceai_noN_a_pred: ", spliceai_noN_a_pred)
             print("")
-            
+
 
 
 
@@ -139,7 +139,7 @@ def plot_DT_plot(true_labels, predict_probabilities, SPLAM_VERSION, target, SPLI
     print(f'Optimal_threshold: {optimal_threshold:.4f}, Precision: {optimal_precision:.2f}, Recall: {optimal_recall:.2f}, F1 score: {optimal_f1_score:.2f}')
 
     # plot the DT plot
-    plt.figure(figsize=(9, 3.5))
+    plt.figure(figsize=(6, 3.5))
     plt.plot(thresholds, precisions, label='Precision', linewidth=2)
     plt.plot(thresholds, recalls, label='Recall', linewidth=2)
     plt.plot(thresholds, f1_scores, label='F1 Score', linewidth=2)
