@@ -5,12 +5,11 @@ def main(argv):
     SEQ_LEN = "800"
     QUARTER_SEQ_LEN = int(SEQ_LEN) // 4
 
-    # output_files = ["./dataset/pos/", "./dataset/neg_can/", "./dataset/neg_noncan/", "./dataset/outlier_test/"]
-
-    output_filename = f'../output/{argv[0]}/{argv[1]}_spliceai_seq'
-    fr = open(output_filename+'.fa', 'r')
-    fw_noN = open(output_filename+'_noN.fa', 'w')
-    fw_N = open(output_filename+'_N.fa', 'w')
+    # open necessary files for i/o
+    os.makedirs('./3_output/', exist_ok=True)
+    fr = open(f'./2_output/{argv[0]}_spliceai_seq.fa', 'r')
+    fw_noN = open(f'./3_output/{argv[0]}_spliceai_seq_noN.fa', 'w')
+    fw_N = open(f'./3_output/{argv[0]}_spliceai_seq_N.fa', 'w')
 
     lines = fr.read().splitlines()
     line_num = len(lines)

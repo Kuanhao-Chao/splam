@@ -21,10 +21,11 @@ def get_chrom_size(path):
 
 def main(argv):
     db = argv[0]
+    bl = argv[1]
 
     chrs = get_chrom_size(f'../../SPLAM_python/extraction/primates/{db}_assembly_report.txt')
 
-    df = pd.read_csv(f'../SPLAM/1_output/{db}_genes.bed', delimiter='\t', header=None, usecols=range(6),
+    df = pd.read_csv(f'../SPLAM/2_output/{bl}bp/{db}/d_a.bed', delimiter='\t', header=None, usecols=range(6),
                      names=['seqid', 'start', 'end', 'name', 'score', 'strand'])
     
     # add the flanking sequence to either end of the transcript
@@ -35,9 +36,15 @@ def main(argv):
     for index, row in df.iterrows():
         chrom = row['seqid']
         if (row['start'] < 0):
-            df.at[index, 'start'] = 0
+            #df.at[index, 'start'] = 0
+            df.drop(index, axis=0, inplace=True)
         if (row['end'] > chrs[chrom]):
-            df.at[index, 'end'] = chrs[chrom]
+            #df.at[index, 'end'] = chrs[chrom]
+            df.drop(index, axis=0, inplace=True)
+
+    # obtain a random sample (reproducible) for further analysis
+    n = 50000
+    df = df.sample(n, random_state=1)
     
     save_path = f'./1_output/{db}_spliceai.bed'
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
