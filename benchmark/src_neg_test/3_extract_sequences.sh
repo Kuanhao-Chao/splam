@@ -1,7 +1,7 @@
 SEQ_LEN=800
 
-# for target in "GRCm39" "Mmul_10" "NHGRI_mPanTro3" "TAIR10"
-for target in "TAIR10"
+for target in "GRCm39" "Mmul_10" "NHGRI_mPanTro3" "TAIR10"
+#for target in "TAIR10"
 do
     echo Generating sequence for $target
     mkdir -p ./3_output/${SEQ_LEN}bp/${target}/

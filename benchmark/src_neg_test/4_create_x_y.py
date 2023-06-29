@@ -26,7 +26,17 @@ def main(db):
     chr_name = ""
     for idx in range(line_num):
         if idx % 2 == 0:
-            chr_name = lines_d[idx]+"_"+lines_a[idx][1:] + "\n"
+            d_e = lines_d[idx][1:].split(':')
+            d_l = d_e[1].split('(')
+            n1 = d_l[0].split('-')
+            n2 = lines_a[idx].split(':')[1].split('(')[0].split('-')
+
+            d_n = int((int(n1[0]) + int(n1[1])) / 2)
+            a_n = int((int(n2[0]) + int(n2[1])) / 2)
+            chr = d_e[0]
+            strand = d_l[1][0]
+
+            chr_name = f'>{chr};{d_n};{a_n};{strand};0\n'
         else:
             seq_d = lines_d[idx]
             seq_a = lines_a[idx]
@@ -99,7 +109,7 @@ if __name__ == "__main__":
         os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test')
 
     datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    idxs = [3] #CHANGEME
+    idxs = [0,1,2] #CHANGEME
 
     for idx in idxs:
         main(datasets[idx])
