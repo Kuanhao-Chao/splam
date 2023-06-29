@@ -7,7 +7,7 @@ def main():
     JUNC_COUNTER = 0
     os.makedirs("./REF_junctions/", exist_ok=True)
     fw = open("./REF_junctions/ref_d_a.bed", 'w')
-    with open("../../Dataset/MANE.GRCh38.v1.0.ensembl_genomic.gff", 'r') as f:
+    with open("../../../Dataset/MANE.GRCh38.v1.0.ensembl_genomic.gff", 'r') as f:
         lists = f.read().splitlines() 
         transcript_id = ""
         prev_transcript_id = ""
