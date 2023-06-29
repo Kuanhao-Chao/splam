@@ -3,15 +3,14 @@ Q & A ...
 
 +++++
 
-Q: What is splam?
--------------------------------------------
+.. Q: What is splam?
+.. -------------------------------------------
+
 
 .. <div style="padding-left:20px">
-
     
 .. dropdown:: Q: What is splam?
     :animate: fade-in-slide-down
-    :container: + shadow
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
@@ -20,10 +19,10 @@ Q: What is splam?
 |
 
 
-Q: Why do we need splam?
--------------------------------------------
+.. Q: Why do we need splam?
+.. -------------------------------------------
 
-.. dropdown:: Ans:
+.. dropdown:: Q: Why do we need splam?
     :animate: fade-in-slide-down
     :container: + shadow
     :title: bg-light font-weight-bolder
@@ -41,10 +40,10 @@ Q: Why do we need splam?
 
 |
 
-Q: What makes splam different from spliceAI?
--------------------------------------------
+.. Q: What makes splam different from spliceAI?
+.. -------------------------------------------
 
-.. dropdown:: Ans:
+.. dropdown:: Q: What makes splam different from spliceAI?
     :animate: fade-in-slide-down
     :container: + shadow
     :title: bg-light font-weight-bolder
@@ -74,70 +73,76 @@ Q: What makes splam different from spliceAI?
 
 | 
 
-Q: What is the model architecture of splam?
------------------------------------------
+.. Q: What is the model architecture of splam?
+.. -----------------------------------------
 
-.. raw:: html
 
-    <details>
-    <summary style="font-size:25px; font-weight: bold; padding-left:50px">Ans:</summary>
-    <p style="padding-left:50px"></p>
-    </details>
+.. dropdown:: Q: What is the model architecture of splam?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
 
-| 
-
-Q: How is splam trained?
---------------------------------
-
-.. raw:: html
-
-    <details>
-    <summary style="font-size:25px; font-weight: bold; padding-left:50px">Ans:</summary>
-    <pre style="padding-left:50px">lots_of_code = "this text block"</pre>
-    </details>
+    Check out :ref:`this section <model_architecture>`.
 
 | 
 
-Q: Which mode should I run splam, :code:`cpu`, :code:`cuda`, or :code:`mps`?
--------------------------------------------------------------------------------
+.. Q: How is splam trained?
+.. --------------------------------
 
-.. raw:: html
+.. dropdown:: Q: How is splam trained?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
 
-    <details>
-    <summary style="font-size:25px; font-weight: bold; padding-left:50px">Ans:</summary>
-    <pre style="padding-left:50px">lots_of_code = "this text block"</pre>
-    </details>
+    Check out :ref:`this section <splam_train_test>`.
 
 | 
 
-Q: How do I interpret splam scores?
--------------------------------------
+.. Q: Which mode should I run splam, :code:`cpu`, :code:`cuda`, or :code:`mps`?
+.. -------------------------------------------------------------------------------
 
-.. raw:: html
+.. dropdown:: Q: Which mode should I run splam, :code:`cpu`, :code:`cuda`, or :code:`mps`?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
 
-    <details>
-    <summary style="font-size:25px; font-weight: bold; padding-left:50px">Ans:</summary>
-    <pre style="padding-left:50px">lots_of_code = "this text block"</pre>
-    </details>
+| 
+
+.. Q: How do I interpret splam scores?
+.. -------------------------------------
+
+.. dropdown:: Q: How do I interpret splam scores?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
 
 |
 
-Q: What is canonical transcripts? 
-------------------------------------------
+.. Q: What is canonical transcripts? 
+.. ------------------------------------------
+
+.. dropdown:: Q: What is canonical transcripts? 
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
 
 
 |
 
-Q: What is alternative splicing?
-------------------------------------------
+.. Q: What is alternative splicing?
+.. ------------------------------------------
+
+.. dropdown:: Q: What is alternative splicing?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
+
 
 |
 |
-
-.. raw:: html
-
-    <style>
-    .text-header {
-        font-size: 30px;
-    }
-    </style>

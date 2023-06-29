@@ -31,7 +31,8 @@ extensions = ['recommonmark',
               'sphinx_rtd_theme',
               'sphinx.ext.autosectionlabel',
               'sphinx_toolbox.collapse',
-              'sphinx_panels'
+              'sphinx_panels',
+              'sphinxcontrib.bibtex'
               ]
 
 # Add any paths that contain templates here, relative to this directory.
@@ -48,6 +49,10 @@ language = 'English'
 # directories to ignore when looking for source files.
 # This pattern also affects html_static_path and html_extra_path.
 exclude_patterns = []
+
+bibtex_bibfiles = ['references.bib']
+bibtex_encoding = 'latin'
+bibtex_default_style = 'unsrt'
 
 
 # -- Options for HTML output -------------------------------------------------
