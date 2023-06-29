@@ -15,7 +15,7 @@ train/src/BAM_REF_Intersection/
 train/src/INPUTS/
 src_spliceNN/SpliceNN/build/
 src_spliceNN/SpliceNN/libtorch/
-SPLAM_C++/build/
+SPLAM_C++/*
 train/src/Experiment_SpliceAI/INPUTS/
 train/src/Experiment_SpliceAI/models/
 __pycache__/
@@ -30,6 +30,7 @@ train/src/6_GET_BAM_NEG_OPP_STRAND_JUNCS/BAM_junctions/
 test/src_reimplementation_keras_pytorch/MODEL/*
 test/src_reimplementation_keras_pytorch/keras-transformer/*
 paper
+src_tools_evaluation/*
 benchmark/src_tools_evaluation/spliceai_result/
 benchmark/src_tools_evaluation/spliceai_result_1/
 benchmark/src_tools_evaluation/spliceai_result_2/
