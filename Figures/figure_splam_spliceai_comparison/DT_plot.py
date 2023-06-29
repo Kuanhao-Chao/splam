@@ -150,7 +150,7 @@ def plot_DT_plot(true_labels, predict_probabilities, SPLAM_VERSION, target, SPLI
     plt.xlim(-0.02, 1.02)
     plt.ylim(0.0, 1.04)
     # plt.legend(loc='upper right', ncol=5, bbox_to_anchor=(1.0, 1.4))
-    plt.title(f'Optimal_threshold: {optimal_threshold:.4f}, Precision: {optimal_precision:.2f}, Recall: {optimal_recall:.2f}, F1 score: {optimal_f1_score:.2f}')
+    plt.title(f'Optimal_threshold: {optimal_threshold:.4f}, Precision: {optimal_precision:.2f}, Recall: {optimal_recall:.2f}, F1 score: {optimal_f1_score:.2f}', fontsize=9)
     plt.xticks(size = 10)
     plt.yticks(size = 10)
     plt.tight_layout()
