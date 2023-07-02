@@ -112,7 +112,6 @@ def main():
                         sns.kdeplot(score_noN_diff, shade=True, clip = (-1.0, -0.15), alpha=0.25, label="SpliceAI", color="#ff7f0e")#, cut = -0.15)
                         sns.kdeplot(score_noN_diff, shade=True, clip = (0.15, 1.0), alpha=0.25, color="#ff7f0e")#, cut = 0.15)
 
-
                     if type == "nofilter":
                         sns.kdeplot(splam_score_diff, shade=True, clip = (-1.0, 1.0), alpha=0.25, label="SPLAM", color="#2ca02c")
                     elif type == "filter":
