@@ -1,6 +1,7 @@
-<!-- <h1 align="center">splam</h1> --> 
-![splam Logo](./logo.png) 
 
+<p align="center">
+  <img src="./logo.png" alt="Italian Trulli" style="width:70%">
+</p>
 
 
 
