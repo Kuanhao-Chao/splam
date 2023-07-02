@@ -16,9 +16,9 @@ def run_plotter(type, db):
     print(f'Running for type: {type}, database: {db}')
 
     # obtain the aggregated and averaged data from all 5 versions of spliceai and write to file
-    agg_ofp = f'./output/aggregate/agg_full_data.{type}.{db}.csv'
-    cnt_ofp = f'./output/aggregate/count_full_data.{type}.{db}.csv'
-    avg_ofp = f'./output/aggregate/avg_data.{type}.{db}.csv'
+    agg_ofp = f'../data/aggregate/agg_full_data.{type}.{db}.csv'
+    cnt_ofp = f'../data/aggregate/count_full_data.{type}.{db}.csv'
+    avg_ofp = f'../data/aggregate/avg_data.{type}.{db}.csv'
     if not os.path.exists(avg_ofp):
         agg_df = aggregate_data(type, db, agg_ofp)
         cnt_df = get_counts(agg_df, id, cnt_ofp)
@@ -57,7 +57,7 @@ def aggregate_data(type, db, ofp):
     for version_num in range(1, 6):
     
         # read the input file
-        ifp = f'./output/comparison/full_data.v{version_num}.{type}.{db}.csv'
+        ifp = f'../data/comparison/full_data.v{version_num}.{type}.{db}.csv'
         full_df = pd.read_csv(ifp)
 
         # add column indicating which version of the model data is from
@@ -84,7 +84,7 @@ def aggregate_data(type, db, ofp):
 def get_counts(df, id, ofp):
 
     # get the fasta file with the sequence used by spliceai
-    fa_file = f'./output/data/{id[1]}_spliceai_seq_{id[0]}.fa'
+    fa_file = f'../SpliceAI/3_output/{id[1]}_spliceai_seq_{id[0]}.fa'
     fa = Fasta(fa_file, key_function = lambda x: x[:-2], duplicate_action='first')
     
     # iterate over each row and get the nucleotide counts
@@ -176,7 +176,7 @@ def make_fig3(df, id):
     plt.tight_layout()
     plt.show()
 
-    save_fig(f'./figures/fig3/agg_scores_distribution.{id[0]}.{id[1]}.png')
+    save_fig(f'../figures/fig3/agg_scores_distribution.{id[0]}.{id[1]}.png')
 
 
 def make_fig4(agg_df, id):
@@ -231,7 +231,7 @@ def make_fig5(agg_df, id):
 
     plt.show()
 
-    save_fig(f'./figures/fig5/acceptor_len_vs_score_all_sai_vers.{id[0]}.{id[1]}.png')
+    save_fig(f'../figures/fig5/acceptor_len_vs_score_all_sai_vers.{id[0]}.{id[1]}.png')
 
 def make_fig6(avg_df, id):
     # plot scores against N content
@@ -263,7 +263,7 @@ def make_fig6(avg_df, id):
     sns.scatterplot(data=a_df, x='N Content', y='Score', hue='Method', ax=axs[1], **plot_params).set(title='Acceptor')
     plt.show()
 
-    save_fig(f'./figures/fig6/N_content_vs_score.{id[0]}.{id[1]}.png')
+    save_fig(f'../figures/fig6/N_content_vs_score.{id[0]}.{id[1]}.png')
 
 
 def make_fig8(avg_df, id):
@@ -348,7 +348,7 @@ def make_fig8(avg_df, id):
 
 if __name__ == '__main__':
 
-    type = 'noN'
+    type = 'N'
     databases = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
     db_nums = [0,1,2,3]
 
