@@ -33,20 +33,24 @@ def main(argv):
     df['end'] += 5200
 
     # perform validation to shorten sequence to ends of the chromosome if over length
-    for index, row in df.iterrows():
-        chrom = row['seqid']
-        if (row['start'] < 0):
-            #df.at[index, 'start'] = 0
-            df.drop(index, axis=0, inplace=True)
-            continue
-        if (row['end'] > chrs[chrom]):
-            #df.at[index, 'end'] = chrs[chrom]
-            df.drop(index, axis=0, inplace=True)
-            continue
+    cuts_file = './1_output/{db}_cuts.csv'
+    os.makedirs(os.path.dirname(cuts_file), exist_ok=True)
+    with open(cuts_file, 'w') as f:
+        for index, row in df.iterrows():
+            chrom = row['seqid']
+            if (row['start'] < 0):
+                df.at[index, 'start'] = 0
+                # df.drop(index, axis=0, inplace=True)
+                # continue
+            if (row['end'] > chrs[chrom]):
+                df.at[index, 'end'] = chrs[chrom]
+                # df.drop(index, axis=0, inplace=True)
+                # continue
+        
 
     # obtain a random sample (reproducible) for further analysis
     n = 50000
-    df = df.sample(n, random_state=1)
+    df = df.sample(n, random_state=3217)
     
     save_path = f'./1_output/{db}_spliceai.bed'
     os.makedirs(os.path.dirname(save_path), exist_ok=True)
