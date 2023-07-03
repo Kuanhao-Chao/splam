@@ -1,3 +1,9 @@
+/*  splam_test.cpp -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #include <thread>
 #include <vector>
 #include <htslib/htslib/sam.h>

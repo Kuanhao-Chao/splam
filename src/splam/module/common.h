@@ -1,3 +1,9 @@
+/*  common.h -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #ifndef _COMMON_H_
 #define _COMMON_H_
 

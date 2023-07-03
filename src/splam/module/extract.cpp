@@ -1,3 +1,10 @@
+/*  extract.cpp -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
+
 #include "extract.h"
 #include "common.h"
 #include "extract.h"

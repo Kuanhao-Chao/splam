@@ -1,3 +1,9 @@
+/*  extract.h -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #ifndef _EXTRACT_H_
 #define _EXTRACT_H_
 #include "bundle.h"

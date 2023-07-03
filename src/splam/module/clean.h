@@ -1,3 +1,9 @@
+/*  clean.h -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #ifndef _CLEAN_H_
 #define _CLEAN_H_
 

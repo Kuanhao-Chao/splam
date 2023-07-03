@@ -1,3 +1,9 @@
+/*  predict.cpp -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #ifndef _PREDICT_H_
 #define _PREDICT_H_
 #include <gclib/GStr.h>
