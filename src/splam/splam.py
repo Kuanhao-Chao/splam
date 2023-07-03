@@ -2,11 +2,11 @@ import os
 import argparse
 import sys
 
-from splam import prediction, config, parse, chr_size, extract_gff
+from splam import prediction, config, parse, chr_size, extract_gff, header
 import splam_extract
 import splam_clean
 
-VERSION = "0.2.15"
+VERSION = header.__version__
 
 CITATION = "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, \033[1m\x1B[3mSPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments\x1B[0m\033[0m, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM"
 
