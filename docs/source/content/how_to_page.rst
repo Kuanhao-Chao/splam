@@ -14,7 +14,7 @@ Q & A ...
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
-    splam means two things: (1) splam is a deep residual convolutional neural networks that accurately predict splice junctions based solely on an input DNA sequence, and (2) it also stands for this software that evaluates the annotation files and clean up the alignment files.
+    splam means two things: **(1)** splam refers to the deep grouped residual convolutional neural network model that we designed to accurately predict splice junctions based solely on an input DNA sequence, and **(2)** it also stands for this software that and clean up alignment files and evaluate annotation files.
 
 |
 
@@ -28,13 +28,21 @@ Q & A ...
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
-    Given an alignment file, 
 
-    1. We need a good way to evaluate the annotation file and the alignment file.
+    We are concerned about the way of training splice junction predictor simply replying on splice junctions in only canonical transcripts. Designing a splice site recognition method based only on one isoform per gene may result in mis-labeling alternative splice sites even when they are perfectly valid. Therefore, 
 
-    2. SpliceAI is biased toward canonical transcript.
-    
-    3. We designed a biologically realistic model. 
+        * **we designed a biologically realistic model.** splam was trained on combined donor and acceptor pairs, with a focus on a narrow window of 400 base pairs surrounding each splice site. This approach is inspired by the understanding that the splicing process primarily relies on signals within this specific region.
+
+
+    Furthermore, there are two applications of splam: 
+
+    When inspecting an alignment file in IGV, it becomes apparent that some reads are spliced and aligned across different gene loci or intergenic regions. This raises the question, "Are these spliced alignments correct?" Therefore,
+
+        * **we need a trustworthy way to evaluate all the spliced alignments in the alignment file.** splam learns splice junction patterns, and we have demonstrated that applying Splam to remove spurious spliced alignments improves transcript assembly! :ref:`alignment evaluation section <alignment-detailed-section>`.
+
+    Additionally, we acknowledge that annotation files are not perfect, and there are more errors in the assembled transcripts. The current approach to assessing assembled transcripts involves comparing them with the annotation.
+
+        * **we can utilize splam to score all introns in transcripts and provide a reference-free evalutation.**  :ref:`annotation evaluation section <annotation-detailed-section>`.
 
 
 
@@ -65,7 +73,7 @@ Q & A ...
 
     #. **Training data**
     
-       * **splam** was trained using a high-quality dataset of human donor and acceptor sites. We curated
+       * **splam** was trained using a high-quality dataset of human donor and acceptor sites. Check out the :ref:`data curation section <data_curation>`.
     
        * **SpliceAI** was trained with canonical transcripts only, and it does not consider alternative splicing.
 
@@ -83,7 +91,7 @@ Q & A ...
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
-    Check out :ref:`this section <model_architecture>`.
+    Check out the :ref:`model architecture section <model_architecture>`.
 
 | 
 
@@ -96,7 +104,7 @@ Q & A ...
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
-    Check out :ref:`this section <splam_train_test>`.
+    Check out the :ref:`splam training and testing section <splam_train_test>`.
 
 | 
 
@@ -122,26 +130,26 @@ Q & A ...
 
 |
 
-.. Q: What is canonical transcripts? 
-.. ------------------------------------------
+.. .. Q: What is canonical transcripts? 
+.. .. ------------------------------------------
 
-.. dropdown:: Q: What is canonical transcripts? 
-    :animate: fade-in-slide-down
-    :container: + shadow
-    :title: bg-light font-weight-bolder
-    :body: bg-light text-left
+.. .. dropdown:: Q: What is canonical transcripts? 
+..     :animate: fade-in-slide-down
+..     :container: + shadow
+..     :title: bg-light font-weight-bolder
+..     :body: bg-light text-left
 
 
-|
+.. |
 
-.. Q: What is alternative splicing?
-.. ------------------------------------------
+.. .. Q: What is alternative splicing?
+.. .. ------------------------------------------
 
-.. dropdown:: Q: What is alternative splicing?
-    :animate: fade-in-slide-down
-    :container: + shadow
-    :title: bg-light font-weight-bolder
-    :body: bg-light text-left
+.. .. dropdown:: Q: What is alternative splicing?
+..     :animate: fade-in-slide-down
+..     :container: + shadow
+..     :title: bg-light font-weight-bolder
+..     :body: bg-light text-left
 
 
 |

@@ -6,9 +6,9 @@ splam's tutorial
    :align:   center
    :scale:   20 %
 
+|
 
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
-
 
 .. image:: https://img.shields.io/badge/version-v.0.2.6-blue
 
@@ -20,16 +20,15 @@ splam's tutorial
 Why splam?
 ==================
 
-splam is a splice junction recognition model based on a deep residual convolutional neural network that provides fast and accurate evaluation of splice junctions. There are two main applications of splam: 
+splam is a splice junction recognition model based on a deep grouped residual convolutional neural network that offers fast and precise assessment of splice junctions. 
 
+There are two primary applications of splam:
 
+.. splam is useful if you want to :
 
-splam is useful if you want to :
+1. improve your **alignmnet file**. splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of the downstream transcriptome assembly [:ref:`Link <alignment-detailed-section>`].
 
-1. improve your **alignmnet file**. splam evaluates the quality of splice alignments and cleans up those that include spurious splice junctions. It significantly improves the quality of the downstream transcriptome assembly [:ref:`Link <alignment-detailed-section>`].
-
-2. know the quality of introns in your **annotation file or assembled transcripts** [:ref:`Link <annotation-detailed-section>`].
-
+2. evaluate the quality of introns in your **annotation file or assembled transcripts** [:ref:`Link <annotation-detailed-section>`].
 
 
 
@@ -43,9 +42,10 @@ splam is free, it's open source, it's a light weight deep learning model, and it
 
 Main features
 =============
-* **Biological inspired training process**: splam was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
-* **Visualization**: splam produces high-quality figures ready for your publication.
-* **Python + C++ integration**: We have taken care of all the engineer work for you! Splam is easy to install and runs efficiently due to its underlying C++ implementation. You can install and run Splam with just one simple command!
+* **Biologically inspired training process**: splam was trained on combined donor and acceptor pairs, with a focus on a narrow window of 400 base pairs surrounding each splice site. This approach is inspired by the understanding that the splicing process predominantly relies on signals within this specific region.
+.. * **Visualization**: splam produces high-quality figures ready for your publication.
+* **Python + C++ integration**: We have taken care of all the engineer work for you! splam is easy to install and runs efficiently due to its underlying C++ implementation. You can install and run splam with just one simple command!
+* **Run splam in three steps**: With just three lines of code, you can obtain a new alignment file that is cleaned and sorted.
 * **Pytorch implementation**: splam is implemented and trained using the popular Pytorch framework.
 
 |
@@ -75,7 +75,7 @@ https://github.com/Kuanhao-Chao/splam/issues
 Key contributors
 ================
 
-splam deep residual convolutional neural network was trained using Pytorch framework by Kuan-Hao Chao. The package that applies splam to evaluate annotation files and clean up alignment files are implemented by Kuan-Hao Chao. 
+splam deep residual convolutional neural network was trained using the PyTorch framework by Kuan-Hao Chao. Kuan-Hao Chao also implemented the package that applies splam to evaluate annotation files and clean up alignment files.
 
 |
 
@@ -94,4 +94,3 @@ Table of content
    content/function_manual
    content/license
    content/contact
-   content/help

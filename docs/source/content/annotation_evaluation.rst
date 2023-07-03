@@ -98,12 +98,13 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
    chr9    5924844 5929044 JUNC00000009    8       -       0.9999883       0.9999949
 
 |
-
-Step 4: Visualization & reports
-+++++++++++++++++++++++++++++++++++
-
-
-
-
 |
-|
+
+.. Step 4: Visualization & reports
+.. +++++++++++++++++++++++++++++++++++
+
+
+
+
+.. |
+.. |

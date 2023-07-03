@@ -3,10 +3,12 @@ Installation
 
 System requirements
 -------------------
-* Python >= 3.6.0 (current)
-* torch >= 1.12.0
-* pybedtools >= 0.9.0
-* gffutils >= 0.10.0
+
+   * Python >= 3.6.0
+   * pytorch >= 1.12.0
+   * pybedtools >= 0.9.0
+   * gffutils >= 0.10.0
+   * pybind11 >= 2.10.0
 
 |
 

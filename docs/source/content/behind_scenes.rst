@@ -4,6 +4,7 @@ behind the scenes of splam
 =================================================
 
 
+.. _data_curation:
 
 Data curation
 +++++++++++++++++++++++++++++++++++
@@ -60,6 +61,7 @@ To further increase the difficulty of negative junctions, **(2)** only splice ju
 
 
 .. _model_architecture:
+
 Model architecture
 +++++++++++++++++++++++++++++++++++
 
@@ -96,6 +98,7 @@ A group of four residual units forms a bigger residual group, and 20 RUs are clu
 
 
 .. _splam_train_test:
+
 splam training & testing
 +++++++++++++++++++++++++++++++++++
 
