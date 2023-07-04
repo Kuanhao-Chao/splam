@@ -1,6 +1,6 @@
 
 <p align="center">
-  <img src="./logo.png" alt="Italian Trulli" style="width:70%">
+  <img src="./logo.png" alt="Italian Trulli" style="width:85%">
 </p>
 
 
