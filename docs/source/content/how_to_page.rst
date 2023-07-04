@@ -93,6 +93,20 @@ Q & A ...
 
     Check out the :ref:`model architecture section <model_architecture>`.
 
+|
+
+.. Q: What is the model architecture of splam?
+.. -----------------------------------------
+
+
+.. dropdown:: Q: What is the model architecture of splam?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
+
+    Check out the :ref:`model architecture section <model_architecture>`.
+
 | 
 
 .. Q: How is splam trained?

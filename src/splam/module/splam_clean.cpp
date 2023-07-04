@@ -56,7 +56,6 @@ TInputFiles in_records;
 TInputRecord* irec=NULL;
 
 float threshold = 0.1;
-int aln_num_thr = 4;
 GSamRecord* brec=NULL;
 
 /*********************

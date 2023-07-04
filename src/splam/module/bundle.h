@@ -33,6 +33,7 @@ struct CReadAln:public GSeg {
 	}
 };
 
+
 // bundle data structure, holds all data needed for
 // infering transcripts from a bundle
 enum BundleStatus {
@@ -40,6 +41,7 @@ enum BundleStatus {
 	BUNDLE_STATUS_LOADING, //being prepared by the main thread (there can be only one)
 	BUNDLE_STATUS_READY //ready to be processed, or being processed
 };
+
 
 // bundle data structure, holds all input data parsed from BAM file
 struct BundleData {

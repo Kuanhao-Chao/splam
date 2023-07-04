@@ -27,6 +27,7 @@ bool check_id(std::string& line, std::string id_tag){
     return true;
 }
 
+
 bool check_id_full(sam_hdr_t *hdr,std::string tag1,std::string tag2){
     bool found_line = false;
     int line_pos = 0;
@@ -50,6 +51,7 @@ bool check_id_full(sam_hdr_t *hdr,std::string tag1,std::string tag2){
     return found_line;
 }
 
+
 void TInputFiles::addFile(const char* fn) {
     GStr sfn(fn);
     if (sfn!="-" && fileExists(fn)<2) {
@@ -59,6 +61,8 @@ void TInputFiles::addFile(const char* fn) {
 
     freaders.Add(new TSamReader(fn));
 }
+
+
 bool TInputFiles::addSam(GSamReader* r, int fidx) {
     //requirement: all files must have the same number of SQ entries in the same order!
     kstring_t hd_line = KS_INITIALIZE;
@@ -151,6 +155,7 @@ bool TInputFiles::addSam(GSamReader* r, int fidx) {
     return tb_file;
 }
 
+
 void TInputFiles::load_hdr_samples(sam_hdr_t* hdr,std::string filename,bool tbMerged,bool donor){
     int sample_line_pos = 0;
     if(tbMerged){
@@ -205,6 +210,7 @@ void TInputFiles::load_hdr_samples(sam_hdr_t* hdr,std::string filename,bool tbMe
     }
 }
 
+
 std::string TInputFiles::get_full_path(std::string fname){
     const char *cur_path = fname.c_str();
     char *actualpath;
@@ -221,6 +227,7 @@ std::string TInputFiles::get_full_path(std::string fname){
         exit(-1);
     }
 }
+
 
 bool TInputFiles::get_sample_from_line(std::string& line){ // returns true if is sample pg line
     std::stringstream *line_stream = new std::stringstream(line);
@@ -245,6 +252,7 @@ bool TInputFiles::get_sample_from_line(std::string& line){ // returns true if is
     delete line_stream;
     return true;
 }
+
 
 // adds a line to the header which tells whether the file has been processed with tiebrush before
 bool TInputFiles::add_tb_tag_if_not_exists(sam_hdr_t *hdr){ // returns true if the tb_tag already existed and false if a new one was created
@@ -287,6 +295,7 @@ bool TInputFiles::add_tb_tag_if_not_exists(sam_hdr_t *hdr){ // returns true if t
     return true;
 }
 
+
 // removed all lines with matching tags
 void TInputFiles::delete_all_hdr_with_tag(sam_hdr_t *hdr,std::string tag1, std::string tag2){
     // check if already exists
@@ -314,6 +323,7 @@ void TInputFiles::delete_all_hdr_with_tag(sam_hdr_t *hdr,std::string tag1, std::
         ks_free(&str);
     }
 }
+
 
 // todo: merge header PG tags
 int TInputFiles::start(){
@@ -375,6 +385,7 @@ TInputRecord* TInputFiles::next() {
     }
     else return NULL;
 }
+
 
 void TInputFiles::stop() {
     for (int i=0;i<freaders.Count();++i) {

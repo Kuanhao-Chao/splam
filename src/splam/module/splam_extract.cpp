@@ -4,7 +4,6 @@
 
     Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
 
-
 #include <iostream>
 #include <vector>
 #include <memory>
@@ -44,14 +43,16 @@ GStr infname_juncbed("");
 GStr out_dir;
 
 bool verbose = false;
-bool predict_junc_mode = false;
 TInputFiles in_records;
 TInputRecord* irec=NULL;
 
 float threshold = 0.1;
-int aln_num_thr = 4;
 GSamRecord* brec=NULL;
 
+
+/******************************
+ * Parameters for output files
+******************************/
 // output file names 
 GStr outfname_cleaned;
 
@@ -67,7 +68,7 @@ GStr outfname_ns_uniq_unpair;
 GStr outfname_s_multi_unpair;
 GStr outfname_s_uniq_unpair;
 GStr outfname_s_multi_unpair_tmp;
-
+// Discarded
 GStr outfname_discard_s_uniq_map;
 GStr outfname_discard_s_multi_map;
 
@@ -85,9 +86,12 @@ GSamWriter* outfile_ns_uniq_unpair = NULL;
 GSamWriter* outfile_s_multi_unpair = NULL;
 GSamWriter* outfile_s_uniq_unpair = NULL;
 GSamWriter* outfile_s_multi_unpair_tmp = NULL;
-
 FILE* joutf=NULL;
 
+
+/******************************
+ * ALN counters 
+******************************/
 // ALN summary
 int ALN_COUNT = 0;
 int ALN_COUNT_BAD = 0;
@@ -110,7 +114,6 @@ int ALN_COUNT_SPLICED_MULTI_DISCARD = 0;
 int ALN_COUNT_NSPLICED_UNIQ = 0;
 int ALN_COUNT_NSPLICED_MULTI = 0;
 
-
 // Unpaired
 int ALN_COUNT_SPLICED_UNPAIR = 0;
 int ALN_COUNT_NSPLICED_UNPAIR = 0;
@@ -123,14 +126,13 @@ int ALN_COUNT_NSPLICED_UNIQ_UNPAIR = 0;
 int ALN_COUNT_NSPLICED_MULTI_UNPAIR = 0;
 int STEP_COUNTER = 0;
 
-// j-extract parameters:
+
+/******************************
+ * j-extract parameters:
+******************************/
 int g_max_splice = 100000;
 int g_bundle_gap = 100000;
-
-// predict parameters:
 bool write_bam = true;
-
-// clean parameters:
 bool g_paired_removal = false;
 
 robin_hood::unordered_map<std::string, int>  CHRS;
@@ -139,24 +141,23 @@ namespace py = pybind11;
 
 int splam_extract(py::list args_pyls) {
     std::vector<std::string> args;
-    // Convert each element of the py::list to std::string
+    // 1. Convert each element of the py::list to std::string
     for (const auto& item : args_pyls) {
         std::string str = py::cast<std::string>(item);
         args.push_back(str);
     }
     int argc = args.size();
     char** argv = new char*[args.size() + 1]; // +1 for the null terminator
-    // Convert each string to a C-style string and copy it to argv
+    // 2. Convert each string to a C-style string and copy it to argv
     for (size_t i = 0; i < args.size(); ++i) {
         argv[i] = new char[args[i].size() + 1]; // +1 for the null terminator
         std::strcpy(argv[i], args[i].c_str());
     }
-    // Add a null terminator at the end
+    // 3. Add a null terminator at the end
     argv[args.size()] = nullptr;
     in_records.setup(VERSION, argc, argv);
     processOptions(argc, argv);
 
-    outfname_cleaned = out_dir + "/cleaned.bam";
     /*********************
      * For paired uniq- / multi- mapped alignments
     *********************/
@@ -181,9 +182,8 @@ int splam_extract(py::list args_pyls) {
     int num_samples=in_records.start();
 
     /*********************
-     * Directory creating + Sam writer creation
+     * Sam writer creation
     *********************/
-   
     if (write_bam) {
         // Creating the directory
         std::filesystem::create_directories(tmp_dir.chars());
@@ -261,23 +261,9 @@ int splam_extract(py::list args_pyls) {
 
 
 PYBIND11_MODULE(splam_extract, m) {
-    // m.doc() = R"pbdoc(
-    //     Pybind11 example plugin
-    //     -----------------------
-
-    //     .. currentmodule:: bind_test
-
-    //     .. autosummary::
-    //        :toctree: _generate
-
-    //        add
-    //        subtract
-    // )pbdoc";
-
     m.def("splam_extract", &splam_extract, R"pbdoc(
         Extracting splice junctions
     )pbdoc");
-
 
 #ifdef VERSION_INFO
     m.attr("__version__") = MACRO_STRINGIFY(VERSION_INFO);
@@ -285,8 +271,6 @@ PYBIND11_MODULE(splam_extract, m) {
     m.attr("__version__") = "dev";
 #endif
 }
-
-
 
 
 
@@ -340,7 +324,6 @@ void processOptions(int argc, char* argv[]) {
     while ( (ifn=args.nextNonOpt())!=NULL) {
         //input alignment files
         std::string absolute_ifn = get_full_path(ifn);
-        // GMessage("absolute_ifn: %s\n", absolute_ifn.c_str());
         in_records.addFile(absolute_ifn.c_str());
     }
 }
@@ -401,7 +384,7 @@ void optionsOutput(GArgs& args) {
 }
 
 void optionsWriteJuncOnly(GArgs& args) {
-    //--write-junctions-only
+    // -n / --write-junctions-only
 	if (args.getOpt('n') || args.getOpt("write-junctions-only")) {
         write_bam = false;
 	}

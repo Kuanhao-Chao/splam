@@ -42,6 +42,7 @@ GStr splamClean() {
     return outfname_NH_tag;
 }
 
+
 void countJuncBed(GStr inbedname) {
     std::ifstream bed_f(inbedname);
     std::string line;
@@ -49,6 +50,7 @@ void countJuncBed(GStr inbedname) {
         JUNC_COUNT += 1;
     }
 }
+
 
 void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
     GMessage("threshold: %f\n", threshold);
@@ -84,14 +86,9 @@ void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
 }
 
 
-
-
-
 GStr filterSpurJuncs(GStr outfname_junc, GStr outfname_junc_score) {
     robin_hdd_rm_hit rm_hit;
     robin_hdd_rm_algn rm_algn;
-
-
     robin_hdd_string rm_juncs;
     countJuncBed(outfname_junc);
     loadBed(outfname_junc_score, rm_juncs);
@@ -151,7 +148,6 @@ GStr filterSpurJuncs(GStr outfname_junc, GStr outfname_junc_score) {
             // if (verbose) {
             //     bar_multi.update();
             // }
-
             bool spur = alignmentAssessment(brec, rm_juncs);
             multi_brec_1st = new GSamRecord(*brec);
             brec = reader_s_multi_map.next();
@@ -225,6 +221,7 @@ GStr filterSpurJuncs(GStr outfname_junc, GStr outfname_junc_score) {
     GStr outfname_NH_tag = writenhHitFile(rm_hit);
     return outfname_NH_tag;
 }
+
 
 void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, BundleData& bdata, GHash<int>& hashread, CReadAln* alndata) { // some false positives should be eliminated here in order to break the bundle
 
@@ -375,10 +372,6 @@ void processRead(int currentstart, int currentend, GList<CReadAln>& readlist, Bu
 }
 
 
-void noMoreBundles() {
-
-}
-
 void removeAlignment(GSamWriter* outfile_target, GSamRecord* brec, robin_hdd_rm_hit& rm_hit, int& counter) {
     outfile_target->write(brec);
     std::string kv = brec->name();
@@ -391,6 +384,7 @@ void removeAlignment(GSamWriter* outfile_target, GSamRecord* brec, robin_hdd_rm_
     counter += 1;
 }
 
+
 GStr writenhHitFile(robin_hdd_rm_hit& rm_hit) {
     // Writing out auxiliary file 
     std::ofstream NH_tag_f;
@@ -402,6 +396,7 @@ GStr writenhHitFile(robin_hdd_rm_hit& rm_hit) {
     NH_tag_f.close();
     return outfname_NH_tag;
 }
+
 
 bool alignmentAssessment(GSamRecord* brec, robin_hdd_string &rm_juncs) {
     bool spur = false;
@@ -421,6 +416,7 @@ bool alignmentAssessment(GSamRecord* brec, robin_hdd_string &rm_juncs) {
     return spur;
 }
 
+
 std::string get_global_removed_mate_algns_key(GSamRecord* brec) {
     std::string brec_name = brec->name();
     int brec_start = brec->start;
@@ -431,6 +427,7 @@ std::string get_global_removed_mate_algns_key(GSamRecord* brec) {
     // GMessage("mate key: %s\n", key.c_str());
     return key;
 }
+
 
 void update_flag_paired_remove_both(GSamRecord* brec_1, GSamRecord* brec_2) {
     
@@ -472,6 +469,7 @@ void update_flag_paired_remove_both(GSamRecord* brec_1, GSamRecord* brec_2) {
     // GMessage("After brec_2->flags(): %d\n", brec_2->flags());
 }
 
+
 void update_flag_paired_remove_one(GSamRecord* removed, GSamRecord* kept) {
     // GMessage("Before removed->flags(): %d (%s)\n", removed->flags(), removed->name());
     // Removed alignment in a pair
@@ -502,6 +500,7 @@ void update_flag_paired_remove_one(GSamRecord* removed, GSamRecord* kept) {
     kept->set_flags(kept->flags() + kept_flag_update);
 }
 
+
 void update_flag_unpair_remove(GSamRecord* removed) {
 
     // GMessage("Before removed->flags(): %d (%s)\n", removed->flags(), removed->name());
@@ -519,6 +518,7 @@ void update_flag_unpair_remove(GSamRecord* removed) {
     removed->set_flags(removed->flags() + removed_flag_update);
     // GMessage("After removed->flags(): %d\n", removed->flags());
 }
+
 
 void update_flag_unpair_kept(GSamRecord* kept) {
     int kept_flag_update = 0;
