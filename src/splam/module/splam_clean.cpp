@@ -10,7 +10,6 @@
 #include <filesystem>
 
 #include "extract.h"
-#include "predict.h"
 #include "clean.h"
 
 #include "common.h"

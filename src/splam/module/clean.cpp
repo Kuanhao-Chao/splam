@@ -10,7 +10,6 @@
 #include "junc_func.h"
 #include "util.h"
 #include "extract.h"
-#include "predict.h"
 #include "bundle.h"
 
 // #include "progressbar.h"

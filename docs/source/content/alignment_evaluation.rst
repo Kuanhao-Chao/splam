@@ -1,12 +1,36 @@
+.. raw:: html
+
+  <script type="text/javascript">
+    var observer = new MutationObserver(function(mutations) {
+        const dark = document.body.dataset.theme == 'dark';
+        console.log(dark);
+        document.getElementsByClassName('mainlogo')[0].src = dark ? '../_images/jhu-logo-white.png' : "../_images/jhu-logo-dark.png";
+        console.log(document.getElementsByClassName('mainlogo')[0].src);
+    })
+    observer.observe(document.body, {attributes: true, attributeFilter: ['data-theme']});
+    console.log(document.body);
+  </script>
+  <link rel="preload" href="../_images/jhu-logo-dark.png" as="image">
+
+
+.. image:: ../image/jhu-logo-dark.png
+   :alt: My Logo
+   :class: logo, mainlogo
+   :align: center
+
+|
+
 .. _alignment-detailed-section:
 
 Alignment file evaluation & cleanup (:code:`BAM`)
 =================================================
 
+
 .. _alignment-introduction:
 
 Introduction
 +++++++++++++++++++++++++++++++++++
+
 
 You are analyzing your RNA-Seq reads using a standard RNA-Seq pipeline. After performing quality control, you have utilized popular spliced aligners such as :code:`HISAT2` and :code:`STAR` to align the reads to the genome. While inspecting the alignments in IGV, you have noticed that some reads are spliced and aligned across different gene loci or intergenic regions. 
 

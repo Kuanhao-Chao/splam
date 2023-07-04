@@ -49,9 +49,10 @@ struct BundleData {
 	int idx; //index in the main bundles array
 	int start;
 	int end;
+	int numreads;
 	GStr refseq; //reference sequence name
 
-	BundleData():status(BUNDLE_STATUS_CLEAR), idx(0), start(0), end(0), refseq() {
+	BundleData():status(BUNDLE_STATUS_CLEAR), idx(0), start(0), end(0), numreads(0), refseq() {
 	}
 
 	void getReady(int currentstart, int currentend) {
@@ -66,6 +67,7 @@ struct BundleData {
 		start=0;
 		end=0;
 		status=BUNDLE_STATUS_CLEAR;
+		numreads = 0;
 	}
 
 	~BundleData() {
