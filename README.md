@@ -38,7 +38,7 @@ There are two main use case scenarios:
 
 You can install splam with conda package manager. This is the easiest approach.
 ``` bash
-$ conda install -c bioconda liftoff
+$ conda install -c bioconda splam
 ```
 
 
