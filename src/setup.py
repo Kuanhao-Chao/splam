@@ -7,7 +7,7 @@ from pathlib import Path
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 
-VERSION = "0.2.16"
+VERSION = "0.2.17"
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
@@ -134,7 +134,7 @@ setup(
 	author_email="kh.chao@cs.jhu.edu",
 	description="Splice junction scoring tool",
 	url="https://github.com/Kuanhao-Chao/SPLAM",
-	install_requires=['torch>=1.12.0', 'pybedtools>=0.9.0', 'gffutils>=0.10.0'],
+	install_requires=['torch>=1.12.0', 'pybedtools>=0.9.0', 'gffutils>=0.10.0', 'progress>=1.0'],
 	python_requires='>=3.6',
 	packages=['splam'],
     ext_modules=[CMakeExtension("splam_extract"),
