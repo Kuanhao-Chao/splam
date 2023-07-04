@@ -29,7 +29,7 @@ There are two main use case scenarios:
 
 
 ## <a name="documentation"></a>Documentation
- 📒 The full documentation is on [ccb](http://ccb.jhu.edu/splam/)
+ The full user manual is available [here 📒](http://ccb.jhu.edu/splam/)
 
 
 <br>
