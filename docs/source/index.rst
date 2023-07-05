@@ -2,7 +2,12 @@
 
     <script type="text/javascript">
         var observer = new MutationObserver(function(mutations) {
-            const dark = document.body.dataset.theme == 'dark';
+            var dark = document.body.dataset.theme == 'dark';
+
+            if (document.body.dataset.theme == 'auto') {
+                dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+            
             console.log(dark);
             document.getElementsByClassName('header-image')[0].src = dark ? './_images/jhu-logo-white.png' : "./_images/jhu-logo-dark.png";
             document.getElementsByClassName('sidebar_ccb')[0].src = dark ? './_images/JHU_ccb-white.png' : "./_images/JHU_ccb-dark.png";
