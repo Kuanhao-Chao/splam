@@ -1,24 +1,39 @@
 .. raw:: html
 
-  <script type="text/javascript">
-    var observer = new MutationObserver(function(mutations) {
-        const dark = document.body.dataset.theme == 'dark';
-        console.log(dark);
-        document.getElementsByClassName('mainlogo')[0].src = dark ? '../_images/jhu-logo-white.png' : "../_images/jhu-logo-dark.png";
-        console.log(document.getElementsByClassName('mainlogo')[0].src);
-    })
-    observer.observe(document.body, {attributes: true, attributeFilter: ['data-theme']});
-    console.log(document.body);
-  </script>
-  <link rel="preload" href="../_images/jhu-logo-dark.png" as="image">
+    <script type="text/javascript">
+        var observer = new MutationObserver(function(mutations) {
+            const dark = document.body.dataset.theme == 'dark';
+            console.log(dark);
+            document.getElementsByClassName('header-image')[0].src = dark ? '../_images/jhu-logo-white.png' : "../_images/jhu-logo-dark.png";
+            document.getElementsByClassName('sidebar_ccb')[0].src = dark ? '../_images/JHU_ccb-white.png' : "../_images/JHU_ccb-dark.png";
+            document.getElementsByClassName('sidebar_wse')[0].src = dark ? '../_images/JHU_wse-white.png' : "../_images/JHU_wse-dark.png";
+
+            console.log("document.getElementsByClassName('sidebar_wse')[0].src: ", document.getElementsByClassName('sidebar_wse')[0].src);
+        })
+        observer.observe(document.body, {attributes: true, attributeFilter: ['data-theme']});
+        console.log(document.body);
+    </script>
+    <link rel="preload" href="../_images/jhu-logo-dark.png" as="image">
 
 
-.. image:: ../image/jhu-logo-dark.png
-   :alt: My Logo
-   :class: logo, mainlogo
-   :align: center
+
+.. raw:: html
+    
+    <script type="text/javascript">
+        var block_to_insert ;
+        var container_block ;
+        
+        block_to_insert = document.createElement( 'div' );
+        block_to_insert.innerHTML = '<img alt="My Logo" style="width:80%;  margin:10px; padding-top:30px" class="logo sidebar_ccb align-center" src="../_images/JHU_ccb-dark.png"><img alt="My Logo" class="logo sidebar_wse align-center" style="width:80%;  margin:10px" src="../_images/JHU_wse-dark.png">' ;
+        
+        container_block = document.getElementsByClassName( 'sidebar-sticky' )[0];
+        console.log("container_block: ", container_block);
+        container_block.appendChild( block_to_insert );
+    </script>
+
 
 |
+
 
 License
 =======
@@ -44,3 +59,20 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
+
+
+|
+|
+|
+|
+
+.. image:: ../image/jhu-logo-dark.png
+   :alt: My Logo
+   :class: logo, header-image
+   :align: center
+
+
+.. raw:: html
+
+    <footer align="center" style="margin-top:-5px">&copy; Copyright 2023, Kuan-Hao Chao</footer> 
