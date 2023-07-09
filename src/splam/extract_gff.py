@@ -48,15 +48,7 @@ def extract_introns(gff_file, gff_db, bed_file):
                 # Write out all introns
                 junc_count = write_introns(fw, intron_dict, junc_count)
                 intron_dict = {}
-
-            elif bundle_chr == gene[0] and gene.start > bundle_e:
-                # Reconstruct the bundle
-                bundle_s = gene.start
-                bundle_e = gene.end
-                # Write out all introns
-                junc_count = write_introns(fw, intron_dict, junc_count)
-                intron_dict = {}
-
+                
             elif bundle_chr == gene[0] and gene.start < bundle_e:
                 # Extend the bundle
                 bundle_e = gene.end

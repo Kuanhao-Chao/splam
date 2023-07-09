@@ -44,6 +44,10 @@ def parse_args(args):
         help='the file type for SPLAM to process. It can only be "BAM", "GFF", or "GTF". The default value is "BAM".'
     )
     parser_extract.add_argument(
+        '-d', '--database', default="NONE",
+        help='the path to the annotation database built using gffutils. If thie argument is provided, splam loads the database instead of creating a new one.'
+    )
+    parser_extract.add_argument(
         '-o', '--outdir', default="tmp_out", metavar='DIR',
         help='the directory where the output file is written to. Default output filename is "junction_score.bed"',
     )

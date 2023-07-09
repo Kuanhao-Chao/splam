@@ -21,13 +21,14 @@ def create_donor_acceptor_bed(junction_bed, junction_dir):
 
     with open(junction_bed, 'r') as f:
         lines = f.read().splitlines()
-        print(f'[Info] Chromosomes in the annotation file is in ')
+        style = ""
         if lines[0].split("\t")[0][:3] == "chr":
             chrs = chr_size.chrs_chr
-            print("'chr*' style")
+            style = "'chr*' style"
         else:
             chrs = chr_size.chrs_refseq
-            print("'NCBI RefSeq' style")
+            style = "'NCBI RefSeq' style"
+        print(f'[Info] Chromosomes in the annotation file is in {style}')
 
         for line in lines:
             eles = line.split("\t")
