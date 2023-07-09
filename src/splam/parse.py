@@ -1,9 +1,9 @@
 import os
 import pybedtools
 
-from splam import config
+from splam import config, chr_size
 
-def create_donor_acceptor_bed(junction_bed, junction_dir, chrs):
+def create_donor_acceptor_bed(junction_bed, junction_dir):
     #################################
     # For 'd_a.bed': 0-based, 1-based
     # For 'donor.bed': 0-based, 0-based
@@ -21,6 +21,14 @@ def create_donor_acceptor_bed(junction_bed, junction_dir, chrs):
 
     with open(junction_bed, 'r') as f:
         lines = f.read().splitlines()
+        print(f'[Info] Chromosomes in the annotation file is in ')
+        if lines[0].split("\t")[0][:3] == "chr":
+            chrs = chr_size.chrs_chr
+            print("'chr*' style")
+        else:
+            chrs = chr_size.chrs_refseq
+            print("'NCBI RefSeq' style")
+
         for line in lines:
             eles = line.split("\t")
             if len(eles) == 1:
@@ -30,7 +38,6 @@ def create_donor_acceptor_bed(junction_bed, junction_dir, chrs):
             score = eles[4]
             strand = eles[5]
 
-            
             if (strand == "+"):
                 donor = int(eles[1])
                 acceptor = int(eles[2])

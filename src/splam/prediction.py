@@ -9,6 +9,7 @@ import random
 import numpy as np
 import warnings
 import os
+import re
 from progress.bar import Bar
 
 warnings.filterwarnings('ignore')
@@ -46,8 +47,10 @@ def one_hot_encode(Xd, Yd):
 
 def create_datapoints(seq, strand):
     # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
-    seq = seq.upper().replace('A', '1').replace('C', '2')
-    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0').replace('K', '0').replace('R', '0')
+    seq = seq.upper().replace('A', '1').replace('C', '2').replace('G', '3').replace('T', '4')
+    pattern = r'[^1234]'
+    # Replace non-ACGT characters with 0
+    seq = re.sub(pattern, '0', seq)
     jn_start = JUNC_START
     jn_end = JUNC_END
 

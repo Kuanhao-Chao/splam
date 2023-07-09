@@ -2,7 +2,7 @@ import os
 import argparse
 import sys
 
-from splam import prediction, config, parse, chr_size, extract_gff, header
+from splam import prediction, config, parse, extract_gff, header
 import splam_extract
 import splam_clean
 
@@ -125,7 +125,7 @@ def main(argv=None):
   ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║
   ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
     """)
-    chrs = chr_size.chrs
+
     args, parser, parser_score = parse_args(argv)
 
     if args.version:
@@ -174,7 +174,7 @@ def main(argv=None):
         #################################
         # Step 1: creating donor acceptor bed file.
         #################################
-        donor_bed, acceptor_bed = parse.create_donor_acceptor_bed(junction_bed, outdir, chrs)
+        donor_bed, acceptor_bed = parse.create_donor_acceptor_bed(junction_bed, outdir)
 
         #################################
         # Step 2: write donor acceptor fasta file.
