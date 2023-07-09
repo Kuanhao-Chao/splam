@@ -13,16 +13,17 @@ def write_introns(fw, intron_dict, junc_count):
     return junc_count
 
 
-def extract_introns(gff_file, gff_db, bed_file):
+def extract_introns(gff_file, gff_db, is_load_gff_db, bed_file):
     print("gff_file: ", gff_file)
     print("gff_db: ", gff_db)
     print("bed_file: ", bed_file)
     
-    # Create the GFF database
-    db = gffutils.create_db(gff_file, dbfn=gff_db, force=True, keep_order=True, merge_strategy='create_unique', sort_attribute_values=True, verbose=True)
-
-    # Load the GFF database
-    # db = gffutils.FeatureDB('gff_db', keep_order=True)
+    if not is_load_gff_db:
+        # Create the GFF database
+        db = gffutils.create_db(gff_file, dbfn=gff_db, force=True, keep_order=True, merge_strategy='create_unique', sort_attribute_values=True, verbose=True)
+    else:
+        # Load the GFF database
+        db = gffutils.FeatureDB(gff_file, keep_order=True)
 
     genes = db.features_of_type("gene")
 
@@ -48,7 +49,7 @@ def extract_introns(gff_file, gff_db, bed_file):
                 # Write out all introns
                 junc_count = write_introns(fw, intron_dict, junc_count)
                 intron_dict = {}
-                
+
             elif bundle_chr == gene[0] and gene.start < bundle_e:
                 # Extend the bundle
                 bundle_e = gene.end
@@ -76,3 +77,7 @@ def extract_introns(gff_file, gff_db, bed_file):
                             intron_dict[key]["count"] = 1
                             intron_dict[key]["trans"] = set([trans_id])
                     prev_exon = exon
+        
+        # Write out all introns
+        junc_count = write_introns(fw, intron_dict, junc_count)
+        intron_dict = {}

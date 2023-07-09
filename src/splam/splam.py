@@ -40,11 +40,11 @@ def parse_args(args):
         help='writing out splice junction bed file only without other temporary files.'
     )
     parser_extract.add_argument(
-        '-f', '--file-format', default="NONE",
+        '-f', '--file-format', default=None,
         help='the file type for SPLAM to process. It can only be "BAM", "GFF", or "GTF". The default value is "BAM".'
     )
     parser_extract.add_argument(
-        '-d', '--database', default="NONE",
+        '-d', '--database', default=None,
         help='the path to the annotation database built using gffutils. If thie argument is provided, splam loads the database instead of creating a new one.'
     )
     parser_extract.add_argument(
@@ -143,7 +143,7 @@ def main(argv=None):
     if args.subcommand == "extract":
         file_format = args.file_format
         input = args.INPUT
-        if file_format == "NONE":
+        if file_format is None:
             filename, file_extension = os.path.splitext(input)
             if file_extension == ".GTF" or file_extension == ".gtf":
                 file_format = "GTF"
@@ -152,18 +152,31 @@ def main(argv=None):
             elif file_extension == ".BAM" or file_extension == ".bam":
                 file_format = "BAM"
 
-        if file_format == "GFF" or file_format == "GTF":
+        if file_format == "GFF" or file_format == "GTF" or file_format == "gff" or file_format == "gtf":
             outdir = args.outdir
             junction_bed = os.path.join(outdir, "junction.bed")
-            gff_db = os.path.join(outdir, "annotation.db")
+            gff_db = args.database
+            is_load_gff_db = False
+
+            if gff_db is None:
+                gff_db = os.path.join(outdir, "annotation.db")
+            else:
+                is_load_gff_db = True
+            
             if not os.path.exists(outdir):
                 os.makedirs(outdir, exist_ok=True)
-            extract_gff.extract_introns(input, gff_db, junction_bed)
-        elif file_format == "BAM":
+            extract_gff.extract_introns(input, gff_db, is_load_gff_db, junction_bed)
+        
+        elif file_format == "BAM" or file_format == "bam":
             argv_extract = sys.argv
             argv_extract.pop(0)
             argv_extract[0] = 'splam-extract'
             splam_extract.splam_extract(argv_extract)
+
+        else:
+            print("[ERROR] the input file must be 'BAM', 'GFF', or 'GTF'.")
+            sys.exit()
+
 
     elif args.subcommand == "score":
         verbose = args.verbose
