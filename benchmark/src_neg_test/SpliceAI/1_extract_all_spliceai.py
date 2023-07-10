@@ -36,12 +36,11 @@ def task(df, seqs, chrs):
         seq = seqs[chrom]
         chrom_size = chrs[chrom]
 
-        # sanity checks
+        # sanity checks pt. 1
         prestart = row['start']
         preend = row['end']
         prelength = preend - prestart
         extract = seq[prestart:preend]
-        #print(row, extract)
         if row['strand'] == '+':
             assert(extract[:2] == 'GT')
             assert(extract[-2:] == 'AG')
@@ -60,14 +59,12 @@ def task(df, seqs, chrs):
         if (start < 0):
             left_pad = 0 - start
             df.at[idx, 'flank_start'] = 0 # modifies the df in-place
-            start = 0
-            print('padding left', left_pad, strand)
+            start = 0 # modifies local variable
 
         if (end > chrom_size):
             right_pad = end - chrom_size
             df.at[idx, 'flank_end'] = chrom_size # modifies the df in-place
-            end = chrom_size
-            print('padding right', right_pad, strand)
+            end = chrom_size # modifies local variable
 
         # extract the noN sequence
         if strand == '+':
@@ -82,26 +79,14 @@ def task(df, seqs, chrs):
         df.at[idx, 'noN_seq'] = noN_sequence
         df.at[idx, 'N_seq'] = N_sequence
 
-        # sanity checks
-        try:
-            assert(noN_sequence[5200:5202] == 'GT')
-            assert(noN_sequence[-5202:-5200] == 'AG')
-        except:
-            print('noN sequence failure', noN_sequence[5200:5202], noN_sequence[-5202:-5200])
-            print(extract, prestart, preend, strand, start, end)
-        try:
-            assert(N_sequence[5200:5202] == 'GT')
-            assert(N_sequence[-5202:-5200] == 'AG')    
-        except:
-            print('N sequence failure', N_sequence[5200:5202], N_sequence[-5202:-5200]) 
-            print(extract, prestart, preend, strand, start, end)
-        
-        try:
-            assert(len(noN_sequence) == prelength + 10400)
-            assert(len(N_sequence) == prelength + 10400)
-            assert(len(noN_sequence) == len(N_sequence))
-        except:
-            print('sequence length failure', len(noN_sequence), len(N_sequence), prelength+10400)
+        # sanity checks pt. 2
+        assert(noN_sequence[5200:5202] == 'GT')
+        assert(noN_sequence[-5202:-5200] == 'AG')
+        assert(N_sequence[5200:5202] == 'GT')
+        assert(N_sequence[-5202:-5200] == 'AG')    
+        assert(len(noN_sequence) == prelength + 10400)
+        assert(len(N_sequence) == prelength + 10400)
+        assert(len(noN_sequence) == len(N_sequence))
 
         pbar.next()
     pbar.finish()
