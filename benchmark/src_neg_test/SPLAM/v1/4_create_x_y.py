@@ -26,6 +26,7 @@ def main(db):
     chr_name = ""
     for idx in range(line_num):
         if idx % 2 == 0:
+            # getting the header line
             d_e = lines_d[idx][1:].split(':')
             d_l = d_e[1].split('(')
             n1 = d_l[0].split('-')
@@ -36,8 +37,10 @@ def main(db):
             chr = d_e[0]
             strand = d_l[1][0]
 
+            # final header format
             chr_name = f'>{chr};{d_n};{a_n};{strand};0\n'
         else:
+            # getting the full sequence from both donor and acceptor fa files
             seq_d = lines_d[idx]
             seq_a = lines_a[idx]
             len_d = len(seq_d)

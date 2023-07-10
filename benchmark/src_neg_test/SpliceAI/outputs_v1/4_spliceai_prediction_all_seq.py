@@ -1,7 +1,7 @@
 import tensorflow as tf
 from tensorflow.keras import backend as K
 import os, sys
-import h5py
+# import h5py
 import matplotlib.pyplot as plt
 from utils import *
 import gc 
@@ -9,15 +9,15 @@ import gc
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 import matplotlib.pyplot as plt; plt.rcdefaults()
-from tqdm import tqdm
-import warnings
+# from tqdm import tqdm
+# import warnings
 
 from keras.models import load_model
 from pkg_resources import resource_filename
-from spliceai.utils import one_hot_encode
+# from spliceai.utils import one_hot_encode
 import numpy as np
-from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve
-import pickle 
+# from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve
+# import pickle 
 
 CONSTANT_SIZE = 10
 def seq_name(seq):
@@ -89,9 +89,9 @@ def main(argv):
             seq = all_lines[pidx]
             X, Y = create_datapoints(seq, label)
             X = X[None, :]
-            Y = np.array(Y)
+            # Y = np.array(Y)
             X = tf.convert_to_tensor(X, dtype=tf.float32)
-            Y = tf.convert_to_tensor(Y, dtype=tf.float32)
+            # Y = tf.convert_to_tensor(Y, dtype=tf.float32)
 
             Y_pred = model.predict(X)
             
@@ -99,19 +99,19 @@ def main(argv):
             # del model
             gc.collect()
             COUNTER += 1
-            print("X.shape     : ", X.shape)
-            print("Y_pred.shape: ", Y_pred.shape)
+            # print("X.shape     : ", X.shape)
+            # print("Y_pred.shape: ", Y_pred.shape)
 
-            donor_p = Y_pred[0][200-1][2]
-            acceptor_p = Y_pred[0][len(Y_pred)-200-1][1]
-            print("(chr, start, end, strand): ", (chr, start, end, strand))
+            # donor_p = Y_pred[0][200-1][2]
+            # acceptor_p = Y_pred[0][len(Y_pred)-200-1][1]
+            # print("(chr, start, end, strand): ", (chr, start, end, strand))
 
-            print("donor_p    : ", donor_p)
-            print("acceptor_p : ", acceptor_p)
+            # print("donor_p    : ", donor_p)
+            # print("acceptor_p : ", acceptor_p)
 
-            Y_pred = np.array(Y_pred)
-            print(Y_pred)
-            print("Y_pred.shape: ", Y_pred.shape)
+            # Y_pred = np.array(Y_pred)
+            # print(Y_pred)
+            # print("Y_pred.shape: ", Y_pred.shape)
 
             d_scores = Y_pred[0, :, 2]
             a_scores = Y_pred[0, :, 1]

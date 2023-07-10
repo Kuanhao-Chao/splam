@@ -18,5 +18,5 @@ python Step_4_create_x_y.py $SAMPLE
 
 # Step 5
 echo "\n\n>> Step 5"
-echo python splam_predict.py -f $SAMPLE/INPUTS/input.fa -o $SAMPLE/${DATABASE}.score.bed -m ../MODEL/splam_14_script.pt
-python splam_predict.py -f $SAMPLE/INPUTS/input.fa -o $SAMPLE/${DATABASE}.score.bed -m ../MODEL/splam_14_script.pt
+echo python Step_5_splam_predict.py -f $SAMPLE/INPUTS/input.fa -o $SAMPLE/${DATABASE}.score.bed -m ../MODEL/splam_14_script.pt
+python Step_5_splam_predict.py -f $SAMPLE/INPUTS/input.fa -o $SAMPLE/${DATABASE}.score.bed -m ../MODEL/splam_14_script.pt

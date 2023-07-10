@@ -6,3 +6,4 @@ do
     python 4_spliceai_prediction_all_seq.py $c N $TARGET $SPLICEAI_VERSION
     echo \n\n
 done
+ 

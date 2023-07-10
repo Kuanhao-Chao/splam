@@ -7,7 +7,7 @@ def run(input_filename):
     
     # define output folder
     output_folder = './1_output/'
-    input_folder = '../SPLAM_python/extraction/primates/'
+    input_folder = '../../SPLAM_python/extraction/primates/'
     db = input_filename.split('.')[0]
     input_filename = input_folder + input_filename
     db_filename = output_folder + 'databases/' + db + '.db'
@@ -39,17 +39,6 @@ def create_database(input_filename, db_filename, output_filename):
             disable_infer_transcripts=True, disable_infer_genes=True, verbose=True)
 
 
-def handle_duplicate_names(path):
-    # pre: path has '/path/to/file(optversion).ext' format
-    filename, extension = os.path.splitext(path)
-    count = 1
-    while os.path.exists(path):
-        path = filename + '(' + str(count) + ')' + extension 
-        count += 1
-    
-    return path
-
-
 def collect_genes(db, output_filename):
     print('Parsing file...')
     print(f'Feature types: {list(db.featuretypes())}')
@@ -72,24 +61,27 @@ def collect_genes(db, output_filename):
     #     print('-'*120)
 
     with open(output_filename, 'w') as bed_file:
-        for i, feature in enumerate(db.features_of_type('gene')):
+        i = 0
+        for feature in db.features_of_type('gene'):
             if feature['gene_biotype'] != ['protein_coding']:
                 continue
+            i += 1
             try:
                 bed_file.write(db.bed12(feature))
-            except ValueError as e: # end of last exon does not match end of feature
+            except ValueError as e: # end of last exon does not match end of feature (or start)
                 print(f'Exception on line {i}: {str(e)}')
                 line = [feature.seqid, feature.start-1, feature.end, feature.id, feature.score, feature.strand]
                 bed_file.write('\t'.join(map(str, line)))
             bed_file.write('\n')
     
+    print(f'Total count: {i} protein-coding genes')
     return output_filename
 
 
 if __name__ == '__main__':
 
-    if os.getcwd() != 'src_neg_test':
-        os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test')
+    if os.getcwd() != 'SPLAM':
+        os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test/SPLAM')
 
     # define filenames
     annotation_files = ['GRCm39.gff', 'Mmul_10.gff', 'NHGRI_mPanTro3.gff', 'TAIR10.gff']
