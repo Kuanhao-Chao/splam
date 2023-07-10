@@ -1,5 +1,3 @@
-DATABASE=NHGRI_mPanTro3
-
 for DATABASE in "GRCm39" "Mmul_10" "NHGRI_mPanTro3" "TAIR10"
 do
     echo Generating scores for $DATABASE
