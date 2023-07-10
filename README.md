@@ -17,13 +17,13 @@
 <!-- [![Travis build status](https://travis-ci.org/roblanf/sangeranalyseR.svg?branch=master)](https://travis-ci.org/roblanf/sangeranalyseR)  -->
 <!-- ![documentation build status](https://readthedocs.org/projects/pip/badge/) -->
 
-splam is a splice junction recognition model based on a deep grouped residual convolutional neural network that offers fast and precise assessment of splice junctions. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
+Splam is a splice junction recognition model based on a deep grouped residual convolutional neural network that offers fast and precise assessment of splice junctions. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
 
 There are two main use case scenarios:
 
-1. improving your **alignmnet file**. splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of the downstream transcriptome assembly [[Link](https://ccb.jhu.edu/splam/content/alignment_evaluation.html#alignment-detailed-section)].
+1. Improving your **alignment file**. Splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of the downstream transcriptome assembly [[Link](https://ccb.jhu.edu/splam/content/alignment_evaluation.html#alignment-detailed-section)].
 
-2. evaluating the quality of introns in your **annotation file or assembled transcripts** [[Link](https://ccb.jhu.edu/splam/content/annotation_evaluation.html#annotation-detailed-section)].
+2. Evaluating the quality of introns in your **annotation file or assembled transcripts** [[Link](https://ccb.jhu.edu/splam/content/annotation_evaluation.html#annotation-detailed-section)].
 
 <br>
 
@@ -36,18 +36,18 @@ There are two main use case scenarios:
 
 ## <a name="installation"></a>Installation
 
-You can install splam with conda package manager. This is the easiest approach.
+You can install Splam with conda package manager. This is the easiest approach.
 ``` bash
 $ conda install -c bioconda splam
 ```
 
 
-splam is on [PyPi](https://pypi.org/) now. Check out all the release [here](https://pypi.org/manage/project/splam/releases/).
+Splam is on [PyPi](https://pypi.org/) now. Check out all the release [here](https://pypi.org/manage/project/splam/releases/).
 ```bash
 $ pip install splam
 ```
 
-You can also install splam from source
+You can also install Splam from source
 ```bash
 $ git clone https://github.com/Kuanhao-Chao/splam --recursive
 
@@ -60,9 +60,9 @@ $ python setup.py install
 
 ## <a name="quick_start"></a>Quick Start
 
-The simplest example in just three lines of code!
+The simplest example uses just three lines of code!
 
-Check this example on google Colab [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
+Check this example on Google Colab [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
 
 
 ```

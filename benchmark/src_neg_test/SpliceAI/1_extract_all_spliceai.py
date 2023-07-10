@@ -107,7 +107,9 @@ def write_results(df, fw_coords, fw_noN_seq, fw_N_seq):
 
     for idx, row in df.iterrows():
         # write header to both FASTA files
-        header = f'>{row["seqid"]}:{row["start"]+1}-{row["end"]}({row["strand"]})\n'
+        # header = f'>{row["seqid"]}:{row["start"]+1}-{row["end"]}({row["strand"]})\n'
+        # NOTE: this is not FASTA formatted, but makes it more SpliceAI compatible (0-indexed start, 1-indexed end)
+        header = f'{row["seqid"]};{row["start"]};{row["end"]};{row["strand"]}\n'
         fw_noN_seq.write(header)
         fw_N_seq.write(header)
 
@@ -144,6 +146,7 @@ def main(db):
 
     # write results to files
     write_results(df, fw_coords, fw_noN_seq, fw_N_seq)
+    print(f'Result in ./1_output/{db}/')
 
     fw_coords.close()
     fw_noN_seq.close()
@@ -155,7 +158,7 @@ if __name__ == "__main__":
         os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test/SpliceAI/')
 
     datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    idxs = [0] #CHANGEME
+    idxs = [0,1,2,3] #CHANGEME
 
     for idx in idxs:
         main(datasets[idx])
