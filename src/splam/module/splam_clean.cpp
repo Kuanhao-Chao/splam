@@ -1,11 +1,15 @@
-// #define DEBUG
+/*  splam_clean.cpp -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #include <iostream>
 #include <vector>
 #include <memory>
 #include <filesystem>
 
 #include "extract.h"
-#include "predict.h"
 #include "clean.h"
 
 #include "common.h"
@@ -51,7 +55,6 @@ TInputFiles in_records;
 TInputRecord* irec=NULL;
 
 float threshold = 0.1;
-int aln_num_thr = 4;
 GSamRecord* brec=NULL;
 
 /*********************

@@ -1,3 +1,9 @@
+/*  update.cpp -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #include "update.h"
 #include <fstream>
 #include <iostream>
@@ -35,41 +41,6 @@ GStr splamNHUpdate() {
         // }
 
     int processed_aln = 0;
-
-
-// // ALN summary
-// int ALN_COUNT = 0;
-// int ALN_COUNT_BAD = 0;
-// int ALN_COUNT_GOOD = 0;
-// int ALN_COUNT_GOOD_CAL = 0;
-
-// // JUNC summary
-// int JUNC_COUNT = 0;
-// int JUNC_COUNT_GOOD = 0;
-// int JUNC_COUNT_BAD = 0;
-
-// // Paired
-// int ALN_COUNT_SPLICED = 0;
-// int ALN_COUNT_NSPLICED = 0;
-// int ALN_COUNT_PAIRED = 0;
-// int ALN_COUNT_SPLICED_UNIQ = 0;
-// int ALN_COUNT_SPLICED_MULTI = 0;
-// int ALN_COUNT_SPLICED_UNIQ_DISCARD = 0;
-// int ALN_COUNT_SPLICED_MULTI_DISCARD = 0;
-// int ALN_COUNT_NSPLICED_UNIQ = 0;
-// int ALN_COUNT_NSPLICED_MULTI = 0;
-
-
-// // Unpaired
-// int ALN_COUNT_SPLICED_UNPAIR = 0;
-// int ALN_COUNT_NSPLICED_UNPAIR = 0;
-// int ALN_COUNT_UNPAIR = 0;
-// int ALN_COUNT_SPLICED_UNIQ_UNPAIR = 0;
-// int ALN_COUNT_SPLICED_MULTI_UNPAIR = 0;
-// int ALN_COUNT_SPLICED_UNIQ_UNPAIR_DISCARD = 0;
-// int ALN_COUNT_SPLICED_MULTI_UNPAIR_DISCARD = 0;
-// int ALN_COUNT_NSPLICED_UNIQ_UNPAIR = 0;
-// int ALN_COUNT_NSPLICED_MULTI_UNPAIR = 0;
 
     if (g_paired_removal) {
         /*********************************

@@ -1,3 +1,45 @@
+.. raw:: html
+
+    <script type="text/javascript">
+        var observer = new MutationObserver(function(mutations) {
+            var dark = document.body.dataset.theme == 'dark';
+
+            if (document.body.dataset.theme == 'auto') {
+                dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+            }
+            
+            console.log(dark);
+            document.getElementsByClassName('header-image')[0].src = dark ? './_images/jhu-logo-white.png' : "./_images/jhu-logo-dark.png";
+            document.getElementsByClassName('sidebar_ccb')[0].src = dark ? './_images/JHU_ccb-white.png' : "./_images/JHU_ccb-dark.png";
+            document.getElementsByClassName('sidebar_wse')[0].src = dark ? './_images/JHU_wse-white.png' : "./_images/JHU_wse-dark.png";
+
+            console.log("document.getElementsByClassName('sidebar_wse')[0].src: ", document.getElementsByClassName('sidebar_wse')[0].src);
+        })
+        observer.observe(document.body, {attributes: true, attributeFilter: ['data-theme']});
+        console.log(document.body);
+    </script>
+    <link rel="preload" href="./_images/jhu-logo-dark.png" as="image">
+
+
+
+.. raw:: html
+    
+    <script type="text/javascript">
+        var block_to_insert ;
+        var container_block ;
+        
+        block_to_insert = document.createElement( 'div' );
+        block_to_insert.innerHTML = '<img alt="My Logo" style="width:80%;  margin:10px; padding-top:30px" class="logo sidebar_ccb align-center" src="./_images/JHU_ccb-dark.png"><img alt="My Logo" class="logo sidebar_wse align-center" style="width:80%;  margin:10px" src="./_images/JHU_wse-dark.png">' ;
+        
+        container_block = document.getElementsByClassName( 'sidebar-sticky' )[0];
+        console.log("container_block: ", container_block);
+        container_block.appendChild( block_to_insert );
+    </script>
+
+
+|
+
+
 splam's tutorial
 *************************
 
@@ -6,9 +48,9 @@ splam's tutorial
    :align:   center
    :scale:   20 %
 
+|
 
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
-
 
 .. image:: https://img.shields.io/badge/version-v.0.2.6-blue
 
@@ -20,16 +62,15 @@ splam's tutorial
 Why splam?
 ==================
 
-splam is a splice junction recognition model based on a deep residual convolutional neural network that provides fast and accurate evaluation of splice junctions. There are two main applications of splam: 
+splam is a splice junction recognition model based on a deep grouped residual convolutional neural network that offers fast and precise assessment of splice junctions. 
 
+There are two primary applications of splam:
 
+.. splam is useful if you want to :
 
-splam is useful if you want to :
+1. improve your **alignmnet file**. splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of the downstream transcriptome assembly [:ref:`Link <alignment-detailed-section>`].
 
-1. improve your **alignmnet file**. splam evaluates the quality of splice alignments and cleans up those that include spurious splice junctions. It significantly improves the quality of the downstream transcriptome assembly [:ref:`Link <alignment-detailed-section>`].
-
-2. know the quality of introns in your **annotation file or assembled transcripts** [:ref:`Link <annotation-detailed-section>`].
-
+2. evaluate the quality of introns in your **annotation file or assembled transcripts** [:ref:`Link <annotation-detailed-section>`].
 
 
 
@@ -43,9 +84,10 @@ splam is free, it's open source, it's a light weight deep learning model, and it
 
 Main features
 =============
-* **Biological inspired training process**: splam was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
-* **Visualization**: splam produces high-quality figures ready for your publication.
-* **Python + C++ integration**: We have taken care of all the engineer work for you! Splam is easy to install and runs efficiently due to its underlying C++ implementation. You can install and run Splam with just one simple command!
+* **Biologically inspired training process**: splam was trained on combined donor and acceptor pairs, with a focus on a narrow window of 400 base pairs surrounding each splice site. This approach is inspired by the understanding that the splicing process predominantly relies on signals within this specific region.
+.. * **Visualization**: splam produces high-quality figures ready for your publication.
+* **Python + C++ integration**: We have taken care of all the engineer work for you! splam is easy to install and runs efficiently due to its underlying C++ implementation. You can install and run splam with just one simple command!
+* **Run splam in three steps**: With just three lines of code, you can obtain a new alignment file that is cleaned and sorted.
 * **Pytorch implementation**: splam is implemented and trained using the popular Pytorch framework.
 
 |
@@ -75,7 +117,7 @@ https://github.com/Kuanhao-Chao/splam/issues
 Key contributors
 ================
 
-splam deep residual convolutional neural network was trained using Pytorch framework by Kuan-Hao Chao. The package that applies splam to evaluate annotation files and clean up alignment files are implemented by Kuan-Hao Chao. 
+splam deep residual convolutional neural network was trained using the PyTorch framework by Kuan-Hao Chao. Kuan-Hao Chao also implemented the package that applies splam to evaluate annotation files and clean up alignment files.
 
 |
 
@@ -94,4 +136,20 @@ Table of content
    content/function_manual
    content/license
    content/contact
-   content/help
+
+
+
+|
+|
+|
+|
+
+.. image:: ./image/jhu-logo-dark.png
+   :alt: My Logo
+   :class: logo, header-image
+   :align: center
+
+
+.. raw:: html
+
+    <footer align="center" style="margin-top:-5px">&copy; Copyright 2023, Kuan-Hao Chao</footer> 

@@ -2,11 +2,11 @@ import os
 import argparse
 import sys
 
-from splam import prediction, config, parse, chr_size, extract_gff
+from splam import prediction, config, parse, extract_gff, header, clean_gff
 import splam_extract
 import splam_clean
 
-VERSION = "0.2.15"
+VERSION = header.__version__
 
 CITATION = "Kuan-Hao Chao, Mihaela Pertea, and Steven Salzberg, \033[1m\x1B[3mSPLAM: accurate deep-learning-based splice site predictor to clean up spurious spliced alignments\x1B[0m\033[0m, (2023), GitHub repository, https://github.com/Kuanhao-Chao/SPLAM"
 
@@ -40,8 +40,12 @@ def parse_args(args):
         help='writing out splice junction bed file only without other temporary files.'
     )
     parser_extract.add_argument(
-        '-f', '--file-format', default="NONE",
+        '-f', '--file-format', default=None,
         help='the file type for SPLAM to process. It can only be "BAM", "GFF", or "GTF". The default value is "BAM".'
+    )
+    parser_extract.add_argument(
+        '-d', '--database', default=None,
+        help='the path to the annotation database built using gffutils. If thie argument is provided, splam loads the database instead of creating a new one.'
     )
     parser_extract.add_argument(
         '-o', '--outdir', default="tmp_out", metavar='DIR',
@@ -98,6 +102,10 @@ def parse_args(args):
         '-t', '--threshold', default="0.1", metavar='threshold',
         help='The cutoff threshold for identifying spurious splice junctions.'
     )
+    parser_clean.add_argument(
+        '-n', '--bad-intron-num', default="8", metavar='bad intron num',
+        help='The threshold for the number of spurious splice junctions in a transcript determines whether the transcript is considered bad. Default is 8.'
+    )
     parser_clean.add_argument('-P', '--paired',
                     action='store_true',
                     help='cleaning up the alignment file in "paired-end" mode.')  # on/off flag
@@ -108,7 +116,6 @@ def parse_args(args):
     )
 
     args_r = parser.parse_args()
-    # args_r = parser.parse_args()
     return args_r, parser, parser_score
 
 def main(argv=None):
@@ -125,7 +132,7 @@ def main(argv=None):
   ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║
   ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
     """)
-    chrs = chr_size.chrs
+
     args, parser, parser_score = parse_args(argv)
 
     if args.version:
@@ -139,7 +146,7 @@ def main(argv=None):
     if args.subcommand == "extract":
         file_format = args.file_format
         input = args.INPUT
-        if file_format == "NONE":
+        if file_format is None:
             filename, file_extension = os.path.splitext(input)
             if file_extension == ".GTF" or file_extension == ".gtf":
                 file_format = "GTF"
@@ -148,18 +155,31 @@ def main(argv=None):
             elif file_extension == ".BAM" or file_extension == ".bam":
                 file_format = "BAM"
 
-        if file_format == "GFF" or file_format == "GTF":
+        if file_format == "GFF" or file_format == "GTF" or file_format == "gff" or file_format == "gtf":
             outdir = args.outdir
             junction_bed = os.path.join(outdir, "junction.bed")
-            gff_db = os.path.join(outdir, "annotation.db")
+            gff_db = args.database
+            is_load_gff_db = False
+
+            if gff_db is None:
+                gff_db = os.path.join(outdir, "annotation.db")
+            else:
+                is_load_gff_db = True
+            
             if not os.path.exists(outdir):
                 os.makedirs(outdir, exist_ok=True)
-            extract_gff.extract_introns(input, gff_db, junction_bed)
-        elif file_format == "BAM":
+            extract_gff.extract_introns(input, gff_db, is_load_gff_db, junction_bed)
+        
+        elif file_format == "BAM" or file_format == "bam":
             argv_extract = sys.argv
             argv_extract.pop(0)
             argv_extract[0] = 'splam-extract'
             splam_extract.splam_extract(argv_extract)
+
+        else:
+            print("[ERROR] the input file must be 'BAM', 'GFF', or 'GTF'.")
+            sys.exit()
+
 
     elif args.subcommand == "score":
         verbose = args.verbose
@@ -174,7 +194,7 @@ def main(argv=None):
         #################################
         # Step 1: creating donor acceptor bed file.
         #################################
-        donor_bed, acceptor_bed = parse.create_donor_acceptor_bed(junction_bed, outdir, chrs)
+        donor_bed, acceptor_bed = parse.create_donor_acceptor_bed(junction_bed, outdir)
 
         #################################
         # Step 2: write donor acceptor fasta file.
@@ -193,12 +213,19 @@ def main(argv=None):
         junction_fasta = prediction.splam_prediction(junction_fasta, junction_score_bed, splam_model, batch_size, device)
 
     elif args.subcommand == "clean":
-        argv_clean = sys.argv
-        argv_clean.pop(0)
-        argv_clean[0] = 'splam-clean'
-        splam_clean.splam_clean(argv_clean)
-    else:
-        parser.print_help()
+        outdir = args.outdir
+        threshold = args.threshold
+        bad_intron_num = args.bad_intron_num
+
+        # Running in clean gff file mode
+        gff_db = outdir + "/annotation.db"
+        if os.path.exists(gff_db):
+            clean_gff.clean_gff(outdir, gff_db, threshold, bad_intron_num)
+        else:
+            argv_clean = sys.argv
+            argv_clean.pop(0)
+            argv_clean[0] = 'splam-clean'
+            splam_clean.splam_clean(argv_clean)
 
 if __name__ == "__main__":
     main()

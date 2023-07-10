@@ -79,7 +79,6 @@ pybind11_add_module(splam_clean
         splam/module/bedidx.c
         splam/module/junc_func.cpp
         splam/module/extract.cpp
-        splam/module/predict.cpp
         splam/module/clean.cpp
         splam/module/update.cpp
         splam/module/util.cpp

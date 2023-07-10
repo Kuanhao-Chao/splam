@@ -1,9 +1,9 @@
 import os
 import pybedtools
 
-from splam import config
+from splam import config, chr_size
 
-def create_donor_acceptor_bed(junction_bed, junction_dir, chrs):
+def create_donor_acceptor_bed(junction_bed, junction_dir):
     #################################
     # For 'd_a.bed': 0-based, 1-based
     # For 'donor.bed': 0-based, 0-based
@@ -21,6 +21,15 @@ def create_donor_acceptor_bed(junction_bed, junction_dir, chrs):
 
     with open(junction_bed, 'r') as f:
         lines = f.read().splitlines()
+        style = ""
+        if lines[0].split("\t")[0][:3] == "chr":
+            chrs = chr_size.chrs_chr
+            style = "'chr*' style"
+        else:
+            chrs = chr_size.chrs_refseq
+            style = "'NCBI RefSeq' style"
+        print(f'[Info] Chromosomes in the annotation file is in {style}')
+
         for line in lines:
             eles = line.split("\t")
             if len(eles) == 1:
@@ -30,7 +39,12 @@ def create_donor_acceptor_bed(junction_bed, junction_dir, chrs):
             score = eles[4]
             strand = eles[5]
 
-            
+            if len(eles) == 7:
+                trans = eles[6]
+                junc_name = f'{junc_name};{score};{trans}'
+            else:
+                junc_name = f'{junc_name};{score};'
+
             if (strand == "+"):
                 donor = int(eles[1])
                 acceptor = int(eles[2])
@@ -66,13 +80,13 @@ def create_donor_acceptor_bed(junction_bed, junction_dir, chrs):
                 continue
             else:
                 JUNCS.add(new_junc)
-                fw_donor.write(chr + "\t" + str(donor_s) + "\t" + str(donor_e) + "\t" + junc_name+"_donor" + "\t" + score + "\t" + strand + "\n")
-                fw_acceptor.write(chr + "\t" + str(acceptor_s) + "\t" + str(acceptor_e) + "\t" + junc_name+"_acceptor" + "\t" + score + "\t" + strand + "\n")
+                fw_donor.write(f'{chr}\t{str(donor_s)}\t{str(donor_e)}\t{junc_name}\t{score}\t{strand}\n')
+                fw_acceptor.write(f'{chr}\t{str(acceptor_s)}\t{str(acceptor_e)}\t{junc_name}\t{score}\t{strand}\n')
 
                 if (strand == "+"):
-                    fw_da.write(chr + "\t" + str(donor) + "\t" + str(acceptor+1) + "\tJUNC\t" + score + "\t" + strand + "\n")
+                    fw_da.write(f'{chr}\t{str(donor)}\t{str(acceptor+1)}\t{junc_name}\t{score}\t{strand}\n')
                 elif (strand == "-"):
-                    fw_da.write(chr + "\t" + str(acceptor) + "\t" + str(donor+1) + "\tJUNC\t" + score + "\t" + strand + "\n")
+                    fw_da.write(f'{chr}\t{str(acceptor)}\t{str(donor+1)}\t{junc_name}\t{score}\t{strand}\n')
 
     fw_donor.close()
     fw_acceptor.close()
@@ -85,7 +99,7 @@ def write_donor_acceptor_fasta(bed_file, reference_genome):
     bed_f = pybedtools.BedTool(bed_file)
 
     # Get the sequences from the BED intervals
-    sequences = bed_f.sequence(fi=reference_genome, s=True)
+    sequences = bed_f.sequence(fi=reference_genome, s=True, name=True)
 
     fasta_f = os.path.splitext(bed_file)[0]+ ".fasta"
     b = sequences.save_seqs(fasta_f)
@@ -113,17 +127,19 @@ def concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta, verbose):
     for idx in range(0, line_num, 2):
         # PARSE FIRST LINE
         # >chr1:10000-20000(+)
-        chr_name = lines_d[idx]
         strand = lines_d[idx][-2]
-        chromosome = lines_d[idx].split(":")[0]
 
-        d_splits = lines_d[idx].split(":")[1].split("(")
+        eles = lines_d[idx].split(":")
+        d_name = eles[0]
+        chromosome = eles[2]
+        d_splits = eles[3].split("(")
         d_start, d_end = d_splits[0].split("-")
-        d_strand = d_splits[1][0]
 
-        a_splits = lines_a[idx].split(":")[1].split("(")
+        eles = lines_a[idx].split(":")
+        a_name = eles[0]
+        chromosome = eles[2]
+        a_splits = eles[3].split("(")
         a_start, a_end = a_splits[0].split("-")
-        a_strand = a_splits[1][0]
 
         if strand == "+":
             donor_pos = int(d_start) + config.QUARTER_SEQ_LEN
@@ -160,7 +176,7 @@ def concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta, verbose):
             continue
         
         # write the final fasta entry as two lines
-        fw.write(chromosome + ";" + str(donor_pos) +";"+ str(acceptor_pos) + ";" + d_strand + ";.\n")
+        fw.write(f'>{chromosome};{str(donor_pos)};{str(acceptor_pos)};{strand};{d_name[1:]}\n')
         fw.write(x + "\n")
 
         # get stats on the dimers 
@@ -188,8 +204,6 @@ def concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta, verbose):
             noncanonical_a_count += 1
 
     # output stats
-    # print("Number of skips due to N in dimer: ", num_skipped)
-
     if verbose:
         print("[Info] Loading splice site statistics ...")
         print("[Info] Canonical donor count: ", canonical_d_count)

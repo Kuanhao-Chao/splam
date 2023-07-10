@@ -9,6 +9,7 @@ import random
 import numpy as np
 import warnings
 import os
+import re
 from progress.bar import Bar
 
 warnings.filterwarnings('ignore')
@@ -46,8 +47,10 @@ def one_hot_encode(Xd, Yd):
 
 def create_datapoints(seq, strand):
     # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
-    seq = seq.upper().replace('A', '1').replace('C', '2')
-    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0').replace('K', '0').replace('R', '0')
+    seq = seq.upper().replace('A', '1').replace('C', '2').replace('G', '3').replace('T', '4')
+    pattern = r'[^1234]'
+    # Replace non-ACGT characters with 0
+    seq = re.sub(pattern, '0', seq)
     jn_start = JUNC_START
     jn_end = JUNC_END
 
@@ -208,12 +211,22 @@ def splam_prediction(junction_fasta, out_score_f, model_path, batch_size, device
 
             donor_labels, donor_scores, acceptor_labels, acceptor_scores = get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP)
             for idx in range(len(yp)):
-                chr, start, end, strand, aln_num = seqname[idx].split(';')
-                # print('seqname[idx]')
-                if strand == '+':
-                    fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + f'\tJUNC{junc_counter:08}\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
-                elif strand == '-':
-                    fw_junc_scores.write(chr + '\t'+ str(end) + '\t' + str(start) + f'\tJUNC{junc_counter:08}\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
+
+                eles = seqname[idx].split(';')
+                if len(eles) == 7:
+                    chr, start, end, strand, name, aln_num, trans = eles
+                    if strand == '+':
+                        fw_junc_scores.write(f'{chr}\t{str(start)}\t{str(end)}\t{name}\t{str(aln_num)}\t{strand}\t{str(donor_scores[idx])}\t{str(acceptor_scores[idx])}\t{trans}\n')
+                    elif strand == '-':
+                        fw_junc_scores.write(f'{chr}\t{str(end)}\t{str(start)}\t{name}\t{str(aln_num)}\t{strand}\t{str(donor_scores[idx])}\t{str(acceptor_scores[idx])}\t{trans}\n')
+
+                else:
+                    chr, start, end, strand, name, aln_num = eles
+                    if strand == '+':
+                        fw_junc_scores.write(f'{chr}\t{str(start)}\t{str(end)}\t{name}\t{str(aln_num)}\t{strand}\t{str(donor_scores[idx])}\t{str(acceptor_scores[idx])}\n')
+                    elif strand == '-':
+                        fw_junc_scores.write(f'{chr}\t{str(end)}\t{str(start)}\t{name}\t{str(aln_num)}\t{strand}\t{str(donor_scores[idx])}\t{str(acceptor_scores[idx])}\n')
+                
                 junc_counter += 1            
             # increment the progress bar
             pbar.next()

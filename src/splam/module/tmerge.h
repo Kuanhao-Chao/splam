@@ -1,3 +1,9 @@
+/*  tmerge.h -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #ifndef _TMERGE_H_
 #define _TMERGE_H_
 

@@ -279,7 +279,7 @@ def main():
                         print("THRESHOLDS_PLT: ", THRESHOLDS_PLT)
                     else:
                         THRESHOLDS_PLT = THRESHOLDS
-                    plt.figure(figsize=(12, 3))
+                    plt.figure(figsize=(12, 2.5))
                     plt.xlabel("Thresholds")
                     plt.ylabel("Number of splice junctions")
 

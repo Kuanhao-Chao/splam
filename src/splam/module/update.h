@@ -1,3 +1,9 @@
+/*  update.h -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #ifndef _UPDATE_H_
 #define _UPDATE_H_
 #include <gclib/GStr.h>

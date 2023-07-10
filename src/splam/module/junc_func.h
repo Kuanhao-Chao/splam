@@ -1,3 +1,9 @@
+/*  junc_func.h -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #ifndef _JUNC_FUNC_H
 #define _JUNC_FUNC_H
 

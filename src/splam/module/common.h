@@ -1,3 +1,9 @@
+/*  common.h -- 
+
+    Copyright (C) 2023 Kuan-Hao Chao
+
+    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+
 #ifndef _COMMON_H_
 #define _COMMON_H_
 
@@ -29,12 +35,8 @@ extern GStr infname_NH_tag;
 extern GStr out_dir;
 
 extern bool verbose;
-extern int aln_num_thr;
 extern float threshold;
-
 extern GSamRecord* brec;
-
-
 
 /*********************
  * File name

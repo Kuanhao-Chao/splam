@@ -76,6 +76,8 @@ def main(db):
 
     mkdir = lambda p : os.makedirs(os.path.dirname(p), exist_ok=True)
 
+    POS_NUM = 2000
+    NEG_NUM = 18000
     #####################################
     # Declaring parameters for probability & prediction array
     #####################################
@@ -88,8 +90,19 @@ def main(db):
     noN_neg_df = pd.read_csv(f'../data/aggregate/avg_data.noN.{db}.csv')
     noN_neg_df['label'] = 0
     
+    noN_pos_df = noN_pos_df.sample(n=POS_NUM, random_state=1)
+    noN_neg_df = noN_neg_df.sample(n=NEG_NUM, random_state=1)
+
     noN_merge_df = pd.concat([noN_pos_df, noN_neg_df], axis=0)
 
+
+    print("noN_pos_df: ", len(noN_pos_df))
+    print("noN_neg_df: ", len(noN_neg_df))
+    print("noN_merge_df: ", len(noN_merge_df))
+
+
+    
+    
     ### N ###
     # positive
     N_pos_df = pd.read_csv(f'../../src_pos_test/output/aggregate/avg_data.N.{db}.csv')
@@ -98,6 +111,9 @@ def main(db):
     N_neg_df = pd.read_csv(f'../data/aggregate/avg_data.N.{db}.csv')
     N_neg_df['label'] = 0
     
+    N_pos_df = N_pos_df.sample(n=POS_NUM, random_state=1)
+    N_neg_df = N_neg_df.sample(n=NEG_NUM, random_state=1)
+
     N_merge_df = pd.concat([N_pos_df, N_neg_df], axis=0)
     
     # load labels and predictions from dataframe
@@ -153,22 +169,11 @@ def main(db):
     # plt.legend([splam_plt, spliceainoN_plt, spliceaiN_plt], [splam_label, spliceainoN_label, spliceaiN_label], fontsize=8)
     path = f'../figures/pr/{db}_junc_pr_min_ratio_2000-10000.png'
     mkdir(path)
-    plt.savefig(path, bbox_inches='tight', dpi=300)
-    plt.close()
-
-    # ###################################
-    # # PR of junction (avg)
-    # ###################################
-    # fig, ax = plt.subplots()
-    # plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "avg")
-    # plot_pr_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI", "sklearn", "avg")
-    # plot_pr_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI-10k-Ns", "sklearn", "avg")
-
-    # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
-    # ax.plot([1, 0], [0, 1], transform=ax.transAxes, linestyle='dashed')
-    # plt.savefig("./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/junction/junc_pr_avg.png", bbox_inches='tight', dpi=300)
+    # plt.savefig(path, bbox_inches='tight', dpi=300)
     # plt.close()
-    
+    plt.show()
+
+
 
     ###################################
     # ROC of junction (min)
@@ -192,57 +197,13 @@ def main(db):
     # plt.legend([splam_plt, spliceainoN_plt, spliceaiN_plt], [splam_label, spliceainoN_label, spliceaiN_label], fontsize=8)
     path = f'../figures/roc/{db}_junc_roc_min_ratio_2000-10000.png'
     mkdir(path)
-    plt.savefig(path, bbox_inches='tight', dpi=300)
-    plt.close()
+    
+    plt.show()
 
-    # ################################### 
-    # # ROC of junction (avg)
-    # ###################################
-    # fig, ax = plt.subplots()
-    # plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "avg")
-    # plot_roc_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI", "sklearn", "avg")
-    # plot_roc_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI-10k-Ns", "sklearn", "avg")
 
-    # ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
-    # ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='dashed')
-    # plt.savefig("./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/junction/junc_roc_avg.png", bbox_inches='tight', dpi=300)
+    
+    # plt.savefig(path, bbox_inches='tight', dpi=300)
     # plt.close()
-
-
-    # ###################################
-    # # PR / ROC of donor
-    # ###################################
-    # plot_pr_curve(spliceai_noN_d_label, spliceai_noN_d_pred, "spliceai_donor", "self")
-    # plot_pr_curve(spliceai_N_d_label, spliceai_N_d_pred, "spliceai_N_donor", "self")
-    # plot_pr_curve(splam_d_label, splam_d_pred, "splam_donor", "self")
-    # # plt.show()
-    # plt.savefig("./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/donor/donor_pr.png")
-    # plt.close()
-
-    # plot_roc_curve(spliceai_noN_d_label, spliceai_noN_d_pred, "spliceai_donor", "self")
-    # plot_roc_curve(spliceai_N_d_label, spliceai_N_d_pred, "spliceai_N_donor", "self")
-    # plot_roc_curve(splam_d_label, splam_d_pred, "splam_donor", "self")
-    # # plt.show()
-    # plt.savefig("./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/donor/donor_roc.png")
-    # plt.close()
-
-    # ###################################
-    # # PR / ROC of acceptor
-    # ###################################
-    # plot_pr_curve(spliceai_noN_a_label_prob, spliceai_noN_a_pred, "spliceai_acceptor", "self")
-    # plot_pr_curve(spliceai_N_a_label_prob, spliceai_N_a_pred, "spliceai_N_acceptor", "self")
-    # plot_pr_curve(splam_a_label, splam_a_pred, "splam_acceptor", "self")
-    # # plt.show()
-    # plt.savefig("./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/acceptor/acceptor_pr.png")
-    # plt.close()
-
-    # plot_roc_curve(spliceai_noN_a_label_prob, spliceai_noN_a_pred, "spliceai_acceptor", "self")
-    # plot_roc_curve(spliceai_N_a_label_prob, spliceai_N_a_pred, "spliceai_N_acceptor", "self")
-    # plot_roc_curve(splam_a_label, splam_a_pred, "splam_acceptor", "self")
-    # # plt.show()
-    # plt.savefig("./IMG/"+SPLAM_VERSION+"/"+SPLICEAI_VERSION+"/acceptor/acceptor_roc.png")
-    # plt.close()
-
 
 if __name__ == "__main__":
 

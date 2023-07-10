@@ -24,7 +24,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
 FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.  */
 
-#include <config.h>
+#include "config.h"
 
 #include <stdbool.h>
 #include <stdlib.h>
@@ -40,15 +40,15 @@ DEALINGS IN THE SOFTWARE.  */
 #include <assert.h>
 #include <pthread.h>
 #include <inttypes.h>
-#include "htslib/ksort.h"
-#include "htslib/hts_os.h"
-#include "htslib/khash.h"
-#include "htslib/klist.h"
-#include "htslib/kstring.h"
-#include "htslib/sam.h"
-#include "htslib/hts_endian.h"
-#include "htslib/cram.h"
-#include "htslib/thread_pool.h"
+#include "htslib/htslib/ksort.h"
+#include "htslib/htslib/hts_os.h"
+#include "htslib/htslib/khash.h"
+#include "htslib/htslib/klist.h"
+#include "htslib/htslib/kstring.h"
+#include "htslib/htslib/sam.h"
+#include "htslib/htslib/hts_endian.h"
+#include "htslib/htslib/cram.h"
+#include "htslib/htslib/thread_pool.h"
 #include "sam_opts.h"
 #include "samtools.h"
 #include "bedidx.h"
