@@ -2,7 +2,7 @@ import os
 import argparse
 import sys
 
-from splam import prediction, config, parse, extract_gff, header
+from splam import prediction, config, parse, extract_gff, header, clean_gff
 import splam_extract
 import splam_clean
 
@@ -102,6 +102,10 @@ def parse_args(args):
         '-t', '--threshold', default="0.1", metavar='threshold',
         help='The cutoff threshold for identifying spurious splice junctions.'
     )
+    parser_clean.add_argument(
+        '-n', '--bad-intron-num', default="8", metavar='bad intron num',
+        help='The threshold for the number of spurious splice junctions in a transcript determines whether the transcript is considered bad. Default is 8.'
+    )
     parser_clean.add_argument('-P', '--paired',
                     action='store_true',
                     help='cleaning up the alignment file in "paired-end" mode.')  # on/off flag
@@ -112,7 +116,6 @@ def parse_args(args):
     )
 
     args_r = parser.parse_args()
-    # args_r = parser.parse_args()
     return args_r, parser, parser_score
 
 def main(argv=None):
@@ -210,12 +213,19 @@ def main(argv=None):
         junction_fasta = prediction.splam_prediction(junction_fasta, junction_score_bed, splam_model, batch_size, device)
 
     elif args.subcommand == "clean":
-        argv_clean = sys.argv
-        argv_clean.pop(0)
-        argv_clean[0] = 'splam-clean'
-        splam_clean.splam_clean(argv_clean)
-    else:
-        parser.print_help()
+        outdir = args.outdir
+        threshold = args.threshold
+        bad_intron_num = args.bad_intron_num
+
+        # Running in clean gff file mode
+        gff_db = outdir + "/annotation.db"
+        if os.path.exists(gff_db):
+            clean_gff.clean_gff(outdir, gff_db, threshold, bad_intron_num)
+        else:
+            argv_clean = sys.argv
+            argv_clean.pop(0)
+            argv_clean[0] = 'splam-clean'
+            splam_clean.splam_clean(argv_clean)
 
 if __name__ == "__main__":
     main()

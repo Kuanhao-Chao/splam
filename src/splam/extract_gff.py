@@ -23,7 +23,7 @@ def extract_introns(gff_file, gff_db, is_load_gff_db, bed_file):
         db = gffutils.create_db(gff_file, dbfn=gff_db, force=True, keep_order=True, merge_strategy='create_unique', sort_attribute_values=True, verbose=True)
     else:
         # Load the GFF database
-        db = gffutils.FeatureDB(gff_file, keep_order=True)
+        db = gffutils.FeatureDB(gff_db, keep_order=True)
 
     genes = db.features_of_type("gene")
 
