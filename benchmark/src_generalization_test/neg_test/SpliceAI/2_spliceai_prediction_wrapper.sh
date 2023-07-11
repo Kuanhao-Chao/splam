@@ -1,4 +1,4 @@
-target="GRCm39"
+target=$1
 
 # for target in "GRCm39" "Mmul_10" "NHGRI_mPanTro3" "TAIR10"
 # do 

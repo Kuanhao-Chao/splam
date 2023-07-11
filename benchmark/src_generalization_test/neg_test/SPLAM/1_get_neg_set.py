@@ -7,7 +7,7 @@ def run(input_filename):
     
     # define output folder
     output_folder = './1_output/'
-    input_folder = '../../SPLAM_python/extraction/primates/'
+    input_folder = '../data/'
     db = input_filename.split('.')[0]
     input_filename = input_folder + input_filename
     db_filename = output_folder + 'databases/' + db + '.db'
@@ -42,23 +42,6 @@ def create_database(input_filename, db_filename):
 def collect_genes(db, output_filename):
     print('Parsing file...')
     print(f'Feature types: {list(db.featuretypes())}')
-
-    # PRINT DEBUGGING
-    # limit = 1000
-    # for i, feature in enumerate(db.features_of_type('gene')):
-    #     if i > limit:
-    #         break
-    #     if feature['gene_biotype'] != ['protein_coding']:
-    #         print('.'*120)
-    #         continue
-    #     print(feature)
-    #     try:
-    #         print(db.bed12(feature))
-    #     except ValueError as e: # end of last exon does not match end of feature
-    #         print('Exception: ', str(e))
-    #         line = [feature.seqid, feature.start-1, feature.end, feature.id, feature.score, feature.strand]
-    #         print('\t'.join(map(str, line)))
-    #     print('-'*120)
 
     with open(output_filename, 'w') as bed_file:
         i = 0

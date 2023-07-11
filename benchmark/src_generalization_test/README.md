@@ -1,15 +1,13 @@
 
 # Generalization Tests:
 
-## How to run:
-
 - all outputs from every step of the data processing will be saved in the corresponding folder of the step `{#}_output/`
 - `{name}` refers to the name of the gene database
 
-### Positive Dataset:
+## Positive Dataset:
 
 
-### Negative Dataset:
+## Negative Dataset:
 
 1. Generate and pre-process the data:
     
@@ -81,7 +79,7 @@
         - `{name}_seq_N.fa`
 
         Outputs:
-        *There are 5 model output folders, each containing a folder with the database name*
+        *There are 5 model output folders, each containing 4 folders with the database names*
         - `spliceai_all_seq.name.noN.{name}.tsv`, `spliceai_all_seq.name.N.{name}.tsv` = names and identifiers for the scored splice junctions
         - `spliceai_all_seq.score.a.noN.{name}.tsv`, `spliceai_all_seq.score.a.N.{name}.tsv` = acceptor site scores for every nt in sequence
         - `spliceai_all_seq.score.d.noN.{name}.tsv`, `spliceai_all_seq.score.d.N.{name}.tsv` = donor site scores for every nt in sequence
@@ -89,7 +87,21 @@
 
     6. Post-process the Splam and SpliceAI scores into a single file for comparison:
 
+            
 
 
+## Plotting Result:
 
-### Plotting Result:
+### Within a set (positive or negative)
+
+1. Comparative score distributions on histogram
+
+2. Intron lengths vs. scores scatterplot with marginal distributions
+
+### Across both sets
+
+3. ROC/PR curves
+
+4. DT plots
+
+
