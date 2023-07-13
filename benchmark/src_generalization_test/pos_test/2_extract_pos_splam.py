@@ -177,7 +177,7 @@ def write_results(df, fw_donor, fw_acceptor, fw_donor_seq, fw_acceptor_seq, fw_d
         fw_acceptor_seq.write(f'>{chrom}:{acceptor_s+1}-{acceptor_e}({strand})\n{acceptor_seq}\n')
 
         # NOTE: the first position is 0-indexed, second position is 1-indeed for SPLAM compatibility
-        fw_input.write(f'>{chrom}:{start}-{end}({strand})\n{input_seq}\n')
+        fw_input.write(f'>{chrom};{start};{end};{strand};1\n{input_seq}\n')
 
 '''Show dimer frequencies'''
 def display_stats(df):
@@ -196,8 +196,8 @@ def main(db):
     print(f'Parsing for {db} dataset:')
 
     # inputs 
-    fasta_file = f'../data/{db}_genomic.fa'
     bed_file = f'./1_output/{db}_introns.bed'
+    fasta_file = f'../data/{db}_genomic.fa'
     assembly_file = f'../data/{db}_assembly_report.txt'
     
     # outputs
@@ -246,7 +246,7 @@ if __name__ == "__main__":
         os.chdir('/home/smao10/SPLAM/benchmark/src_generalization_test/pos_test/')
 
     datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    idxs = [0] #CHANGEME
+    idxs = [0,1,2,3] #CHANGEME
 
     for idx in idxs:
         main(datasets[idx])
