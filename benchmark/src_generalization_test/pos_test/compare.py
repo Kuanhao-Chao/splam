@@ -27,10 +27,16 @@ def main(db):
     print(len(old_only), len(new_only))
 
     os.makedirs('./1_output/compare/', exist_ok=True)
-    old_only.to_csv(f'./1_output/compare/{db}_old_only.bed', sep='\t', header=None)
-    new_only.to_csv(f'./1_output/compare/{db}_new_only.bed', sep='\t', header=None)
+    old_only.to_csv(f'./1_output/compare/{db}_old_only.bed', sep='\t', header=None, index=False)
+    new_only.to_csv(f'./1_output/compare/{db}_new_only.bed', sep='\t', header=None, index=False)
 
 if __name__ == '__main__':
     
     for db in ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']:
         main(db)
+
+
+        ######################################################################################################
+        # Verdict: gffutils method is less accurate (picks up less introns) than my previous method
+        # (verified using igv) 
+        ######################################################################################################

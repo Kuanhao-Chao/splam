@@ -21,7 +21,7 @@ def run(db_name):
     print(f'Successfully connected to {db_name} database')
     
     # write db file into bed format
-    get_introns_gffutils(db, output_filename)
+    get_introns(db, output_filename)
 
     print(f'Complete.\nDatabase file at {db_filename}\nBED file at {output_filename}')
 
@@ -38,27 +38,6 @@ def create_database(input_filename, db_filename):
     if not os.path.exists(db_filename):
         db = gffutils.create_db(fin, db_filename, merge_strategy='create_unique', force=True, \
             disable_infer_transcripts=True, disable_infer_genes=True, verbose=True)
-
-
-def get_introns_gffutils(db, output_filename):
-
-    # write introns to file
-    with open(output_filename, 'w') as bed_file:
-        
-        all_introns = db.create_introns()
-
-        count = 0
-        for intron in all_introns:
-            count += 1
-
-            line = [intron.seqid, intron.start-1, intron.end, intron.id, intron.score, intron.strand]
-            bed_file.write('\t'.join(map(str, line)))
-            bed_file.write('\n')
-            
-            if count % 100000 == 0:
-                print(f'Found {count} introns')
-        print(f'Total {count} introns')
-
 
 
 def get_introns(db, output_filename):
@@ -122,7 +101,7 @@ if __name__ == '__main__':
 
     # define filenames
     annotation_files = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    file_idxs = [1,2,3] #CHANGEME
+    file_idxs = [0,1,2,3] #CHANGEME
     
     for idx in file_idxs:       
         run(annotation_files[idx])

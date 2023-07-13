@@ -240,7 +240,7 @@ if __name__ == "__main__":
         os.chdir('/home/smao10/SPLAM/benchmark/src_generalization_test/pos_test/')
 
     datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    idxs = [0,1,2] #CHANGEME
+    idxs = [1,2,3] #CHANGEME
 
     for idx in idxs:
         main(datasets[idx])
