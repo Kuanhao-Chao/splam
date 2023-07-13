@@ -8,8 +8,7 @@ def run(input_filename):
     # define output folder
     output_folder = './1_output/'
     input_folder = '../data/'
-    db = input_filename.split('.')[0]
-    input_filename = input_folder + input_filename
+    input_filename = input_folder + db + '.gff'
     db_filename = output_folder + 'databases/' + db + '.db'
     output_filename = output_folder + db + '_genes.bed'
 
@@ -21,7 +20,7 @@ def run(input_filename):
     print('Successfully connected to database')
     
     # write db file into bed format
-    output_filename = collect_genes(db, output_filename)
+    output_filename = get_genes(db, output_filename)
     print(f'Complete.\nDatabase file at {db_filename}\nBED file at {output_filename}')
 
 
@@ -37,9 +36,9 @@ def create_database(input_filename, db_filename):
     if not os.path.exists(db_filename):
         db = gffutils.create_db(fin, db_filename, merge_strategy="create_unique", force=True, \
             disable_infer_transcripts=True, disable_infer_genes=True, verbose=True)
+        
 
-
-def collect_genes(db, output_filename):
+def get_genes(db, output_filename):
     print('Parsing file...')
     print(f'Feature types: {list(db.featuretypes())}')
 
@@ -64,7 +63,7 @@ def collect_genes(db, output_filename):
 if __name__ == '__main__':
 
     if os.getcwd() != 'SPLAM':
-        os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test/SPLAM')
+        os.chdir('/home/smao10/SPLAM/benchmark/src_generalization_test/pos_test/SPLAM')
 
     # define filenames
     annotation_files = ['GRCm39.gff', 'Mmul_10.gff', 'NHGRI_mPanTro3.gff', 'TAIR10.gff']

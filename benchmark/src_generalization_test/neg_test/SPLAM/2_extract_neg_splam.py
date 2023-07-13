@@ -1,5 +1,3 @@
-# IMPORTANT: starting from here, outputs will not be properly BED-indexed (0-indexed start, 1-indexed end), instead both start and end are 0-indexed
-
 import random
 import os
 from progress.bar import Bar
@@ -7,7 +5,7 @@ from pyfaidx import Fasta
 
 SEQ_LENGTH = "800"
 QUARTER_SEQ_LEN = int(SEQ_LENGTH) // 4
-EACH_JUNC_PER_LOCUS = 20 #15 for mammalian
+EACH_JUNC_PER_LOCUS = 20
 MIN_JUNC = 200
 MAX_JUNC = 20000
 OUTPUT_DIR = f'./2_output/'
@@ -36,7 +34,7 @@ def get_chrom_size(path):
 
 
 '''Obtain the negative sequence'''
-def task(chromosome, sequence, start, end, name, strand, chrom_size, 
+def extract(chromosome, sequence, start, end, name, strand, chrom_size, 
          fw_donor, fw_acceptor, fw_donor_seq, fw_acceptor_seq, fw_da, fw_input):
 # NOTE: start is 0-indexed, end is 1-indexed (BED format)
 
@@ -116,7 +114,7 @@ def task(chromosome, sequence, start, end, name, strand, chrom_size,
         ######################
         if has_first and has_second:
 
-            # generate the 200bp flanking sequence each side (decreased if fully overlaps)
+            # generate the 200nt flanking sequence each side (decreased if fully overlaps)
             flanking_size = QUARTER_SEQ_LEN
             center_pad = 0
             if second_idx < QUARTER_SEQ_LEN:
@@ -232,14 +230,12 @@ def main(db):
     with open(bed_file) as f:
 
         record_dict = Fasta(fasta_file, sequence_always_upper=True)
-        #print(record_dict)
         size_dict = get_chrom_size(assembly_file)
 
         lines = f.read().splitlines()
         pbar = Bar('Generating negative samples... ', max=len(lines))
         for line in lines:
             eles = line.split("\t")
-            #print(eles)
 
             chr = eles[0]
             start = int(eles[1])
@@ -248,11 +244,10 @@ def main(db):
             strand = eles[5]
             sequence = record_dict[chr]
             chrom_size = size_dict[chr]
-            #chromosome = sequence.long_name
 
             # Extract individual parts of the FASTA record
             #print(f'Searching in: {chromosome}:{start}-{end};{strand}')
-            task(chr, sequence, start, end, name, strand, chrom_size, 
+            extract(chr, sequence, start, end, name, strand, chrom_size, 
                  fw_donor, fw_acceptor, fw_donor_seq, fw_acceptor_seq, fw_da, fw_input)
 
             pbar.next()

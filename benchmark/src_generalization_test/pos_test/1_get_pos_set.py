@@ -4,29 +4,29 @@ import os
 import gffutils
 from progress.bar import Bar
 
-def run(input_filename):
+def run(db_name):
     
     # define output folder
     output_folder = './1_output/'
     input_folder = '../data/'
-    title = input_filename.split('.')[0]
-    input_filename = input_folder + input_filename
-    db_filename = output_folder + 'databases/' + title + '.db'
-    output_filename = output_folder + title + '_parsed.bed'
+    input_filename = input_folder + db_name + '.gff'
+    db_filename = output_folder + 'databases/' + db_name + '.db'
+    output_filename = output_folder + db_name + '_introns.bed'
 
     # create database
-    create_database(input_filename, db_filename, output_filename)
+    create_database(input_filename, db_filename)
 
     # connect to database
     db = gffutils.FeatureDB(db_filename)
-    print('Successfully connected to database')
+    print(f'Successfully connected to {db_name} database')
     
     # write db file into bed format
-    output_filename = parse_database(db, output_filename)
+    get_introns_gffutils(db, output_filename)
+
     print(f'Complete.\nDatabase file at {db_filename}\nBED file at {output_filename}')
 
 
-def create_database(input_filename, db_filename, output_filename):
+def create_database(input_filename, db_filename):
 
     # make output folder
     os.makedirs(os.path.dirname(db_filename), exist_ok=True)
@@ -36,27 +36,34 @@ def create_database(input_filename, db_filename, output_filename):
 
     # generate database if empty (~5 mins / 3.42 mil features), 
     if not os.path.exists(db_filename):
-        db = gffutils.create_db(fin, db_filename, merge_strategy="create_unique", force=True, \
+        db = gffutils.create_db(fin, db_filename, merge_strategy='create_unique', force=True, \
             disable_infer_transcripts=True, disable_infer_genes=True, verbose=True)
 
 
-def handle_duplicate_names(path):
-    # pre: path has '/path/to/file(optversion).ext' format
-    filename, extension = os.path.splitext(path)
-    count = 1
-    while os.path.exists(path):
-        path = filename + '(' + str(count) + ')' + extension 
-        count += 1
-    
-    return path
+def get_introns_gffutils(db, output_filename):
+
+    # write introns to file
+    with open(output_filename, 'w') as bed_file:
+        
+        all_introns = db.create_introns()
+
+        count = 0
+        for intron in all_introns:
+            count += 1
+
+            line = [intron.seqid, intron.start-1, intron.end, intron.id, intron.score, intron.strand]
+            bed_file.write('\t'.join(map(str, line)))
+            bed_file.write('\n')
+            
+            if count % 100000 == 0:
+                print(f'Found {count} introns')
+        print(f'Total {count} introns')
 
 
-def parse_database(db, output_filename):
+
+def get_introns(db, output_filename):
     print('Parsing file...')
     print(f'Feature types: {list(db.featuretypes())}')
-
-    # handling duplicate output files to avoid overwrite
-    output_filename = handle_duplicate_names(output_filename)
 
     with open(output_filename, 'w') as bed_file:        
         # obtain list of all exons, then obtain a list of all parents of these exons
@@ -106,14 +113,16 @@ def parse_database(db, output_filename):
             
             pbar.next()
         pbar.finish()
-        
-        return output_filename
 
 
 if __name__ == '__main__':
+
+    if os.getcwd() != 'pos_test':
+        os.chdir('/home/smao10/SPLAM/benchmark/src_generalization_test/pos_test/')
+
     # define filenames
-    annotation_files = ['Mmul_10.gff', 'NHGRI_mPanTro3.gff', 'GRCm39.gff', 'TAIR10.1.gff']
-    file_idxs = [3] #CHANGEME
+    annotation_files = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
+    file_idxs = [1,2,3] #CHANGEME
     
     for idx in file_idxs:       
         run(annotation_files[idx])
