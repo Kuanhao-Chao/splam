@@ -22,7 +22,7 @@ def get_chrom_size(path):
     return chrs
 
 '''Extract the negative SpliceAI-formatted sequences'''
-def task(df, seqs, chrs):
+def extract(df, seqs, chrs):
 
     # add the flanking sequence to either end of the transcript
     df['flank_start'] = df['start'] - 5200
@@ -56,12 +56,12 @@ def task(df, seqs, chrs):
         strand = row['strand']
 
         # check for any sequences out of bounds
-        if (start < 0):
+        if start < 0:
             left_pad = 0 - start
             df.at[idx, 'flank_start'] = 0 # modifies the df in-place
             start = 0 # modifies local variable
 
-        if (end > chrom_size):
+        if end > chrom_size:
             right_pad = end - chrom_size
             df.at[idx, 'flank_end'] = chrom_size # modifies the df in-place
             end = chrom_size # modifies local variable
@@ -103,7 +103,7 @@ def write_results(df, fw_coords, fw_noN_seq, fw_N_seq):
 
     # write coordinate BED filea
     bed_columns = ['seqid', 'flank_start', 'flank_end', 'name', 'score', 'strand']
-    df[bed_columns].to_csv(fw_coords, sep='\t', header=None, index=0) # select the columns to write now
+    df[bed_columns].to_csv(fw_coords, sep='\t', header=None, index=0) 
 
     for idx, row in df.iterrows():
         # write header to both FASTA files
@@ -142,7 +142,7 @@ def main(db):
     chrs = get_chrom_size(assembly_file)
 
     # extract the sequences
-    df = task(df, seqs, chrs)
+    df = extract(df, seqs, chrs)
 
     # write results to files
     write_results(df, fw_coords, fw_noN_seq, fw_N_seq)
