@@ -14,7 +14,8 @@ for library in ["polyA", "ribozero"]:
 
         rowname = list (after_df.index)
         print("rowname: ", rowname)
-        plt.figure(figsize=(6, 2.57))  # Adjust the width and height as desired
+        # plt.figure(figsize=(6, 2.57))  # Adjust the width and height as desired
+        plt.figure(figsize=(6, 6))  # Adjust the width and height as desired
 
         for sample_id in range(10):
             sample = rowname[sample_id]
@@ -62,8 +63,8 @@ for library in ["polyA", "ribozero"]:
 
         # plt.legend()
         # plt.legend(bbox_to_anchor=(1.04, 0.96), loc="upper left")
-        # plt.legend(bbox_to_anchor=(0.5, 1.25), loc="upper center", ncol=5)
-        plt.tight_layout()
+        plt.legend(bbox_to_anchor=(0.5, 1.), loc="upper center", ncol=3)
+        # plt.tight_layout()
         plt.savefig("intron_sensitivity_precision/"+library+ "_" + annotation + ".png", dpi=300)
         plt.close()
             # Displaying the plot

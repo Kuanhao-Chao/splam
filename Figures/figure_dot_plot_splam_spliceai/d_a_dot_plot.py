@@ -106,7 +106,7 @@ def main():
 
 
         for SPLAM_VERSION in ["SPLAM_v11"]:#, "SPLAM_v12"]:
-            for SPLICEAI_VERSION in ["1", "2", "3", "4", "5", "AVERAGE"]:
+            for SPLICEAI_VERSION in ["AVERAGE"]:#["1", "2", "3", "4", "5", "AVERAGE"]:
                 #####################################
                 # Creating directories for visualization.
                 #####################################
@@ -370,7 +370,7 @@ def main():
                         print("Threshold:  ", threshold, "; str(spliceai_TN__splam_TN_len): ", str(spliceai_TN__splam_TN_len))
 
 
-                        lgd = fig.legend([spliceai_TP__splam_FN, spliceai_FN__splam_TP, spliceai_TN__splam_FP, spliceai_FP__splam_TN, spliceai_FN__splam_FN, spliceai_FP__splam_FP], ["SpliceAI_TP & splam_FN ("+str(spliceai_TP__splam_FN_len)+")", "SpliceAI_FN & splam_TP ("+str(spliceai_FN__splam_TP_len)+")", "SpliceAI_TN & splam_FP ("+str(spliceai_TN__splam_FP_len)+")", "SpliceAI_FP & splam_TN ("+str(spliceai_FP__splam_TN_len)+")", "SpliceAI_FN & splam_FN ("+str(spliceai_FN__splam_FN_len)+")", "SpliceAI_FP & splam_FP ("+str(spliceai_FP__splam_FP_len)+")"], loc='lower right', bbox_to_anchor=(0.9, 0.27), ncol=3)
+                        lgd = fig.legend([spliceai_TP__splam_FN, spliceai_FN__splam_TP, spliceai_TN__splam_FP, spliceai_FP__splam_TN, spliceai_FN__splam_FN, spliceai_FP__splam_FP], ["SpliceAI_TP & Splam_FN ("+str(spliceai_TP__splam_FN_len)+")", "SpliceAI_FN & Splam_TP ("+str(spliceai_FN__splam_TP_len)+")", "SpliceAI_TN & Splam_FP ("+str(spliceai_TN__splam_FP_len)+")", "SpliceAI_FP & Splam_TN ("+str(spliceai_FP__splam_TN_len)+")", "SpliceAI_FN & Splam_FN ("+str(spliceai_FN__splam_FN_len)+")", "SpliceAI_FP & Splam_FP ("+str(spliceai_FP__splam_FP_len)+")"], loc='lower right', bbox_to_anchor=(0.9, 0.27), ncol=3)
 
 
                         # lgd = ax.legend([spliceai_TP__splam_TP, spliceai_TP__splam_FN, spliceai_FN__splam_TP], ["spliceai_TP__splam_TP ("+str(spliceai_TP__splam_TP_len)+")", "spliceai_TP__splam_FN ("+str(spliceai_TP__splam_FN_len)+")", "spliceai_FN__splam_TP ("+str(spliceai_FN__splam_TP_len)+")"], loc='center left', bbox_to_anchor=(1, 0.5))

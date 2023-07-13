@@ -158,6 +158,7 @@ def main(argv=None):
         if file_format == "GFF" or file_format == "GTF" or file_format == "gff" or file_format == "gtf":
             outdir = args.outdir
             junction_bed = os.path.join(outdir, "junction.bed")
+            trans_intron_num_txt = os.path.join(outdir, "intron_num.txt")
             gff_db = args.database
             is_load_gff_db = False
 
@@ -168,7 +169,7 @@ def main(argv=None):
             
             if not os.path.exists(outdir):
                 os.makedirs(outdir, exist_ok=True)
-            extract_gff.extract_introns(input, gff_db, is_load_gff_db, junction_bed)
+            extract_gff.extract_introns(input, gff_db, is_load_gff_db, junction_bed, trans_intron_num_txt)
         
         elif file_format == "BAM" or file_format == "bam":
             argv_extract = sys.argv

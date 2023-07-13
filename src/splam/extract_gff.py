@@ -1,3 +1,4 @@
+import json
 import gffutils
 
 def write_introns(fw, intron_dict, junc_count):
@@ -13,7 +14,7 @@ def write_introns(fw, intron_dict, junc_count):
     return junc_count
 
 
-def extract_introns(gff_file, gff_db, is_load_gff_db, bed_file):
+def extract_introns(gff_file, gff_db, is_load_gff_db, bed_file, trans_intron_num_txt):
     print("gff_file: ", gff_file)
     print("gff_db: ", gff_db)
     print("bed_file: ", bed_file)
@@ -28,6 +29,7 @@ def extract_introns(gff_file, gff_db, is_load_gff_db, bed_file):
     genes = db.features_of_type("gene")
 
     intron_dict = {}
+    trans_2_intron_num = {}
 
     junc_count = 0 
     with open(bed_file, 'w') as fw:
@@ -63,12 +65,14 @@ def extract_introns(gff_file, gff_db, is_load_gff_db, bed_file):
                 trans_id = child.id
                 trans_s = child.start
                 trans_e = child.end
+                trans_2_intron_num[trans_id] = 0
 
                 exons = db.children(child, featuretype='exon', order_by='start', level=1)
                 prev_exon = ""
-                for exon in exons:    
+                for exon in exons:
                     if (prev_exon != ""):
                         key = f'{exon[0]}\t{str(prev_exon.end-1)}\t{str(exon.start)}\t{exon.strand}'
+                        trans_2_intron_num[trans_id] += 1
                         if key in intron_dict.keys():
                             intron_dict[key]["count"] += 1
                             intron_dict[key]["trans"].add(trans_id)
@@ -81,3 +85,5 @@ def extract_introns(gff_file, gff_db, is_load_gff_db, bed_file):
         # Write out all introns
         junc_count = write_introns(fw, intron_dict, junc_count)
         intron_dict = {}
+    
+    json.dump(trans_2_intron_num, open(trans_intron_num_txt,'w'))

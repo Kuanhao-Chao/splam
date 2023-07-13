@@ -116,7 +116,7 @@ def main():
 
         # plot donor
         TARGET = "Donor"
-        sns.kdeplot(splam_donors_sum, shade=True, clip = (0.0, 1.0), alpha=0.5, label="splam", color=color_splam)
+        sns.kdeplot(splam_donors_sum, shade=True, clip = (0.0, 1.0), alpha=0.5, label="Splam", color=color_splam)
         sns.kdeplot(spliceai_donors_sum, shade=True, clip = (0.0, 1.0), alpha=0.5, label="SpliceAI", color=color_spliceai)
         plt.legend(loc="upper center")
         plt.xlabel('Scores')
@@ -132,7 +132,7 @@ def main():
 
         # plot acceptor
         TARGET = "Acceptor"
-        sns.kdeplot(splam_acceptors_sum, shade=True, clip = (0.0, 1.0), alpha=0.5, label="splam", color=color_splam)
+        sns.kdeplot(splam_acceptors_sum, shade=True, clip = (0.0, 1.0), alpha=0.5, label="Splam", color=color_splam)
         sns.kdeplot(spliceai_acceptors_sum, shade=True, clip = (0.0, 1.0), alpha=0.5, label="SpliceAI", color=color_spliceai)
         plt.legend(loc="upper center")
         plt.xlabel('Scores')

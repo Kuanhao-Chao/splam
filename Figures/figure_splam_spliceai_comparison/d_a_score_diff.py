@@ -29,7 +29,7 @@ def main():
     #####################################
 
     MANE_OR_ALTS = "ALTS"
-    for SPLICEAI_VERSION in ["1", "2", "3", "4", "5", "AVERAGE"]:
+    for SPLICEAI_VERSION in ["AVERAGE"]:#["1", "2", "3", "4", "5", "AVERAGE"]:
 
         with open("../../src_tools_evaluation/spliceai_result_"+SPLICEAI_VERSION+"/spliceai.da.N.merged.BOTH.pkl", "rb") as fr:
             spliceai_N_d_label = pickle.load(fr)
@@ -113,9 +113,9 @@ def main():
                         sns.kdeplot(score_noN_diff, shade=True, clip = (0.15, 1.0), alpha=0.25, color="#ff7f0e")#, cut = 0.15)
 
                     if type == "nofilter":
-                        sns.kdeplot(splam_score_diff, shade=True, clip = (-1.0, 1.0), alpha=0.25, label="SPLAM", color="#2ca02c")
+                        sns.kdeplot(splam_score_diff, shade=True, clip = (-1.0, 1.0), alpha=0.25, label="Splam", color="#2ca02c")
                     elif type == "filter":
-                        sns.kdeplot(splam_score_diff, shade=True, clip = (-1.0, -0.15), alpha=0.25, label="SPLAM", color="#2ca02c")#, cut = -0.15)
+                        sns.kdeplot(splam_score_diff, shade=True, clip = (-1.0, -0.15), alpha=0.25, label="Splam", color="#2ca02c")#, cut = -0.15)
                         sns.kdeplot(splam_score_diff, shade=True, clip = (0.15, 1.0), alpha=0.25, color="#2ca02c")#, cut = 0.15)
 
                     # if type == "nofilter":
