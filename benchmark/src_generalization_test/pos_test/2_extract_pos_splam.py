@@ -42,7 +42,7 @@ def extract(df, seqs, chrs):
 
         # filter out erroneous introns (can't have donor and acceptor sites overlap)
         if splice_junc_len < 4:
-            print(f'Too short intron at {chrom}:{start}-{end}({strand}). Skipping.')
+            print(f'Impossibly short intron at {chrom}:{start}-{end}({strand}). Skipping.')
             df.drop(idx, axis=0, inplace=True)
             continue
 
@@ -64,11 +64,9 @@ def extract(df, seqs, chrs):
         if first_s < 0:
             left_pad = 0 - first_s
             first_s = 0
-            print(f'left pad {left_pad}')
         if second_e > chrom_size:
             right_pad = second_e - chrom_size
             second_e = chrom_size
-            print(f'right pad {right_pad}')
 
         # sanity checks
         try: 
@@ -87,6 +85,13 @@ def extract(df, seqs, chrs):
             df.at[idx, 'acceptor_dimer'] = str(seq[start:start+2].reverse.complement)
         else: 
             print('No strand information. Skipping...')
+            df.drop(idx, axis=0, inplace=True)
+            continue
+        try:
+            assert('N' not in df.at[idx, 'donor_dimer'])
+            assert('N' not in df.at[idx, 'acceptor_dimer'])
+        except: 
+            print(f'Dimer contains N at {chrom}:{start}-{end}({strand}). Skipping.')
             df.drop(idx, axis=0, inplace=True)
             continue
         
@@ -129,7 +134,8 @@ def extract(df, seqs, chrs):
             assert(donor_seq[200:202] == df.at[idx, 'donor_dimer'])
             assert(acceptor_seq[198:200] == df.at[idx, 'acceptor_dimer'])
         except AssertionError as e:
-            print(start, end, strand, flanking_size, left_pad, right_pad, center_pad, donor_seq[200:202], acceptor_seq[198:200], df.at[idx, 'donor_dimer'], df.at[idx, 'acceptor_dimer'])
+            print('Debug values: ', start, end, strand, flanking_size, left_pad, right_pad, center_pad, 
+                  donor_seq[200:202], acceptor_seq[198:200], df.at[idx, 'donor_dimer'], df.at[idx, 'acceptor_dimer'])
             raise(e)
 
         pbar.next()
@@ -211,7 +217,7 @@ def main(db):
     seqs = Fasta(fasta_file, sequence_always_upper=True)
     chrs = get_chrom_size(assembly_file)
 
-    # remove any erroneous duplicates in the bed file
+    # remove any duplicate isoforms in the bed file
     len_before = len(df)
     df.drop_duplicates(subset=['seqid', 'start', 'end', 'strand'], inplace=True)
     print(f'{len_before} introns before\n{len(df)} introns after\n{len_before-len(df)} duplicate introns removed')
@@ -240,7 +246,7 @@ if __name__ == "__main__":
         os.chdir('/home/smao10/SPLAM/benchmark/src_generalization_test/pos_test/')
 
     datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
-    idxs = [1,2,3] #CHANGEME
+    idxs = [0] #CHANGEME
 
     for idx in idxs:
         main(datasets[idx])
