@@ -409,7 +409,7 @@ def main():
                 fig, ax = plt.subplots()
                 spliceainoN_plt, spliceainoN_label = plot_pr_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred,spliceai_noN_a_pred, "SpliceAI", "sklearn", "min", color="#ff7f0e")
                 spliceaiN_plt, spliceaiN_label = plot_pr_curve_J(spliceai_N_d_label, spliceai_N_d_pred,spliceai_N_a_pred, "SpliceAI-10k-Ns", "sklearn", "min", color="#1f77b4")
-                splam_plt, splam_label = plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "min", color="#2ca02c")
+                splam_plt, splam_label = plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "Splam", "sklearn", "min", color="#2ca02c")
 
                 ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
                 ax.plot([1, 0], [0, 1], transform=ax.transAxes, linestyle='dashed', color="#d62728")
@@ -434,7 +434,7 @@ def main():
                 # # # PR of junction (avg)
                 # # ###################################
                 # fig, ax = plt.subplots()
-                # plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "avg")
+                # plot_pr_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "Splam", "sklearn", "avg")
                 # plot_pr_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI", "sklearn", "avg")
                 # plot_pr_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI-10k-Ns", "sklearn", "avg")
 
@@ -450,7 +450,7 @@ def main():
                 fig, ax = plt.subplots()
                 spliceainoN_plt, spliceainoN_label = plot_roc_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI", "sklearn", "min", color="#ff7f0e")
                 spliceaiN_plt, spliceaiN_label = plot_roc_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI-10k-Ns", "sklearn", "min", color="#1f77b4")
-                splam_plt, splam_label = plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "min", color="#2ca02c")
+                splam_plt, splam_label = plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "Splam", "sklearn", "min", color="#2ca02c")
 
                 ax.set_aspect(1.0/ax.get_data_ratio(), adjustable='box')
                 ax.plot([0, 1], [0, 1], transform=ax.transAxes, linestyle='dashed', color="#d62728")
@@ -471,7 +471,7 @@ def main():
                 # # ROC of junction (avg)
                 # ###################################
                 # fig, ax = plt.subplots()
-                # plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "SPLAM", "sklearn", "avg")
+                # plot_roc_curve_J(splam_d_label, splam_d_pred, splam_a_pred, "Splam", "sklearn", "avg")
                 # plot_roc_curve_J(spliceai_noN_d_label, spliceai_noN_d_pred, spliceai_noN_a_pred, "SpliceAI", "sklearn", "avg")
                 # plot_roc_curve_J(spliceai_N_d_label, spliceai_N_d_pred, spliceai_N_a_pred, "SpliceAI-10k-Ns", "sklearn", "avg")
 

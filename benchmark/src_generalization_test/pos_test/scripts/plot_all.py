@@ -118,7 +118,7 @@ def make_fig7(type):
     handles, labels = ax.get_legend_handles_labels()
     print("handles: ", handles)
     order = [1,0]
-    f.legend([handles[idx] for idx in order], ["splam", "SpliceAI"], loc='upper center', ncol=2, fontsize="15")
+    f.legend([handles[idx] for idx in order], ["Splam", "SpliceAI"], loc='upper center', ncol=2, fontsize="15")
 
     # f.subplots_adjust(top=0.9) # <-- Change the 0.02 to work for your plot.
 
