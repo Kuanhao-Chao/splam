@@ -35,10 +35,10 @@ def main(argv):
     ##################################################
     # CHANGEME: getting the path of the spliceai files
     ##################################################
-    path = f'./models/spliceai{spliceai_version}.h5'
     input_dir = f'./1_output/{database}'
     output_dir = f'./2_output/spliceai_result_{spliceai_version}/{database}'
 
+    path = f'./models/spliceai{spliceai_version}.h5'
     print(">> path\t\t: ", path)
     print(">> database\t: ", database)
     model = load_model(resource_filename('spliceai', path), compile=False)
