@@ -1,1 +1,1 @@
-# sangeranalyseR-documentation
+# Splam-documentation
