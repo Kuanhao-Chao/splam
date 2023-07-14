@@ -2,27 +2,21 @@
 # (1)sensitivity / (2)accuracy of Splam for (a)donor / (b)acceptor sites / (c)splice junctions  would be
 # X%, Y%, and Z% for chimpanzee, mouse, and Arabidopsis 
 
-import matplotlib.pyplot as plt
-import pickle
 import numpy as np
-import os
 import pandas as pd
 import itertools
-from util import *
-from sklearn.metrics import auc, accuracy_score, confusion_matrix, roc_auc_score, roc_curve, precision_recall_curve, PrecisionRecallDisplay
-from sklearn import svm
-threshold = 0.15
+threshold = 0.9
 
 ###### INPUT DATA #########
 def read_inputs(db):
     # positive
     noN_pos_df = pd.read_csv(f'../1_pos_test/data/aggregate/avg_data.noN.{db}.csv')
-    noN_pos_df['true_label'] = 1
+    noN_pos_df['true_label'] = True
     print(len(noN_pos_df))
 
     # negative
     noN_neg_df = pd.read_csv(f'../2_neg_test/data/aggregate/avg_data.noN.{db}.csv')
-    noN_neg_df['true_label'] = 0
+    noN_neg_df['true_label'] = False
     print(len(noN_neg_df))
 
     noN_pos_df = noN_pos_df.sample(n=10000, random_state=1091)
@@ -65,18 +59,26 @@ def calculate_metrics(df, site, model):
             
     # Apply threshold to scores
     predicted_labels = scores >= threshold
+    print(len(predicted_labels), len(true_labels))
 
-    # Calculate sensitivity (true positive rate)
+    # Get prediction vs. true
     true_positives = np.sum(np.logical_and(predicted_labels, true_labels))
-    total_positives = np.sum(true_labels)
-    sensitivity = true_positives / total_positives
+    true_negatives = np.sum(np.logical_and(~predicted_labels, ~true_labels))
+    false_positives = np.sum(np.logical_and(predicted_labels, ~true_labels))
+    false_negatives = np.sum(np.logical_and(~predicted_labels, true_labels))
+    print(true_positives, true_negatives, false_positives, false_negatives)
 
-    # Calculate accuracy
-    total_samples = len(true_labels)
-    correct_predictions = np.sum(predicted_labels == true_labels)
-    accuracy = correct_predictions / total_samples
+    # Calculate metrics
+    sensitivity = true_positives / (true_positives + false_negatives) # true positive rate
+    specificity = true_negatives / (true_negatives + false_positives) # true negative rate
+    precision = true_positives / (true_positives + false_positives) # positive predictive value
+    npv = true_negatives / (true_negatives + false_negatives) # negative predictive value
 
-    return sensitivity, accuracy
+    accuracy = (true_positives + true_negatives) / (true_positives + true_negatives + false_positives + false_negatives) # overall correctness
+
+    f1_score = 2 * (precision * sensitivity) / (precision + sensitivity) # harmonic mean of precision and accuracy
+
+    return sensitivity, specificity, precision, npv, accuracy, f1_score
 
 ###### RUNNER ######
 def run():
@@ -86,16 +88,16 @@ def run():
     models = ['splam', 'spliceai']
 
     with open(f'./result{threshold}.csv', 'w') as f:
-        f.write('Database,Site,Model,Sensitivity,Accuracy\n')
+        f.write('Database,Site,Model,Sensitivity,Specificity,Precision,NPV,Accuracy,F1_Score\n')
         for db in dbs:
             df = read_inputs(db)
             for site, model in itertools.product(sites, models):
                 print('-'*120)
                 print(f'Calculating for database: {db}, site: {site}, model: {model}')
-                sensitivity, accuracy = calculate_metrics(df, site, model)
-                print(f'\tSensitivity: {sensitivity}\n\tAccuracy: {accuracy}\n')
+                sensitivity, specificity, precision, npv, accuracy, f1_score = calculate_metrics(df, site, model)
+                print(f'\tSensitivity: {sensitivity}\n\tSpecificity: {specificity}\n\tPrecision: {precision}\n\tNPV: {npv}\n\tAccuracy: {accuracy}\n\tF1 Score: {f1_score}\n')
                 
-                f.write(f'{db},{site},{model},{sensitivity},{accuracy}\n')
+                f.write(f'{db},{site},{model},{sensitivity},{specificity},{precision},{npv},{accuracy},{f1_score}\n')
 
 
 if __name__ == '__main__':
