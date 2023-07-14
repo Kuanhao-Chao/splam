@@ -8,11 +8,6 @@ QUARTER_SEQ_LEN = int(SEQ_LENGTH) // 4
 EACH_JUNC_PER_LOCUS = 20
 MIN_JUNC = 200
 MAX_JUNC = 20000
-OUTPUT_DIR = f'./2_output/'
-
-'''Make the directory(ies) needed for the given path'''
-dir = lambda path : os.makedirs(os.path.dirname(path), exist_ok=True)
-
  
 '''Obtain chromosome size'''
 def get_chrom_size(path):
@@ -212,20 +207,21 @@ def main(db):
 
     # make the necessary dirs
     print(f'Parsing for {db} dataset')
-    dir(OUTPUT_DIR+db+'/')
 
     # inputs 
-    fasta_file = f'../../SPLAM_python/extraction/primates/{db}_genomic.fa'
     bed_file = f'./1_output/{db}_genes.bed'
-    assembly_file = f'../../SPLAM_python/extraction/primates/{db}_assembly_report.txt'
+    fasta_file = f'../data/{db}_genomic.fa'
+    assembly_file = f'../data/{db}_assembly_report.txt'
     
     # outputs
-    fw_donor = open(f'{OUTPUT_DIR}{db}/donor.bed', 'w')
-    fw_acceptor = open(f'{OUTPUT_DIR}{db}/acceptor.bed', 'w')
-    fw_donor_seq = open(f'{OUTPUT_DIR}{db}/donor_seq.fa', 'w')
-    fw_acceptor_seq = open(f'{OUTPUT_DIR}{db}/acceptor_seq.fa', 'w')
-    fw_da = open(f'{OUTPUT_DIR}{db}/d_a.bed', 'w')
-    fw_input = open(f'{OUTPUT_DIR}{db}/input_neg_random.fa', 'w')
+    output_dir = f'./2_output/{db}/'
+    os.makedirs(output_dir, exist_ok=True)
+    fw_donor = open(f'{output_dir}donor.bed', 'w')
+    fw_acceptor = open(f'{output_dir}acceptor.bed', 'w')
+    fw_donor_seq = open(f'{output_dir}donor_seq.fa', 'w')
+    fw_acceptor_seq = open(f'{output_dir}acceptor_seq.fa', 'w')
+    fw_da = open(f'{output_dir}d_a.bed', 'w')
+    fw_input = open(f'{output_dir}input_neg_random.fa', 'w')
 
     with open(bed_file) as f:
 
@@ -233,6 +229,7 @@ def main(db):
         size_dict = get_chrom_size(assembly_file)
 
         lines = f.read().splitlines()
+
         pbar = Bar('Generating negative samples... ', max=len(lines))
         for line in lines:
             eles = line.split("\t")
@@ -246,7 +243,6 @@ def main(db):
             chrom_size = size_dict[chr]
 
             # Extract individual parts of the FASTA record
-            #print(f'Searching in: {chromosome}:{start}-{end};{strand}')
             extract(chr, sequence, start, end, name, strand, chrom_size, 
                  fw_donor, fw_acceptor, fw_donor_seq, fw_acceptor_seq, fw_da, fw_input)
 
@@ -263,8 +259,8 @@ def main(db):
 
 if __name__ == "__main__":
 
-    if os.getcwd() != 'SPLAM':
-        os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test/SPLAM')
+    if os.getcwd() != 'src_neg_test':
+        os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test/')
 
     datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
     idxs = [1,2,3] #CHANGEME

@@ -3,24 +3,25 @@
 import os
 import gffutils
 
-def run(input_filename):
+def run(db_name):
     
     # define output folder
     output_folder = './1_output/'
     input_folder = '../data/'
-    input_filename = input_folder + db + '.gff'
-    db_filename = output_folder + 'databases/' + db + '.db'
-    output_filename = output_folder + db + '_genes.bed'
+    input_filename = input_folder + db_name + '.gff'
+    db_filename = output_folder + 'databases/' + db_name + '.db'
+    output_filename = output_folder + db_name + '_genes.bed'
 
     # create database
     create_database(input_filename, db_filename)
 
     # connect to database
     db = gffutils.FeatureDB(db_filename)
-    print('Successfully connected to database')
+    print(f'Successfully connected to {db_name} database')
     
     # write db file into bed format
-    output_filename = get_genes(db, output_filename)
+    get_genes(db, output_filename)
+    
     print(f'Complete.\nDatabase file at {db_filename}\nBED file at {output_filename}')
 
 
@@ -57,17 +58,16 @@ def get_genes(db, output_filename):
             bed_file.write('\n')
     
     print(f'Total count: {i} protein-coding genes')
-    return output_filename
 
 
 if __name__ == '__main__':
 
-    if os.getcwd() != 'SPLAM':
-        os.chdir('/home/smao10/SPLAM/benchmark/src_generalization_test/pos_test/SPLAM')
+    if os.getcwd() != 'neg_test':
+        os.chdir('/home/smao10/SPLAM/benchmark/src_generalization_test/neg_test/')
 
     # define filenames
-    annotation_files = ['GRCm39.gff', 'Mmul_10.gff', 'NHGRI_mPanTro3.gff', 'TAIR10.gff']
-    file_idxs = [0] #CHANGEME
+    annotation_files = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
+    file_idxs = [0,1,2,3] #CHANGEME
     
     for idx in file_idxs:       
         run(annotation_files[idx])

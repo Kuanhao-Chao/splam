@@ -76,7 +76,7 @@ def calculate_metrics(df, site, model):
 
     accuracy = (true_positives + true_negatives) / (true_positives + true_negatives + false_positives + false_negatives) # overall correctness
 
-    f1_score = 2 * (precision * sensitivity) / (precision + sensitivity) # harmonic mean of precision and accuracy
+    f1_score = 2 * (precision * sensitivity) / (precision + sensitivity) # harmonic mean of precision and recall
 
     return sensitivity, specificity, precision, npv, accuracy, f1_score
 

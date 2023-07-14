@@ -107,7 +107,6 @@ def write_results(df, fw_coords, fw_noN_seq, fw_N_seq):
 
     for idx, row in df.iterrows():
         # write header to both FASTA files
-        # header = f'>{row["seqid"]}:{row["start"]+1}-{row["end"]}({row["strand"]})\n'
         # NOTE: this is not FASTA formatted, but makes it more SpliceAI compatible (0-indexed start, 1-indexed end)
         header = f'{row["seqid"]};{row["start"]};{row["end"]};{row["strand"]}\n'
         fw_noN_seq.write(header)
@@ -125,15 +124,16 @@ def main(db):
     print(f'Parsing for {db} dataset:')
 
     # input files
-    bed_file = f'../SPLAM/2_output/{db}/d_a.bed'
-    fasta_file = f'../../SPLAM_python/extraction/primates/{db}_genomic.fa'
-    assembly_file = f'../../SPLAM_python/extraction/primates/{db}_assembly_report.txt'
+    bed_file = f'./2_output/{db}/d_a.bed'
+    fasta_file = f'../data/{db}_genomic.fa'
+    assembly_file = f'../data/{db}_assembly_report.txt'
     
     # output files
-    os.makedirs(f'./1_output/{db}/', exist_ok=True)
-    fw_coords = open(f'./1_output/{db}/{db}_coords.bed', 'w')
-    fw_noN_seq = open(f'./1_output/{db}/{db}_seq_noN.fa', 'w')
-    fw_N_seq = open(f'./1_output/{db}/{db}_seq_N.fa', 'w')
+    output_dir = f'./3_output/{db}/'
+    os.makedirs(output_dir, exist_ok=True)
+    fw_coords = open(f'{output_dir}coords.bed', 'w')
+    fw_noN_seq = open(f'{output_dir}seq_noN.fa', 'w')
+    fw_N_seq = open(f'{output_dir}seq_N.fa', 'w')
 
     # process inputs
     df = pd.read_csv(bed_file, delimiter='\t', header=None, usecols=range(6),
@@ -146,7 +146,7 @@ def main(db):
 
     # write results to files
     write_results(df, fw_coords, fw_noN_seq, fw_N_seq)
-    print(f'Result in ./1_output/{db}/')
+    print(f'Result in {output_dir}')
 
     fw_coords.close()
     fw_noN_seq.close()
@@ -154,8 +154,8 @@ def main(db):
 
 if __name__ == "__main__":
 
-    if os.getcwd() != 'SpliceAI':
-        os.chdir('/home/smao10/SPLAM/benchmark/src_neg_test/SpliceAI/')
+    if os.getcwd() != 'neg_test':
+        os.chdir('/home/smao10/SPLAM/benchmark/src_generalization_test/neg_test/')
 
     datasets = ['GRCm39', 'Mmul_10', 'NHGRI_mPanTro3', 'TAIR10']
     idxs = [0,1,2,3] #CHANGEME
