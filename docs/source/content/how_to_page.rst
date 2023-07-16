@@ -184,6 +184,8 @@ Q & A ...
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
+    Given an input of length 800bp, Splam outputs a Tensor with dimensions 3 * 800. The first channel represents the "acceptor scores", the second channel represents the "donor scores", and the third channel represents the "non-splice site scores". Each score is between 0 and 1, representing Splam's confidence in a given site being a splice site. A score closer to one indicates a higher level of confidence in its classification.
+
 |
 
 .. .. Q: What is canonical transcripts? 
