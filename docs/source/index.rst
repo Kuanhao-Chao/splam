@@ -29,7 +29,7 @@
         var container_block ;
         
         block_to_insert = document.createElement( 'div' );
-        block_to_insert.innerHTML = '<img alt="My Logo" style="width:80%;  margin:10px; padding-top:30px" class="logo sidebar_ccb align-center" src="./_images/JHU_ccb-dark.png"><img alt="My Logo" class="logo sidebar_wse align-center" style="width:80%;  margin:10px" src="./_images/JHU_wse-dark.png">' ;
+        block_to_insert.innerHTML = '<img alt="My Logo" style="margin-top:30px; width:80%;  margin:10px; padding-top:30px" class="logo sidebar_ccb align-center" src="./_images/JHU_ccb-dark.png"><img alt="My Logo" class="logo sidebar_wse align-center" style="width:80%;  margin:10px" src="./_images/JHU_wse-dark.png">' ;
         
         container_block = document.getElementsByClassName( 'sidebar-sticky' )[0];
         console.log("container_block: ", container_block);
@@ -40,7 +40,7 @@
 |
 
 
-splam's tutorial
+Splam's tutorial
 *************************
 
 .. _splam_logo:
@@ -85,7 +85,6 @@ splam is free, it's open source, it's a light weight deep learning model, and it
 Main features
 =============
 * **Biologically inspired training process**: splam was trained on combined donor and acceptor pairs, with a focus on a narrow window of 400 base pairs surrounding each splice site. This approach is inspired by the understanding that the splicing process predominantly relies on signals within this specific region.
-.. * **Visualization**: splam produces high-quality figures ready for your publication.
 * **Python + C++ integration**: We have taken care of all the engineer work for you! splam is easy to install and runs efficiently due to its underlying C++ implementation. You can install and run splam with just one simple command!
 * **Run splam in three steps**: With just three lines of code, you can obtain a new alignment file that is cleaned and sorted.
 * **Pytorch implementation**: splam is implemented and trained using the popular Pytorch framework.
@@ -121,6 +120,9 @@ splam deep residual convolutional neural network was trained using the PyTorch f
 
 |
 
+
+
+
 Table of content
 ==================
 
@@ -137,8 +139,7 @@ Table of content
    content/license
    content/contact
 
-
-
+|
 |
 |
 |
@@ -148,8 +149,3 @@ Table of content
    :alt: My Logo
    :class: logo, header-image
    :align: center
-
-
-.. raw:: html
-
-    <footer align="center" style="margin-top:-5px">&copy; Copyright 2023, Kuan-Hao Chao</footer> 

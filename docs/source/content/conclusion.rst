@@ -58,13 +58,9 @@ soley one single splice alignment situated on the opposite strand of the protein
 |
 |
 |
+|
 
 .. image:: ../image/jhu-logo-dark.png
    :alt: My Logo
    :class: logo, header-image
    :align: center
-
-
-.. raw:: html
-
-    <footer align="center" style="margin-top:-5px">&copy; Copyright 2023, Kuan-Hao Chao</footer> 

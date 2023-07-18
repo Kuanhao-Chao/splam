@@ -13,7 +13,20 @@
             document.getElementsByClassName('sidebar_ccb')[0].src = dark ? '../_images/JHU_ccb-white.png' : "../_images/JHU_ccb-dark.png";
             document.getElementsByClassName('sidebar_wse')[0].src = dark ? '../_images/JHU_wse-white.png' : "../_images/JHU_wse-dark.png";
 
-            console.log("document.getElementsByClassName('sidebar_wse')[0].src: ", document.getElementsByClassName('sidebar_wse')[0].src);
+
+
+            for (let i=0; i < document.getElementsByClassName('summary-title').length; i++) {
+                console.log("document.getElementsByClassName('sidebar_wse')[0].src: ", document.getElementsByClassName('summary-title')[i]);
+
+                if (dark) {
+                    document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-dark font-weight-bolder";
+                    document.getElementsByClassName('summary-content')[i].classList = "summary-content card-body bg-dark text-left docutils";
+                } else {
+                    document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-light font-weight-bolder";
+                    document.getElementsByClassName('summary-content')[i].classList = "summary-content card-body bg-light text-left docutils";
+                }
+            }
+
         })
         observer.observe(document.body, {attributes: true, attributeFilter: ['data-theme']});
         console.log(document.body);
@@ -43,11 +56,8 @@
 Q & A ...
 ==========
 
-+++++
-
 .. Q: What is splam?
 .. -------------------------------------------
-
 
 .. <div style="padding-left:20px">
     
@@ -106,6 +116,7 @@ Q & A ...
     #. **Input constraints:**
  
        * **splam**: It follows the design principle of using biologically realistic input constraints. It uses a window limited to 200 base pairs on each side of the donor and acceptor sites, totaling 800 base pairs. Furthermore, we pair each donor and acceptor
+
        .. figure::  ../image/splam_input.png
             :align:   center
             :scale:   40 %
@@ -215,13 +226,9 @@ Q & A ...
 |
 |
 |
+|
 
 .. image:: ../image/jhu-logo-dark.png
    :alt: My Logo
    :class: logo, header-image
    :align: center
-
-
-.. raw:: html
-
-    <footer align="center" style="margin-top:-5px">&copy; Copyright 2023, Kuan-Hao Chao</footer> 

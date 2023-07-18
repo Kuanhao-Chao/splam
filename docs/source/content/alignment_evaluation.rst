@@ -106,6 +106,7 @@ The first step is to prepare three files for splam analysis:
 |
 
 .. _alignment-extract-introns:
+
 Step 2: Extracting splice junctions in your alignment file
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
@@ -210,8 +211,3 @@ In :ref:`Figure<figure_EHMT1>`, the first three tracks display the coverage, spl
    :alt: My Logo
    :class: logo, header-image
    :align: center
-
-
-.. raw:: html
-
-    <footer align="center" style="margin-top:-5px">&copy; Copyright 2023, Kuan-Hao Chao</footer> 
