@@ -29,57 +29,57 @@ There are two main use case scenarios:
 
 
 ## <a name="documentation"></a>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading">#</a>
- The full user manual is available [here 📒](http://ccb.jhu.edu/splam/)
+📒 The full user manual is available [here](http://ccb.jhu.edu/splam/)
 
 <section id="table-of-content">
 <h3>Table of content<a class="headerlink" href="#table-of-content" title="Permalink to this heading">#</a></h3>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#system-requirements">System requirements</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#install-through-conda">Install through conda</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#install-through-pip">Install through pip</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#install-from-source">Install from source</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#now-you-are-ready-to-go">Now, you are ready to go !</a></li>
+<li class="toctree-l1"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/installation.html">Installation</a><ul>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/installation.html#system-requirements">System requirements</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/installation.html#install-through-conda">Install through conda</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/installation.html#install-through-pip">Install through pip</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/installation.html#install-from-source">Install from source</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/installation.html#now-you-are-ready-to-go">Now, you are ready to go !</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/quickstart.html">Quick Start Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/quickstart.html#super-quick-start-3-lines-of-code">Super-Quick Start (3 lines of code)</a></li>
+<li class="toctree-l1"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/quickstart.html">Quick Start Guide</a><ul>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/quickstart.html#super-quick-start-3-lines-of-code">Super-Quick Start (3 lines of code)</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html">Alignment file evaluation &amp; cleanup (<code class="code docutils literal notranslate"><span class="pre">BAM</span></code>)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#introduction">Introduction</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#workflow-overview">Workflow overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#step-1-preparing-your-input-files">Step 1: Preparing your input files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#step-2-extracting-splice-junctions-in-your-alignment-file">Step 2: Extracting splice junctions in your alignment file</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#step-3-scoring-extracted-splice-junctions">Step 3: Scoring extracted splice junctions</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#step-4-cleaning-up-your-alignment-file">Step 4: Cleaning up your alignment file</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#step-5-igv-visualization">Step 5: IGV visualization</a></li>
+<li class="toctree-l1"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html">Alignment file evaluation &amp; cleanup (<code class="code docutils literal notranslate"><span class="pre">BAM</span></code>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#introduction">Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#workflow-overview">Workflow overview</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#step-1-preparing-your-input-files">Step 1: Preparing your input files</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#step-2-extracting-splice-junctions-in-your-alignment-file">Step 2: Extracting splice junctions in your alignment file</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#step-3-scoring-extracted-splice-junctions">Step 3: Scoring extracted splice junctions</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#step-4-cleaning-up-your-alignment-file">Step 4: Cleaning up your alignment file</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#step-5-igv-visualization">Step 5: IGV visualization</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html">Annotation file / assembeled transcripts evaluation (<code class="code docutils literal notranslate"><span class="pre">GFF</span></code>)</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html#step-1-preparing-your-input-files">Step 1: Preparing your input files</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html#step-2-extracting-introns-in-your-annotation-file">Step 2: Extracting introns in your annotation file</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html#step-3-scoring-extracted-introns">Step 3: Scoring extracted introns</a></li>
+<li class="toctree-l1"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html">Annotation file / assembeled transcripts evaluation (<code class="code docutils literal notranslate"><span class="pre">GFF</span></code>)</a><ul>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html#step-1-preparing-your-input-files">Step 1: Preparing your input files</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html#step-2-extracting-introns-in-your-annotation-file">Step 2: Extracting introns in your annotation file</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html#step-3-scoring-extracted-introns">Step 3: Scoring extracted introns</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html">behind the scenes of splam</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#data-curation">Data curation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#model-architecture">Model architecture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#splam-training-testing">splam training &amp; testing</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#reference">Reference</a></li>
+<li class="toctree-l1"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/behind_scenes.html">behind the scenes of splam</a><ul>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#data-curation">Data curation</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#model-architecture">Model architecture</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#splam-training-testing">splam training &amp; testing</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#reference">Reference</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/how_to_page.html">Q &amp; A ...</a></li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/function_manual.html">User Manual</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/function_manual.html#splam">splam</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/function_manual.html#splam-extract">splam extract</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/function_manual.html#splam-score">splam score</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/function_manual.html#splam-clean">splam clean</a></li>
+<li class="toctree-l1"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/how_to_page.html">Q &amp; A ...</a></li>
+<li class="toctree-l1"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/function_manual.html">User Manual</a><ul>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/function_manual.html#splam">splam</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/function_manual.html#splam-extract">splam extract</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/function_manual.html#splam-score">splam score</a></li>
+<li class="toctree-l2"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/function_manual.html#splam-clean">splam clean</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/license.html">License</a></li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/contact.html">Contact</a></li>
+<li class="toctree-l1"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/license.html">License</a></li>
+<li class="toctree-l1"><a class="reference internal" target="_blank" href="http://ccb.jhu.edu/splam/content/contact.html">Contact</a></li>
 </ul>
 </div>
 <div class="line-block">
