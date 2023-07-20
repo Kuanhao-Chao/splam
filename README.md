@@ -28,11 +28,11 @@ There are two main use case scenarios:
 <br>
 
 
-## <a name="documentation"></a>Documentation
+## <a name="documentation"></a>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading">#</a>
  The full user manual is available [here 📒](http://ccb.jhu.edu/splam/)
 
 <section id="table-of-content">
-<h2>Table of content<a class="headerlink" href="#table-of-content" title="Permalink to this heading">#</a></h2>
+<h3>Table of content<a class="headerlink" href="#table-of-content" title="Permalink to this heading">#</a></h3>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html">Installation</a><ul>
@@ -83,18 +83,12 @@ There are two main use case scenarios:
 </ul>
 </div>
 <div class="line-block">
-<div class="line"><br /></div>
-<div class="line"><br /></div>
-<div class="line"><br /></div>
-<div class="line"><br /></div>
-<div class="line"><br /></div>
 </div>
-<img alt="My Logo" class="logo header-image align-center" src="_images/jhu-logo-dark.png" />
 </section>
 
 <br>
 
-## <a name="installation"></a>Installation
+## <a name="installation"></a>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a>
 
 You can install Splam with conda package manager. This is the easiest approach.
 ``` bash
@@ -118,7 +112,7 @@ $ python setup.py install
 
 <br>
 
-## <a name="quick_start"></a>Quick Start
+## <a name="quick_start"></a>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading">#</a>
 
 The simplest example uses just three lines of code!
 
@@ -138,5 +132,5 @@ $ splam clean -o tmp_out
 <br>
 
 
-## <a name="publication"></a>Publications
+## <a name="publication"></a>Publications<a class="headerlink" href="#publication" title="Permalink to this heading">#</a>
 TBC
