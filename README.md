@@ -119,14 +119,27 @@ The simplest example uses just three lines of code!
 Check this example on Google Colab [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
 
 
+### Running Splam to clean up alignment files
 ```
 $ cd test
 
-$ splam extract -P -o tmp_out SRR1352129_chr9_sub.bam
+$ splam extract -P SRR1352129_chr9_sub.bam -o tmp_out_alignment
 
-$ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out tmp_out/junction.bed
+$ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_alignment tmp_out_alignment/junction.bed
 
-$ splam clean -o tmp_out
+$ splam clean -o tmp_out_alignment
+```
+
+### Running Splam to evaluate annotation files / assembled transcripts
+
+```
+$ cd test
+
+$ splam extract refseq_40_GRCh38.p14_chr_fixed.gff -o tmp_out_annotation
+
+$ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_annotation tmp_out_annotation/junction.bed
+
+$ splam clean -o tmp_out_annotation
 ```
 
 <br>
