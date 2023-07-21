@@ -119,7 +119,7 @@ The simplest example uses just three lines of code!
 Check this example on Google Colab [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
 
 
-### Running Splam to clean up alignment files
+### Running Splam to clean up alignment files ('BAM')
 ```
 $ cd test
 
@@ -130,7 +130,7 @@ $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_alignment
 $ splam clean -o tmp_out_alignment
 ```
 
-### Running Splam to evaluate annotation files / assembled transcripts
+### Running Splam to evaluate annotation files / assembled transcripts ('GFF')
 
 ```
 $ cd test
