@@ -39,9 +39,9 @@
 
 |
 
-.. _annotation-detailed-section:
+.. _generalization-section:
 
-Annotation file / assembeled transcripts evaluation (:code:`GFF`)
+Splam generalizes on no-human species
 =========================================================================
 
 
@@ -74,74 +74,6 @@ You can run splam on **(1) annotation files** or **(2) assembled transcripts**. 
 
 Step 1: Preparing your input files
 +++++++++++++++++++++++++++++++++++
-
-The first step is to prepare three files for splam analysis:
-
-
-1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: MANE.GRCh38.v1.1.subset.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/MANE.GRCh38.v1.1.subset.gff>`_].  
-2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
-3. The splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
-
-|
-
-
-.. _extract-introns:
-
-Step 2: Extracting introns in your annotation file
-+++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-In this step, you take :ref:`an annotation file (1) <annotation-prepareintput>` and run
-
-.. code-block:: bash
-
-   splam extract MANE.GRCh38.v1.1.subset.gff
-
-splam iterates through the :code:`GFF` file, extracts all introns in transcripts, and writes their coordinates into a :code:`BED` file. By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :code:`BED` file consists of six columns: :code:`CHROM`, :code:`START`, :code:`END`, :code:`JUNC_NAME`, :code:`INTRON_NUM`, and :code:`STRAND`. Here are a few entries from the :code:`BED` file:
-
-* **Output**
-
-.. code-block:: text
-   :linenos:
-
-   chr9    4849549 4860125 JUNC00000007    3       +
-   chr9    5923308 5924658 JUNC00000008    6       -
-   chr9    5924844 5929044 JUNC00000009    8       -
-
-
-|
-
-Step 3: Scoring extracted introns
-+++++++++++++++++++++++++++++++++++
-
-
-In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need three essential files. Firstly, you should have the BED file that was generated in :ref:`Step 2 <extract-introns>`. Additionally, you will require two additional files: (1) :ref:`the reference genome (2) <annotation-prepareintput>`, which shares coordinates with the junction BED file, and (2) :ref:`the splam model (3) <annotation-prepareintput>`. Once you have these files in place, you can run the following command:
-
-.. code-block:: bash
-
-   splam score -G chr9_subset.fa -m splam_script.pt tmp_out/junction.bed
-
-
-By default, splam automatically detects your environment and runs in :code:`cuda` mode if CUDA is available. However, if your computer is running macOS, splam will check if :code:`mps` mode is available. If neither :code:`cuda` nor :code:`mps` are available, splam will run in :code:`cpu` mode. You can manually specify the mode using the :code:`-d / --device` argument.
-
-Additionally, you can adjust the batch size using the :code:`-b / --batch-size` argument. We recommend setting a small batch size (default is 10) when running splam in :code:`cpu` mode.
-
-
-After this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (p.s. they might be from unstranded transcripts assembled by StringTie).
-
-* **Output**
-
-.. code-block:: text
-   :linenos:
-   
-   chr9    4849549 4860125 JUNC00000007    3       +       0.7723698       0.5370769
-   chr9    5923308 5924658 JUNC00000008    6       -       0.9999831       0.9999958
-   chr9    5924844 5929044 JUNC00000009    8       -       0.9999883       0.9999949
-
-|
-
-Step 4: Evaluating isoforms by Splam scores
-++++++++++++++++++++++++++++++++++++++++++
-To summarize the quality of each isoform, users can run Splam to count how many spurious splice junctions are in each transcript. 
 
 
 |

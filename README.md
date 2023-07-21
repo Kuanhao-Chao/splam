@@ -4,7 +4,7 @@
 </p>
 
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![version](https://img.shields.io/badge/version-v.0.2.6-blue) [![GitHub Downloads](https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download)](https://github.com/Kuanhao-Chao/splam/releases) ![os](https://img.shields.io/badge/platform-macOS_/Linux_/Windows-green.svg) [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![version](https://img.shields.io/badge/version-v.1.0.0-blue) [![GitHub Downloads](https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download)](https://github.com/Kuanhao-Chao/splam/releases) ![os](https://img.shields.io/badge/platform-macOS_/Linux_/Windows-green.svg) [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
 
 <!-- <a href="https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> -->
 
@@ -29,7 +29,7 @@ There are two main use case scenarios:
 
 
 ## <a name="documentation"></a>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading">#</a>
-📒 The full user manual is available [here](http://ccb.jhu.edu/splam/)
+📒 The full user manual is available **[here](http://ccb.jhu.edu/splam/)**
 
 <section id="table-of-content">
 <h3>Table of content<a class="headerlink" href="#table-of-content" title="Permalink to this heading">#</a></h3>

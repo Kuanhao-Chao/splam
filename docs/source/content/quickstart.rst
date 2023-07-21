@@ -89,9 +89,11 @@ Annotation file evalutation (:code:`GFF`)
 
 For more detailed analysis steps, please check :
 
-* :ref:`alignment-detailed-section`
+.. seealso::
+    
+    * :ref:`alignment-detailed-section`
 
-* :ref:`annotation-detailed-section`
+    * :ref:`annotation-detailed-section`
 
 
 |

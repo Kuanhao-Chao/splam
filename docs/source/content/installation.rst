@@ -45,6 +45,8 @@ Installation
 System requirements
 -------------------
 
+.. admonition:: Software dependency
+
    * Python >= 3.6.0
    * pytorch >= 1.12.0
    * pybedtools >= 0.9.0
@@ -55,25 +57,12 @@ System requirements
 
 There are three ways that you can install splam:
 
-|
 
-Install through conda
--------------------------------
-
-Install splam through conda is the easiest way to go
-
-.. code-block:: bash
-   
-   $ conda install -c bioconda liftoff
-   
-   TBC
-
-|
 
 Install through pip
 -------------------------
 
-splam is on `PyPi 3.12 <https://pypi.org/project/splam/>`_ now. Check out all the release `here <https://pypi.org/manage/project/splam/releases/>`_.
+Splam is on `PyPi 3.12 <https://pypi.org/project/splam/>`_ now. Check out all the release `here <https://pypi.org/manage/project/splam/releases/>`_. Pip automatically resolves and installs any dependencies required by Splam.
 
 .. code-block:: bash
    
@@ -84,7 +73,8 @@ splam is on `PyPi 3.12 <https://pypi.org/project/splam/>`_ now. Check out all th
 Install from source
 -------------------------
 
-You can also install splam from source
+You can also install Splam from source. Check out the latest version on `GitHub <https://github.com/Kuanhao-Chao/splam>`_
+!
 
 .. code-block:: bash
 
@@ -93,6 +83,19 @@ You can also install splam from source
    $ cd splam/src/
 
    $ python setup.py install
+
+|
+
+Install through conda
+-------------------------------
+
+Install Splam through conda is the easiest way to go
+
+.. code-block:: bash
+   
+   $ conda install -c bioconda liftoff
+   
+   TBC
 
 |
 
