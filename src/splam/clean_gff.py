@@ -16,8 +16,10 @@ def clean_gff(outdir, gff_db, threshold, bad_intron_num):
     # reconstructing the data as a dictionary
     intron_2_num = json.loads(intron_2_num)
 
-    TOTAL_FILE = 50
     junc_score = outdir + "/junction_score.bed"
+    report = outdir + "/report.tsv"
+
+    ratio_threshold = 0.6
     with open(junc_score) as fr:
         lines = fr.read().splitlines()
         trans_dict = {}
@@ -40,29 +42,11 @@ def clean_gff(outdir, gff_db, threshold, bad_intron_num):
         transcript_num = 0
         ls = [0]*50
         trans_dir = outdir + "/trans/"
-        # fw_list = []  # Empty list to store file contents
         os.makedirs(trans_dir, exist_ok=True)
-
-
-
-        # for i in range(0, TOTAL_FILE):
-        #     file_name = f"{trans_dir}trans_{i}.txt"  # Assuming the files are named as file_1.txt, file_2.txt, and so on
-        #     try:
-        #         fw = open(file_name, 'w')
-        #         fw_list.append(fw)
-        #     except FileNotFoundError:
-        #         print(f"[ERROR] File {file_name} not found.")
-
         for tran, count in trans_dict.items():
 
 
             trans_ratio_dict[tran] = count / intron_2_num[tran]
-
-            # if count > (TOTAL_FILE-1):
-            #     count = (TOTAL_FILE-1)
-            # fw_list[count].write(f'{tran}\n')
-
-            # ls[count] += 1  
             transcript_num += 1
 
         # for id in range(len(ls)):
@@ -70,6 +54,11 @@ def clean_gff(outdir, gff_db, threshold, bad_intron_num):
         #     fw_list[id].close()
 
         # print("trans_ratio_dict: ", trans_ratio_dict)
+
+        fw_report = open(report, 'w')
+        for tran, ratio in trans_ratio_dict.items():
+            fw_report.write(f'{tran}\t{ratio}\t{trans_dict[tran]}\n')
+        fw_report.close()
         print("[Info] Total transcripts: ", transcript_num)
 
 
@@ -92,17 +81,14 @@ def clean_gff(outdir, gff_db, threshold, bad_intron_num):
 
         trans_removed = []
         for tran, ratio in trans_ratio_dict.items():
-            if ratio > 0.9 and intron_2_num[tran] >= 3:
+            if ratio > ratio_threshold and intron_2_num[tran] >= 3:
                 trans_removed.append(tran)
 
         print("trans_removed: ", len(trans_removed))
         print(f'[Info] Number of removed transcripts: {len(trans_removed)}\n')
 
-
         output_file = outdir + '/cleaned.gff'
         # Open the output file in write mode
-
-
         genes = db.features_of_type("gene")
 
         kept_transcript_count = 0
