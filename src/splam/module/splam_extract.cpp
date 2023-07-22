@@ -131,7 +131,7 @@ int STEP_COUNTER = 0;
  * j-extract parameters:
 ******************************/
 int g_max_splice = 100000;
-int g_bundle_gap = 100000;
+int g_bundle_gap = 1000;
 bool write_bam = true;
 bool g_paired_removal = false;
 

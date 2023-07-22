@@ -42,7 +42,7 @@
 
 .. _behind-the-scenes-splam:
 
-behind the scenes of splam
+Behind the scenes of Splam
 =================================================
 
 
@@ -53,15 +53,15 @@ Data curation
 
 Data plays a critically important role in deep learning. The model performance largely depends on the quality, quantity, and relevenace of the data used for training. 
 
-To understand how splam works, you first need to understand the how we generate data to train splam. For curating input splice sites, our approach differs from the state of the art tool, spliceAI, which is trained on splice sites labeled on canonical transcripts. Our approach focuses on a smaller region that encompasses the donor and acceptor sites. 
+To understand how Splam works, you first need to understand the how we generate data to train splam. For curating input splice sites, our approach differs from the state of the art tool, spliceAI, which is trained on splice sites labeled on canonical transcripts. Our approach focuses on a smaller region that encompasses the donor and acceptor sites. 
 
-Our approach involves extracting a 400bp sequence centered around the splice sites, shifting the focus from learning the splicing pattern at the transcript level to the splice site level. This strategy enables localized prediction of splicing events, mitigating biases associated with canonical transcripts and eliminating the need for larger window sizes encompassing the entire intron and 10,000 flanking sequences. In summary, each data point in our SPLAM model consists of a donor-acceptor pair with a 400bp window size for each, resulting in a total of 800bps.
+Our approach involves extracting a 400bp sequence centered around the splice sites, shifting the focus from learning the splicing pattern at the transcript level to the splice site level. This strategy enables localized prediction of splicing events, mitigating biases associated with canonical transcripts and eliminating the need for larger window sizes encompassing the entire intron and 10,000 flanking sequences. In summary, each data point in our Splam model consists of a donor-acceptor pair with a 400bp window size for each, resulting in a total of 800bps.
 
 
 Model input & output dimension
 --------------------------------
 
-The input to the model is 800bp one-hot encoded DNA sequences in the dimension of :code:`4 x 800`, and the output is the probability of every base pair if it is a donor site, acceptor site, or neither in the dimension of :code:`3 x 800`, shown in :ref:`Figure <splam_input>`. Three scores sum up to 1. For the development of splam, we use Pytorch version 1.13.0 framework.
+The input to the model is 800bp one-hot encoded DNA sequences in the dimension of :code:`4 x 800`, and the output is the probability of every base pair if it is a donor site, acceptor site, or neither in the dimension of :code:`3 x 800`, shown in :ref:`Figure <splam_input>`. Three scores sum up to 1. For the development of Splam, we use Pytorch version 1.13.0 framework.
 
 
 .. _splam_input:
@@ -87,7 +87,7 @@ Curating high-quality negative splice junctions is a challenging task due to inc
 
 To address this issue in training SPLAM, two novel approaches were adopted for generating challenging negative splice junctions. **(1)** The first approach involved selecting random GT-AG pairs on the opposite strand of protein-coding gene loci. Since overlapping genes are rare in eukaryotes, it is unlikely to have another transcribed gene on the opposite strand of a protein-coding gene. This resulted in 4,467,910 splice junctions referred to as **Negative Random** (red in :ref:`Figure <splam_data_curation>`).
 
-To further increase the difficulty of negative junctions, **(2)** only splice junctions with 1-alignment support on the opposite strand of protein-coding gene loci were chosen. These junctions are likely to be transcription noise or alignment artifacts and should be eliminated, making them more suitable for SPLAM training. This approach generated 2,486,305 splice junctions referred to as **Negative 1** (orange in :ref:`Figure <splam_data_curation>`). Accurately curating these challenging negative splice junctions is crucial for effective training of SPLAM.
+To further increase the difficulty of negative junctions, **(2)** only splice junctions with 1-alignment support on the opposite strand of protein-coding gene loci were chosen. These junctions are likely to be transcription noise or alignment artifacts and should be eliminated, making them more suitable for Splam training. This approach generated 2,486,305 splice junctions referred to as **Negative 1** (orange in :ref:`Figure <splam_data_curation>`). Accurately curating these challenging negative splice junctions is crucial for effective training of SPLAM.
 
 
 .. _splam_data_curation:
@@ -107,16 +107,16 @@ To further increase the difficulty of negative junctions, **(2)** only splice ju
 Model architecture
 +++++++++++++++++++++++++++++++++++
 
-splam utilized a deep dilated residual convolutional neural network (CNN) that incorporates grouped convolution layers within the residual units. 
+Splam utilized a deep dilated residual convolutional neural network (CNN) that incorporates grouped convolution layers within the residual units. 
 
 
 Residual unit
 ---------------
 
-splam architecture consists of 20 residual units, each containing two convolutional layers. The model uses a grouped convolution approach with a parameter called :code:`group` set to 4. The hyperparameters of splam include :code:`F` (number of filters), :code:`W` (window size), :code:`D` (dilation rate), and :code:`G` (groups), which are shown as (:code:`F`, :code:`W`, :code:`D`, :code:`G`) in :ref:`Figure a <spalm_model>`. The concept of grouped convolution, which allows for memory savings with minimal accuracy loss, is inspired by the ResNext model.
+Splam architecture consists of 20 residual units, each containing two convolutional layers. The model uses a grouped convolution approach with a parameter called :code:`group` set to 4. The hyperparameters of Splam include :code:`F` (number of filters), :code:`W` (window size), :code:`D` (dilation rate), and :code:`G` (groups), which are shown as (:code:`F`, :code:`W`, :code:`D`, :code:`G`) in :ref:`Figure a <spalm_model>`. The concept of grouped convolution, which allows for memory savings with minimal accuracy loss, is inspired by the ResNext model.
 
 
-.. For a convolutional layer, nucleotide in the sequence, it checks the region of :code:`F x (W-1)`, and therefore :code:`2F x (W-1)` neighboring positions for a residual unit. Furthermore, in a grouped convolution with :code:`G` groups, :code:`F/G` filters are applied to each :code:`F/G` of the input for a $G$× reduction in parameters used. In total, there are 651,715 parameters in splam. 
+.. For a convolutional layer, nucleotide in the sequence, it checks the region of :code:`F x (W-1)`, and therefore :code:`2F x (W-1)` neighboring positions for a residual unit. Furthermore, in a grouped convolution with :code:`G` groups, :code:`F/G` filters are applied to each :code:`F/G` of the input for a $G$× reduction in parameters used. In total, there are 651,715 parameters in Splam. 
 
 Each convolutional layer in the residual unit follows a batch normalization and a rectified linear unit (ReLU) :ref:`Figure b<spalm_model>`, and the input of the unit is residually connected to its output. He et al. :cite:p:`he2016deep` introduced residual units to address the issue of training accuracy degradation in deep learning. The inclusion of shortcut connections enables successful training of deeper models using simple stochastic gradient descent (SGD) with backpropagation, leading to improved accuracy as the depth increases.
 
@@ -124,7 +124,7 @@ Each convolutional layer in the residual unit follows a batch normalization and 
 Residual group
 ---------------
 
-A group of four residual units forms a bigger residual group, and 20 RUs are clustered into five residual groups. Residual groups are stacked such that the output of the i \ :sup:`th`\  residual group is connected to the i+1 \ :sup:`th`\  residual group. Furthermore, the output of each residual group undergoes a convolutional layer, with the parameters :code:`(64, 1, 1)`, and then being added to all the other outputs of residual groups (residual connections colored in red), which then is passed into the last convolutional layer in :code:`(3, 1, 1)` and a softmax layer. :code:`F` is set to :code:`64` for all convolutional layers, and for each residual group, :code:`W` is set to :code:`11`, :code:`11`, :code:`11`, :code:`21`, and :code:`21`, and $D$ is set to :code:`1`, :code:`5`, :code:`10`, :code:`15`, and :code:`20` in residual groups in sequence. :code:`G` is by default is :code:`1` for all convolutional layers, but setting to :code:`4` in the residual units. We visualized the architecture of splam in :ref:`Figure <spalm_model>`. For each nucleotide position, its total neighboring span of splam model is 
+A group of four residual units forms a bigger residual group, and 20 RUs are clustered into five residual groups. Residual groups are stacked such that the output of the i \ :sup:`th`\  residual group is connected to the i+1 \ :sup:`th`\  residual group. Furthermore, the output of each residual group undergoes a convolutional layer, with the parameters :code:`(64, 1, 1)`, and then being added to all the other outputs of residual groups (residual connections colored in red), which then is passed into the last convolutional layer in :code:`(3, 1, 1)` and a softmax layer. :code:`F` is set to :code:`64` for all convolutional layers, and for each residual group, :code:`W` is set to :code:`11`, :code:`11`, :code:`11`, :code:`21`, and :code:`21`, and $D$ is set to :code:`1`, :code:`5`, :code:`10`, :code:`15`, and :code:`20` in residual groups in sequence. :code:`G` is by default is :code:`1` for all convolutional layers, but setting to :code:`4` in the residual units. We visualized the architecture of Splam in :ref:`Figure <spalm_model>`. For each nucleotide position, its total neighboring span of Splam model is 
 
 .. math::
 
@@ -141,7 +141,7 @@ A group of four residual units forms a bigger residual group, and 20 RUs are clu
 
 .. _splam_train_test:
 
-splam training & testing
+Splam training & testing
 +++++++++++++++++++++++++++++++++++
 
 After curating the gold standard dataset, we divided all splice junctions into two datasets: one for model training and the other for testing. For model training, we utilized all the splice sites on the main Chromosomes, except Chromosome 1 and 9. For model testing, we used the splice sites on the held-out Chromosome 1 and 9, with the splice sites in paralogs removed.
@@ -150,7 +150,7 @@ After curating the gold standard dataset, we divided all splice junctions into t
 Hyperparameters
 -----------------
 
-To train SPLAM, we used a batch size of 100 and trained it for 15 epochs. We employed the AdamW optimizer with the default learning rate of 0.03. A 1000-step warmup was utilized, with the learning rate increasing linearly from 0 to 0.03. The learning rate then decreased following the values of the cosine function between 0.03 to 0 (:ref:`Figure <train_lr>`).
+To train Splam, we used a batch size of 100 and trained it for 15 epochs. We employed the AdamW optimizer with the default learning rate of 0.03. A 1000-step warmup was utilized, with the learning rate increasing linearly from 0 to 0.03. The learning rate then decreased following the values of the cosine function between 0.03 to 0 (:ref:`Figure <train_lr>`).
 
 .. _train_lr:
 .. figure::  ../image/train_lr.png
@@ -162,7 +162,7 @@ To train SPLAM, we used a batch size of 100 and trained it for 15 epochs. We emp
 Loss function
 ---------------
 
-We further improved SPLAM's performance by changing the loss function. Instead of using the commonly used cross entropy (:ref:`Equation <equation_cel>`), we replaced it with focal loss :cite:p:`lin2017focal` (:ref:`Equation <equation_fl>`).
+We further improved Splam's performance by changing the loss function. Instead of using the commonly used cross entropy (:ref:`Equation <equation_cel>`), we replaced it with focal loss :cite:p:`lin2017focal` (:ref:`Equation <equation_fl>`).
 
 .. _equation_cel:
 .. math::
@@ -175,7 +175,7 @@ We further improved SPLAM's performance by changing the loss function. Instead o
     Loss_{FL} = \sum_{class \in \{donor, acceptor, neither\}} I_{class}\times (1-P_{class})^{\gamma} \times \log(P_{class}), \text{where } \gamma = 2
 
 
-Focal loss puts more emphasis on the challenging data points where SPLAM is more likely to make incorrect predictions and penalized these data points by an additional :math:`(1-P)^{\gamma}`` scale, where :math:`\gamma = 2`, and :math:`P` is the probabilities of each class. This scale quantifies the degree of inaccuracy in predictions, instead of just binary misclassification that cross entropy applied.
+Focal loss puts more emphasis on the challenging data points where Splam is more likely to make incorrect predictions and penalized these data points by an additional :math:`(1-P)^{\gamma}`` scale, where :math:`\gamma = 2`, and :math:`P` is the probabilities of each class. This scale quantifies the degree of inaccuracy in predictions, instead of just binary misclassification that cross entropy applied.
 
 
 

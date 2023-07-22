@@ -51,38 +51,41 @@ If you haven't already, please follow the steps in the :ref:`Installation` page 
 Super-Quick Start (3 lines of code)
 +++++++++++++++++++++++++++++++++++
 
-The most minimal example gets the job done in three lines of code for two use case scenarios of splam. More details below:
+There are two use case scenarios of Splam. The first one is :ref:`running with an alignment file <splam_bam_quick>`, and second one is :ref:`running with an annotation file <splam_gff_quick>`. Both can be done in three lines of code. Following are the examples:
 
 |
 
-Alignment file evalutation (:code:`BAM`)
+.. _splam_bam_quick:
+Cleaning up alignment files  (:code:`BAM`)
 -------------------------------------------
 
 The most minimal example gets the job done in three lines of code. More details below.
 
 .. code-block:: bash
 
-   cd test
+    $ cd test
 
-   splam extract -P -o tmp_out SRR1352129_chr9_sub.bam 
+    $ splam extract -P SRR1352129_chr9_sub.bam -o tmp_out_alignment
 
-   splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out tmp_out/junction.bed
+    $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_alignment tmp_out_alignment/junction.bed
 
-   splam clean -o tmp_out
+    $ splam clean -o tmp_out_alignment
 
 | 
 
-Annotation file evalutation (:code:`GFF`)
--------------------------------------------
+.. _splam_gff_quick:
+Evaluation annotation files / assembled transcripts (:code:`GFF`)
+----------------------------------------------------------------------
 
 .. code-block:: bash
 
+    $ cd test
 
-   cd test
+    $ splam extract refseq_40_GRCh38.p14_chr_fixed.gff -o tmp_out_annotation
 
-   splam extract MANE.GRCh38.v1.1.subset.gff
+    $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_annotation tmp_out_annotation/junction.bed
 
-   splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out tmp_out/junction.bed
+    $ splam clean -o tmp_out_annotation
 
 |
 
@@ -91,7 +94,7 @@ For more detailed analysis steps, please check :
 
 .. seealso::
     
-    * :ref:`alignment-detailed-section`
+    * :ref:`Q&A`
 
     * :ref:`annotation-detailed-section`
 

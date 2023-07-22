@@ -61,7 +61,7 @@ This raises concerns regarding the accuracy of these splice alignments and the a
 
 .. important::
 
-    **we propose running Splam as a new step in standard RNA-Seq analysis pipeline.**
+    **We propose running Splam as a new step in RNA-Seq analysis pipeline.**
 
 
 
@@ -97,11 +97,15 @@ Splam **takes a sorted alignment file**, extracts all splice junctions, and scor
 Step 1: Preparing your input files
 +++++++++++++++++++++++++++++++++++
 
-The first step is to prepare three files for Splam analysis:
+The first step is to prepare three files for Splam analysis. The following three files are toy datasets that we are going to use in the tutorial:
 
-1. An alignment file in :code:`BAM` format [`example file: SRR1352129_chr9_sub.bam <https://github.com/Kuanhao-Chao/splam/blob/main/test/SRR1352129_chr9_sub.bam>`_].  
-2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
-3. The splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
+
+.. admonition:: Input files
+    :class: note
+
+    1. An alignment file in :code:`BAM` format [`example file: SRR1352129_chr9_sub.bam <https://github.com/Kuanhao-Chao/splam/blob/main/test/SRR1352129_chr9_sub.bam>`_].  
+    2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
+    3. The Splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
 
 |
 
@@ -116,7 +120,8 @@ In this step, you take :ref:`an alignment file (1) <alignment-prepareintput>` an
 
     splam extract -P SRR1352129_chr9_sub.bam
 
-The primary outputs for this step is a BED file containing the coordinates of each junction and some temporary files. If you only want to extract splice junctions from the BAM file without running the subsequent cleaning step, you can use the :code:`-n / --write-junctions-only` argument to skip writing out temporary files.
+The primary outputs for this step is a :code:`BED` file containing the coordinates of each junction and some temporary files. 
+
 
 Splam iterates through the :code:`BAM` file, extracts all splice junctions in alignments, and writes their coordinates into a :code:`BED` file. By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :code:`BED` file consists of six columns: :code:`CHROM`, :code:`START`, :code:`END`, :code:`JUNC_NAME`, :code:`INTRON_NUM`, and :code:`STRAND`. Here are a few entries from the :code:`BED` file:
 
@@ -135,9 +140,57 @@ Note that in this command, we run with the argument :code:`-P / --paired`. This 
 
 By default, Splam processes alignments without pairing and bundling them. If your RNA-Seq sample is single-read, there is no need to set this argument. However, if your RNA-Seq sample is from paired-end sequencing, it is highly recommended to run Splam with the :code:`-P / --paired` argument. Otherwise, if an alignment is removed, the flag of its mate will not be unpaired. It is worth noting that it takes longer to pair alignments in the BAM file, but it produces more accurate flags. 
 
-In addition, when running in paired mode, the default gap between bundles is 10000bp. If you set the :code:`-g / --bundle-gap` argument to set the minimum gap betwen bundles. 
+
+.. admonition::  Here are some **optional arguments**:
+    :class: note
+
+    .. dropdown:: :code:`-P / --paired`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        This argument bundles and pairs alignment reads. If your sample is paired-end RNA-Seq, you should run Splam with this argument to ensure more accurate flag updates.
+
+    .. dropdown:: :code:`-n / --write-junctions-only`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+        
+        If you only want to extract splice junctions from the BAM file without running the subsequent cleaning step, you can use the :code:`-n / --write-junctions-only` argument to skip writing out temporary files. This argument makes splice junction extraction faster!
+
+    .. dropdown:: :code:`-M / --max-splice DIST`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The maximum length for splice junctions is 100,000 nt by default. This means that any splice junctions in spliced alignments longer than the maximum splice junction length will be removed.
+
+
+    .. dropdown:: :code:`-g / --bundle-gap GAP`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        If you are running with a single-end RNA-Seq sample, then you do not need to worry about the :code:`-g / --bundle-gap GAP` argument. However, if you are working with a paired-end RNA-Seq sample and using the :code:`-P / --paired` argument, then this parameter becomes significant. The algorithm for extracting splice junctions in paired-end RNA-Seq data begins by bundling alignments. As alignments overlap, the bundle extends accordingly. Regions with no alignment coverage are referred to as "gaps." This argument allows you to define the minimum gap size allowed within a bundle. In other words, if a gap's length exceeds the specified minimum, the regions on the left and right-hand side of the gap are treated as two separate bundles. The default value for this argument is set to 1000nt, but you can adjust it based on your specific analysis needs.
+
+
+    .. dropdown:: :code:`-o / --outdir DIR`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The directory where the output file is written to. The default output directory is :code:`tmp_out`. You can set your own output directory using this argument.
+
+    .. dropdown:: :code:`-f / --file-format FILE_FORMAT`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        Splam automatically detects whether your input file is a BAM or GFF file based on its extension. In this section, we are using Splam to clean up a given alignment file, so please ensure that your input file has a :code:`.bam` or :code:`.BAM` extension.
 
 |
+
+.. _alignment-clean-introns:
 
 Step 3: Scoring extracted splice junctions
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -147,11 +200,6 @@ In this step, the goal is to score all the extracted splice junctions. To accomp
 .. code-block:: bash
 
     splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out tmp_out/junction.bed
-
-
-By default, Splam automatically detects your environment and runs in :code:`cuda` mode if CUDA is available. However, if your computer is running macOS, Splam will check if :code:`mps` mode is available. If neither :code:`cuda` nor :code:`mps` are available, Splam will run in :code:`cpu` mode. You can manually specify the mode using the :code:`-d / --device` argument.
-
-Additionally, you can adjust the batch size using the :code:`-b / --batch-size` argument. We recommend setting a small batch size (default is 10) when running Splam in :code:`cpu` mode.
 
 
 After this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (p.s. they might be from unstranded transcripts assembled by StringTie).
@@ -166,6 +214,49 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
     chr9    5924844 5929044 JUNC00000009    8       -       0.9999883       0.9999949
 
 
+.. admonition::  Here are the explanation of the **required arguments**:
+    :class: important
+
+    .. dropdown:: :code:`-G / --reference-genome REF.fasta`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The path to the reference genome in FASTA format. Please ensure that this file shares the same coordinates as your input alignment file, which is where you align your RNA-Seq reads. Splam will handle the indexing process for you if the reference genome has not been indexed yet.
+
+    .. dropdown:: :code:`-m / --model MODEL.pt`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        This argument is the path to the trained Splam model. If you haven't download the Splam model yet, here is the :ref:`link <alignment-prepareintput>`.
+
+
+.. admonition::  Here are some **optional arguments**:
+    :class: note
+
+    .. dropdown:: :code:`-d / --device pytorch_DEV`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        By default, Splam automatically detects your environment and runs in :code:`cuda` mode if CUDA is available. However, if your computer is running macOS, Splam will check if :code:`mps` mode is available. If neither :code:`cuda` nor :code:`mps` are available, Splam will run in :code:`cpu` mode. You can explicitly specify the mode using the :code:`-d / --device` argument.
+
+
+    .. dropdown:: :code:`-b / --batch-size BATCH`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        Additionally, you can adjust the batch size using the :code:`-b / --batch-size` argument. This argument defines the number of samples that will be propagated through the Splam network. By default, the batch size is set to 10. We recommend setting a small batch size (for instance 2) when running Splam in :code:`cpu` mode.
+
+    .. dropdown:: :code:`-o / --outdir DIR`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <alignment-extract-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well, or otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
+
 
 |
 
@@ -178,7 +269,44 @@ After scoring every splice junction in your alignment file, the final step of th
 
 .. code-block:: bash
 
-    splam clean -o tmp_out -@ 5
+    splam clean -P -o tmp_out -@ 5
+
+
+* **Output**
+
+This output file of this step is a sorted Splam-cleaned BAM file. You can replace the original BAM file with this cleaned BAM file to do the transcript assembly, quantification, and all other downstream analyses! 
+
+.. admonition::  Here are some **optional arguments**:
+    :class: note
+
+    .. dropdown:: :code:`-P / --paired`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+        
+        This argument bundles and pairs alignment reads. If your sample is paired-end RNA-Seq, you should run Splam with this argument to ensure more accurate flag updates. Note that you should be consistent in setting this argument as described in :ref:`Step 2 <alignment-extract-introns>`.
+
+    .. dropdown:: :code:`-t / --threshold threshold`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        This is the threshold for Splam to determine whether a given splice junction is spurious or not. If the score of either the donor or acceptor site falls below this value, then any spliced alignments containing this junction will be removed. The default threshold is set to 0.1.
+
+    .. dropdown:: :code:`-@ / --threads threads`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        Splam utilizes the sorting, compression, and merging scripts from `samtools <https://github.com/samtools/samtools>`_. You can enable multi-threading for the Splam final stage of BAM file sorting and merging by setting this argument. By default, the operation is performed in single-thread.
+
+    .. dropdown:: :code:`-o / --outdir DIR`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <alignment-extract-introns>` and :ref:`Step 3 <alignment-clean-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well, or otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
+
 
 |
 
@@ -189,6 +317,12 @@ Here is an example of the EHMT1 gene locus on chromosome 9 visulaized in IGV. Th
 
 
 In :ref:`Figure<figure_EHMT1>`, the first three tracks display the coverage, splice junction, and alignment information from the original alignment file of the SRR1352129 sample. The fourth, fifth, and sixth tracks show the coverage, splice junction, and alignment data obtained from the cleaned alignment file of the SRR1352129 sample, which was generated using Splam. Many of the spliced alignments on the reverse strand of EHMT1 have splice junctions with low Splam scores and were consequently removed. The Splam removal procedure results in a more refined gene locus and enhances the transcriptome assembly. The final track represents the RefSeq annotations of the EHMT1 gene.
+
+.. important::
+
+    Note that Splam does not know the strand information when scoring the splice junctions. 
+
+    Splice junctions on the reverse strand are reversed complemented into DNA sequenece, and Splam only take the DNA sequence information. In this example, Splam can tell that most of the splice junctions in the alignment on the reversed strand of this EHMT1 gene locus are bad, again, simply checking the DNA sequence!
 
 
 .. _figure_EHMT1:
@@ -201,6 +335,36 @@ In :ref:`Figure<figure_EHMT1>`, the first three tracks display the coverage, spl
 .. figure::  ../image/figure_S_EHMT1_annotations.png
     :align:   center
     :scale:   50 %
+
+|
+
+Step 6: Assembling alignments into transcripts
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+We run Stringtie to assemble the original alignment BAM file and the Splam-cleaned alignment BAM file. We loaded both assembled transcripts and RefSeq annotation into IGV. We observed that at EHMT1 gene locus, originally there is one transcript assmebled which is on the opposite strand of this gene, now will not be assembled!
+
+.. _figure_EHMT1:
+.. figure::  ../image/EHMT1_assembly.png
+    :align:   center
+    :scale:   30 %
+
+
+.. seealso::
+    
+    * StringTie to learn more about the transcriptome assembly.
+
+|
+
+What's next?
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Congratulation! You have finished this tutorial.
+
+.. seealso::
+    
+    * :ref:`behind-the-scenes-splam` to understand how Splam is designed and trained.
+    * :ref:`Q&A` to check out some common questions.
+
 
 |
 |

@@ -55,7 +55,7 @@ It is important to acknowledge that annotation files can contain misannotations 
 
 .. important::
 
-    **We provide a new approach to evaluate transcripts. You can run splam!**
+    **We provide a new approach to evaluate transcripts by counting how many bad splice junctions in a transcript!**
 
 
 You can run splam on **(1) annotation files** or **(2) assembled transcripts**. splam outputs the scores of every donor and acceptor sites, by using these scores, 
@@ -75,17 +75,20 @@ You can run splam on **(1) annotation files** or **(2) assembled transcripts**. 
 Step 1: Preparing your input files
 +++++++++++++++++++++++++++++++++++
 
-The first step is to prepare three files for splam analysis:
+The first step is to prepare three files for Splam analysis. The following three files are toy datasets that we are going to use in the tutorial:
 
 
-1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: MANE.GRCh38.v1.1.subset.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/MANE.GRCh38.v1.1.subset.gff>`_].  
-2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
-3. The splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
+.. admonition:: Input files
+    :class: note
+
+   1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: MANE.GRCh38.v1.1.subset.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/MANE.GRCh38.v1.1.subset.gff>`_].  
+   2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
+   3. The splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
 
 |
 
 
-.. _extract-introns:
+.. _annotation-extract-introns:
 
 Step 2: Extracting introns in your annotation file
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -96,7 +99,11 @@ In this step, you take :ref:`an annotation file (1) <annotation-prepareintput>` 
 
    splam extract MANE.GRCh38.v1.1.subset.gff
 
-splam iterates through the :code:`GFF` file, extracts all introns in transcripts, and writes their coordinates into a :code:`BED` file. By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :code:`BED` file consists of six columns: :code:`CHROM`, :code:`START`, :code:`END`, :code:`JUNC_NAME`, :code:`INTRON_NUM`, and :code:`STRAND`. Here are a few entries from the :code:`BED` file:
+
+Splam uses gffutils to extract introns from all transcripts. It starts from creating a sqlite3 database and then iterates through all exons in the :code:`GFF` file and writes intron coordinates into a :code:`BED` file. 
+
+
+By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :code:`BED` file consists of six columns: :code:`CHROM`, :code:`START`, :code:`END`, :code:`JUNC_NAME`, :code:`INTRON_NUM`, and :code:`STRAND`. Here are a few entries from the :code:`BED` file:
 
 * **Output**
 
@@ -107,6 +114,30 @@ splam iterates through the :code:`GFF` file, extracts all introns in transcripts
    chr9    5923308 5924658 JUNC00000008    6       -
    chr9    5924844 5929044 JUNC00000009    8       -
 
+.. admonition::  Here are some **optional arguments**:
+    :class: note
+
+    .. dropdown:: :code:`-o / --outdir DIR`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The directory where the output file is written to. The default output directory is :code:`tmp_out`. You can set your own output directory using this argument.
+
+    .. dropdown:: :code:`-f / --file-format FILE_FORMAT`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        Splam automatically detects whether your input file is a BAM or GFF file based on its extension. In this section, we are using Splam to evaluate a given annotation file, so please ensure that your input file has a :code:`.gff`, :code:`.gtf`, :code:`.GFF`, or :code:`.GTF` extension.
+
+
+    .. dropdown:: :code:`-d / --database DATABASE`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        the path to the annotation database built using gffutils. If thie argument is provided, splam loads the database instead of creating a new one.
 
 |
 
@@ -120,13 +151,7 @@ In this step, the goal is to score all the extracted splice junctions. To accomp
 
    splam score -G chr9_subset.fa -m splam_script.pt tmp_out/junction.bed
 
-
-By default, splam automatically detects your environment and runs in :code:`cuda` mode if CUDA is available. However, if your computer is running macOS, splam will check if :code:`mps` mode is available. If neither :code:`cuda` nor :code:`mps` are available, splam will run in :code:`cpu` mode. You can manually specify the mode using the :code:`-d / --device` argument.
-
-Additionally, you can adjust the batch size using the :code:`-b / --batch-size` argument. We recommend setting a small batch size (default is 10) when running splam in :code:`cpu` mode.
-
-
-After this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (p.s. they might be from unstranded transcripts assembled by StringTie).
+In this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (p.s. they might be from unstranded transcripts assembled by StringTie).
 
 * **Output**
 
@@ -137,11 +162,69 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
    chr9    5923308 5924658 JUNC00000008    6       -       0.9999831       0.9999958
    chr9    5924844 5929044 JUNC00000009    8       -       0.9999883       0.9999949
 
+.. admonition::  Here are the explanation of the **required arguments**:
+    :class: important
+
+    .. dropdown:: :code:`-G / --reference-genome REF.fasta`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The path to the reference genome in FASTA format. Please ensure that this file shares the same coordinates as your input alignment file, which is where you align your RNA-Seq reads. Splam will handle the indexing process for you if the reference genome has not been indexed yet.
+
+    .. dropdown:: :code:`-m / --model MODEL.pt`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        This argument is the path to the trained Splam model. If you haven't download the Splam model yet, here is the :ref:`link <alignment-prepareintput>`.
+
+
+.. admonition::  Here are some **optional arguments**:
+    :class: note
+
+    .. dropdown:: :code:`-d / --device pytorch_DEV`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        By default, Splam automatically detects your environment and runs in :code:`cuda` mode if CUDA is available. However, if your computer is running macOS, Splam will check if :code:`mps` mode is available. If neither :code:`cuda` nor :code:`mps` are available, Splam will run in :code:`cpu` mode. You can explicitly specify the mode using the :code:`-d / --device` argument.
+
+
+    .. dropdown:: :code:`-b / --batch-size BATCH`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        Additionally, you can adjust the batch size using the :code:`-b / --batch-size` argument. This argument defines the number of samples that will be propagated through the Splam network. By default, the batch size is set to 10. We recommend setting a small batch size (for instance 2) when running Splam in :code:`cpu` mode.
+
+    .. dropdown:: :code:`-o / --outdir DIR`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <annotation-extract-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well, or otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
+
+
+
 |
 
 Step 4: Evaluating isoforms by Splam scores
 ++++++++++++++++++++++++++++++++++++++++++
 To summarize the quality of each isoform, users can run Splam to count how many spurious splice junctions are in each transcript. 
+
+|
+
+What's next?
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+Congratulation! You have finished this tutorial.
+
+.. seealso::
+    
+    * :ref:`behind-the-scenes-splam` to understand how Splam is designed and trained.
+    * :ref:`Q&A` to check out some common questions.
+
 
 
 |

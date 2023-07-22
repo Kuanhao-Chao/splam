@@ -52,29 +52,30 @@
 
 |
 
+.. _Q&A:
 
 Q & A ...
 ==========
 
-.. Q: What is splam?
+.. Q: What is Splam?
 .. -------------------------------------------
 
 .. <div style="padding-left:20px">
     
-.. dropdown:: Q: What is splam?
+.. dropdown:: Q: What is Splam?
     :animate: fade-in-slide-down
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
-    splam means two things: **(1)** splam refers to the deep grouped residual convolutional neural network model that we designed to accurately predict splice junctions based solely on an input DNA sequence, and **(2)** it also stands for this software that and clean up alignment files and evaluate annotation files.
+    Splam means two things: **(1)** Splam refers to the deep grouped residual convolutional neural network model that we designed to accurately predict splice junctions based solely on an input DNA sequence, and **(2)** it also stands for this software that and clean up alignment files and evaluate annotation files.
 
 |
 
 
-.. Q: Why do we need splam?
+.. Q: Why do we need Splam?
 .. -------------------------------------------
 
-.. dropdown:: Q: Why do we need splam?
+.. dropdown:: Q: Why do we need Splam?
     :animate: fade-in-slide-down
     :container: + shadow
     :title: bg-light font-weight-bolder
@@ -83,27 +84,27 @@ Q & A ...
 
     We are concerned about the way of training splice junction predictor simply replying on splice junctions in only canonical transcripts. Designing a splice site recognition method based only on one isoform per gene may result in mis-labeling alternative splice sites even when they are perfectly valid. Therefore, 
 
-        * **we designed a biologically realistic model.** splam was trained on combined donor and acceptor pairs, with a focus on a narrow window of 400 base pairs surrounding each splice site. This approach is inspired by the understanding that the splicing process primarily relies on signals within this specific region.
+        * **we designed a biologically realistic model.** Splam was trained on combined donor and acceptor pairs, with a focus on a narrow window of 400 base pairs surrounding each splice site. This approach is inspired by the understanding that the splicing process primarily relies on signals within this specific region.
 
 
     Furthermore, there are two applications of splam: 
 
     When inspecting an alignment file in IGV, it becomes apparent that some reads are spliced and aligned across different gene loci or intergenic regions. This raises the question, "Are these spliced alignments correct?" Therefore,
 
-        * **we need a trustworthy way to evaluate all the spliced alignments in the alignment file.** splam learns splice junction patterns, and we have demonstrated that applying Splam to remove spurious spliced alignments improves transcript assembly! :ref:`alignment evaluation section <alignment-detailed-section>`.
+        * **we need a trustworthy way to evaluate all the spliced alignments in the alignment file.** Splam learns splice junction patterns, and we have demonstrated that applying Splam to remove spurious spliced alignments improves transcript assembly! :ref:`alignment evaluation section <alignment-detailed-section>`.
 
     Additionally, we acknowledge that annotation files are not perfect, and there are more errors in the assembled transcripts. The current approach to assessing assembled transcripts involves comparing them with the annotation.
 
-        * **we can utilize splam to score all introns in transcripts and provide a reference-free evalutation.**  :ref:`annotation evaluation section <annotation-detailed-section>`.
+        * **we can utilize Splam to score all introns in transcripts and provide a reference-free evalutation.**  :ref:`annotation evaluation section <annotation-detailed-section>`.
 
 
 
 |
 
-.. Q: What makes splam different from spliceAI?
+.. Q: What makes Splam different from SpliceAI?
 .. -------------------------------------------
 
-.. dropdown:: Q: What makes splam different from spliceAI?
+.. dropdown:: Q: What makes Splam different from SpliceAI?
     :animate: fade-in-slide-down
     :container: + shadow
     :title: bg-light font-weight-bolder
@@ -134,25 +135,11 @@ Q & A ...
 
 | 
 
-.. Q: What is the model architecture of splam?
+.. Q: What is the model architecture of Splam?
 .. -----------------------------------------
 
 
-.. dropdown:: Q: What is the model architecture of splam?
-    :animate: fade-in-slide-down
-    :container: + shadow
-    :title: bg-light font-weight-bolder
-    :body: bg-light text-left
-
-    Check out the :ref:`model architecture section <model_architecture>`.
-
-|
-
-.. Q: What is the model architecture of splam?
-.. -----------------------------------------
-
-
-.. dropdown:: Q: What is the model architecture of splam?
+.. dropdown:: Q: What is the model architecture of Splam?
     :animate: fade-in-slide-down
     :container: + shadow
     :title: bg-light font-weight-bolder
@@ -162,10 +149,10 @@ Q & A ...
 
 | 
 
-.. Q: How is splam trained?
+.. Q: How is Splam trained?
 .. --------------------------------
 
-.. dropdown:: Q: How is splam trained?
+.. dropdown:: Q: How is Splam trained?
     :animate: fade-in-slide-down
     :container: + shadow
     :title: bg-light font-weight-bolder
@@ -184,12 +171,31 @@ Q & A ...
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
+
+    By default, Splam automatically detects your environment and runs in :code:`cuda` mode if CUDA is available. However, if your computer is running macOS, Splam will check if :code:`mps` mode is available. If neither :code:`cuda` nor :code:`mps` are available, Splam will run in :code:`cpu` mode. You can explicitly specify the mode using the :code:`-d / --device` argument.
+
+    .. important::
+
+        In sum, 
+
+        1. if you are using the Apple Silicon Mac, you should run Splam with :code:`mps` mode. 
+
+
+        2. If you are using Linux with CUDA installed, you should run Splam with :code:`cuda` mode.
+
+
+        3. If you are none of the above cases, then you can still run Splam with :code:`cpu`` mode.
+
+
+    You can check Pytorch website for more explanation about the :code:`device` parameter.
+
+
 | 
 
-.. Q: How do I interpret splam scores?
+.. Q: How do I interpret Splam scores?
 .. -------------------------------------
 
-.. dropdown:: Q: How do I interpret splam scores?
+.. dropdown:: Q: How do I interpret Splam scores?
     :animate: fade-in-slide-down
     :container: + shadow
     :title: bg-light font-weight-bolder
