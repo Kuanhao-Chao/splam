@@ -90,15 +90,6 @@ There are two main use case scenarios:
 <li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/contact.html">Contact</a></li>
 </ul>
 </div>
-<div class="line-block">
-<div class="line"><br></div>
-<div class="line"><br></div>
-<div class="line"><br></div>
-<div class="line"><br></div>
-<div class="line"><br></div>
-</div>
-<img alt="My Logo" class="logo header-image only-light align-center" src="_images/jhu-logo-dark.png">
-<img alt="My Logo" class="logo header-image only-dark align-center" src="_images/jhu-logo-white.png">
 </section>
 
 <br>
