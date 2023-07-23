@@ -1,40 +1,38 @@
 .. raw:: html
 
     <script type="text/javascript">
-        var observer = new MutationObserver(function(mutations) {
+
+        let mutation_fuc = function(mutations) {
             var dark = document.body.dataset.theme == 'dark';
 
             if (document.body.dataset.theme == 'auto') {
                 dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             }
             
-            console.log(dark);
-            document.getElementsByClassName('header-image')[0].src = dark ? '../_images/jhu-logo-white.png' : "../_images/jhu-logo-dark.png";
-            document.getElementsByClassName('sidebar_ccb')[0].src = dark ? '../_images/JHU_ccb-white.png' : "../_images/JHU_ccb-dark.png";
-            document.getElementsByClassName('sidebar_wse')[0].src = dark ? '../_images/JHU_wse-white.png' : "../_images/JHU_wse-dark.png";
+            document.getElementsByClassName('sidebar_ccb')[0].src = dark ? '../_static/JHU_ccb-white.png' : "../_static/JHU_ccb-dark.png";
+            document.getElementsByClassName('sidebar_wse')[0].src = dark ? '../_static/JHU_wse-white.png' : "../_static/JHU_wse-dark.png";
 
-            console.log("document.getElementsByClassName('sidebar_wse')[0].src: ", document.getElementsByClassName('sidebar_wse')[0].src);
-        })
+
+
+            for (let i=0; i < document.getElementsByClassName('summary-title').length; i++) {
+                console.log(">> document.getElementsByClassName('summary-title')[i]: ", document.getElementsByClassName('summary-title')[i]);
+
+                if (dark) {
+                    document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-dark font-weight-bolder";
+                    document.getElementsByClassName('summary-content')[i].classList = "summary-content card-body bg-dark text-left docutils";
+                } else {
+                    document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-light font-weight-bolder";
+                    document.getElementsByClassName('summary-content')[i].classList = "summary-content card-body bg-light text-left docutils";
+                }
+            }
+
+        }
+        document.addEventListener("DOMContentLoaded", mutation_fuc);
+        var observer = new MutationObserver(mutation_fuc)
         observer.observe(document.body, {attributes: true, attributeFilter: ['data-theme']});
         console.log(document.body);
     </script>
     <link rel="preload" href="../_images/jhu-logo-dark.png" as="image">
-
-
-
-.. raw:: html
-    
-    <script type="text/javascript">
-        var block_to_insert ;
-        var container_block ;
-        
-        block_to_insert = document.createElement( 'div' );
-        block_to_insert.innerHTML = '<img alt="My Logo" style="width:80%;  margin:10px; padding-top:30px" class="logo sidebar_ccb align-center" src="../_images/JHU_ccb-dark.png"><img alt="My Logo" class="logo sidebar_wse align-center" style="width:80%;  margin:10px" src="../_images/JHU_wse-dark.png">' ;
-        
-        container_block = document.getElementsByClassName( 'sidebar-sticky' )[0];
-        console.log("container_block: ", container_block);
-        container_block.appendChild( block_to_insert );
-    </script>
 
 
 |
@@ -65,7 +63,7 @@ The input to the model is 800bp one-hot encoded DNA sequences in the dimension o
 
 
 .. _splam_input:
-.. figure::  ../image/splam_input.png
+.. figure::  ../_images/splam_input.png
     :align:   center
     :scale:   7 %
 
@@ -94,7 +92,7 @@ To further increase the difficulty of negative junctions, **(2)** only splice ju
 
 
 .. _splam_data_curation:
-.. figure::  ../image/splam_data_curation.png
+.. figure::  ../_images/splam_data_curation.png
     :align:   center
     :scale:   21 %
 
@@ -134,7 +132,7 @@ A group of four residual units forms a bigger residual group, and 20 RUs are clu
     S=\sum_{i=1}^{20}2F_{i}\times(W_{i}-1)
 
 .. _spalm_model:
-.. figure::  ../image/splam_model_architecture.png
+.. figure::  ../_images/splam_model_architecture.png
     :align:   center
     :scale:   18 %
 
@@ -158,7 +156,7 @@ Hyperparameters
 To train Splam, we used a batch size of 100 and trained it for 15 epochs. We employed the AdamW optimizer with the default learning rate of 0.03. A 1000-step warmup was utilized, with the learning rate increasing linearly from 0 to 0.03. The learning rate then decreased following the values of the cosine function between 0.03 to 0 (:numref:`train_lr`).
 
 .. _train_lr:
-.. figure::  ../image/train_lr.png
+.. figure::  ../_images/train_lr.png
     :align:   center
     :scale:   80 %
 
@@ -189,7 +187,7 @@ Focal loss puts more emphasis on the challenging data points where Splam is more
 .. Training precision
 .. --------------------
 
-.. .. figure::  ../image/train_J_threshold_precision.png
+.. .. figure::  ../_images/train_J_threshold_precision.png
 ..     :align:   center
 ..     :scale:   80 %
 
@@ -197,7 +195,7 @@ Focal loss puts more emphasis on the challenging data points where Splam is more
 
 .. Testing precision
 .. --------------------
-.. .. figure::  ../image/test_J_threshold_precision.png
+.. .. figure::  ../_images/test_J_threshold_precision.png
 ..     :align:   center
 ..     :scale:   80 %
 
@@ -217,7 +215,13 @@ Reference
 |
 |
 
-.. image:: ../image/jhu-logo-dark.png
+
+.. image:: ../_images/jhu-logo-dark.png
    :alt: My Logo
-   :class: logo, header-image
+   :class: logo, header-image only-light
+   :align: center
+
+.. image:: ../_images/jhu-logo-white.png
+   :alt: My Logo
+   :class: logo, header-image only-dark
    :align: center

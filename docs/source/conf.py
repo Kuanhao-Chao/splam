@@ -70,7 +70,7 @@ html_theme = 'furo'
 # html_theme = 'scrolls'
 
 
-html_logo = "./image/logo.png"
+html_logo = "./_static/logo.png"
 html_theme_options = {
     "announcement": "Splam: a deep-learning-based splice site predictor that improves spliced alignments",
     "sidebar_hide_name": True,
@@ -125,21 +125,9 @@ html_sidebars = {
         "sidebar/navigation.html",
         "sidebar/ethical-ads.html",
         "sidebar/scroll-end.html",
+        "sidebar/sidebarlogo.html",
     ]
 }
-
-# html_theme_options = {
-#     # 'display_version': True,
-#     'logo_only': False,
-#     # "rightsidebar": "false",
-#     # "logo": "./image/logo.png",
-#     # {
-#     #     "image_light": "./image/logo.png",
-#     #     "image_dark": "./image/logo.png",
-#     #     "text": "Designed by Kuan-Hao Chao",
-#     # },
-#     # 'logo_only': True,
-# }
 
 html_context = {
    "default_mode": "light"
@@ -159,6 +147,8 @@ numfig_format = {
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
+
+# html_extra_path = ['image']
 
 def setup(app):
     app.add_css_file('custom.css')

@@ -1,22 +1,21 @@
 .. raw:: html
 
     <script type="text/javascript">
-        var observer = new MutationObserver(function(mutations) {
+
+        let mutation_fuc = function(mutations) {
             var dark = document.body.dataset.theme == 'dark';
 
             if (document.body.dataset.theme == 'auto') {
                 dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             }
             
-            console.log(dark);
-            document.getElementsByClassName('header-image')[0].src = dark ? '../_images/jhu-logo-white.png' : "../_images/jhu-logo-dark.png";
-            document.getElementsByClassName('sidebar_ccb')[0].src = dark ? '../_images/JHU_ccb-white.png' : "../_images/JHU_ccb-dark.png";
-            document.getElementsByClassName('sidebar_wse')[0].src = dark ? '../_images/JHU_wse-white.png' : "../_images/JHU_wse-dark.png";
+            document.getElementsByClassName('sidebar_ccb')[0].src = dark ? '../_static/JHU_ccb-white.png' : "../_static/JHU_ccb-dark.png";
+            document.getElementsByClassName('sidebar_wse')[0].src = dark ? '../_static/JHU_wse-white.png' : "../_static/JHU_wse-dark.png";
 
 
 
             for (let i=0; i < document.getElementsByClassName('summary-title').length; i++) {
-                console.log("document.getElementsByClassName('sidebar_wse')[0].src: ", document.getElementsByClassName('summary-title')[i]);
+                console.log(">> document.getElementsByClassName('summary-title')[i]: ", document.getElementsByClassName('summary-title')[i]);
 
                 if (dark) {
                     document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-dark font-weight-bolder";
@@ -27,27 +26,14 @@
                 }
             }
 
-        })
+        }
+        document.addEventListener("DOMContentLoaded", mutation_fuc);
+        var observer = new MutationObserver(mutation_fuc)
         observer.observe(document.body, {attributes: true, attributeFilter: ['data-theme']});
         console.log(document.body);
     </script>
     <link rel="preload" href="../_images/jhu-logo-dark.png" as="image">
 
-
-
-.. raw:: html
-    
-    <script type="text/javascript">
-        var block_to_insert ;
-        var container_block ;
-        
-        block_to_insert = document.createElement( 'div' );
-        block_to_insert.innerHTML = '<img alt="My Logo" style="width:80%;  margin:10px; padding-top:30px" class="logo sidebar_ccb align-center" src="../_images/JHU_ccb-dark.png"><img alt="My Logo" class="logo sidebar_wse align-center" style="width:80%;  margin:10px" src="../_images/JHU_wse-dark.png">' ;
-        
-        container_block = document.getElementsByClassName( 'sidebar-sticky' )[0];
-        console.log("container_block: ", container_block);
-        container_block.appendChild( block_to_insert );
-    </script>
 
 
 |
@@ -61,11 +47,11 @@ Q & A ...
 .. -------------------------------------------
 
 .. <div style="padding-left:20px">
-    
+
 .. dropdown:: Q: What is Splam?
     :animate: fade-in-slide-down
-    :title: bg-light font-weight-bolder
-    :body: bg-light text-left
+    :title: bg-dark font-weight-bolder howtoclass
+    :body: bg-dark text-left
 
     Splam means two things: **(1)** Splam refers to the deep grouped residual convolutional neural network model that we designed to accurately predict splice junctions based solely on an input DNA sequence, and **(2)** it also stands for this software that and clean up alignment files and evaluate annotation files.
 
@@ -80,7 +66,6 @@ Q & A ...
     :container: + shadow
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
-
 
     We are concerned about the way of training splice junction predictor simply replying on splice junctions in only canonical transcripts. Designing a splice site recognition method based only on one isoform per gene may result in mis-labeling alternative splice sites even when they are perfectly valid. Therefore, 
 
@@ -118,7 +103,7 @@ Q & A ...
  
        * **splam**: It follows the design principle of using biologically realistic input constraints. It uses a window limited to 200 base pairs on each side of the donor and acceptor sites, totaling 800 base pairs. Furthermore, we pair each donor and acceptor
 
-       .. figure::  ../image/splam_input.png
+       .. figure::  ../_images/splam_input.png
             :align:   center
             :scale:   40 %
      
@@ -234,7 +219,13 @@ Q & A ...
 |
 |
 
-.. image:: ../image/jhu-logo-dark.png
+
+.. image:: ../_images/jhu-logo-dark.png
    :alt: My Logo
-   :class: logo, header-image
+   :class: logo, header-image only-light
+   :align: center
+
+.. image:: ../_images/jhu-logo-white.png
+   :alt: My Logo
+   :class: logo, header-image only-dark
    :align: center

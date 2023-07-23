@@ -1,41 +1,38 @@
 .. raw:: html
 
     <script type="text/javascript">
-        var observer = new MutationObserver(function(mutations) {
+
+        let mutation_fuc = function(mutations) {
             var dark = document.body.dataset.theme == 'dark';
 
             if (document.body.dataset.theme == 'auto') {
                 dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
             }
             
-            console.log(dark);
-            document.getElementsByClassName('header-image')[0].src = dark ? '../_images/jhu-logo-white.png' : "../_images/jhu-logo-dark.png";
-            document.getElementsByClassName('sidebar_ccb')[0].src = dark ? '../_images/JHU_ccb-white.png' : "../_images/JHU_ccb-dark.png";
-            document.getElementsByClassName('sidebar_wse')[0].src = dark ? '../_images/JHU_wse-white.png' : "../_images/JHU_wse-dark.png";
+            document.getElementsByClassName('sidebar_ccb')[0].src = dark ? '../_static/JHU_ccb-white.png' : "../_static/JHU_ccb-dark.png";
+            document.getElementsByClassName('sidebar_wse')[0].src = dark ? '../_static/JHU_wse-white.png' : "../_static/JHU_wse-dark.png";
 
-            console.log("document.getElementsByClassName('sidebar_wse')[0].src: ", document.getElementsByClassName('sidebar_wse')[0].src);
-        })
+
+
+            for (let i=0; i < document.getElementsByClassName('summary-title').length; i++) {
+                console.log(">> document.getElementsByClassName('summary-title')[i]: ", document.getElementsByClassName('summary-title')[i]);
+
+                if (dark) {
+                    document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-dark font-weight-bolder";
+                    document.getElementsByClassName('summary-content')[i].classList = "summary-content card-body bg-dark text-left docutils";
+                } else {
+                    document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-light font-weight-bolder";
+                    document.getElementsByClassName('summary-content')[i].classList = "summary-content card-body bg-light text-left docutils";
+                }
+            }
+
+        }
+        document.addEventListener("DOMContentLoaded", mutation_fuc);
+        var observer = new MutationObserver(mutation_fuc)
         observer.observe(document.body, {attributes: true, attributeFilter: ['data-theme']});
         console.log(document.body);
     </script>
     <link rel="preload" href="../_images/jhu-logo-dark.png" as="image">
-
-
-
-.. raw:: html
-    
-    <script type="text/javascript">
-        var block_to_insert ;
-        var container_block ;
-        
-        block_to_insert = document.createElement( 'div' );
-        block_to_insert.innerHTML = '<img alt="My Logo" style="width:80%;  margin:10px; padding-top:30px" class="logo sidebar_ccb align-center" src="../_images/JHU_ccb-dark.png"><img alt="My Logo" class="logo sidebar_wse align-center" style="width:80%;  margin:10px" src="../_images/JHU_wse-dark.png">' ;
-        
-        container_block = document.getElementsByClassName( 'sidebar-sticky' )[0];
-        console.log("container_block: ", container_block);
-        container_block.appendChild( block_to_insert );
-    </script>
-
 
 |
 
@@ -86,7 +83,7 @@ Splam **takes a sorted alignment file**, extracts all splice junctions, and scor
 
 .. _alignment_cleanup_workflow:
 
-.. figure::  ../image/alignment_cleanup_workflow.png
+.. figure::  ../_images/alignment_cleanup_workflow.png
     :align:   center
     :scale:   25 %
 
@@ -321,15 +318,15 @@ Here is an example of the EHMT1 gene locus on chromosome 9 visulaized in IGV. Th
 In :numref:`figure_EHMT1`, the first three tracks display the coverage, splice junction, and alignment information from the original alignment file of the SRR1352129 sample. The fourth, fifth, and sixth tracks show the coverage, splice junction, and alignment data obtained from the cleaned alignment file of the SRR1352129 sample, which was generated using Splam. Many of the spliced alignments on the reverse strand of EHMT1 have splice junctions with low Splam scores and were consequently removed. The Splam removal procedure results in a more refined gene locus and :ref:`enhances the transcriptome assembly <assemble_alignments_into_trans>`. The final track represents the RefSeq annotations of the EHMT1 gene.
 
 
-.. figure::  ../image/figure_S_EHMT1_original.png
+.. figure::  ../_images/figure_S_EHMT1_original.png
     :align:   center
     :scale:   50 %
-.. figure::  ../image/figure_S_EHMT1_cleaned.png
+.. figure::  ../_images/figure_S_EHMT1_cleaned.png
     :align:   center
     :scale:   50 %
 
 .. _figure_EHMT1:
-.. figure::  ../image/figure_S_EHMT1_annotations.png
+.. figure::  ../_images/figure_S_EHMT1_annotations.png
     :align:   center
     :scale:   50 %
 
@@ -352,7 +349,7 @@ We ran Stringtie to assemble the original alignment BAM file and the Splam-clean
 
 
 .. _figure_EHMT1_assembly:
-.. figure::  ../image/EHMT1_assembly.png
+.. figure::  ../_images/EHMT1_assembly.png
     :align:   center
     :scale:   30 %
 
@@ -381,7 +378,12 @@ Congratulation! You have finished this tutorial.
 |
 |
 
-.. image:: ../image/jhu-logo-dark.png
+.. image:: ../_images/jhu-logo-dark.png
    :alt: My Logo
-   :class: logo, header-image
+   :class: logo, header-image only-light
+   :align: center
+
+.. image:: ../_images/jhu-logo-white.png
+   :alt: My Logo
+   :class: logo, header-image only-dark
    :align: center
