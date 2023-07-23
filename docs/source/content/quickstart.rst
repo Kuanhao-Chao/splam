@@ -94,7 +94,7 @@ For more detailed analysis steps, please check :
 
 .. seealso::
     
-    * :ref:`Q&A`
+    * :ref:`alignment-detailed-section`
 
     * :ref:`annotation-detailed-section`
 

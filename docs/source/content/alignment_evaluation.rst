@@ -61,7 +61,7 @@ This raises concerns regarding the accuracy of these splice alignments and the a
 
 .. important::
 
-    **We propose running Splam as a new step in RNA-Seq analysis pipeline.**
+    **We propose running Splam as a new step in RNA-Seq analysis pipeline to score all splice junctions.**
 
 
 
@@ -79,7 +79,7 @@ Splam offers solutions to several problems, addressing the following:
 Workflow overview
 +++++++++++++++++++++++++++++++++++
 
-Before diving into details of each step, this is the overview workflow. :ref:`Figure a <alignment_cleanup_workflow>` is the workflow of running Splam in the standard RNA-Seq pipeline, and :ref:`Figure b <alignment_cleanup_workflow>` is the workflow of spurious splice alignment removal.
+Before diving into details of each step, this is the overview workflow. :numref:`alignment_cleanup_workflow` a is the workflow of running Splam in the standard RNA-Seq pipeline, and :numref:`alignment_cleanup_workflow` b is the workflow of spurious splice alignment removal.
 
 Splam **takes a sorted alignment file**, extracts all splice junctions, and scores all of them. Furthermore, Splam cleans up the alignment file by removing spliced alignments with poor quality splice junctions, and **output a new sorted alignment file**. 
 
@@ -89,6 +89,8 @@ Splam **takes a sorted alignment file**, extracts all splice junctions, and scor
 .. figure::  ../image/alignment_cleanup_workflow.png
     :align:   center
     :scale:   25 %
+
+    The Splam workflow for cleaning up spurious spliced alignments in an alignment file.
 
 |
 
@@ -316,42 +318,50 @@ Step 5: IGV visualization
 Here is an example of the EHMT1 gene locus on chromosome 9 visulaized in IGV. This protein-coding gene is located on the forward strand; however, we have observed that the splice aligner generates several splice alignments on the reverse strand. 
 
 
-In :ref:`Figure<figure_EHMT1>`, the first three tracks display the coverage, splice junction, and alignment information from the original alignment file of the SRR1352129 sample. The fourth, fifth, and sixth tracks show the coverage, splice junction, and alignment data obtained from the cleaned alignment file of the SRR1352129 sample, which was generated using Splam. Many of the spliced alignments on the reverse strand of EHMT1 have splice junctions with low Splam scores and were consequently removed. The Splam removal procedure results in a more refined gene locus and enhances the transcriptome assembly. The final track represents the RefSeq annotations of the EHMT1 gene.
-
-.. important::
-
-    Note that Splam does not know the strand information when scoring the splice junctions. 
-
-    Splice junctions on the reverse strand are reversed complemented into DNA sequenece, and Splam only take the DNA sequence information. In this example, Splam can tell that most of the splice junctions in the alignment on the reversed strand of this EHMT1 gene locus are bad, again, simply checking the DNA sequence!
+In :numref:`figure_EHMT1`, the first three tracks display the coverage, splice junction, and alignment information from the original alignment file of the SRR1352129 sample. The fourth, fifth, and sixth tracks show the coverage, splice junction, and alignment data obtained from the cleaned alignment file of the SRR1352129 sample, which was generated using Splam. Many of the spliced alignments on the reverse strand of EHMT1 have splice junctions with low Splam scores and were consequently removed. The Splam removal procedure results in a more refined gene locus and :ref:`enhances the transcriptome assembly <assemble_alignments_into_trans>`. The final track represents the RefSeq annotations of the EHMT1 gene.
 
 
-.. _figure_EHMT1:
 .. figure::  ../image/figure_S_EHMT1_original.png
     :align:   center
     :scale:   50 %
 .. figure::  ../image/figure_S_EHMT1_cleaned.png
     :align:   center
     :scale:   50 %
+
+.. _figure_EHMT1:
 .. figure::  ../image/figure_S_EHMT1_annotations.png
     :align:   center
     :scale:   50 %
 
+    An example of a BAM file before and after Splam cleanup.
+
+.. important::
+
+    It's important to emphasize that Splam **exclusively employs the strand information to perform reverse complement of DNA sequences for splice junctions. And when it comes to scoring splice junctions, Splam relies solely on the DNA sequence information**. 
+    
+    In the above example, Splam can distinguish that the majority of splice junctions aligned on the opposite strand of the EHMT1 gene locus are of poor quality. This final score is drawn by simply examining the DNA sequence!
+    
+
 |
 
+.. _assemble_alignments_into_trans:
 Step 6: Assembling alignments into transcripts
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-We run Stringtie to assemble the original alignment BAM file and the Splam-cleaned alignment BAM file. We loaded both assembled transcripts and RefSeq annotation into IGV. We observed that at EHMT1 gene locus, originally there is one transcript assmebled which is on the opposite strand of this gene, now will not be assembled!
+We ran Stringtie to assemble the original alignment BAM file and the Splam-cleaned alignment BAM file. Subsequently, we loaded both sets of assembled transcripts along with the RefSeq annotation into IGV (:numref:`figure_EHMT1_assembly`). Upon observation, we noted that at the EHMT1 gene locus, there was originally one transcript assembled on the opposite strand of this gene, which will no longer be assembled after applying Splam's cleaning process, and the 3' end of the transcripts becomes more accurate!
 
-.. _figure_EHMT1:
+
+.. _figure_EHMT1_assembly:
 .. figure::  ../image/EHMT1_assembly.png
     :align:   center
     :scale:   30 %
 
+    The assembly results of the original alignment file and the Splam-cleaned alignment file.
+
 
 .. seealso::
     
-    * StringTie to learn more about the transcriptome assembly.
+    * `StringTie <https://ccb.jhu.edu/software/stringtie/>`_ to learn more about the transcriptome assembly.
 
 |
 

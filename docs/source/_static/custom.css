@@ -29,6 +29,15 @@
 .octicon {
     font-size: 25px;   
 }
+
+.std-numref {
+    font-weight: bold;   
+}
+
+.caption-number {
+    font-weight: bold;   
+}
+
 /* 
 .bottom-of-page {
     visibility: visible;

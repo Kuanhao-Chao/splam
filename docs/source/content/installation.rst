@@ -99,6 +99,51 @@ Install Splam through conda is the easiest way to go
 
 |
 
+Check Splam installation
+-------------------------------------
+
+Run the following command to make sure Splam is properly installed.
+
+.. code-block:: bash
+   
+   $ splam -h
+
+
+.. dropdown:: Terminal output
+    :animate: fade-in-slide-down
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
+
+    .. code-block::
+
+        ====================================================================
+        An accurate spliced alignment pruner and spliced junction predictor.
+        ====================================================================
+
+
+        ███████╗██████╗ ██╗      █████╗ ███╗   ███╗
+        ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║
+        ███████╗██████╔╝██║     ███████║██╔████╔██║
+        ╚════██║██╔═══╝ ██║     ██╔══██║██║╚██╔╝██║
+        ███████║██║     ███████╗██║  ██║██║ ╚═╝ ██║
+        ╚══════╝╚═╝     ╚══════╝╚═╝  ╚═╝╚═╝     ╚═╝
+
+        usage: splam [-h] [-v] [-c] {extract,score,clean} ...
+
+        splice junction predictor to improve alignment files (BAM / CRAM)
+
+        optional arguments:
+        -h, --help            show this help message and exit
+        -v, --version
+        -c, --citation
+
+        Commands:
+        {extract,score,clean}
+            extract             Extracting all splice junctions from an alignment or annotation file
+            score               Scoring all splice junctions
+            clean               Cleaning up spurious splice alignment
+
+|
 
 Now, you are ready to go !
 --------------------------
