@@ -40,16 +40,16 @@
 Quick Start Guide
 =================
 
-This page provides simple quick-start information for using splam with :code:`BAM` and :code:`GFF` files. Please read the :ref:`alignment-detailed-section` or :ref:`annotation-detailed-section` page for more details on each step.
+This page provides simple quick-start information for using Splam with :code:`BAM` and :code:`GFF` files. Please read the :ref:`alignment-detailed-section` or :ref:`annotation-detailed-section` page for more details on each step.
 
-If you haven't already, please follow the steps in the :ref:`Installation` page to install and load splam.
+If you haven't already, please follow the steps in the :ref:`Installation` page to install and load Splam.
 
 |
 
 Super-Quick Start (3 lines of code)
 +++++++++++++++++++++++++++++++++++
 
-There are two use case scenarios of Splam. The first one is :ref:`running with an alignment file <splam_bam_quick>`, and second one is :ref:`running with an annotation file <splam_gff_quick>`. Both can be done in three lines of code. Following are the examples:
+There are 2 use case scenarios of Splam. The first one is :ref:`running with an alignment file <splam_bam_quick>`, and second one is :ref:`running with an annotation file <splam_gff_quick>`. Both can be done in three lines of code. We demonstrate below:
 
 |
 
@@ -57,7 +57,7 @@ There are two use case scenarios of Splam. The first one is :ref:`running with a
 Cleaning up alignment files  (:code:`BAM`)
 -------------------------------------------
 
-The most minimal example gets the job done in three lines of code. More details below.
+The most minimal example gets the job done in three lines of code:
 
 .. code-block:: bash
 

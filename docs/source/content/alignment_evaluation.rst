@@ -194,14 +194,14 @@ By default, Splam processes alignments without pairing and bundling them. If you
 Step 3: Scoring extracted splice junctions
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. Firstly, you should have the BED file that was generated in :ref:`Step 2 <alignment-extract-introns>`. Additionally, you will require two additional files: (1) :ref:`the reference genome (2) <alignment-prepareintput>`, which shares coordinates with the junction BED file, and (2) :ref:`the Splam model (3) <alignment-prepareintput>`. Once you have these files in place, you can run the following command:
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. (1) The BED file that was generated in :ref:`Step 2 <alignment-extract-introns>`, (2) :ref:`the reference genome (2) <alignment-prepareintput>` which shares coordinates with the junction BED file, and (3) :ref:`the Splam model (3) <alignment-prepareintput>`. Once you have these files in place, you can run the following command:
 
 .. code-block:: bash
 
     splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out tmp_out/junction.bed
 
 
-After this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (p.s. they might be from unstranded transcripts assembled by StringTie).
+After this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (P.S. They might be from unstranded transcripts assembled by StringTie).
 
 * **Output**
 
@@ -254,7 +254,7 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
         :title: bg-light font-weight-bolder
         :body: bg-light text-left
 
-        The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <alignment-extract-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well, or otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
+        The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <alignment-extract-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well. Otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
 
 
 |
