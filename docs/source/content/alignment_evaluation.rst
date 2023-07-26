@@ -1,41 +1,3 @@
-.. raw:: html
-
-    <script type="text/javascript">
-
-        let mutation_fuc = function(mutations) {
-            var dark = document.body.dataset.theme == 'dark';
-
-            if (document.body.dataset.theme == 'auto') {
-                dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            }
-            
-            document.getElementsByClassName('sidebar_ccb')[0].src = dark ? '../_static/JHU_ccb-white.png' : "../_static/JHU_ccb-dark.png";
-            document.getElementsByClassName('sidebar_wse')[0].src = dark ? '../_static/JHU_wse-white.png' : "../_static/JHU_wse-dark.png";
-
-
-
-            for (let i=0; i < document.getElementsByClassName('summary-title').length; i++) {
-                console.log(">> document.getElementsByClassName('summary-title')[i]: ", document.getElementsByClassName('summary-title')[i]);
-
-                if (dark) {
-                    document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-dark font-weight-bolder";
-                    document.getElementsByClassName('summary-content')[i].classList = "summary-content card-body bg-dark text-left docutils";
-                } else {
-                    document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-light font-weight-bolder";
-                    document.getElementsByClassName('summary-content')[i].classList = "summary-content card-body bg-light text-left docutils";
-                }
-            }
-
-        }
-        document.addEventListener("DOMContentLoaded", mutation_fuc);
-        var observer = new MutationObserver(mutation_fuc)
-        observer.observe(document.body, {attributes: true, attributeFilter: ['data-theme']});
-        console.log(document.body);
-    </script>
-    <link rel="preload" href="../_images/jhu-logo-dark.png" as="image">
-
-|
-
 .. _alignment-detailed-section:
 
 Alignment file evaluation & cleanup (:code:`BAM`)
@@ -76,7 +38,7 @@ Splam offers solutions to several problems, addressing the following:
 Workflow overview
 +++++++++++++++++++++++++++++++++++
 
-Before diving into details of each step, this is the overview workflow. :numref:`alignment_cleanup_workflow` a is the workflow of running Splam in the standard RNA-Seq pipeline, and :numref:`alignment_cleanup_workflow` b is the workflow of spurious splice alignment removal.
+Before diving into details of each step, this is the overview workflow. :numref:`alignment_cleanup_workflow` a is the workflow of running Splam in the standard RNA-Seq pipeline, and :numref:`alignment_cleanup_workflow` b is the spurious spliced alignment removal workflow.
 
 Splam **takes a sorted alignment file**, extracts all splice junctions, and scores all of them. Furthermore, Splam cleans up the alignment file by removing spliced alignments with poor quality splice junctions, and **output a new sorted alignment file**. 
 
@@ -273,7 +235,7 @@ After scoring every splice junction in your alignment file, the final step of th
 
 * **Output**
 
-This output file of this step is a sorted Splam-cleaned BAM file. You can replace the original BAM file with this cleaned BAM file to do the transcript assembly, quantification, and all other downstream analyses! 
+The output file of this step is a sorted Splam-cleaned BAM file. You can replace the original BAM file with this cleaned BAM file to do the transcript assembly, quantification, and all other downstream analyses! 
 
 .. admonition::  Here are some **optional arguments**:
     :class: note

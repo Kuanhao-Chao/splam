@@ -1,42 +1,3 @@
-.. raw:: html
-
-    <script type="text/javascript">
-
-        let mutation_fuc = function(mutations) {
-            var dark = document.body.dataset.theme == 'dark';
-
-            if (document.body.dataset.theme == 'auto') {
-                dark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-            }
-            
-            document.getElementsByClassName('sidebar_ccb')[0].src = dark ? '../_static/JHU_ccb-white.png' : "../_static/JHU_ccb-dark.png";
-            document.getElementsByClassName('sidebar_wse')[0].src = dark ? '../_static/JHU_wse-white.png' : "../_static/JHU_wse-dark.png";
-
-
-
-            for (let i=0; i < document.getElementsByClassName('summary-title').length; i++) {
-                console.log(">> document.getElementsByClassName('summary-title')[i]: ", document.getElementsByClassName('summary-title')[i]);
-
-                if (dark) {
-                    document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-dark font-weight-bolder";
-                    document.getElementsByClassName('summary-content')[i].classList = "summary-content card-body bg-dark text-left docutils";
-                } else {
-                    document.getElementsByClassName('summary-title')[i].classList = "summary-title card-header bg-light font-weight-bolder";
-                    document.getElementsByClassName('summary-content')[i].classList = "summary-content card-body bg-light text-left docutils";
-                }
-            }
-
-        }
-        document.addEventListener("DOMContentLoaded", mutation_fuc);
-        var observer = new MutationObserver(mutation_fuc)
-        observer.observe(document.body, {attributes: true, attributeFilter: ['data-theme']});
-        console.log(document.body);
-    </script>
-    <link rel="preload" href="../_images/jhu-logo-dark.png" as="image">
-
-
-|
-
 Quick Start Guide
 =================
 
@@ -49,15 +10,16 @@ If you haven't already, please follow the steps in the :ref:`Installation` page 
 Super-Quick Start (3 lines of code)
 +++++++++++++++++++++++++++++++++++
 
-There are two use case scenarios of Splam. The first one is :ref:`running with an alignment file <splam_bam_quick>`, and second one is :ref:`running with an annotation file <splam_gff_quick>`. Both can be done in three lines of code. Following are the examples:
+There are two use case scenarios of Splam. The first one is :ref:`running with an alignment file <splam_bam_quick>`, and second one is :ref:`running with an annotation file <splam_gff_quick>`. Both can be done in three lines of code. 
+
+Before you get started, make sure you have already cloned the :ref:`Splam GitHub repository <install_from_source>`. Following are the examples:
+
 
 |
 
 .. _splam_bam_quick:
 Cleaning up alignment files  (:code:`BAM`)
 -------------------------------------------
-
-The most minimal example gets the job done in three lines of code. More details below.
 
 .. code-block:: bash
 
@@ -87,6 +49,18 @@ Evaluation annotation files / assembled transcripts (:code:`GFF`)
 
 |
 
+Try Splam on Google Colab
++++++++++++++++++++++++++++++++++++
+
+We created some reproducible and easy-to-run Splam examples on Google Colab. It's an good starting point, so go ahead and check them out!
+
+
+.. image:: https://colab.research.google.com/assets/colab-badge.svg
+    :target: https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb
+
+
+
+|
 
 For more detailed analysis steps, please check :
 
