@@ -1,3 +1,27 @@
+/*  GSam.h
+
+    Copyright (C) 2019 Geo Pertea
+    
+    Author: Geo Pertea
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.  */
+
 #ifndef _G_SAM_H
 #define _G_SAM_H
 
@@ -300,22 +324,6 @@ class GSamRecord: public GSeg {
       b->core.flag=samflags;
     }
 
-    /* //implementing these requires access to htslib internals (sam_internal.h)
-    //creates a new record from 1-based alignment coordinate
-    //quals should be given as Phred33
-    //Warning: pos and mate_pos must be given 1-based!
-    GSamRecord(const char* qname, int32_t gseq_tid,
-                    int pos, bool reverse, const char* qseq, const char* cigar=NULL, const char* quals=NULL);
-    GSamRecord(const char* qname, int32_t samflags, int32_t g_tid,
-             int pos, int map_qual, const char* cigar, int32_t mg_tid, int mate_pos,
-             int insert_size, const char* qseq, const char* quals=NULL,
-             GVec<char*>* aux_strings=NULL);
-             //const std::vector<std::string>* aux_strings=NULL);
-
-    void add_sequence(const char* qseq, int slen=-1); //adds the DNA sequence given in plain text format
-    void add_quals(const char* quals); //quality values string in Phred33 format
-    void set_cigar(const char* str); //converts and adds CIGAR string given in plain SAM text format
-    */
     void add_aux(const char* str); //adds one aux field in plain SAM text format (e.g. "NM:i:1")
     int  add_aux(const char tag[2], char atype, int len, uint8_t *data) {
       //IMPORTANT:  strings (Z,H) should include the terminal \0
@@ -576,52 +584,6 @@ class GSamWriter {
       return sam_hdr_name2tid(hdr, seq_name);
       }
 
-   /* -- these are tied to the htslib internals (sam_internal.h)
-   //just a convenience function for creating a new record, but it's NOT written
-   //given pos must be 1-based (so it'll be stored as pos-1 because BAM is 0-based)
-   GSamRecord* new_record(const char* qname, const char* gseqname,
-            int pos, bool reverse, const char* qseq, const char* cigar=NULL, const char* qual=NULL) {
-      int32_t gseq_tid=get_tid(gseqname);
-      if (gseq_tid < 0 && strcmp(gseqname, "*")) {
-            if (hdr->n_targets == 0) {
-               GError("Error: missing/invalid SAM header\n");
-               } else
-                   GMessage("Warning: reference '%s' not found in header, will consider it '*'.\n",
-                                   gseqname);
-            }
-
-      return (new GSamRecord(qname, gseq_tid, pos, reverse, qseq, cigar, qual));
-      }
-
-   GSamRecord* new_record(const char* qname, int32_t samflags, const char* gseqname,
-         int pos, int map_qual, const char* cigar, const char* mgseqname, int mate_pos,
-         int insert_size, const char* qseq, const char* quals=NULL,
-                          GVec<char*>* aux_strings=NULL) {
-      int32_t gseq_tid=get_tid(gseqname);
-      if (gseq_tid < 0 && strcmp(gseqname, "*")) {
-            if (hdr->n_targets == 0) {
-               GError("Error: missing/invalid SAM header\n");
-               } else
-                   GMessage("Warning: reference '%s' not found in header, will consider it '*'.\n",
-                                   gseqname);
-            }
-      int32_t mgseq_tid=-1;
-      if (mgseqname!=NULL) {
-         if (strcmp(mgseqname, "=")==0) {
-            mgseq_tid=gseq_tid;
-            }
-          else {
-            mgseq_tid=get_tid(mgseqname);
-            if (mgseq_tid < 0 && strcmp(mgseqname, "*")) {
-                GMessage("Warning: reference '%s' not found in header, will consider it '*'.\n",
-                                   mgseqname);
-                }
-            }
-          }
-      return (new GSamRecord(qname, samflags, gseq_tid, pos, map_qual, cigar,
-              mgseq_tid, mate_pos, insert_size, qseq, quals, aux_strings));
-      }
-   */
    void write(GSamRecord* brec) {
       if (brec!=NULL) {
           if (sam_write1(this->bam_file,this->hdr, brec->b)<0)
@@ -634,34 +596,4 @@ class GSamWriter {
     	 GError("Error writing SAM record!\n");
    }
 };
-
-// class GSamRecordList {
-//  public:
-//    int NH_tag_bound = 0;
-//    GVec<GSamRecord> sam_list;
-//    // if (sam_list.Count() == 0) {
-//    //    NH_tag_bound = ;
-//    // }
-//    GSamRecordList(GSamRecord &brec) {
-//       // GMessage("Before sam_list size: %d\n", sam_list.Count());
-//       NH_tag_bound = brec.tag_int("NH", 0);
-//       sam_list.Add(brec);
-//       // GMessage("After sam_list size: %d\n", sam_list.Count());
-//    }
-   
-//    ~GSamRecordList() {
-
-//    }
-   
-//    void add(GSamRecord &brec) {
-//       // GMessage("@@ Adding an element!\n");
-//       sam_list.Add(brec);
-//       std::string kv = brec.name();
-//       // kv = kv + "_" + std::to_string(brec.pairOrder());
-//       // GMessage("\tNH tag: %d\n", brec.tag_int("NH", 0));
-//       // GMessage("\tkv: %s\n", kv.c_str());
-//       // GMessage("\tAfter sam_list size: %d\n\n\n", sam_list.Count());
-//    }   
-// };
-
 #endif

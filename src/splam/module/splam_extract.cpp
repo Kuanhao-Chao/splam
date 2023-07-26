@@ -289,7 +289,6 @@ void processOptions(int argc, char* argv[]) {
 
     if (args.getOpt('P') || args.getOpt("paired") ) {
         g_paired_removal = true;
-        GMessage("g_paired_removal: %d\n", g_paired_removal);
     }
     
     verbose=(args.getOpt('V')!=NULL || args.getOpt("verbose")!=NULL);

@@ -11,25 +11,14 @@
 #include "GSam.h"
 
 struct CReadAln:public GSeg {
-	//DEBUG ONLY:
 	GSamRecord brec;
 	int pair_idx;     // keeps index for the pair of the alignment.
-	// GVec<GSeg> segs; //"exons"
-
 	CReadAln(GSamRecord* bamrec): 
 			GSeg(bamrec->start, bamrec->end), brec(NULL), pair_idx(-1) {
 		this->brec = (*bamrec);
 	}
-	
-	// CReadAln(CReadAln &rd):GSeg(rd.start,rd.end) { // copy contructor
-	// 	pair_idx=rd.pair_idx;
-	// 	GSamRecord brec_tmp = GSamRecord(rd.brec);
-	// 	brec = &brec_tmp;
-	// }
 
 	~CReadAln() { 
-		// GMessage("CReadAln destructor called\n");
-		// delete brec;
 	}
 };
 
