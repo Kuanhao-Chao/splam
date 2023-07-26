@@ -19,9 +19,23 @@
 
 Splam is a splice junction recognition model based on a deep grouped residual convolutional neural network that offers fast and precise assessment of splice junctions. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
 
+
+##  <a name="whysplam"></a>Why Splam❓<a class="headerlink" href="#whysplam" title="Permalink to this heading">#</a>
+
+1. **We need a tools to evaluate spliced junctions & alignments.** There are tens of thousands of RNA-Seq datasets, such as GTEX and TCGA. However, in a typical bulk RNA-Seq pipeline, there are no tools to systematically assess and clean up spliced alignments. Splam addresses this problem!
+2. **Cleaner alignments lead to improved transcript assembly, which, in turn, enhances all downstream analyses.** We have demonstrated that using the Splam-cleaned alignment file enhances RNA-Seq assembly. Consequently, this improvement will have a positive impact on all downstream RNA-Seq analyses, including transcript quantification, differential gene expression analysis, differential transcriptome usage analysis, etc.
+
+
+## <a name="whosplaminterested"></a>Who would be interested❓<a class="headerlink" href="#whosplaminterested" title="Permalink to this heading">#</a>
+
+If you are **(1) doing RNA-Seq data analysis** or **(2) seeking a trustworthy tool to evaluate splice junctions (introns)**, then Splam is the tool that you are looking for!
+
+## <a name="whatsplamdo"></a>What does Splam do❓<a class="headerlink" href="#whatsplamdo" title="Permalink to this heading">#</a>
+
+
 There are two main use case scenarios:
 
-1. Improving your **alignment file**. Splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of the downstream transcriptome assembly [[Link](https://ccb.jhu.edu/splam/content/alignment_evaluation.html#alignment-detailed-section)].
+1. Improving your **alignmnet file**. Splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of downstream transcriptome assemblies [[Link](https://ccb.jhu.edu/splam/content/alignment_evaluation.html#alignment-detailed-section)].
 
 2. Evaluating the quality of introns in your **annotation file or assembled transcripts** [[Link](https://ccb.jhu.edu/splam/content/annotation_evaluation.html#annotation-detailed-section)].
 
