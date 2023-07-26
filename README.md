@@ -137,7 +137,7 @@ $ python setup.py install
 
 ## <a name="quick_start"></a>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading">#</a>
 
-The simplest example uses just three lines of code!
+Running Splam is simple. It only requires three lines of code!
 
 Check this example on Google Colab [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
 
@@ -167,6 +167,10 @@ $ splam clean -o tmp_out_annotation
 
 <br>
 
+## Scripts for Splam model training
+All the scripts for Splam training and data analysis are in [this github repository](https://github.com/Kuanhao-Chao/splam-analysis-results).
+
+<br>
 
 ## <a name="publication"></a>Publications<a class="headerlink" href="#publication" title="Permalink to this heading">#</a>
 TBC
