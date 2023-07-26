@@ -1,6 +1,6 @@
 .. _annotation-detailed-section:
 
-Annotation file / assembeled transcripts evaluation (:code:`GFF`)
+Annotation file / assembled transcripts evaluation (:code:`GFF`)
 =========================================================================
 
 

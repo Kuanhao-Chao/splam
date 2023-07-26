@@ -66,15 +66,19 @@ Splam is a splice junction recognition model based on a deep residual convolutio
 
 There are two primary applications of Splam:
 
+<<<<<<< HEAD
 .. splam is useful if you want to :
 
 1. Improving your **alignmnet file**. Splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of downstream transcriptome assemblies [:ref:`Link <alignment-detailed-section>`].
+=======
+1. Improving your **alignment file**. Splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of the downstream transcriptome assembly [:ref:`Link <alignment-detailed-section>`].
+>>>>>>> 5de719a90196b2d6e913eae56a64ca79d0482af7
 
 2. Evaluating the quality of introns in your **annotation file or assembled transcripts** [:ref:`Link <annotation-detailed-section>`].
 
 
 
-Splam is free, it's open source, it's a light weight deep learning model, and it's in Python!
+Splam is free, it's open source, it's a lightweight deep learning model, and it's in Python!
 
 .. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
 

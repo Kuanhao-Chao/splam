@@ -31,16 +31,16 @@ Splam offers solutions to several problems, addressing the following:
 1. Distinguishing high-quality spliced alignments from those with low confidence.
 2. Providing a systematic approach to assess all splice alignments within an alignment file. Additionally, it eliminates erroneous splice alignments, thereby enhancing downstream transcriptome assembly.
 3. Potentially aiding in understanding the biases inherent in splice aligners.
-4. There are more potential usage to be explored!
+4. There are more potential usages to be explored!
 
 |
 
 Workflow overview
 +++++++++++++++++++++++++++++++++++
 
-Before diving into details of each step, this is the overview workflow. :numref:`alignment_cleanup_workflow` a is the workflow of running Splam in the standard RNA-Seq pipeline, and :numref:`alignment_cleanup_workflow` b is the spurious spliced alignment removal workflow.
+Before diving into details of each step, this is the overview workflow. :numref:`alignment_cleanup_workflow` **(a)** is the workflow of running Splam in the standard RNA-Seq pipeline, and :numref:`alignment_cleanup_workflow` **(b)** is the workflow of spurious splice alignment removal.
 
-Splam **takes a sorted alignment file**, extracts all splice junctions, and scores all of them. Furthermore, Splam cleans up the alignment file by removing spliced alignments with poor quality splice junctions, and **output a new sorted alignment file**. 
+Splam **takes a sorted alignment file**, extracts all splice junctions, and scores all of them. Furthermore, Splam cleans up the alignment file by removing spliced alignments with poor quality splice junctions, and **outputs a new sorted alignment file**. 
 
 
 .. _alignment_cleanup_workflow:
@@ -58,7 +58,7 @@ Splam **takes a sorted alignment file**, extracts all splice junctions, and scor
 Step 1: Preparing your input files
 +++++++++++++++++++++++++++++++++++
 
-The first step is to prepare three files for Splam analysis. The following three files are toy datasets that we are going to use in the tutorial:
+The first step is to prepare 3 files for Splam analysis. The following three files are toy datasets that we are going to use in the tutorial:
 
 
 .. admonition:: Input files
@@ -66,7 +66,7 @@ The first step is to prepare three files for Splam analysis. The following three
 
     1. An alignment file in :code:`BAM` format [`example file: SRR1352129_chr9_sub.bam <https://github.com/Kuanhao-Chao/splam/blob/main/test/SRR1352129_chr9_sub.bam>`_].  
     2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
-    3. The Splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
+    3. The Splam model, which you can find here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
 
 |
 
@@ -124,7 +124,7 @@ By default, Splam processes alignments without pairing and bundling them. If you
         :title: bg-light font-weight-bolder
         :body: bg-light text-left
 
-        The maximum length for splice junctions is 100,000 nt by default. This means that any splice junctions in spliced alignments longer than the maximum splice junction length will be removed.
+        The maximum length for splice junctions is 100,000nt by default. This means that any splice junctions in spliced alignments longer than the maximum splice junction length will be removed.
 
 
     .. dropdown:: :code:`-g / --bundle-gap GAP`
@@ -156,7 +156,7 @@ By default, Splam processes alignments without pairing and bundling them. If you
 Step 3: Scoring extracted splice junctions
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need three essential files. Firstly, you should have the BED file that was generated in :ref:`Step 2 <alignment-extract-introns>`. Additionally, you will require two additional files: (1) :ref:`the reference genome (2) <alignment-prepareintput>`, which shares coordinates with the junction BED file, and (2) :ref:`the Splam model (3) <alignment-prepareintput>`. Once you have these files in place, you can run the following command:
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. Firstly, you should have the BED file that was generated in :ref:`Step 2 <alignment-extract-introns>`. Additionally, you will require two additional files: (1) :ref:`the reference genome (2) <alignment-prepareintput>`, which shares coordinates with the junction BED file, and (2) :ref:`the Splam model (3) <alignment-prepareintput>`. Once you have these files in place, you can run the following command:
 
 .. code-block:: bash
 
@@ -175,7 +175,7 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
     chr9    5924844 5929044 JUNC00000009    8       -       0.9999883       0.9999949
 
 
-.. admonition::  Here are the explanation of the **required arguments**:
+.. admonition::  Here are the **required arguments**:
     :class: important
 
     .. dropdown:: :code:`-G / --reference-genome REF.fasta`
@@ -190,7 +190,7 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
         :title: bg-light font-weight-bolder
         :body: bg-light text-left
 
-        This argument is the path to the trained Splam model. If you haven't download the Splam model yet, here is the :ref:`link <alignment-prepareintput>`.
+        This argument is the path to the trained Splam model. If you haven't downloaded the Splam model yet, here is the :ref:`link <alignment-prepareintput>`.
 
 
 .. admonition::  Here are some **optional arguments**:
@@ -225,7 +225,7 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
 Step 4: Cleaning up your alignment file
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-After scoring every splice junction in your alignment file, the final step of this analysis is to remove alignments with low-quality splice junctions and update 'NH' tag and flags for multi-mapped reads. You can pass the directory path to Splam using the clean mode, which will output a new cleaned and sorted BAM file. The implementation of this step utilizes the core functions of :code:`samtools sort` and :code:`samtools merge`. If you want to run this step with multiple threads, you can set the :code:`-@ / --threads` argument accordingly.
+After scoring every splice junction in your alignment file, the final step of this analysis is to remove alignments with low-quality splice junctions and update 'NH' tags and flags for multi-mapped reads. You can pass the directory path to Splam using the clean mode, which will output a new cleaned and sorted BAM file. The implementation of this step utilizes the core functions of :code:`samtools sort` and :code:`samtools merge`. If you want to run this step with multiple threads, you can set the :code:`-@ / --threads` argument accordingly.
 
 
 .. code-block:: bash
@@ -259,7 +259,7 @@ The output file of this step is a sorted Splam-cleaned BAM file. You can replace
         :title: bg-light font-weight-bolder
         :body: bg-light text-left
 
-        Splam utilizes the sorting, compression, and merging scripts from `samtools <https://github.com/samtools/samtools>`_. You can enable multi-threading for the Splam final stage of BAM file sorting and merging by setting this argument. By default, the operation is performed in single-thread.
+        Splam utilizes the sorting, compression, and merging scripts from `samtools <https://github.com/samtools/samtools>`_. You can enable multi-threading for the final stage of BAM file sorting and merging by setting this argument. By default, the operation is performed in single-thread.
 
     .. dropdown:: :code:`-o / --outdir DIR`
         :animate: fade-in-slide-down
@@ -274,7 +274,7 @@ The output file of this step is a sorted Splam-cleaned BAM file. You can replace
 Step 5: IGV visualization
 +++++++++++++++++++++++++++++++++++
 
-Here is an example of the EHMT1 gene locus on chromosome 9 visulaized in IGV. This protein-coding gene is located on the forward strand; however, we have observed that the splice aligner generates several splice alignments on the reverse strand. 
+Here is an example of the EHMT1 gene locus on chromosome 9 visualized in IGV. This protein-coding gene is located on the forward strand; however, we have observed that the splice aligner generates several splice alignments on the reverse strand. 
 
 
 In :numref:`figure_EHMT1`, the first three tracks display the coverage, splice junction, and alignment information from the original alignment file of the SRR1352129 sample. The fourth, fifth, and sixth tracks show the coverage, splice junction, and alignment data obtained from the cleaned alignment file of the SRR1352129 sample, which was generated using Splam. Many of the spliced alignments on the reverse strand of EHMT1 have splice junctions with low Splam scores and were consequently removed. The Splam removal procedure results in a more refined gene locus and :ref:`enhances the transcriptome assembly <assemble_alignments_into_trans>`. The final track represents the RefSeq annotations of the EHMT1 gene.
@@ -296,7 +296,7 @@ In :numref:`figure_EHMT1`, the first three tracks display the coverage, splice j
 
 .. important::
 
-    It's important to emphasize that Splam **exclusively employs the strand information to perform reverse complement of DNA sequences for splice junctions. And when it comes to scoring splice junctions, Splam relies solely on the DNA sequence information**. 
+    **Splam exclusively employs the strand information to extract the reverse complement of DNA sequences for splice junctions when necessary.** When it comes to scoring splice junctions, **Splam relies solely on the DNA sequence information**. 
     
     In the above example, Splam can distinguish that the majority of splice junctions aligned on the opposite strand of the EHMT1 gene locus are of poor quality. This final score is drawn by simply examining the DNA sequence!
     
@@ -320,19 +320,19 @@ We ran Stringtie to assemble the original alignment BAM file and the Splam-clean
 
 .. seealso::
     
-    * `StringTie <https://ccb.jhu.edu/software/stringtie/>`_ to learn more about the transcriptome assembly.
+    * `StringTie <https://ccb.jhu.edu/software/stringtie/>`_ to learn more about the transcriptome assembly
 
 |
 
 What's next?
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-Congratulation! You have finished this tutorial.
+Congratulations! You have finished this tutorial.
 
 .. seealso::
     
-    * :ref:`behind-the-scenes-splam` to understand how Splam is designed and trained.
-    * :ref:`Q&A` to check out some common questions.
+    * :ref:`behind-the-scenes-splam` to understand how Splam is designed and trained
+    * :ref:`Q&A` to check out some common questions
 
 
 |
