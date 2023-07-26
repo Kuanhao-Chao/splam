@@ -72,8 +72,8 @@ Splam is a splice junction recognition model based on a deep residual convolutio
 Why Splam❓
 ==================
 
-1. **We need a tools to evaluate spliced junctions & alignments.** There are tens of thousands of RNA-Seq datasets, such as GTEX and TCGA. However, in a typical bulk RNA-Seq pipeline, there are no tools to systematically assess and clean up spliced alignments. Splam addresses this problem!
-2. **Cleaner alignments lead to improved transcript assembly, which, in turn, enhances all downstream analyses.** We have demonstrated that using the Splam-cleaned alignment file enhances RNA-Seq assembly. Consequently, this improvement will have a positive impact on all downstream RNA-Seq analyses, including transcript quantification, differential gene expression analysis, differential transcriptome usage analysis, etc.
+1. **We need a tools to evaluate splice junctions & spliced alignments.** Thousands of RNA-Seq datasets are generated every day, but there are no tools available for cleaning up spurious spliced alignments in these data. Splam addresses this problem!
+2. **Splam-cleaned alignments lead to improved transcript assembly, which, in turn, may enhance all downstream RNA-Seq analyses**, including transcript quantification, differential gene expression analysis, and more!
 
 |
 
