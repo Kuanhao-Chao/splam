@@ -1,6 +1,9 @@
 from torch.nn import Module, BatchNorm1d, LazyBatchNorm1d, ReLU, LeakyReLU, Conv1d, LazyConv1d, ModuleList, Softmax, Sigmoid, Flatten, Dropout2d, Linear
 import numpy as np
 
+
+CL_max = 10000
+
 CARDINALITY_ITEM = 16
 
 class ResidualUnit(Module):

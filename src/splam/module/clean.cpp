@@ -68,7 +68,8 @@ void loadBed(GStr inbedname, robin_hdd_string &rm_juncs) {
         }
         double donor_score = junc[6].asDouble();
         double acceptor_score = junc[7].asDouble();
-        if (donor_score <= threshold && acceptor_score <= threshold) {
+        // if (donor_score <= threshold && acceptor_score <= threshold) {
+        if (donor_score < threshold || acceptor_score < threshold) {
             char* chrname =junc[0].detach();
             char* strand =junc[5].detach();
             std::string j = std::to_string(junc[1].asInt()) + "_" + std::to_string(junc[2].asInt()) + "_" + strand + "_" + chrname;

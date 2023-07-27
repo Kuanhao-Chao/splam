@@ -133,7 +133,7 @@ setup(
 	author="Kuan-Hao Chao",
 	author_email="kh.chao@cs.jhu.edu",
 	description="Splice junction scoring tool",
-	url="https://github.com/Kuanhao-Chao/SPLAM",
+	url="https://github.com/Kuanhao-Chao/splam",
 	install_requires=['torch>=1.12.0', 'pybedtools>=0.9.0', 'gffutils>=0.10.0', 'progress>=1.0'],
 	python_requires='>=3.6',
 	packages=['splam'],
@@ -141,5 +141,5 @@ setup(
                  CMakeExtension("splam_clean")],
     cmdclass={"build_ext": CMakeBuild},
     extras_require={"test": "pytest"},
-	entry_points={'console_scripts': ['splam = splam.splam:main'], },
+	entry_points={'console_scripts': ['splam = splam.main:main'], },
 )

@@ -1,8 +1,27 @@
-/*  tmerge.h -- 
+/*  tmerge.h
 
-    Copyright (C) 2023 Kuan-Hao Chao
+    Copyright (C) 2016 Mihaela Pertea & Geo Pertea
 
-    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+    Author: Mihaela Pertea <mpertea@jhu.edu>
+    Author: Geo Pertea
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.  */
 
 #ifndef _TMERGE_H_
 #define _TMERGE_H_
@@ -11,7 +30,6 @@
 #include <gclib/GStr.h>
 #include <gclib/GVec.hh>
 #include <gclib/GList.hh>
-//#include "rlink.h"
 #include "GSam.h"
 #include <htslib/htslib/khash.h>
 
@@ -36,7 +54,6 @@ struct TInputRecord {
 		 GSamRecord& r2=*(o.brec);
 		 int r1_tid=r1.refId();
 		 int r2_tid=r2.refId();
-		 //int refcmp=strcmp(r1.refName(),r2.refName()); //should use the refID comparison instead
 		 if (r1_tid==r2_tid) {
 		 //higher coords first
 			if (r1.start!=r2.start)

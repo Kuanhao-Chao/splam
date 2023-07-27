@@ -119,6 +119,7 @@ html_theme_options = {
 
 html_sidebars = {
     "**": [
+        "sidebar/initial.html",
         "sidebar/scroll-start.html",
         "sidebar/brand.html",
         "sidebar/search.html",

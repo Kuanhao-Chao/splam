@@ -1,8 +1,27 @@
-/*  tmerge.cpp -- 
+/*  tmerge.cpp
 
-    Copyright (C) 2023 Kuan-Hao Chao
+    Copyright (C) 2016 Mihaela Pertea & Geo Pertea
 
-    Author: Kuan-Hao Chao <kuanhao.chao@gmail.com> */
+    Author: Mihaela Pertea <mpertea@jhu.edu>
+    Author: Geo Pertea
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.  */
 
 #include "tmerge.h"
 #include <string>
@@ -195,10 +214,6 @@ void TInputFiles::load_hdr_samples(sam_hdr_t* hdr,std::string filename,bool tbMe
     }
     else{ // no sample was found - need to add current name to the header
         this->s2l_it = this->sample2lineno.insert(std::make_pair(get_full_path(filename),std::make_tuple(this->max_sample_id,sample_line_pos,"",donor)));
-
-        // GMessage("this->max_sample_id: %d\n", this->max_sample_id);
-        // GMessage("donor: %d\n", donor);
-
         if(!this->s2l_it.second){ // not inserted
             GMessage("this->s2l_it.second: %d\n", this->s2l_it.second);
             std::cerr<<"duplicate entries detected"<<std::endl;
@@ -380,7 +395,6 @@ TInputRecord* TInputFiles::next() {
         GSamRecord* rnext=freaders[crec->fidx]->samreader->next();
         if (rnext)
             recs.Add(new TInputRecord(rnext,crec->fidx, crec->tbMerged));
-        //return crec->brec;
         return crec;
     }
     else return NULL;

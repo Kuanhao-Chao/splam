@@ -12,8 +12,6 @@
 #include <filesystem>
 #include <progressbar/progressbar.hpp>
 
-// #include "predict.h"
-// #include "extract.h"
 #include "common.h"
 #include "util.h"
 #include "clean.h"
@@ -120,18 +118,10 @@ void readnhHitFile(robin_hdd_rm_hit& rm_hit) {
 
 void update_NH_tag_write_alignment(GStr infname, GSamWriter *outfile, int& processed_aln, robin_hdd_rm_hit rm_hit, GStr log) {
     GSamReader reader(infname.chars(), SAM_QNAME|SAM_FLAG|SAM_RNAME|SAM_POS|SAM_CIGAR|SAM_AUX);
-    // fprintf(stderr, "infname: %s\n", infname.chars());
-    // progressbar bar(bar_num);
-
     GStr msg = "[INFO] SPLAM! Processing " + log + "\n";
     fprintf(stderr, msg);
-    // bar.set_opening_bracket_char("[INFO] SPLAM! Processing multi-mapped spliced alignments\n\t[");
-
     while ((brec=reader.next())!=NULL) {
         processed_aln += 1;
-        // if (verbose) {
-        //     bar.update();
-        // }
         std::string kv = brec->name();
         kv = kv + "_" + std::to_string(brec->pairOrder());
         // GMessage("kv: %s\n", kv.c_str());
@@ -141,7 +131,6 @@ void update_NH_tag_write_alignment(GStr infname, GSamWriter *outfile, int& proce
             // GMessage("Before update NH tag: %d\n", brec->tag_int("NH", 0));
             int new_nh = brec->tag_int("NH", 0) - rm_hit[kv];
             brec->add_int_tag("NH", new_nh);
-            // GMessage("After update NH tag: %d\n", brec->tag_int("NH", 0));
         }
         int tmp = 0;
         keepAlignment(outfile, brec, tmp);

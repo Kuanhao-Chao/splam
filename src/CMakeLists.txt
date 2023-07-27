@@ -46,8 +46,6 @@ pybind11_add_module(splam_extract
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.h
         ${CMAKE_SOURCE_DIR}/include/gclib/GBase.cpp)
 
-
-
 # Add include directories
 target_include_directories(splam_extract PRIVATE ${CMAKE_SOURCE_DIR}/include/)
 

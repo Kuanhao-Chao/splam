@@ -64,3 +64,4 @@ build/
 *.gff3
 *.db
 experiment/
+test_diff_model/

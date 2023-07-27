@@ -1,17 +1,30 @@
+/*  GSam.cpp
+
+    Copyright (C) 2019 Geo Pertea
+    
+    Author: Geo Pertea
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.  */
+
 #include "GSam.h"
 #include <ctype.h>
-/*
-//for bam1_t (re)allocation functions:
-// sam_realloc_bam_data(), realloc_bam_data(), possibly_expand_bam_data()
-#include "sam_internal.h"
 
-//for parsing functions hts_str2uint() etc.:
-#include "textutils_internal.h"
-
-#define  _get_bmem(type_t, x, b, l) if (possibly_expand_bam_data((b), (l)) < 0) \
- GError("Error: cannot allocate SAM data\n"); \
- *(x) = (type_t*)((b)->data + (b)->l_data); (b)->l_data += (l)
-*/
 #define _parse_err(cond, msg) if (cond) GError("Error [SAM parsing]: %s\n",msg);
 #define _parse_warn(cond, msg) if (cond) GMessage("Warning [SAM parsing]: %s\n",msg);
 #define _parse_mem_err() GError("Error [SAM parsing]: memory allocation problem!\n");

@@ -19,9 +19,26 @@
 
 Splam is a splice junction recognition model based on a deep grouped residual convolutional neural network that offers fast and precise assessment of splice junctions. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
 
+
+##  <a name="whysplam"></a>Why Splam❓<a class="headerlink" href="#whysplam" title="Permalink to this heading">#</a>
+
+1. **We need a tools to evaluate splice junctions & spliced alignments.** Thousands of RNA-Seq datasets are generated every day, but there are no tools available for cleaning up spurious spliced alignments in these data. Splam addresses this problem!
+2. **Splam-cleaned alignments lead to improved transcript assembly, which, in turn, may enhance all downstream RNA-Seq analyses**, including transcript quantification, differential gene expression analysis, and more!
+
+<br>
+
+## <a name="whosplaminterested"></a>Who would be interested❓<a class="headerlink" href="#whosplaminterested" title="Permalink to this heading">#</a>
+
+If you are **(1) doing RNA-Seq data analysis** or **(2) seeking a trustworthy tool to evaluate splice junctions (introns)**, then Splam is the tool that you are looking for!
+
+<br>
+
+## <a name="whatsplamdo"></a>What does Splam do❓<a class="headerlink" href="#whatsplamdo" title="Permalink to this heading">#</a>
+
+
 There are two main use case scenarios:
 
-1. Improving your **alignment file**. Splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of the downstream transcriptome assembly [[Link](https://ccb.jhu.edu/splam/content/alignment_evaluation.html#alignment-detailed-section)].
+1. Improving your **alignmnet file**. Splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of downstream transcriptome assemblies [[Link](https://ccb.jhu.edu/splam/content/alignment_evaluation.html#alignment-detailed-section)].
 
 2. Evaluating the quality of introns in your **annotation file or assembled transcripts** [[Link](https://ccb.jhu.edu/splam/content/annotation_evaluation.html#annotation-detailed-section)].
 
@@ -96,13 +113,13 @@ There are two main use case scenarios:
 
 ## <a name="installation"></a>Installation<a class="headerlink" href="#installation" title="Permalink to this heading">#</a>
 
-You can install Splam with conda package manager. This is the easiest approach.
+<!-- You can install Splam with conda package manager. This is the easiest approach.
 ``` bash
 $ conda install -c bioconda splam
-```
+``` -->
 
 
-Splam is on [PyPi](https://pypi.org/) now. Check out all the release [here](https://pypi.org/manage/project/splam/releases/).
+Splam is on [PyPi](https://pypi.org/) now. This is the easiest installation approach. Check out all the release [here](https://pypi.org/manage/project/splam/releases/).
 ```bash
 $ pip install splam
 ```
@@ -120,7 +137,7 @@ $ python setup.py install
 
 ## <a name="quick_start"></a>Quick Start<a class="headerlink" href="#quick-start" title="Permalink to this heading">#</a>
 
-The simplest example uses just three lines of code!
+Running Splam is simple. It only requires three lines of code!
 
 Check this example on Google Colab [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
 
@@ -150,6 +167,10 @@ $ splam clean -o tmp_out_annotation
 
 <br>
 
+## Scripts for Splam model training
+All the scripts for Splam training and data analysis are in [this github repository](https://github.com/Kuanhao-Chao/splam-analysis-results).
+
+<br>
 
 ## <a name="publication"></a>Publications<a class="headerlink" href="#publication" title="Permalink to this heading">#</a>
 TBC
