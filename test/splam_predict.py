@@ -4,18 +4,24 @@ from torch.optim.lr_scheduler import LambdaLR
 from torch.optim import Optimizer
 from torch.utils.data import Dataset, DataLoader
 
+import argparse
 import math
 import random
 import numpy as np
 import warnings
-import os
-import re
 from progress.bar import Bar
-
-# from splam.SPLAM import *
 
 warnings.filterwarnings('ignore')
 
+parser = argparse.ArgumentParser(description='SPLAM! splice junction prediction.')
+parser.add_argument('-f', metavar='<junction.fa>', required=True, help='the junction FASTA file in SPLAM! format')
+parser.add_argument('-o', metavar='<score.bed>', required=True, help='the output SPLAM! scores for junctions')
+parser.add_argument('-m', metavar='<model.pt>', required=True, help='the path to the SPLAM! model')
+
+args = parser.parse_args()
+JUNC_FA = args.f
+OUT_SCORE = args.o
+MODEL_PATH = args.m
 CARDINALITY_ITEM = 16
 SEQ_LEN = 800
 JUNC_START = 200
@@ -30,18 +36,67 @@ OUT_MAP = np.asarray([[1, 0, 0],
                       [0, 0, 1],
                       [0, 0, 0]])
 
+class ResidualUnit(Module):
+    def __init__(self, l, w, ar, bot_mul=1):
+        super().__init__()
+        bot_channels = int(round(l * bot_mul))
+        self.batchnorm1 = BatchNorm1d(l)
+        self.relu = LeakyReLU(0.1)
+        self.batchnorm2 = BatchNorm1d(l)
+        self.C = bot_channels//CARDINALITY_ITEM
+        self.conv1 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
+        self.conv2 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
+
+    def forward(self, x, y):
+        x1 = self.relu(self.batchnorm1(self.conv1(x)))
+        x2 = self.relu(self.batchnorm2(self.conv2(x1)))
+        return x + x2, y
+
+class Skip(Module):
+    def __init__(self, l):
+        super().__init__()
+        self.conv = Conv1d(l, l, 1)
+
+    def forward(self, x, y):
+        return x, self.conv(x) + y
+
+class SpliceNN(Module):
+    def __init__(self, L=64, W=np.array([11]*8+[21]*4+[41]*4), AR=np.array([1]*4+[4]*4+[10]*4+[25]*4)):
+        super().__init__()
+        self.CL = 2 * (AR * (W - 1)).sum()  # context length
+        self.conv1 = Conv1d(4, L, 1)
+        self.skip1 = Skip(L)
+        self.residual_blocks = ModuleList()
+        for i, (w, r) in enumerate(zip(W, AR)):
+            self.residual_blocks.append(ResidualUnit(L, w, r))
+            if (i+1) % 4 == 0:
+                self.residual_blocks.append(Skip(L))
+        if (len(W)+1) % 4 != 0:
+            self.residual_blocks.append(Skip(L))
+        self.last_cov = Conv1d(L, 3, 1)
+        self.flatten = Flatten()
+        self.drop_out = Dropout2d(0.2)
+        self.fc = Linear(2400, 1)
+        self.softmax = Softmax(dim=1)
+        self.sigmoid = Sigmoid()
+
+    def forward(self, x):
+        x, skip = self.skip1(self.conv1(x), 0)
+        for m in self.residual_blocks:
+            x, skip = m(x, skip)
+        output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
+        return output
+
 def get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP):
     return D_YL[:, 200], D_YP[:, 200], A_YL[:, 600], A_YP[:, 600]
-
+           
 def one_hot_encode(Xd, Yd):
     return IN_MAP[Xd.astype('int8')], [OUT_MAP[Yd[t].astype('int8')] for t in range(1)]
-
+      
 def create_datapoints(seq, strand):
     # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
-    seq = seq.upper().replace('A', '1').replace('C', '2').replace('G', '3').replace('T', '4')
-    pattern = r'[^1234]'
-    # Replace non-ACGT characters with 0
-    seq = re.sub(pattern, '0', seq)
+    seq = seq.upper().replace('A', '1').replace('C', '2')
+    seq = seq.replace('G', '3').replace('T', '4').replace('N', '0').replace('K', '0').replace('R', '0').replace('Y', '0').replace('W', '0').replace('M', '0').replace('S','0')
     jn_start = JUNC_START
     jn_end = JUNC_END
 
@@ -51,7 +106,7 @@ def create_datapoints(seq, strand):
     X0 = np.asarray(list(map(int, list(seq))))
     Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
     if strand == '+':
-        for t in range(1):
+        for t in range(1):        
             Y0[t][jn_start] = 2
             Y0[t][jn_end] = 1
     X, Y = one_hot_encode(X0, Y0)
@@ -83,6 +138,7 @@ def get_accuracy(y_prob, y_true):
     y_prob = y_prob > 0.5
     return (y_true == y_prob).sum().item() / y_true.size(0)
 
+
 def model_fn(DNAs, labels, model, criterion):
     outs = model(DNAs)
     loss = categorical_crossentropy_2d(labels, outs, criterion)
@@ -94,6 +150,7 @@ def categorical_crossentropy_2d(y_true, y_pred, criterion):
     return - torch.mean(y_true[:, 0, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 0, :]), gamma ), torch.log(y_pred[:, 0, :]+1e-10) )
                         + SEQ_WEIGHT * y_true[:, 1, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 1, :]), gamma ), torch.log(y_pred[:, 1, :]+1e-10) )
                         + SEQ_WEIGHT * y_true[:, 2, :] * torch.mul( torch.pow( torch.sub(1, y_pred[:, 2, :]), gamma ), torch.log(y_pred[:, 2, :]+1e-10) ))
+
 
 def split_seq_name(seq):
     return seq[1:]
@@ -125,20 +182,20 @@ class myDataset(Dataset):
                         print(Y.size())
                     self.data.append([X, Y, seq_name])
                 pidx += 1
-                if pidx %100000 == 0:
-                    print('\t', pidx//2, ' junctions loaded.')
+                if pidx %10000 == 0:
+                    print('\t', pidx, ' junctions loaded.')
 
         index_shuf = list(range(len(self.data)))
         if shuffle:
             random.shuffle(index_shuf)
         list_shuf = [self.data[i] for i in index_shuf]
-        self.data = list_shuf
+        self.data = list_shuf 
         self.indices = index_shuf
-        print('\t', pidx//2, ' junctions loaded.')
+        print('\t', pidx, ' junctions loaded.')
 
     def __len__(self):
         return len(self.data)
-
+ 
     def __getitem__(self, index):
         feature = self.data[index][0]
         label = self.data[index][1]
@@ -156,40 +213,33 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
     )
     return test_loader
 
-def splam_prediction(junction_fasta, out_score_f, model_path, batch_size, device_str):
-    BATCH_SIZE = int(batch_size)
+
+def test_model():
+    BATCH_SIZE = 100
     N_WORKERS = None
-    if device_str == "NONE":
-        device_str = 'cpu'
-        if torch.cuda.is_available(): 
-            device_str = 'cuda'
-        elif torch.backends.mps.is_available():
-            device_str = 'mps'
-    device = torch.device(device_str)
+    device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
+    print(f'[Info] Loading model ...',flush = True)
+    model = torch.jit.load(MODEL_PATH)
+    # model = torch.load(MODEL_PATH)
+    model = model.to('mps')
 
-    print(f'[Info] Running model in "'+ device_str+'" mode')
-    print(f'[Info] Loading model ... (' + model_path + ')', flush = True)
-    # model = torch.jit.load(model_path)
-    print("model = torch.load(model_path)!!")
-    model = torch.load(model_path)
-    model = model.to(device)
+    print(f'[Info] Done loading model',flush = True)
+    print(f'[Info] Loading data ...',flush = True)
+    test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, JUNC_FA, False, str(0))
+    print(f'[Info] Done loading data ...',flush = True)
 
-    print(f'[Info] Done loading model', flush = True)
-    print(f'[Info] Loading data ...', flush = True)
-    test_loader = get_dataloader(BATCH_SIZE, N_WORKERS, junction_fasta, False, str(0))
-    print(f'[Info] Done loading data', flush = True)
-    
     criterion = torch.nn.BCELoss()
-    fw_junc_scores = open(out_score_f, 'w')
+    fw_junc_scores = open(OUT_SCORE, 'w')
 
     model.eval()
-    junc_counter = 0
+    junc_counter = 0    
     pbar = Bar('[Info] SPLAM! ', max=len(test_loader))
     with torch.no_grad():
         for batch_idx, data in enumerate(test_loader):
+            # print('batch_idx: ', batch_idx)
             # DNAs:  torch.Size([40, 800, 4])
             # labels:  torch.Size([40, 1, 800, 3])
-            DNAs, labels, seqname = data
+            DNAs, labels, seqname = data 
             DNAs = DNAs.to(torch.float32).to(device)
             labels = labels.to(torch.float32).to(device)
 
@@ -204,26 +254,19 @@ def splam_prediction(junction_fasta, out_score_f, model_path, batch_size, device
 
             donor_labels, donor_scores, acceptor_labels, acceptor_scores = get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP)
             for idx in range(len(yp)):
-
-                eles = seqname[idx].split(';')
-                if len(eles) == 7:
-                    chr, start, end, strand, name, aln_num, trans = eles
-                    if strand == '+':
-                        fw_junc_scores.write(f'{chr}\t{str(start)}\t{str(end)}\t{name}\t{str(aln_num)}\t{strand}\t{str(donor_scores[idx])}\t{str(acceptor_scores[idx])}\t{trans}\n')
-                    elif strand == '-':
-                        fw_junc_scores.write(f'{chr}\t{str(end)}\t{str(start)}\t{name}\t{str(aln_num)}\t{strand}\t{str(donor_scores[idx])}\t{str(acceptor_scores[idx])}\t{trans}\n')
-
-                else:
-                    chr, start, end, strand, name, aln_num = eles
-                    if strand == '+':
-                        fw_junc_scores.write(f'{chr}\t{str(start)}\t{str(end)}\t{name}\t{str(aln_num)}\t{strand}\t{str(donor_scores[idx])}\t{str(acceptor_scores[idx])}\n')
-                    elif strand == '-':
-                        fw_junc_scores.write(f'{chr}\t{str(end)}\t{str(start)}\t{name}\t{str(aln_num)}\t{strand}\t{str(donor_scores[idx])}\t{str(acceptor_scores[idx])}\n')
-                
-                junc_counter += 1            
+                chr, start, end, strand, jun_name, aln_num, _ = seqname[idx].split(';')
+                # print('seqname[idx]')
+                if strand == '+':
+                    fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
+                elif strand == '-':
+                    fw_junc_scores.write(chr + '\t'+ str(end) + '\t' + str(start) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
+                junc_counter += 1   
+            
             # increment the progress bar
             pbar.next()
 
     pbar.finish()
     fw_junc_scores.close()
-    return out_score_f
+
+if __name__ == '__main__':
+    test_model()
