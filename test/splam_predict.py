@@ -219,8 +219,8 @@ def test_model():
     N_WORKERS = None
     device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
     print(f'[Info] Loading model ...',flush = True)
-    model = torch.jit.load(MODEL_PATH)
-    # model = torch.load(MODEL_PATH)
+    # model = torch.jit.load(MODEL_PATH)
+    model = torch.load(MODEL_PATH)
     model = model.to('mps')
 
     print(f'[Info] Done loading model',flush = True)
