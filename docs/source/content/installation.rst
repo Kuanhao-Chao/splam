@@ -49,7 +49,7 @@ You can also install Splam from source. Check out the latest version on `GitHub 
 Install through conda
 -------------------------------
 
-Install Splam through conda is the easiest way to go
+Installing Splam through conda is the easiest way to go:
 
 .. code-block:: bash
    
@@ -62,7 +62,7 @@ Install Splam through conda is the easiest way to go
 Check Splam installation
 -------------------------------------
 
-Run the following command to make sure Splam is properly installed.
+Run the following command to make sure Splam is properly installed:
 
 .. code-block:: bash
    
