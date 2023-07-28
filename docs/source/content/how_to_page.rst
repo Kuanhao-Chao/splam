@@ -106,6 +106,17 @@ Q & A ...
 
 | 
 
+.. dropdown:: Q: What is the difference between two released model, :code:`splam.pt` and :code:`splam_script.pt`?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
+    
+    Hi    
+
+
+|
+
 .. Q: Which mode should I run Splam, :code:`cpu`, :code:`cuda`, or :code:`mps`?
 .. -------------------------------------------------------------------------------
 
@@ -131,12 +142,8 @@ Q & A ...
         3. If you are none of the above cases, then you can still run Splam with :code:`cpu`` mode.
 
 
-<<<<<<< HEAD
     You can check `Pytorch website <https://pytorch.org/docs/stable/tensor_attributes.html#torch.device>`_ for more explanation about the :code:`device` parameter.
 
-=======
-    You can check the `PyTorch website <https://pytorch.org/docs/stable/tensor_attributes.html?highlight=device#torch.device>`_ for more explanation about the :code:`device` parameter.
->>>>>>> 5de719a90196b2d6e913eae56a64ca79d0482af7
 
 | 
 

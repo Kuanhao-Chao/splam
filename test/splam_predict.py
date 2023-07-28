@@ -9,6 +9,7 @@ import math
 import random
 import numpy as np
 import warnings
+import SPLAM
 from progress.bar import Bar
 
 warnings.filterwarnings('ignore')
@@ -36,63 +37,12 @@ OUT_MAP = np.asarray([[1, 0, 0],
                       [0, 0, 1],
                       [0, 0, 0]])
 
-class ResidualUnit(Module):
-    def __init__(self, l, w, ar, bot_mul=1):
-        super().__init__()
-        bot_channels = int(round(l * bot_mul))
-        self.batchnorm1 = BatchNorm1d(l)
-        self.relu = LeakyReLU(0.1)
-        self.batchnorm2 = BatchNorm1d(l)
-        self.C = bot_channels//CARDINALITY_ITEM
-        self.conv1 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
-        self.conv2 = Conv1d(l, l, w, dilation=ar, padding=(w-1)*ar//2, groups=self.C)
-
-    def forward(self, x, y):
-        x1 = self.relu(self.batchnorm1(self.conv1(x)))
-        x2 = self.relu(self.batchnorm2(self.conv2(x1)))
-        return x + x2, y
-
-class Skip(Module):
-    def __init__(self, l):
-        super().__init__()
-        self.conv = Conv1d(l, l, 1)
-
-    def forward(self, x, y):
-        return x, self.conv(x) + y
-
-class SpliceNN(Module):
-    def __init__(self, L=64, W=np.array([11]*8+[21]*4+[41]*4), AR=np.array([1]*4+[4]*4+[10]*4+[25]*4)):
-        super().__init__()
-        self.CL = 2 * (AR * (W - 1)).sum()  # context length
-        self.conv1 = Conv1d(4, L, 1)
-        self.skip1 = Skip(L)
-        self.residual_blocks = ModuleList()
-        for i, (w, r) in enumerate(zip(W, AR)):
-            self.residual_blocks.append(ResidualUnit(L, w, r))
-            if (i+1) % 4 == 0:
-                self.residual_blocks.append(Skip(L))
-        if (len(W)+1) % 4 != 0:
-            self.residual_blocks.append(Skip(L))
-        self.last_cov = Conv1d(L, 3, 1)
-        self.flatten = Flatten()
-        self.drop_out = Dropout2d(0.2)
-        self.fc = Linear(2400, 1)
-        self.softmax = Softmax(dim=1)
-        self.sigmoid = Sigmoid()
-
-    def forward(self, x):
-        x, skip = self.skip1(self.conv1(x), 0)
-        for m in self.residual_blocks:
-            x, skip = m(x, skip)
-        output = self.sigmoid(self.fc(self.flatten(self.last_cov(skip))))
-        return output
-
 def get_donor_acceptor_scores(D_YL, A_YL, D_YP, A_YP):
     return D_YL[:, 200], D_YP[:, 200], A_YL[:, 600], A_YP[:, 600]
-           
+
 def one_hot_encode(Xd, Yd):
     return IN_MAP[Xd.astype('int8')], [OUT_MAP[Yd[t].astype('int8')] for t in range(1)]
-      
+
 def create_datapoints(seq, strand):
     # seq = 'N'*(CL_MAX//2) + seq + 'N'*(CL_MAX//2)
     seq = seq.upper().replace('A', '1').replace('C', '2')
@@ -106,7 +56,7 @@ def create_datapoints(seq, strand):
     X0 = np.asarray(list(map(int, list(seq))))
     Y0 = [np.zeros(SEQ_LEN) for t in range(1)]
     if strand == '+':
-        for t in range(1):        
+        for t in range(1):
             Y0[t][jn_start] = 2
             Y0[t][jn_end] = 1
     X, Y = one_hot_encode(X0, Y0)
@@ -189,13 +139,13 @@ class myDataset(Dataset):
         if shuffle:
             random.shuffle(index_shuf)
         list_shuf = [self.data[i] for i in index_shuf]
-        self.data = list_shuf 
+        self.data = list_shuf
         self.indices = index_shuf
         print('\t', pidx, ' junctions loaded.')
 
     def __len__(self):
         return len(self.data)
- 
+
     def __getitem__(self, index):
         feature = self.data[index][0]
         label = self.data[index][1]
@@ -217,7 +167,13 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
 def test_model():
     BATCH_SIZE = 100
     N_WORKERS = None
-    device = torch.device('cuda' if torch.cuda.is_available() else 'mps')
+    device_str = 'cpu'
+    if torch.cuda.is_available(): 
+        device_str = 'cuda'
+    elif torch.backends.mps.is_available():
+        device_str = 'mps'
+    device = torch.device(device_str)
+
     print(f'[Info] Loading model ...',flush = True)
     # model = torch.jit.load(MODEL_PATH)
     model = torch.load(MODEL_PATH)
@@ -232,14 +188,14 @@ def test_model():
     fw_junc_scores = open(OUT_SCORE, 'w')
 
     model.eval()
-    junc_counter = 0    
+    junc_counter = 0
     pbar = Bar('[Info] SPLAM! ', max=len(test_loader))
     with torch.no_grad():
         for batch_idx, data in enumerate(test_loader):
             # print('batch_idx: ', batch_idx)
             # DNAs:  torch.Size([40, 800, 4])
             # labels:  torch.Size([40, 1, 800, 3])
-            DNAs, labels, seqname = data 
+            DNAs, labels, seqname = data
             DNAs = DNAs.to(torch.float32).to(device)
             labels = labels.to(torch.float32).to(device)
 
@@ -260,8 +216,8 @@ def test_model():
                     fw_junc_scores.write(chr + '\t'+ str(start) + '\t' + str(end) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand + '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
                 elif strand == '-':
                     fw_junc_scores.write(chr + '\t'+ str(end) + '\t' + str(start) + '\tJUNC_' + str(junc_counter) + '\t' + str(aln_num) + '\t'+ strand+ '\t' + str(donor_scores[idx]) + '\t' + str(acceptor_scores[idx]) + '\n')
-                junc_counter += 1   
-            
+                junc_counter += 1
+
             # increment the progress bar
             pbar.next()
 

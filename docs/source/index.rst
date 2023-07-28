@@ -50,14 +50,14 @@ Splam's tutorial
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: https://img.shields.io/badge/License-MIT-yellow.svg
 
-.. image:: https://img.shields.io/badge/version-v.0.2.6-blue
-    :target: https://img.shields.io/badge/version-v.0.2.6-blue
+.. image:: https://img.shields.io/badge/version-v.1.0.0-blue
+    :target: https://img.shields.io/badge/version-v.1.0.0-blue
 
 .. image:: https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download
     :target: https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download
 
-.. image:: https://img.shields.io/badge/platform-macOS_/Linux_/Windows-green.svg
-    :target: https://img.shields.io/badge/platform-macOS_/Linux_/Windows-green.svg
+.. image:: https://img.shields.io/badge/platform-macOS_/Linux-green.svg
+    :target: https://img.shields.io/badge/platform-macOS_/Linux-green.svg
 
 .. image:: https://colab.research.google.com/assets/colab-badge.svg
     :target: https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb
