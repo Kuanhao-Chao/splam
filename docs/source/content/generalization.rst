@@ -3,9 +3,13 @@
 Splam generalizes on non-human species
 =========================================================================
 
-Although Splam was trained on human datasets, we have shown that the model is able to generalize to other eukaryotic genomes, including plants. In our investigation, we tested the performance of Splam on the Chimpanzee (*Pan troglodytes*), Mouse (*Mus musculus*), and Thale cress, a flowering plant (*Arabidopsis thaliana*), genomes. We report that Splam outperforms SpliceAI in recall, precision, and accuracy, on every score threshold for every species. Additionally, we advise that users run Splam on a threshold of **0.1** for optimal performance. 
+Although Splam was trained on human datasets, we have shown that the model is able to generalize to other eukaryotic genomes, including plants. In our investigation, we tested the performance of Splam on the Chimpanzee (*Pan troglodytes*), Mouse (*Mus musculus*), and Thale cress, a flowering plant (*Arabidopsis thaliana*), genomes. We report that Splam outperforms SpliceAI in recall, precision, and accuracy, on every score threshold for every species. Additionally, we propose two workflows for running Splam on non-human species: 
 
-In the following sections, we will summarize our methods and key findings.
+   * **(1)** For evaluating the accuracy of GFF annotation files, we advise using a stricter score threshold of **0.8**. 
+
+   * **(2)** For cleaning up BAM alignment files, we advise using a more lenient score threshold of **0.1**. 
+   
+That being said, Splam is a decisive model, and performs quite consistently across a wide range of thresholds. In the following sections, we will summarize our methods and key findings.
 
 |
 
@@ -26,7 +30,7 @@ For both datasets, we randomly sampled 25,000 splice junctions and ran Splam and
 Key findings
 +++++++++++++++++++++++++
 
-We find that Splam is able to quickly and accurately classify positive and negative samples, even in species as distant as plants (*Arabidopsis thaliana*). For the positive samples, Splam correctly classified the vast majority with a high score, whereas SpliceAI struggled more, particularly with *Arabidopsis* (:numref:`generalization-score-dist`). 
+We find that Splam is able to quickly and accurately classify positive and negative samples, even in species as distant as plants (*Arabidopsis thaliana*). For the positive samples, Splam correctly classified the vast majority with a high score, whereas SpliceAI struggled more, particularly with *Arabidopsis*. Moreover, we find that Splam is decisive, with medians values for all three species at 1.0, while SpliceAI's distribution is more evenly spread (:numref:`generalization-score-dist`). 
 
 .. _generalization-score-dist:
 .. figure::  ../_images/generalization_pos_score_dist.png
@@ -37,21 +41,18 @@ We find that Splam is able to quickly and accurately classify positive and negat
 
 |
 
-Combining this result with the negative data, we calculate summary statistics that help us gauge the performance of Splam at various thresholds. We observe that the recall/sensitivity, precision, and accuracy of Splam outperform SpliceAI at every score threshold for every species, visualized in :numref:`generalization-heatmap`.
+Combining this result with the negative data, we calculate summary statistics that help us gauge the performance of Splam at various thresholds. We observe that the recall/sensitivity, precision, and accuracy of Splam outperform SpliceAI at every score threshold for every species, visualized in :numref:`generalization-heatmap`. Additionally, the figure demonstrates Splam's consistency across a wide range of score thresholds. 
 
 .. _generalization-heatmap:
 .. figure::  ../_images/generalization_performance_heatmap.png
    :align:   center
    :scale:   22 %
 
-   A grid of heatmaps portraying the recall (top), precision (middle), and accuracy (bottom) of both models on the chimpanzee (left), mouse (middle), and *Arabidopsis* (right) genomes, across a variety of score thresholds (x-axis). For each heatmap, the top three rows (green) represent Splam, and the bottom three rows (orange) represent SpliceAI, where each is examined at the donor, acceptor, and splice junction levels. The performance metrics are reported as percentages on the heatmap. We observe that Splam exhibits high recall and accuracy whereas SpliceAI's swiftly declines with increasing score thresholds.
+   A grid of heatmaps portraying the recall (top), precision (middle), and accuracy (bottom) of both models on the chimpanzee (left), mouse (middle), and *Arabidopsis* (right) genomes, across a variety of score thresholds (x-axis). For each heatmap, the top three rows (green) represent Splam, and the bottom three rows (orange) represent SpliceAI, where each is examined at the donor, acceptor, and splice junction levels. The performance metrics are reported as percentages on the heatmap. We observe that Splam exhibits consistently high recall and accuracy whereas SpliceAI's swiftly declines with increasing score thresholds. Precision for both models is consistently high. 
 
 |
 
-The results of this investigation suggest that Splam is able to generalize well to non-human species, including both animal and plant genomes.
-
-Based on the thresholds we investigated, we advise users to run Splam on a threshold of **0.1** for optimal performance. 
-
+The results of this investigation demonstrate Splam's ability to generalize well on non-human species, including both animal and plant genomes. Additionally, we show Splam performing consistently and accurately on a wide range of score thresholds. 
 
 
 |
