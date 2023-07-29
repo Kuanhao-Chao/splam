@@ -173,4 +173,13 @@ All the scripts for Splam training and data analysis are in [this GitHub reposit
 <br>
 
 ## <a name="publication"></a>Publications<a class="headerlink" href="#publication" title="Permalink to this heading">#</a>
-TBC
+
+Kuan-Hao Chao, Alan Mao, Steven L Salzberg, Mihaela Pertea,
+
+Splam: a deep-learning-based splice site predictor that improves spliced alignments 
+
+ bioRxiv 2023.07.27.550754; doi: https://doi.org/10.1101/2023.07.27.550754
+
+
+> Kuan-Hao Chao*, Alan Mao, Steven L Salzberg, Mihaela Pertea*;, "Splam: a deep-learning-based splice site predictor that improves spliced alignments ", <i>bioRxiv</i> <b>2023.07.27.550754</b>, doi: [https://doi.org/10.1101/2023.07.27.550754](https://doi.org/10.1101/2023.07.27.550754), 2023
+
