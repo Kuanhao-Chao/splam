@@ -17,19 +17,19 @@
 <!-- [![Travis build status](https://travis-ci.org/roblanf/sangeranalyseR.svg?branch=master)](https://travis-ci.org/roblanf/sangeranalyseR)  -->
 <!-- ![documentation build status](https://readthedocs.org/projects/pip/badge/) -->
 
-Splam is a splice junction recognition model based on a deep grouped residual convolutional neural network that offers fast and precise assessment of splice junctions. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
+Splam is a splice junction recognition model based on a deep grouped residual convolutional neural network that offers fast and precise assessment of splice junctions. It was trained on combined donor-acceptor pairs and focuses on a narrow window of 400 base pairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this region.
 
 
 ##  <a name="whysplam"></a>Why Splam❓<a class="headerlink" href="#whysplam" title="Permalink to this heading">#</a>
 
-1. **We need a tools to evaluate splice junctions & spliced alignments.** Thousands of RNA-Seq datasets are generated every day, but there are no tools available for cleaning up spurious spliced alignments in these data. Splam addresses this problem!
+1. **We need a tool to evaluate splice junctions & spliced alignments.** Thousands of RNA-Seq datasets are generated every day, but there are no tools available for cleaning up spurious spliced alignments in these data. Splam addresses this problem!
 2. **Splam-cleaned alignments lead to improved transcript assembly, which, in turn, may enhance all downstream RNA-Seq analyses**, including transcript quantification, differential gene expression analysis, and more!
 
 <br>
 
 ## <a name="whosplaminterested"></a>Who would be interested❓<a class="headerlink" href="#whosplaminterested" title="Permalink to this heading">#</a>
 
-If you are **(1) doing RNA-Seq data analysis** or **(2) seeking a trustworthy tool to evaluate splice junctions (introns)**, then Splam is the tool that you are looking for!
+If you are **(1) doing RNA-Seq data analysis** or **(2) seeking a trustworthy way to evaluate splice junctions (introns)**, then Splam is the tool that you are looking for!
 
 <br>
 
@@ -38,7 +38,7 @@ If you are **(1) doing RNA-Seq data analysis** or **(2) seeking a trustworthy to
 
 There are two main use case scenarios:
 
-1. Improving your **alignmnet file**. Splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of downstream transcriptome assemblies [[Link](https://ccb.jhu.edu/splam/content/alignment_evaluation.html#alignment-detailed-section)].
+1. Improving your **alignment file**. Splam evaluates the quality of spliced alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of downstream transcriptome assemblies [[Link](https://ccb.jhu.edu/splam/content/alignment_evaluation.html#alignment-detailed-section)].
 
 2. Evaluating the quality of introns in your **annotation file or assembled transcripts** [[Link](https://ccb.jhu.edu/splam/content/annotation_evaluation.html#annotation-detailed-section)].
 
@@ -47,8 +47,8 @@ There are two main use case scenarios:
 
 ## <a name="documentation"></a>Documentation<a class="headerlink" href="#documentation" title="Permalink to this heading">#</a>
 📒 The full user manual is available **[here](http://ccb.jhu.edu/splam/)**
-<section id="table-of-content" class="">
-<h2>Table of content<a class="headerlink" href="#table-of-content" title="Permalink to this heading">#</a></h2>
+<section id="table-of-contents" class="">
+<h2>Table of contents<a class="headerlink" href="#table-of-contents" title="Permalink to this heading">#</a></h2>
 <div class="toctree-wrapper compound">
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html">Installation</a><ul>
@@ -76,7 +76,7 @@ There are two main use case scenarios:
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html#what-s-next">What's next?</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html">Annotation file / assembeled transcripts evaluation (<code class="code docutils literal notranslate"><span class="pre">GFF</span></code>)</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html">Annotation file / assembled transcripts evaluation (<code class="code docutils literal notranslate"><span class="pre">GFF</span></code>)</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html#step-1-preparing-your-input-files">Step 1: Preparing your input files</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html#step-2-extracting-introns-in-your-annotation-file">Step 2: Extracting introns in your annotation file</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html#step-3-scoring-extracted-introns">Step 3: Scoring extracted introns</a></li>
@@ -91,7 +91,7 @@ There are two main use case scenarios:
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#reference">Reference</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/generalization.html">Splam generalizes on no-human species</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/generalization.html">Splam generalizes on non-human species</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/generalization.html#test">Test</a></li>
 </ul>
 </li>
@@ -119,7 +119,7 @@ $ conda install -c bioconda splam
 ``` -->
 
 
-Splam is on [PyPi](https://pypi.org/) now. This is the easiest installation approach. Check out all the release [here](https://pypi.org/manage/project/splam/releases/).
+Splam is on [PyPi](https://pypi.org/). This is the easiest installation approach. Check out all the releases [here](https://pypi.org/manage/project/splam/releases/).
 ```bash
 $ pip install splam
 ```
@@ -139,10 +139,10 @@ $ python setup.py install
 
 Running Splam is simple. It only requires three lines of code!
 
-Check this example on Google Colab [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
+See this example on Google Colab: [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
 
 
-### Running Splam to clean up alignment files ('BAM')
+### Running Splam to clean up alignment files (`BAM`)
 ```
 $ cd test
 
@@ -153,7 +153,7 @@ $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_alignment
 $ splam clean -o tmp_out_alignment
 ```
 
-### Running Splam to evaluate annotation files / assembled transcripts ('GFF')
+### Running Splam to evaluate annotation files / assembled transcripts (`GFF`)
 
 ```
 $ cd test
@@ -168,7 +168,7 @@ $ splam clean -o tmp_out_annotation
 <br>
 
 ## Scripts for Splam model training
-All the scripts for Splam training and data analysis are in [this github repository](https://github.com/Kuanhao-Chao/splam-analysis-results).
+All the scripts for Splam training and data analysis are in [this GitHub repository](https://github.com/Kuanhao-Chao/splam-analysis-results).
 
 <br>
 
