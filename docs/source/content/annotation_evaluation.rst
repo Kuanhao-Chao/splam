@@ -172,6 +172,12 @@ Step 4: Evaluating isoforms by Splam scores
 ++++++++++++++++++++++++++++++++++++++++++
 To summarize the quality of each isoform, users can run Splam to count how many spurious splice junctions are in each transcript. 
 
+.. admonition:: Splam score threshold suggestion.
+    :class: important
+
+    *  For evaluating the accuracy of GFF annotation files, we advise using a stricter **score threshold of 0.8**. 
+
+
 |
 
 What's next?

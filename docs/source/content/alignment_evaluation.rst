@@ -233,6 +233,12 @@ After scoring every splice junction in your alignment file, the final step of th
     splam clean -P -o tmp_out -@ 5
 
 
+.. admonition:: Splam score threshold suggestion.
+    :class: important
+
+    For cleaning up BAM alignment files, we advise using a more lenient **score threshold of 0.1**. Note that Splam is a decisive model and performs quite consistently across a wide range of thresholds, so a score threshold between 0.1 to 0.9 would work well.
+   
+
 * **Output**
 
 The output file of this step is a sorted Splam-cleaned BAM file. You can replace the original BAM file with this cleaned BAM file to do the transcript assembly, quantification, and all other downstream analyses! 
