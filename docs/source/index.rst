@@ -135,7 +135,7 @@ https://github.com/Kuanhao-Chao/splam/issues
 Key contributors
 ================
 
-Splam deep residual convolutional neural network was trained using the PyTorch framework by Kuan-Hao Chao. Kuan-Hao Chao also implemented the package that applies Splam to evaluate annotation files and clean up alignment files. This documentation was written by Kuan-Hao Chao.
+Splam deep residual convolutional neural network was trained using the PyTorch framework by Kuan-Hao Chao. Kuan-Hao Chao also implemented the package that applies Splam to evaluate annotation files and clean up alignment files. This documentation was written by Kuan-Hao Chao and Alan Mao.
 
 |
 
