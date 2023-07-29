@@ -23,11 +23,11 @@ Splam is a splice junction recognition model based on a deep grouped residual co
 ##  <a name="whysplam"></a>Why Splam❓<a class="headerlink" href="#whysplam" title="Permalink to this heading">#</a>
 
 1. **We need a tool to evaluate splice junctions & spliced alignments.** Thousands of RNA-Seq datasets are generated every day, but there are no tools available for cleaning up spurious spliced alignments in these data. Splam addresses this problem!
-2. **Splam-cleaned alignments lead to improved transcript assembly, which, in turn, may enhance all downstream RNA-Seq analyses**, including transcript quantification, differential gene expression analysis, and more!
+2. **Splam-cleaned alignments lead to improved transcript assembly, which, in turn, may enhance all downstream RNA-Seq analyses**, including transcript quantification, differential gene expression analysis, and more.
 
 <br>
 
-## <a name="whosplaminterested"></a>Who would be interested❓<a class="headerlink" href="#whosplaminterested" title="Permalink to this heading">#</a>
+## <a name="whosplaminterested"></a>Who is it for❓<a class="headerlink" href="#whosplaminterested" title="Permalink to this heading">#</a>
 
 If you are **(1) doing RNA-Seq data analysis** or **(2) seeking a trustworthy way to evaluate splice junctions (introns)**, then Splam is the tool that you are looking for!
 
@@ -38,7 +38,7 @@ If you are **(1) doing RNA-Seq data analysis** or **(2) seeking a trustworthy wa
 
 There are two main use case scenarios:
 
-1. Improving your **alignment file**. Splam evaluates the quality of spliced alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of downstream transcriptome assemblies [[Link](https://ccb.jhu.edu/splam/content/alignment_evaluation.html#alignment-detailed-section)].
+1. Improving your **alignment file**. Splam evaluates the quality of spliced alignments and removes those containing spurious splice junctions. This significantly enhances the quality of downstream transcriptome assemblies [[Link](https://ccb.jhu.edu/splam/content/alignment_evaluation.html#alignment-detailed-section)].
 
 2. Evaluating the quality of introns in your **annotation file or assembled transcripts** [[Link](https://ccb.jhu.edu/splam/content/annotation_evaluation.html#annotation-detailed-section)].
 
@@ -56,12 +56,12 @@ There are two main use case scenarios:
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#install-through-pip">Install through pip</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#install-from-source">Install from source</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#install-through-conda">Install through conda</a></li>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#check-splam-installation">Check Splam installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#check-splam-installation">Verify installation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/installation.html#now-you-are-ready-to-go">Now, you are ready to go !</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/quickstart.html">Quick Start Guide</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/quickstart.html#super-quick-start-3-lines-of-code">Super-Quick Start (3 lines of code)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/quickstart.html#super-quick-start-3-lines-of-code">Super-Quick Start (3 lines)</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/alignment_evaluation.html">Alignment file evaluation &amp; cleanup (<code class="code docutils literal notranslate"><span class="pre">BAM</span></code>)</a><ul>
@@ -84,7 +84,7 @@ There are two main use case scenarios:
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/annotation_evaluation.html#what-s-next">What's next?</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html">Behind the scenes of Splam</a><ul>
+<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html">Behind the scenes</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#data-curation">Data curation</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#model-architecture">Model architecture</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/behind_scenes.html#splam-training-testing">Splam training &amp; testing</a></li>
@@ -95,7 +95,7 @@ There are two main use case scenarios:
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/generalization.html#test">Test</a></li>
 </ul>
 </li>
-<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/how_to_page.html">Q &amp; A ...</a></li>
+<li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/how_to_page.html">Q &amp; A</a></li>
 <li class="toctree-l1"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/function_manual.html">User Manual</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/function_manual.html#splam">splam</a></li>
 <li class="toctree-l2"><a class="reference internal" href="http://ccb.jhu.edu/splam/content/function_manual.html#splam-extract">splam extract</a></li>
