@@ -1,9 +1,9 @@
-[submodule "SPLAM_C++/include/htslib"]
+[submodule "src/include/htslib"]
 	path = src/include/htslib
 	url = https://github.com/samtools/htslib
-[submodule "SPLAM_C++/include/spdlog"]
+[submodule "src/include/spdlog"]
 	path = src/include/spdlog
 	url = https://github.com/gabime/spdlog
-[submodule "SPLAM_C++/pybind11"]
+[submodule "src/pybind11"]
 	path = src/pybind11
 	url = https://github.com/pybind/pybind11
