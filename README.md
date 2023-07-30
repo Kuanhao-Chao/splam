@@ -167,12 +167,12 @@ $ splam clean -o tmp_out_annotation
 
 <br>
 
-## <a name="publication"></a>Scripts for Splam model training & analysis<a class="headerlink" href="#splam_scripts" title="Permalink to this heading">#</a>
+## <a name="training_analysis_scripts"></a>Scripts for Splam model training & analysis<a class="headerlink" href="#splam_scripts" title="Permalink to this heading">#</a>
 All the scripts for Splam training and data analysis are in [this GitHub repository](https://github.com/Kuanhao-Chao/splam-analysis-results).
 
 <br>
 
-## <a name="publication"></a>Publications<a class="headerlink" href="#publication" title="Permalink to this heading">#</a>
+## <a name="Citation"></a>Citation<a class="headerlink" href="#publication" title="Permalink to this heading">#</a>
 
 
 Kuan-Hao Chao*, Alan Mao, Steven L Salzberg, Mihaela Pertea*, "Splam: a deep-learning-based splice site predictor that improves spliced alignments ", <i>bioRxiv</i> <b>2023.07.27.550754</b>, doi: [https://doi.org/10.1101/2023.07.27.550754](https://doi.org/10.1101/2023.07.27.550754), 2023

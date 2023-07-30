@@ -1,6 +1,6 @@
 .. _behind-the-scenes-splam:
 
-Behind the scenes of Splam
+Behind the scenes
 =================================================
 
 

@@ -66,7 +66,7 @@ Q & A ...
 
        .. figure::  ../_images/splam_input.png
             :align:   center
-            :scale:   40 %
+            :scale:   7%
      
        * **SpliceAI**: The previous state-of-the-art CNN-based system, SpliceAI, relies on a window of 10,000 base pairs flanking each splice site to obtain maximal accuracy. However, this window size is much larger than what the splicing machinery in cells can recognize.
 
@@ -111,8 +111,17 @@ Q & A ...
     :container: + shadow
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
-    
-    Hi    
+
+    You may have noticed that we have two released Splam models: ":code:`splam.pt`" and ":code:`splam_script.pt`".
+
+    * :code:`splam.pt` [`link <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam.pt>`_] is the original model that requires the original model script to load and run.
+
+    * :code:`splam_script.pt` [`link <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_] is the Torchscripted Splam model. Torchscript serializes and optimizes PyTorch code for improved performance and deployment. Essentially, it allows you to convert PyTorch code into a more efficient intermediate representation, which can be used for Just-In-Time (JIT) compilation and deployment without the need for the Python interpreter.
+
+    .. important::
+
+        In sum, we strongly recommend using :code:`splam_script.pt` for all users. It provides a faster, portable, and secure way of deploying the model.
+
 
 
 |

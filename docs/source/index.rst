@@ -77,7 +77,7 @@ Why Splam❓
 
 |
 
-Who would be interested❓
+Who is it for❓
 ====================================
 
 If you are **(1) doing RNA-Seq data analysis** or **(2) seeking a trustworthy tool to evaluate splice junctions (introns)**, then Splam is the tool that you are looking for!
@@ -152,8 +152,8 @@ Table of content
    content/quickstart
    content/alignment_evaluation
    content/annotation_evaluation
-   content/behind_scenes
    content/generalization
+   content/behind_scenes
    content/how_to_page
    content/function_manual
    content/license

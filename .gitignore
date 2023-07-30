@@ -66,3 +66,4 @@ build/
 *.db
 experiment/
 test_diff_model/
+src/release/
