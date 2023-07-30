@@ -36,11 +36,12 @@
 
 |
 
+.. _main:
 
 Splam's tutorial
 *************************
 
-.. _splam_logo:
+.. _splam-logo:
 .. figure::  ./_static/logo.png
    :align:   center
    :scale:   13 %
@@ -94,13 +95,11 @@ There are two main use case scenarios:
 2. Evaluating the quality of introns in your **annotation file or assembled transcripts** [:ref:`Link <annotation-detailed-section>`].
 
 
-
 Splam is free, it's open source, it's a lightweight deep learning model, and it's in Python!
 
 .. It was trained on donor and acceptor pairs combined and focuses on a narrow window of 400 basepairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this specific region.
 
 |
-
 
 Main features
 =============
@@ -140,9 +139,7 @@ Splam deep residual convolutional neural network was trained using the PyTorch f
 |
 
 
-
-
-Table of content
+Table of contents
 ==================
 
 .. toctree::

@@ -73,7 +73,7 @@ Q & A ...
 
     #. **Training data**
     
-       * **Splam**: Was trained using a high-quality dataset of human donor and acceptor sites. Check out the :ref:`data curation section <data_curation>`.
+       * **Splam**: Was trained using a high-quality dataset of human donor and acceptor sites. Check out the :ref:`data curation section <data-curation>`.
     
        * **SpliceAI**: Was trained with canonical transcripts only, and does not consider alternative splicing.
 
@@ -124,7 +124,7 @@ Q & A ...
         3. If you are none of the above cases, then you can still run Splam with :code:`cpu`` mode.
 
 
-    You can check `Pytorch website <https://pytorch.org/docs/stable/tensor_attributes.html#torch.device>`_ for more explanation about the :code:`device` parameter.
+    You can check out the `Pytorch website <https://pytorch.org/docs/stable/tensor_attributes.html#torch.device>`_ for more explanation about the :code:`device` parameter.
 
 
 | 
@@ -138,7 +138,7 @@ Q & A ...
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
-    Given an input of length 800bp, Splam outputs a Tensor with dimensions (3 x 800). The first channel represents the "acceptor scores", the second channel represents the "donor scores", and the third channel represents the "non-splice site scores". Each score is between 0 and 1, representing Splam's confidence in a given site being a splice site. A score closer to one indicates a higher level of confidence in its classification.
+    Given an input of length 800nt, Splam outputs a Tensor with dimensions (3 x 800). The first channel represents the "acceptor scores", the second channel represents the "donor scores", and the third channel represents the "non-splice site scores". Each score is between 0 and 1, representing Splam's confidence in a given site being a splice site. A score closer to one indicates a higher level of confidence in its classification.
 
 |
 

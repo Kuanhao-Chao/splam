@@ -21,30 +21,41 @@ Example: Running Splam on house mouse (*Mus musculus*)
 
 The workflow to evaluate non-human species introns is basically the same as running with the human data. For brevity, we only summarize the main code here, and detailed explanation about the output and arguments of each step can be found :ref:`on this page <annotation-detailed-section>`.
 
-.. _annotation-prepareintput_generalization:
+In this example, we will be scoring the GRCm39 full assembly of mouse chromosome 19. The steps are very similar to the :ref:`annotation-detailed-section` example, which you should check out first. The key difference is that we will be running Splam with an extra file argument (the assembly report) that is needed for non-human species. Also, in this genome, we are using RefSeq identifiers. 
+
+|
+
+.. _mouse-prepare-input:
+
 Step 1: Preparing your input files
 ------------------------------------
 
-The first step is to prepare four files for Spam analysis. It is very similar to the :ref:`human analysis workflow <annotation-detailed-section>`, with the only difference being that you need to prepare an additional file telling Splam the length of each chromosome. This information helps Splam to handle introns that are at the ends of chromosomes. The following four files are toy datasets that we are going to use in the tutorial:
-
+For non-human species, you need four files for running Splam. It is very similar to the :ref:`human analysis workflow <mouse-prepare-input>`, with the only difference being that you need to prepare an additional file which tells Splam the length of each chromosome. This information helps Splam to handle introns that are at the ends of chromosome, and is built-in for humans, but not other species. The following four files are toy datasets that we are going to use in the tutorial:
 
 .. admonition:: Input files
-    :class: note
+   :class: note
 
    1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: mouse_chr19.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/mouse_chr19.gff>`_].  
-   2. A reference genome in :code:`FASTA` format [`example file: mouse_chr19.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/mouse_chr19.gff>`_].
-   3. The Splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
-   4. A tsv file storing the length of each chromosome: `GRCm39_assembly_report.txt <https://github.com/Kuanhao-Chao/splam/blob/main/test/GRCm39_assembly_report.txt>`_
+   2. A reference genome in :code:`FASTA` format [`example file: mouse_chr19.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/mouse_chr19.fa>`_].
+   3. The Splam model, which you can find here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
+   4. An assembly report in :code:`tsv` format [`example file: GRCm39_assembly_report.txt <https://github.com/Kuanhao-Chao/splam/blob/main/test/GRCm39_assembly_report.txt>`_].
+
+|
+
+.. admonition:: Assembly report
+   :class: important
+
+   For non-human species, remember to include an assembly report with your input files! You should download the assembly report from the same source as your :code:`GFF` or :code:`GTF` annotation file and :code:`FASTA` genome. 
 
 |
 
 
-.. _annotation-extract-introns:
+.. _mouse-extract-introns:
 
 Step 2: Extracting introns in your annotation file
 -----------------------------------------------------
 
-In this step, you take :ref:`an annotation file (1) <annotation-prepareintput_generalization>` and run
+In this step, you take :ref:`an annotation file (1) <mouse-prepare-input>` and run
 
 .. code-block:: bash
 
@@ -52,18 +63,20 @@ In this step, you take :ref:`an annotation file (1) <annotation-prepareintput_ge
 
 |
 
-.. _annotation-score-introns:
+.. _mouse-score-introns:
+
 Step 3: Scoring extracted introns
 -----------------------------------
 
-In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 4 essential files. **(1)** The BED file that was generated in :ref:`Step 2 <annotation-extract-introns>`, **(2)** :ref:`the reference genome (2) <annotation-prepareintput_generalization>` which shares coordinates with the junction BED file, **(3)** :ref:`the splam model (3) <annotation-prepareintput_generalization>`, and **(4)** :ref:`a tsv file (4)<annotation-prepareintput_generalization>` telling Splam the length of each chromosome. Once you have these files in place, you can run the following command:
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 4 essential files. **(1)** The BED file that was generated in :ref:`Step 2 <mouse-extract-introns>`, **(2)** :ref:`the reference genome (2) <mouse-prepare-input>` which shares coordinates with the junction BED file, **(3)** :ref:`the splam model (3) <mouse-prepare-input>`, and **(4)** :ref:`a tsv file (4)<mouse-prepare-input>` telling Splam the length of each chromosome. Once you have these files in place, you can run the following command:
 
 .. code-block:: bash
 
    splam score -A GRCm39_assembly_report.txt -G mouse_chr19.fa -m ../model/splam_script.pt -o tmp_out_generalization tmp_out_generalization/junction.bed
 
-
 |
+
+.. _mouse-evaluate-isoforms:
 
 Step 4: Evaluating isoforms by Splam scores
 ------------------------------------------------
@@ -72,32 +85,6 @@ To summarize the quality of each isoform, users can count how many spurious spli
 .. code-block:: bash
 
    splam clean -o tmp_out_generalization
-
-In this example, we will be scoring the GRCm39 full assembly of mouse chromosome 19. The steps are very similar to the :ref:`annotation-detailed-section` example, which you should check out first. The key difference is that we will be running Splam with an extra file argument (the assembly report) that is needed for non-human species. Also, in this genome, we are using RefSeq identifiers. 
-
-|
-
-.. _mouse-prepare-input:
-
-Step 1: Prepare input files
-++++++++++++++++++++++++++++++
-
-There are three required files, which are the same as in the :ref:`human annotation file evaluation <annotation-prepare-input>`. The fourth file is required for **non-human species**. It is the assembly report, which contains chromosome identifiers and sizes. This information is built into Splam for humans, but not for other species. You should download the assembly report from the same source as your :code:`GFF` or :code:`GTF` annotation file and :code:`FASTA` genome. 
-
-.. admonition:: Input files
-   :class: note
-
-   1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: mouse_chr19.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/mouse_chr19.gff>`_].  
-   2. A reference genome in :code:`FASTA` format [`example file: mouse_chr19.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/mouse_chr19.fa>`_].
-   3. The Splam model, which you can find here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
-   4. An assembly report in :code:`txt` format [`example file: GRCm39_assembly_report.txt <https://github.com/Kuanhao-Chao/splam/blob/main/test/GRCm39_assembly_report.txt>`_].
-
-|
-
-.. admonition:: Assembly report
-   :class: important
-
-   For non-human species, remember to include an assembly report with your input files! 
 
 |
 

@@ -101,6 +101,7 @@ By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :c
 |
 
 .. _annotation-score-introns:
+
 Step 3: Scoring extracted introns
 +++++++++++++++++++++++++++++++++++
 
@@ -136,7 +137,7 @@ In this step, a new :code:`BED` file is produced, featuring eight columns. Two e
         :title: bg-light font-weight-bolder
         :body: bg-light text-left
 
-        This argument is the path to the trained Splam model. If you haven't downloaded the Splam model yet, here is the :ref:`link <alignment-prepareintput>`.
+        This argument is the path to the trained Splam model. If you haven't downloaded the Splam model yet, here is the :ref:`link <alignment-prepare-input>`.
 
 
 .. admonition::  Here are some **optional arguments**:
@@ -172,11 +173,16 @@ Step 4: Evaluating isoforms by Splam scores
 
 To summarize the quality of each isoform, users can run Splam to count how many spurious splice junctions are in each transcript. 
 
-.. admonition:: Splam score threshold suggestion.
+.. code-block:: bash
+
+   splam clean -o tmp_out_generalization
+
+|
+
+.. admonition:: Splam score threshold suggestion
     :class: important
 
     *  For evaluating the accuracy of GFF annotation files, we advise using a stricter **score threshold of 0.8**. 
-
 
 |
 
