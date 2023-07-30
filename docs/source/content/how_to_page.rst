@@ -79,33 +79,6 @@ Q & A ...
 
 | 
 
-.. Q: What is the model architecture of Splam?
-.. -----------------------------------------
-
-
-.. dropdown:: Q: What is the model architecture of Splam?
-    :animate: fade-in-slide-down
-    :container: + shadow
-    :title: bg-light font-weight-bolder
-    :body: bg-light text-left
-
-    Check out the :ref:`model architecture section <model_architecture>`.
-
-| 
-
-.. Q: How is Splam trained?
-.. --------------------------------
-
-.. dropdown:: Q: How is Splam trained?
-    :animate: fade-in-slide-down
-    :container: + shadow
-    :title: bg-light font-weight-bolder
-    :body: bg-light text-left
-
-    Check out the :ref:`splam training and testing section <splam_train_test>`.
-
-| 
-
 .. dropdown:: Q: What is the difference between two released model, :code:`splam.pt` and :code:`splam_script.pt`?
     :animate: fade-in-slide-down
     :container: + shadow
@@ -190,6 +163,32 @@ Q & A ...
 ..     :title: bg-light font-weight-bolder
 ..     :body: bg-light text-left
 
+|
+
+.. Q: What is the model architecture of Splam?
+.. -----------------------------------------
+
+
+.. dropdown:: Q: What is the model architecture of Splam?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
+
+    Check out the :ref:`model architecture section <model_architecture>`.
+
+| 
+
+.. Q: How is Splam trained?
+.. --------------------------------
+
+.. dropdown:: Q: How is Splam trained?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
+
+    Check out the :ref:`splam training and testing section <splam_train_test>`.
 
 
 |
