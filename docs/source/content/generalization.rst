@@ -18,6 +18,60 @@ Below is a simple example to show :ref:`Splam works on mouse <example_on_running
 Example: of running Splam on house mouse (*Mus musculus*) 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
+The workflow to evaluate non-human species introns is basically the same as running with the human data. For brevity, we only summarize the main code here, and detailed explanation about the output and arguments of each step can be found :ref:`on this page <annotation-detailed-section>`.
+
+.. _annotation-prepareintput_generalization:
+Step 1: Preparing your input files
+------------------------------------
+
+The first step is to prepare four files for Spam analysis. It is very similar to the :ref:`human analysis workflow <annotation-detailed-section>`, with the only difference being that you need to prepare an additional file telling Splam the length of each chromosome. This information helps Splam to handle introns that are at the ends of chromosomes. The following four files are toy datasets that we are going to use in the tutorial:
+
+
+.. admonition:: Input files
+    :class: note
+
+   1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: mouse_chr19.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/mouse_chr19.gff>`_].  
+   2. A reference genome in :code:`FASTA` format [`example file: mouse_chr19.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/mouse_chr19.gff>`_].
+   3. The Splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
+   4. A tsv file storing the length of each chromosome: `GRCm39_assembly_report.txt <https://github.com/Kuanhao-Chao/splam/blob/main/test/GRCm39_assembly_report.txt>`_
+
+|
+
+
+.. _annotation-extract-introns:
+
+Step 2: Extracting introns in your annotation file
+-----------------------------------------------------
+
+In this step, you take :ref:`an annotation file (1) <annotation-prepareintput_generalization>` and run
+
+.. code-block:: bash
+
+   splam extract mouse_chr19.gff -o tmp_out_generalization
+
+|
+
+.. _annotation-score-introns:
+Step 3: Scoring extracted introns
+-----------------------------------
+
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 4 essential files. **(1)** The BED file that was generated in :ref:`Step 2 <annotation-extract-introns>`, **(2)** :ref:`the reference genome (2) <annotation-prepareintput_generalization>` which shares coordinates with the junction BED file, **(3)** :ref:`the splam model (3) <annotation-prepareintput_generalization>`, and **(4)** :ref:`a tsv file (4)<annotation-prepareintput_generalization>` telling Splam the length of each chromosome. Once you have these files in place, you can run the following command:
+
+.. code-block:: bash
+
+   splam score -A GRCm39_assembly_report.txt -G mouse_chr19.fa -m ../model/splam_script.pt -o tmp_out_generalization tmp_out_generalization/junction.bed
+
+
+|
+
+Step 4: Evaluating isoforms by Splam scores
+------------------------------------------------
+To summarize the quality of each isoform, users can count how many spurious splice junctions are present in each transcript and calculate the ratio of bad splice junctions among all introns within each transcript by running the following Splam command: 
+
+.. code-block:: bash
+
+   splam clean -o tmp_out_generalization
+
 |
 
 

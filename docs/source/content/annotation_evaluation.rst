@@ -40,7 +40,7 @@ The first step is to prepare three files for Splam analysis. The following three
 .. admonition:: Input files
     :class: note
 
-   1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: MANE.GRCh38.v1.1.subset.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/MANE.GRCh38.v1.1.subset.gff>`_].  
+   1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: refseq_110_GRCh38_chr_fixed.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/refseq_110_GRCh38_chr_fixed.gff>`_].  
    2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
    3. The Splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
 
@@ -56,7 +56,7 @@ In this step, you take :ref:`an annotation file (1) <annotation-prepareintput>` 
 
 .. code-block:: bash
 
-   splam extract MANE.GRCh38.v1.1.subset.gff
+   splam extract refseq_110_GRCh38_chr_fixed.gff
 
 
 Splam uses :code:`gffutils` to extract introns from all transcripts. It starts by creating an sqlite3 database and then iterates through all exons in the :code:`GFF` file and writes intron coordinates into a :code:`BED` file. 
@@ -100,11 +100,12 @@ By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :c
 
 |
 
+.. _annotation-score-introns:
 Step 3: Scoring extracted introns
 +++++++++++++++++++++++++++++++++++
 
 
-In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. (1) The BED file that was generated in :ref:`Step 2 <annotation-extract-introns>`, (2) :ref:`the reference genome (2) <annotation-prepareintput>` which shares coordinates with the junction BED file, and (3) :ref:`the splam model (3) <annotation-prepareintput>`. Once you have these files in place, you can run the following command:
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. **(1)** The BED file that was generated in :ref:`Step 2 <annotation-extract-introns>`, **(2)** :ref:`the reference genome (2) <annotation-prepareintput>` which shares coordinates with the junction BED file, and **(3)** :ref:`the splam model (3) <annotation-prepareintput>`. Once you have these files in place, you can run the following command:
 
 .. code-block:: bash
 
@@ -170,11 +171,44 @@ In this step, a new :code:`BED` file is produced, featuring eight columns. Two e
 
 Step 4: Evaluating isoforms by Splam scores
 ++++++++++++++++++++++++++++++++++++++++++++
-To summarize the quality of each isoform, users can run Splam to count how many spurious splice junctions are present in each transcript and calculate the ratio of bad splice junctions among all introns within each transcript.
+To summarize the quality of each isoform, users can count how many spurious splice junctions are present in each transcript and calculate the ratio of bad splice junctions among all introns within each transcript by running the following Splam command: 
 
 .. code-block:: bash
 
-    splam clean -o tmp_out_annotation
+    splam clean -o tmp_out_annotation -t 0.8
+
+
+* **Output**
+
+The output of this step is a TSV file with three columns: **(1)** transcript ID, **(2)** the ratio of spurious splice junctions, and **(3)** the number of spurious splice junctions in each respective transcript.
+
+.. code-block:: text
+   :linenos:
+
+    rna-XM_011517664.4      0.1111111111111111      1
+    rna-NM_182905.6 0.0     0
+    rna-XM_047422584.1      0.14285714285714285     1
+    rna-XM_047422587.1      0.16666666666666666     1
+
+
+
+.. admonition::  Here are some **optional arguments**:
+    :class: note
+
+    .. dropdown:: :code:`-t / --threshold threshold`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        This is the threshold for Splam to determine whether a given intron in the annotation file is spurious or not. If the score of either the donor or acceptor site falls below this value, then this intron is considered spurious. The default threshold is set to 0.1.
+
+    .. dropdown:: :code:`-o / --outdir DIR`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <annotation-extract-introns>` and :ref:`Step 3 <annotation-score-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well, or otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
+
 
 
 .. admonition:: Splam score threshold suggestion.
