@@ -81,8 +81,12 @@ def parse_args(args):
         help='the computing device that is used to perform computations on tensors and execute operations in the PyTorch framework. By default, this parameter is detectd automatically.'
     )
     parser_score.add_argument(
+        '-A', '--assembly-report', default=None, metavar='REPORT',
+        help='the path to an assembly report file containing the chromosome identifiers and sizes. If none provided, will default to human GRCh38.p14.'
+    )
+    parser_score.add_argument(
         '-G', '--reference-genome',  metavar='REF.fasta',
-        required=True, help='The path to the reference genome.'
+        required=True, help='the path to the reference genome.'
     )
     parser_score.add_argument(
         '-m', '--model', metavar='MODEL.pt',
@@ -96,15 +100,15 @@ def parse_args(args):
     parser_clean = subparsers.add_parser('clean', help='Cleaning up spurious splice alignment')
     parser_clean.add_argument(
         '-@', '--threads', default="1", metavar='threads',
-        help='Set number of sorting, compression and merging threads. By default, operation is single-threaded.'
+        help='set number of sorting, compression and merging threads. By default, operation is single-threaded.'
     )
     parser_clean.add_argument(
         '-t', '--threshold', default="0.1", metavar='threshold',
-        help='The cutoff threshold for identifying spurious splice junctions.'
+        help='the cutoff threshold for identifying spurious splice junctions.'
     )
     parser_clean.add_argument(
         '-n', '--bad-intron-num', default="8", metavar='bad intron num',
-        help='The threshold for the number of spurious splice junctions in a transcript determines whether the transcript is considered bad. Default is 8.'
+        help='the threshold for the number of spurious splice junctions in a transcript determines whether the transcript is considered bad. Default is 8.'
     )
     parser_clean.add_argument('-P', '--paired',
                     action='store_true',
@@ -121,9 +125,9 @@ def parse_args(args):
 def main(argv=None):
 
     print(
-            "====================================================================\n"
-            "An accurate spliced alignment pruner and spliced junction predictor.\n"
-            "====================================================================\n");
+            "=====================================================================\n"
+            " An accurate spliced alignment pruner and splice junction predictor. \n"
+            "=====================================================================\n");
     print("""
   ███████╗██████╗ ██╗      █████╗ ███╗   ███╗
   ██╔════╝██╔══██╗██║     ██╔══██╗████╗ ████║
@@ -191,11 +195,12 @@ def main(argv=None):
         splam_model = args.model
         batch_size = args.batch_size
         device = args.device
+        assembly_report = args.assembly_report
 
         #################################
         # Step 1: creating donor acceptor bed file.
         #################################
-        donor_bed, acceptor_bed = parse.create_donor_acceptor_bed(junction_bed, outdir)
+        donor_bed, acceptor_bed = parse.create_donor_acceptor_bed(junction_bed, outdir, assembly_report)
 
         #################################
         # Step 2: write donor acceptor fasta file.

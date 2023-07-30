@@ -3,7 +3,7 @@ import pybedtools
 
 from splam import config, chr_size
 
-def create_donor_acceptor_bed(junction_bed, junction_dir):
+def create_donor_acceptor_bed(junction_bed, junction_dir, assembly_report):
     #################################
     # For 'd_a.bed': 0-based, 1-based
     # For 'donor.bed': 0-based, 0-based
@@ -21,15 +21,24 @@ def create_donor_acceptor_bed(junction_bed, junction_dir):
 
     with open(junction_bed, 'r') as f:
         lines = f.read().splitlines()
+
+        # get chromosome sizes
         style = ""
         if lines[0].split("\t")[0][:3] == "chr":
-            chrs = chr_size.chrs_chr
+            if assembly_report:
+                chrs = chr_size.get_chrom_size(assembly_report, 'chr')
+            else:
+                chrs = chr_size.chrs_chr
             style = "'chr*' style"
         else:
-            chrs = chr_size.chrs_refseq
+            if assembly_report:
+                chrs = chr_size.get_chrom_size(assembly_report, 'refseq')
+            else:
+                chrs = chr_size.chrs_refseq
             style = "'NCBI RefSeq' style"
         print(f'[Info] Chromosomes in the annotation file is in {style}')
 
+        # write coordinates of Splam-formatted input sequences
         for line in lines:
             eles = line.split("\t")
             if len(eles) == 1:

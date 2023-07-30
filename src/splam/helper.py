@@ -5,7 +5,7 @@ def get_hg38_chrom_size():
         for line in file:  
 
             # skip all comments
-            while line.startswith('#'):
+            if line.startswith('#'):
                 continue
 
             # split by tabs
@@ -26,7 +26,7 @@ def get_chrom_size(path, type):
         for line in file:  
 
             # skip all comments
-            while line.startswith('#'):
+            if line.startswith('#'):
                 continue
 
             # split by tabs
