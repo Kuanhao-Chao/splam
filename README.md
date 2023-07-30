@@ -17,7 +17,8 @@
 <!-- [![Travis build status](https://travis-ci.org/roblanf/sangeranalyseR.svg?branch=master)](https://travis-ci.org/roblanf/sangeranalyseR)  -->
 <!-- ![documentation build status](https://readthedocs.org/projects/pip/badge/) -->
 
-Splam is a splice junction recognition model based on a deep grouped residual convolutional neural network that offers fast and precise assessment of splice junctions. It was trained on combined donor-acceptor pairs and focuses on a narrow window of 400 base pairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this region.
+Splam is a splice junction recognition model based on a deep residual convolutional neural network that offers **fast and precise** assessment of splice junctions. It was trained on combined donor-acceptor pairs and focuses on a narrow window of 400 base pairs surrounding each splice site, inspired by the understanding that the splicing process primarily depends on signals within this region.
+
 
 
 ##  <a name="whysplam"></a>Why Splam❓<a class="headerlink" href="#whysplam" title="Permalink to this heading">#</a>

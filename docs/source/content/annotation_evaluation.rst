@@ -169,8 +169,13 @@ In this step, a new :code:`BED` file is produced, featuring eight columns. Two e
 |
 
 Step 4: Evaluating isoforms by Splam scores
-++++++++++++++++++++++++++++++++++++++++++
-To summarize the quality of each isoform, users can run Splam to count how many spurious splice junctions are in each transcript. 
+++++++++++++++++++++++++++++++++++++++++++++
+To summarize the quality of each isoform, users can run Splam to count how many spurious splice junctions are present in each transcript and calculate the ratio of bad splice junctions among all introns within each transcript.
+
+.. code-block:: bash
+
+    splam clean -o tmp_out_annotation
+
 
 .. admonition:: Splam score threshold suggestion.
     :class: important

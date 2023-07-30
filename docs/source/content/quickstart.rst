@@ -10,42 +10,70 @@ If you haven't already, please follow the steps in the :ref:`Installation` page 
 Super-Quick Start (3 lines of code)
 +++++++++++++++++++++++++++++++++++
 
-There are two use case scenarios of Splam. The first one is :ref:`running with an alignment file <splam_bam_quick>`, and second one is :ref:`running with an annotation file <splam_gff_quick>`. Both can be done in three lines of code. 
+There are two main use case scenarios of Splam. The first one is :ref:`running with an alignment file <splam_bam_quick>`, and second one is :ref:`running with an annotation file or assembled transcripts <splam_gff_quick>`. Both of them can be done in three lines of code. 
 
-Before you get started, make sure you have already cloned the :ref:`Splam GitHub repository <install_from_source>`. We demonstrate below:
+Before you get started, make sure you have already cloned the :ref:`Splam GitHub repository <install_from_source>`. Following are the examples:
 
 
 |
 
 .. _splam_bam_quick:
-Cleaning up alignment files  (:code:`BAM`)
+Example 1: clean up alignment files  (:code:`BAM`)
 -------------------------------------------
 
 .. code-block:: bash
 
     $ cd test
 
+    # Step 1: extract splice junctions in the alignment file
     $ splam extract -P SRR1352129_chr9_sub.bam -o tmp_out_alignment
 
+    # Step 2: score all the extracted splice junctions
     $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_alignment tmp_out_alignment/junction.bed
 
+    #Step 3: output a cleaned and sorted alignment file
     $ splam clean -o tmp_out_alignment
 
 | 
 
 .. _splam_gff_quick:
-Evaluation annotation files / assembled transcripts (:code:`GFF`)
+Example 2: evaluate annotation files / assembled transcripts (:code:`GFF`)
 ----------------------------------------------------------------------
 
 .. code-block:: bash
 
     $ cd test
 
-    $ splam extract MANE.GRCh38.v1.1.subset.gff -o tmp_out_annotation
+    # Step 1: extract introns in the annotation
+    $ splam extract refseq_40_GRCh38.p14_chr_fixed.gff -o tmp_out_annotation
 
+    # Step 2: score introns in the annotation
     $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_annotation tmp_out_annotation/junction.bed
 
+    #Step 3: output statistics of each transcript
     $ splam clean -o tmp_out_annotation
+
+| 
+
+Furthermore, Splam can also :ref:`run on non-human species <generalization-introduction>`. 
+
+.. _splam_generalization_example:
+Example of evaluating mouse annotation files (:code:`GFF`)
+----------------------------------------------------------------------
+
+.. code-block:: bash
+
+    $ cd test
+
+    # Step 1: extract introns in the annotation
+    $ splam extract refseq_40_GRCh38.p14_chr_fixed.gff -o tmp_out_annotation
+
+    # Step 2: score introns in the annotation
+    $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_annotation tmp_out_annotation/junction.bed
+
+    #Step 3: output statistics of each transcript
+    $ splam clean -o tmp_out_annotation
+
 
 |
 

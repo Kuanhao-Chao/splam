@@ -14,7 +14,7 @@ Q & A ...
     :title: bg-dark font-weight-bolder howtoclass
     :body: bg-dark text-left
 
-    Splam means two things: **(1)** Splam refers to the deep grouped residual CNN model that we designed to accurately predict splice junctions (based solely on an input DNA sequence), and **(2)** it also stands for this software which can clean up alignment files and evaluate annotation files.
+    Splam stands for two things: **(1)** Splam refers to the deep grouped residual CNN model that we designed to accurately predict splice junctions (based solely on an input DNA sequence), and **(2)** it also stands for this software which can clean up alignment files and evaluate annotation files.
 
 |
 
@@ -163,7 +163,6 @@ Q & A ...
 ..     :title: bg-light font-weight-bolder
 ..     :body: bg-light text-left
 
-|
 
 .. Q: What is the model architecture of Splam?
 .. -----------------------------------------
