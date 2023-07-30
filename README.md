@@ -139,36 +139,43 @@ $ python setup.py install
 
 Running Splam is simple. It only requires three lines of code!
 
-See this example on Google Colab: [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
+See these examples on Google Colab: [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
 
 
-### Running Splam to clean up alignment files (`BAM`)
-```
+### Example 1: clean up alignment files (`BAM`)
+``` bash
 $ cd test
 
+# Step 1: extract splice junctions in the alignment file
 $ splam extract -P SRR1352129_chr9_sub.bam -o tmp_out_alignment
 
+# Step 2: score all the extracted splice junctions
 $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_alignment tmp_out_alignment/junction.bed
 
+#Step 3: output a cleaned and sorted alignment file
 $ splam clean -o tmp_out_alignment
 ```
 
-### Running Splam to evaluate annotation files / assembled transcripts (`GFF`)
+### Example 2: evaluate annotation files / assembled transcripts (`GFF`)
 
-```
+``` bash
 $ cd test
 
+# Step 1: extract introns in the annotation
 $ splam extract refseq_40_GRCh38.p14_chr_fixed.gff -o tmp_out_annotation
 
+# Step 2: score introns in the annotation
 $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_annotation tmp_out_annotation/junction.bed
 
+#Step 3: output statistics of each transcript
 $ splam clean -o tmp_out_annotation
 ```
 
-### Evaluate mouse annotation files (`GFF`)
+### Example 3: evaluate mouse annotation files (`GFF`)
 
-```
+``` bash
 $ cd test
+
 # Step 1: extract introns in the annotation
 $ splam extract mouse_chr19.gff -o tmp_out_generalization
 
@@ -187,7 +194,7 @@ All the scripts for Splam training and data analysis are in [this GitHub reposit
 
 <br>
 
-## <a name="Citation"></a>Citation<a class="headerlink" href="#publication" title="Permalink to this heading">#</a>
+## <a name="citation"></a>Citation<a class="headerlink" href="#citation" title="Permalink to this heading">#</a>
 
 
 Kuan-Hao Chao*, Alan Mao, Steven L Salzberg, Mihaela Pertea*, "Splam: a deep-learning-based splice site predictor that improves spliced alignments ", <i>bioRxiv</i> <b>2023.07.27.550754</b>, doi: [https://doi.org/10.1101/2023.07.27.550754](https://doi.org/10.1101/2023.07.27.550754), 2023
