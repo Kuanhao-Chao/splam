@@ -56,6 +56,7 @@ benchmark/src_splam_cleanup/results/*
 benchmark/src_splam_cleanup_STAR/results/*
 benchmark/src_neg_test/SpliceAI/4_output/spliceai*
 src/tmp_out/
+test/tmp_out_*/
 __pycache__/
 splam.egg-info/
 dist/

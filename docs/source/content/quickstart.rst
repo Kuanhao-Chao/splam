@@ -41,7 +41,7 @@ Evaluation annotation files / assembled transcripts (:code:`GFF`)
 
     $ cd test
 
-    $ splam extract refseq_40_GRCh38.p14_chr_fixed.gff -o tmp_out_annotation
+    $ splam extract MANE.GRCh38.v1.1.subset.gff -o tmp_out_annotation
 
     $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_annotation tmp_out_annotation/junction.bed
 
@@ -52,7 +52,7 @@ Evaluation annotation files / assembled transcripts (:code:`GFF`)
 Try Splam on Google Colab
 +++++++++++++++++++++++++++++++++++
 
-We created some reproducible and easy-to-run Splam examples on Google Colab. It's an good starting point, so go ahead and check them out!
+We created some reproducible and easy-to-run Splam examples on Google Colab. It's a good starting point, so go ahead and check them out!
 
 
 .. image:: https://colab.research.google.com/assets/colab-badge.svg

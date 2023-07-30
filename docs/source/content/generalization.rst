@@ -15,17 +15,17 @@ Below is a simple example to show :ref:`Splam works on mouse <example_on_running
 
 
 .. _example_on_running_splam_on_mouse:
-An example of running Splam on house mouse (*Mus musculus*) 
+Example: of running Splam on house mouse (*Mus musculus*) 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 |
 
 
 .. _splam_generalization_performance:
-Splam's performance on non-human species
+Performance on non-human species
 ++++++++++++++++++++++++++++++++++++++++++++
 
-Although Splam was trained on human datasets, we have shown that the model is able to generalize to other eukaryotic genomes, including plants. In our investigation, we tested the performance of Splam on the Chimpanzee (*Pan troglodytes*), Mouse (*Mus musculus*), and Thale cress, a flowering plant (*Arabidopsis thaliana*), genomes. We report that Splam outperforms SpliceAI in recall, precision, and accuracy, on every score threshold for every species. Additionally, we propose two workflows for running Splam on non-human species: 
+Although Splam was trained on human datasets, we have shown that the model is able to generalize to other eukaryotic genomes, including plants. In our investigation, we tested the performance of Splam on the Chimpanzee (*Pan troglodytes*), Mouse (*Mus musculus*), and Thale cress, a flowering plant (*Arabidopsis thaliana*), genomes. We report that Splam outperforms SpliceAI in recall, precision, and accuracy, on every score threshold for every species. 
 
 .. _generalization-data-curation:
 

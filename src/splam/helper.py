@@ -1,11 +1,13 @@
 def get_hg38_chrom_size():    
     chrs = {}
     with open('GRCh38.p14_assembly_report.txt', 'r') as file:       
-        # skip header
-        next(file)
-
         # read the file line by line
         for line in file:  
+
+            # skip all comments
+            while line.startswith('#'):
+                continue
+
             # split by tabs
             columns = line.strip().split('\t')
             ucsc_name = columns[9]
@@ -20,11 +22,13 @@ def get_hg38_chrom_size():
 def get_chrom_size(path, type):
     chrs = {}
     with open(path, 'r') as file:       
-        # skip header
-        next(file)
-
         # read the file line by line
         for line in file:  
+
+            # skip all comments
+            while line.startswith('#'):
+                continue
+
             # split by tabs
             columns = line.strip().split('\t')
             if type == "refseq":
