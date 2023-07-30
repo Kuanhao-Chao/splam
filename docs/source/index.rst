@@ -87,9 +87,9 @@ If you are **(1) doing RNA-Seq data analysis** or **(2) seeking a trustworthy to
 What does Splam do❓
 ====================================
 
-There are two primary applications of Splam:
+There are two main use case scenarios:
 
-1. Improving your **alignmnet file**. Splam evaluates the quality of splice alignments and removes those that contain spurious splice junctions. This removal process significantly enhances the quality of downstream transcriptome assemblies [:ref:`Link <alignment-detailed-section>`].
+1. Improving your **alignmnet file**. Splam evaluates the quality of spliced alignments and removes those containing spurious splice junctions. This significantly enhances the quality of downstream transcriptome [:ref:`Link <alignment-detailed-section>`].
 
 2. Evaluating the quality of introns in your **annotation file or assembled transcripts** [:ref:`Link <annotation-detailed-section>`].
 

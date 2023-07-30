@@ -14,7 +14,7 @@ Q & A ...
     :title: bg-dark font-weight-bolder howtoclass
     :body: bg-dark text-left
 
-    Splam means two things: **(1)** Splam refers to the deep grouped residual CNN model that we designed to accurately predict splice junctions (based solely on an input DNA sequence), and **(2)** it also stands for this software which can clean up alignment files and evaluate annotation files.
+    Splam stands for two things: **(1)** Splam refers to the deep grouped residual CNN model that we designed to accurately predict splice junctions (based solely on an input DNA sequence), and **(2)** it also stands for this software which can clean up alignment files and evaluate annotation files.
 
 |
 
@@ -76,33 +76,6 @@ Q & A ...
        * **Splam**: Was trained using a high-quality dataset of human donor and acceptor sites. Check out the :ref:`data curation section <data_curation>`.
     
        * **SpliceAI**: Was trained with canonical transcripts only, and does not consider alternative splicing.
-
-| 
-
-.. Q: What is the model architecture of Splam?
-.. -----------------------------------------
-
-
-.. dropdown:: Q: What is the model architecture of Splam?
-    :animate: fade-in-slide-down
-    :container: + shadow
-    :title: bg-light font-weight-bolder
-    :body: bg-light text-left
-
-    Check out the :ref:`model architecture section <model_architecture>`.
-
-| 
-
-.. Q: How is Splam trained?
-.. --------------------------------
-
-.. dropdown:: Q: How is Splam trained?
-    :animate: fade-in-slide-down
-    :container: + shadow
-    :title: bg-light font-weight-bolder
-    :body: bg-light text-left
-
-    Check out the :ref:`splam training and testing section <splam_train_test>`.
 
 | 
 
@@ -190,6 +163,31 @@ Q & A ...
 ..     :title: bg-light font-weight-bolder
 ..     :body: bg-light text-left
 
+
+.. Q: What is the model architecture of Splam?
+.. -----------------------------------------
+
+
+.. dropdown:: Q: What is the model architecture of Splam?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
+
+    Check out the :ref:`model architecture section <model_architecture>`.
+
+| 
+
+.. Q: How is Splam trained?
+.. --------------------------------
+
+.. dropdown:: Q: How is Splam trained?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
+
+    Check out the :ref:`splam training and testing section <splam_train_test>`.
 
 
 |

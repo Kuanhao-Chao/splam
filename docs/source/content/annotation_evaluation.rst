@@ -39,9 +39,9 @@ The first step is to prepare three files for Splam analysis. The following three
 .. admonition:: Input files
     :class: note
 
-    1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: MANE.GRCh38.v1.1.subset.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/MANE.GRCh38.v1.1.subset.gff>`_].  
-    2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
-    3. The Splam model, which you can find here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
+   1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: refseq_110_GRCh38_chr_fixed.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/refseq_110_GRCh38_chr_fixed.gff>`_].  
+   2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
+   3. The Splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
 
 |
 
@@ -55,7 +55,7 @@ In this step, you take :ref:`an annotation file (1) <annotation-prepare-input>` 
 
 .. code-block:: bash
 
-   splam extract MANE.GRCh38.v1.1.subset.gff
+   splam extract refseq_110_GRCh38_chr_fixed.gff
 
 
 Splam uses :code:`gffutils` to extract introns from all transcripts. It starts by creating an sqlite3 database and then iterates through all exons in the :code:`GFF` file and writes intron coordinates into a :code:`BED` file. 
@@ -100,8 +100,7 @@ By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :c
 
 |
 
-.. _annotation-score-extracted-introns:
-
+.. _annotation-score-introns:
 Step 3: Scoring extracted introns
 +++++++++++++++++++++++++++++++++++
 
