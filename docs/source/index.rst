@@ -50,8 +50,8 @@ Splam's tutorial
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: https://img.shields.io/badge/License-MIT-yellow.svg
 
-.. image:: https://img.shields.io/badge/version-v.1.0.0-blue
-    :target: https://img.shields.io/badge/version-v.1.0.0-blue
+.. image:: https://img.shields.io/badge/version-v.1.0.1-blue
+    :target: https://img.shields.io/badge/version-v.1.0.1-blue
 
 .. image:: https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download
     :target: https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download
@@ -77,7 +77,7 @@ Why Splam❓
 
 |
 
-Who would be interested❓
+Who is it for❓
 ====================================
 
 If you are **(1) doing RNA-Seq data analysis** or **(2) seeking a trustworthy tool to evaluate splice junctions (introns)**, then Splam is the tool that you are looking for!
@@ -152,8 +152,8 @@ Table of content
    content/quickstart
    content/alignment_evaluation
    content/annotation_evaluation
-   content/behind_scenes
    content/generalization
+   content/behind_scenes
    content/how_to_page
    content/function_manual
    content/license

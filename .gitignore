@@ -26,6 +26,7 @@ src/tmp_out*
 *.gff
 *.gff3
 *.db
+<<<<<<< HEAD
 *.tsv
 *.pkl
 *.bed
@@ -47,3 +48,8 @@ src/splam/helper.py
 !test/mouse_chr19.fa
 !test/mouse_chr19.gff
 !test/SRR1352129_chr9_sub.bam
+=======
+experiment/
+test_diff_model/
+src/release/
+>>>>>>> 1c26b69b5f5e27522da34357f0c2522e445da970
