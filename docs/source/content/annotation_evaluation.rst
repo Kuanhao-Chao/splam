@@ -21,7 +21,6 @@ You can run Splam on **(1) annotation files** or **(2) assembled transcripts**. 
 
 1. You can get an overview of what is the quality of all the introns (splice junctions) inside your annotation file.
 
-
 2. You **(I)** have an overview of what's the quality of the assembled transcripts. Furthermore, you can **(II)** assess each transcript by checking how many bad splice junctions a transcripts have, which can be a good filtering criteria for assembled transcripts.
 
 3. There are more potential usage to be explored!
@@ -29,7 +28,7 @@ You can run Splam on **(1) annotation files** or **(2) assembled transcripts**. 
 
 |
 
-.. _annotation-prepareintput:
+.. _annotation-prepare-input:
 
 Step 1: Preparing your input files
 +++++++++++++++++++++++++++++++++++
@@ -40,9 +39,9 @@ The first step is to prepare three files for Splam analysis. The following three
 .. admonition:: Input files
     :class: note
 
-   1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: MANE.GRCh38.v1.1.subset.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/MANE.GRCh38.v1.1.subset.gff>`_].  
-   2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
-   3. The Splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
+    1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: MANE.GRCh38.v1.1.subset.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/MANE.GRCh38.v1.1.subset.gff>`_].  
+    2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
+    3. The Splam model, which you can find here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
 
 |
 
@@ -52,7 +51,7 @@ The first step is to prepare three files for Splam analysis. The following three
 Step 2: Extracting introns in your annotation file
 +++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In this step, you take :ref:`an annotation file (1) <annotation-prepareintput>` and run
+In this step, you take :ref:`an annotation file (1) <annotation-prepare-input>` and run
 
 .. code-block:: bash
 
@@ -64,14 +63,15 @@ Splam uses :code:`gffutils` to extract introns from all transcripts. It starts b
 
 By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :code:`BED` file consists of six columns: :code:`CHROM`, :code:`START`, :code:`END`, :code:`JUNC_NAME`, :code:`INTRON_NUM`, and :code:`STRAND`. Here are a few entries from the :code:`BED` file:
 
-* **Output**
 
+**Output:**
 .. code-block:: text
-   :linenos:
+    :linenos:
 
-   chr9    4849549 4860125 JUNC00000007    3       +
-   chr9    5923308 5924658 JUNC00000008    6       -
-   chr9    5924844 5929044 JUNC00000009    8       -
+    chr9    4849549 4860125 JUNC00000007    3       +
+    chr9    5923308 5924658 JUNC00000008    6       -
+    chr9    5924844 5929044 JUNC00000009    8       -
+
 
 .. admonition::  Here are some **optional arguments**:
     :class: note
@@ -100,11 +100,13 @@ By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :c
 
 |
 
+.. _annotation-score-extracted-introns:
+
 Step 3: Scoring extracted introns
 +++++++++++++++++++++++++++++++++++
 
 
-In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. (1) The BED file that was generated in :ref:`Step 2 <annotation-extract-introns>`, (2) :ref:`the reference genome (2) <annotation-prepareintput>` which shares coordinates with the junction BED file, and (3) :ref:`the splam model (3) <annotation-prepareintput>`. Once you have these files in place, you can run the following command:
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. (1) The BED file that was generated in :ref:`Step 2 <annotation-extract-introns>`, (2) :ref:`the reference genome (2) <annotation-prepare-input>` which shares coordinates with the junction BED file, and (3) :ref:`the splam model (3) <annotation-prepare-input>`. Once you have these files in place, you can run the following command:
 
 .. code-block:: bash
 
@@ -112,16 +114,15 @@ In this step, the goal is to score all the extracted splice junctions. To accomp
 
 In this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (P.S. They might be from unstranded transcripts assembled by StringTie).
 
-* **Output**
-
+**Output:**
 .. code-block:: text
-   :linenos:
+    :linenos:
    
-   chr9    4849549 4860125 JUNC00000007    3       +       0.7723698       0.5370769
-   chr9    5923308 5924658 JUNC00000008    6       -       0.9999831       0.9999958
-   chr9    5924844 5929044 JUNC00000009    8       -       0.9999883       0.9999949
+    chr9    4849549 4860125 JUNC00000007    3       +       0.7723698       0.5370769
+    chr9    5923308 5924658 JUNC00000008    6       -       0.9999831       0.9999958
+    chr9    5924844 5929044 JUNC00000009    8       -       0.9999883       0.9999949
 
-.. admonition::  Here are the explanation of the **required arguments**:
+.. admonition::  Here are the **required arguments**:
     :class: important
 
     .. dropdown:: :code:`-G / --reference-genome REF.fasta`
@@ -149,7 +150,6 @@ In this step, a new :code:`BED` file is produced, featuring eight columns. Two e
 
         By default, Splam automatically detects your environment and runs in :code:`cuda` mode if CUDA is available. However, if your computer is running macOS, Splam will check if :code:`mps` mode is available. If neither :code:`cuda` nor :code:`mps` are available, Splam will run in :code:`cpu` mode. You can explicitly specify the mode using the :code:`-d / --device` argument.
 
-
     .. dropdown:: :code:`-b / --batch-size BATCH`
         :animate: fade-in-slide-down
         :title: bg-light font-weight-bolder
@@ -164,12 +164,13 @@ In this step, a new :code:`BED` file is produced, featuring eight columns. Two e
 
         The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <annotation-extract-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well. Otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
 
-
-
 |
 
+.. _annotation-evaluate-isoforms:
+
 Step 4: Evaluating isoforms by Splam scores
-++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
 To summarize the quality of each isoform, users can run Splam to count how many spurious splice junctions are in each transcript. 
 
 .. admonition:: Splam score threshold suggestion.
@@ -179,6 +180,8 @@ To summarize the quality of each isoform, users can run Splam to count how many 
 
 
 |
+
+.. _annotation-whats-next:
 
 What's next?
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++

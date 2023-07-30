@@ -1,5 +1,9 @@
+.. _installation:
+
 Installation
 ===============
+
+.. _sys-reqs:
 
 System requirements
 -------------------
@@ -17,6 +21,7 @@ System requirements
 There are three ways that you can install splam:
 
 
+.. _install-through-pip:
 
 Install through pip
 -------------------------
@@ -29,7 +34,8 @@ Splam is on `PyPi 3.12 <https://pypi.org/project/splam/>`_ now. Check out all th
 
 |
 
-.. _install_from_source:
+.. _install-from-source:
+
 Install from source
 -------------------------
 
@@ -46,6 +52,8 @@ You can also install Splam from source. Check out the latest version on `GitHub 
 
 |
 
+.. _install-through-conda: 
+
 Install through conda
 -------------------------------
 
@@ -58,6 +66,8 @@ Installing Splam through conda is the easiest way to go:
    $ conda install -c bioconda liftoff
 
 |
+
+.. _check-splam-installation:
 
 Check Splam installation
 -------------------------------------
@@ -104,6 +114,8 @@ Run the following command to make sure Splam is properly installed:
             clean               Cleaning up spurious splice alignment
 
 |
+
+.. _installation-complete:
 
 Now, you are ready to go !
 --------------------------

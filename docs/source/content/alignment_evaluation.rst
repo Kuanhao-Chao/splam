@@ -38,12 +38,12 @@ Splam offers solutions to several problems, addressing the following:
 Workflow overview
 +++++++++++++++++++++++++++++++++++
 
-Before diving into details of each step, this is the overview workflow. :numref:`alignment_cleanup_workflow` **(a)** is the workflow of running Splam in the standard RNA-Seq pipeline, and :numref:`alignment_cleanup_workflow` **(b)** is the workflow of spurious splice alignment removal.
+Before diving into details of each step, this is the overview workflow. :numref:`alignment-cleanup-workflow` **(a)** is the workflow of running Splam in the standard RNA-Seq pipeline, and :numref:`alignment-cleanup-workflow` **(b)** is the workflow of spurious splice alignment removal.
 
 Splam **takes a sorted alignment file**, extracts all splice junctions, and scores all of them. Furthermore, Splam cleans up the alignment file by removing spliced alignments with poor quality splice junctions, and **outputs a new sorted alignment file**. 
 
 
-.. _alignment_cleanup_workflow:
+.. _alignment-cleanup-workflow:
 
 .. figure::  ../_images/alignment_cleanup_workflow.png
     :align:   center
@@ -53,7 +53,7 @@ Splam **takes a sorted alignment file**, extracts all splice junctions, and scor
 
 |
 
-.. _alignment-prepareintput:
+.. _alignment-prepare-input:
 
 Step 1: Preparing your input files
 +++++++++++++++++++++++++++++++++++
@@ -75,7 +75,7 @@ The first step is to prepare 3 files for Splam analysis. The following three fil
 Step 2: Extracting splice junctions in your alignment file
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In this step, you take :ref:`an alignment file (1) <alignment-prepareintput>` and run
+In this step, you take :ref:`an alignment file (1) <alignment-prepare-input>` and run
 
 .. code-block:: bash
 
@@ -151,12 +151,12 @@ By default, Splam processes alignments without pairing and bundling them. If you
 
 |
 
-.. _alignment-clean-introns:
+.. _alignment-score-extracted-introns:
 
 Step 3: Scoring extracted splice junctions
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. (1) The BED file that was generated in :ref:`Step 2 <alignment-extract-introns>`, (2) :ref:`the reference genome (2) <alignment-prepareintput>` which shares coordinates with the junction BED file, and (3) :ref:`the Splam model (3) <alignment-prepareintput>`. Once you have these files in place, you can run the following command:
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. (1) The BED file that was generated in :ref:`Step 2 <alignment-extract-introns>`, (2) :ref:`the reference genome (2) <alignment-prepare-input>` which shares coordinates with the junction BED file, and (3) :ref:`the Splam model (3) <alignment-prepare-input>`. Once you have these files in place, you can run the following command:
 
 .. code-block:: bash
 
@@ -190,7 +190,7 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
         :title: bg-light font-weight-bolder
         :body: bg-light text-left
 
-        This argument is the path to the trained Splam model. If you haven't downloaded the Splam model yet, here is the :ref:`link <alignment-prepareintput>`.
+        This argument is the path to the trained Splam model. If you haven't downloaded the Splam model yet, here is the :ref:`link <alignment-prepare-input>`.
 
 
 .. admonition::  Here are some **optional arguments**:
@@ -221,6 +221,7 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
 
 |
 
+.. _alignment-cleanup-bam:
 
 Step 4: Cleaning up your alignment file
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -272,10 +273,12 @@ The output file of this step is a sorted Splam-cleaned BAM file. You can replace
         :title: bg-light font-weight-bolder
         :body: bg-light text-left
 
-        The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <alignment-extract-introns>` and :ref:`Step 3 <alignment-clean-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well, or otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
+        The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <alignment-extract-introns>` and :ref:`Step 3 <alignment-score-extracted-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well, or otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
 
 
 |
+
+.. _alignment-igv-visualization:
 
 Step 5: IGV visualization
 +++++++++++++++++++++++++++++++++++
@@ -283,17 +286,15 @@ Step 5: IGV visualization
 Here is an example of the EHMT1 gene locus on chromosome 9 visualized in IGV. This protein-coding gene is located on the forward strand; however, we have observed that the splice aligner generates several splice alignments on the reverse strand. 
 
 
-In :numref:`figure_EHMT1`, the first three tracks display the coverage, splice junction, and alignment information from the original alignment file of the SRR1352129 sample. The fourth, fifth, and sixth tracks show the coverage, splice junction, and alignment data obtained from the cleaned alignment file of the SRR1352129 sample, which was generated using Splam. Many of the spliced alignments on the reverse strand of EHMT1 have splice junctions with low Splam scores and were consequently removed. The Splam removal procedure results in a more refined gene locus and :ref:`enhances the transcriptome assembly <assemble_alignments_into_trans>`. The final track represents the RefSeq annotations of the EHMT1 gene.
+In :numref:`figure-EHMT1`, the first three tracks display the coverage, splice junction, and alignment information from the original alignment file of the SRR1352129 sample. The fourth, fifth, and sixth tracks show the coverage, splice junction, and alignment data obtained from the cleaned alignment file of the SRR1352129 sample, which was generated using Splam. Many of the spliced alignments on the reverse strand of EHMT1 have splice junctions with low Splam scores and were consequently removed. The Splam removal procedure results in a more refined gene locus and :ref:`enhances the transcriptome assembly <assemble-alignments-into-transcripts>`. The final track represents the RefSeq annotations of the EHMT1 gene.
 
-
+.. _figure-EHMT1:
 .. figure::  ../_images/figure_S_EHMT1_original.png
     :align:   center
     :scale:   50 %
 .. figure::  ../_images/figure_S_EHMT1_cleaned.png
     :align:   center
     :scale:   50 %
-
-.. _figure_EHMT1:
 .. figure::  ../_images/figure_S_EHMT1_annotations.png
     :align:   center
     :scale:   50 %
@@ -309,14 +310,15 @@ In :numref:`figure_EHMT1`, the first three tracks display the coverage, splice j
 
 |
 
-.. _assemble_alignments_into_trans:
+.. _assemble-alignments-into-transcripts:
+
 Step 6: Assembling alignments into transcripts
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-We ran Stringtie to assemble the original alignment BAM file and the Splam-cleaned alignment BAM file. Subsequently, we loaded both sets of assembled transcripts along with the RefSeq annotation into IGV (:numref:`figure_EHMT1_assembly`). Upon observation, we noted that at the EHMT1 gene locus, there was originally one transcript assembled on the opposite strand of this gene, which will no longer be assembled after applying Splam's cleaning process, and the 3' end of the transcripts become more accurate!
+We ran Stringtie to assemble the original alignment BAM file and the Splam-cleaned alignment BAM file. Subsequently, we loaded both sets of assembled transcripts along with the RefSeq annotation into IGV (:numref:`figure-EHMT1-assembly`). Upon observation, we noted that at the EHMT1 gene locus, there was originally one transcript assembled on the opposite strand of this gene, which will no longer be assembled after applying Splam's cleaning process, and the 3' end of the transcripts become more accurate!
 
 
-.. _figure_EHMT1_assembly:
+.. _figure-EHMT1-assembly:
 .. figure::  ../_images/EHMT1_assembly.png
     :align:   center
     :scale:   30 %
@@ -329,6 +331,8 @@ We ran Stringtie to assemble the original alignment BAM file and the Splam-clean
     * `StringTie <https://ccb.jhu.edu/software/stringtie/>`_ to learn more about the transcriptome assembly
 
 |
+
+.. _alignment-whats-next:
 
 What's next?
 +++++++++++++++++++++++++++++++++++++++++++++++++++++++
