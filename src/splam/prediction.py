@@ -11,7 +11,7 @@ import warnings
 import os
 import re
 from progress.bar import Bar
-import splam.SPLAM
+
 warnings.filterwarnings('ignore')
 
 CARDINALITY_ITEM = 16
