@@ -187,7 +187,7 @@ Q & A ...
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
-    Check out the :ref:`splam training and testing section <splam_train_test>`.
+    Check out the :ref:`splam training and testing section <splam-train-test>`.
 
 
 |

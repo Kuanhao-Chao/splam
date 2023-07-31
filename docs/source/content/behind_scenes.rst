@@ -104,7 +104,7 @@ A group of four residual units forms a bigger residual group, and 20 RUs are clu
 |
 
 
-.. _splam_train_test:
+.. _splam-train-test:
 
 Splam training & testing
 +++++++++++++++++++++++++++++++++++
@@ -116,9 +116,9 @@ After curating the gold standard dataset, we divided all splice junctions into t
 Hyperparameters
 -----------------
 
-To train Splam, we used a batch size of 100 and trained it for 15 epochs. We employed the AdamW optimizer with the default learning rate of 0.03. A 1000-step warmup was utilized, with the learning rate increasing linearly from 0 to 0.03. The learning rate then decreased following the values of the cosine function between 0.03 to 0 (:numref:`train_lr`).
+To train Splam, we used a batch size of 100 and trained it for 15 epochs. We employed the AdamW optimizer with the default learning rate of 0.03. A 1000-step warmup was utilized, with the learning rate increasing linearly from 0 to 0.03. The learning rate then decreased following the values of the cosine function between 0.03 to 0 (:numref:`train-lr`).
 
-.. _train_lr:
+.. _train-lr:
 .. figure::  ../_images/train_lr.png
     :align:   center
     :scale:   80 %
@@ -130,15 +130,17 @@ To train Splam, we used a batch size of 100 and trained it for 15 epochs. We emp
 Loss function
 ---------------
 
-We further improved Splam's performance by changing the loss function. Instead of using the commonly used cross entropy (:ref:`Equation <equation_cel>`), we replaced it with focal loss :cite:p:`lin2017focal` (:ref:`Equation <equation_fl>`).
+We further improved Splam's performance by changing the loss function. Instead of using the commonly used cross entropy (:ref:`Eq. 1 <equation-cel>`), we replaced it with focal loss (:ref:`Eq. 2 <equation-fl>`) :cite:p:`lin2017focal`.
 
-.. _equation_cel:
+.. _equation-cel:
 .. math::
+    :label: 1
 
     Loss_{CEL} = \sum_{class \in \{donor, acceptor, neither\}} I_{class}\times\log(P_{class}) 
 
-.. _equation_fl:
+.. _equation-fl:
 .. math::
+    :label: 2
 
     Loss_{FL} = \sum_{class \in \{donor, acceptor, neither\}} I_{class}\times (1-P_{class})^{\gamma} \times \log(P_{class}), \text{where } \gamma = 2
 
@@ -169,7 +171,6 @@ Reference
 +++++++++++++++++++++++++++++++++++
 
 .. bibliography::
-
 
 
 |
