@@ -10,16 +10,23 @@ System requirements
 
 .. admonition:: Software dependency
 
-   * Python >= 3.6.0
+   * python >= 3.6.0
    * pytorch >= 1.12.0
    * pybedtools >= 0.9.0
    * gffutils >= 0.10.0
    * pybind11 >= 2.10.0
 
+.. admonition:: Version warning
+   :class: important
+
+   Splam is currently not compatible with the latest version of :code:`python=3.11.4` due to a dependency issue with :code:`pybedtools`. We are currently investigating and will patch in a future update. In the meantime, we recommend running in a :code:`python=3.10` environment, as shown below
+
+      $ conda create -n myenv python=3.10
+
 |
 
-There are three ways that you can install Splam:
 
+There are three ways that you can install Splam:
 
 .. _install-through-pip:
 
