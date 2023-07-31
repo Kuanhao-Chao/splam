@@ -104,7 +104,7 @@ This gives you a cleaned :code:`GFF` file at :code:`tmp_out_generalization/clean
 .. _splam-generalization-performance:
 
 Explanation: Splam's performance on non-human species
-++++++++++++++++++++++++++++++++++++++++++++
++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Although Splam was trained on human datasets, we have shown that the model is able to generalize to other eukaryotic genomes, including plants. In our investigation, we tested the performance of Splam on the Chimpanzee (*Pan troglodytes*), Mouse (*Mus musculus*), and Thale cress, a flowering plant (*Arabidopsis thaliana*), genomes. We report that Splam outperforms SpliceAI in recall, precision, and accuracy, on every score threshold for every species. 
 
@@ -132,7 +132,7 @@ We find that Splam is able to quickly and accurately classify positive and negat
 .. _generalization-score-dist:
 .. figure::  ../_images/generalization_pos_score_dist.png
    :align:   center
-   :scale:   8 %
+   :scale:   12 %
 
    A comparison of the score distributions between Splam (green) and SpliceAI (orange) for the positive dataset. The top row represents donor site scores and the bottom row represents acceptor site scores. The darkened vertical line through the distribution represents the median value, while the two dotted vertical lines represent the first and third quartiles. Splam demonstrates the ability to correctly score positive samples highly, with a peak near 1.0 for all three species. SpliceAI's distributions are more spread out, especially for *Arabidopsis*, which exhibits an M-shaped distribution.
 
@@ -143,7 +143,7 @@ Combining this result with the negative data, we calculate summary statistics th
 .. _generalization-heatmap:
 .. figure::  ../_images/generalization_performance_heatmap.png
    :align:   center
-   :scale:   22 %
+   :scale:   28 %
 
    A grid of heatmaps portraying the recall (top), precision (middle), and accuracy (bottom) of both models on the chimpanzee (left), mouse (middle), and *Arabidopsis* (right) genomes, across a variety of score thresholds (x-axis). For each heatmap, the top three rows (green) represent Splam, and the bottom three rows (orange) represent SpliceAI, where each is examined at the donor, acceptor, and splice junction levels. The performance metrics are reported as percentages on the heatmap. We observe that Splam exhibits consistently high recall and accuracy whereas SpliceAI's swiftly declines with increasing score thresholds. Precision for both models is consistently high. 
 
