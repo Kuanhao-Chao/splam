@@ -72,7 +72,7 @@ Example of evaluating mouse annotation files (:code:`GFF`)
     $ cd test
 
     # Step 1: extract introns in the annotation
-    splam extract mouse_chr19.gff -o tmp_out_generalization
+    splam extract mouse_chr19_subset.gff -o tmp_out_generalization
 
     # Step 2: score introns in the annotation
     splam score -A GRCm39_assembly_report.txt -G mouse_chr19.fa -m ../model/splam_script.pt -o tmp_out_generalization tmp_out_generalization/junction.bed

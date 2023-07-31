@@ -55,7 +55,7 @@ In this step, you take :ref:`an annotation file (1) <mouse-prepare-input>` and r
 
 .. code-block:: bash
 
-   splam extract mouse_chr19.gff -o tmp_out_generalization
+   splam extract mouse_chr19_subset.gff -o tmp_out_generalization
 
 
 This gives you a :code:`BED` file with the extracted introns in :code:`tmp_out_generalization/junction.bed`.
