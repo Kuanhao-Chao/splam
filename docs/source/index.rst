@@ -51,8 +51,8 @@ Splam's tutorial
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: https://img.shields.io/badge/License-MIT-yellow.svg
 
-.. image:: https://img.shields.io/badge/version-v.1.0.1-blue
-    :target: https://img.shields.io/badge/version-v.1.0.1-blue
+.. image:: https://img.shields.io/badge/version-v.1.0.2-blue
+    :target: https://img.shields.io/badge/version-v.1.0.2-blue
 
 .. image:: https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download
     :target: https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download
