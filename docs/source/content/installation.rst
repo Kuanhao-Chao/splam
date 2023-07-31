@@ -18,7 +18,7 @@ System requirements
 
 |
 
-There are three ways that you can install splam:
+There are three ways that you can install Splam:
 
 
 .. _install-through-pip:

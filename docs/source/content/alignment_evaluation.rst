@@ -286,15 +286,17 @@ Step 5: IGV visualization
 Here is an example of the EHMT1 gene locus on chromosome 9 visualized in IGV. This protein-coding gene is located on the forward strand; however, we have observed that the splice aligner generates several splice alignments on the reverse strand. 
 
 
-In :numref:`figure-EHMT1`, the first three tracks display the coverage, splice junction, and alignment information from the original alignment file of the SRR1352129 sample. The fourth, fifth, and sixth tracks show the coverage, splice junction, and alignment data obtained from the cleaned alignment file of the SRR1352129 sample, which was generated using Splam. Many of the spliced alignments on the reverse strand of EHMT1 have splice junctions with low Splam scores and were consequently removed. The Splam removal procedure results in a more refined gene locus and :ref:`enhances the transcriptome assembly <assemble-alignments-into-transcripts>`. The final track represents the RefSeq annotations of the EHMT1 gene.
+In :numref:`figure-igv`, the first three tracks display the coverage, splice junction, and alignment information from the original alignment file of the SRR1352129 sample. The fourth, fifth, and sixth tracks show the coverage, splice junction, and alignment data obtained from the cleaned alignment file of the SRR1352129 sample, which was generated using Splam. Many of the spliced alignments on the reverse strand of EHMT1 have splice junctions with low Splam scores and were consequently removed. The Splam removal procedure results in a more refined gene locus and :ref:`enhances the transcriptome assembly <assemble-alignments-into-transcripts>`. The final track represents the RefSeq annotations of the EHMT1 gene.
 
-.. _figure-EHMT1:
+
 .. figure::  ../_images/figure_S_EHMT1_original.png
     :align:   center
     :scale:   50 %
 .. figure::  ../_images/figure_S_EHMT1_cleaned.png
     :align:   center
     :scale:   50 %
+    
+.. _figure-igv:
 .. figure::  ../_images/figure_S_EHMT1_annotations.png
     :align:   center
     :scale:   50 %

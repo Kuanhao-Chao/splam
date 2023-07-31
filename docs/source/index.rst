@@ -63,17 +63,17 @@ Splam's tutorial
 .. image:: https://colab.research.google.com/assets/colab-badge.svg
     :target: https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb
 
+| 
 
 .. What is Splam?
 .. ==================
-|
 
 Splam is a splice junction recognition model based on a deep residual convolutional neural network that offers **fast and precise** assessment of splice junctions. 
 
 Why Splam❓
 ==================
 
-1. **We need a tools to evaluate splice junctions & spliced alignments.** Thousands of RNA-Seq datasets are generated every day, but there are no tools available for cleaning up spurious spliced alignments in these data. Splam addresses this problem!
+1. **We need a tool to evaluate splice junctions & spliced alignments.** Thousands of RNA-Seq datasets are generated every day, but there are no tools available for cleaning up spurious spliced alignments in these data. Splam addresses this problem!
 2. **Splam-cleaned alignments lead to improved transcript assembly, which, in turn, may enhance all downstream RNA-Seq analyses**, including transcript quantification, differential gene expression analysis, and more!
 
 |
@@ -90,7 +90,7 @@ What does Splam do❓
 
 There are two main use case scenarios:
 
-1. Improving your **alignmnet file**. Splam evaluates the quality of spliced alignments and removes those containing spurious splice junctions. This significantly enhances the quality of downstream transcriptome [:ref:`Link <alignment-detailed-section>`].
+1. Improving your **alignment file**. Splam evaluates the quality of spliced alignments and removes those containing spurious splice junctions. This significantly enhances the quality of downstream transcriptomes [:ref:`Link <alignment-detailed-section>`].
 
 2. Evaluating the quality of introns in your **annotation file or assembled transcripts** [:ref:`Link <annotation-detailed-section>`].
 
@@ -105,8 +105,8 @@ Main features
 =============
 
 * **Biologically inspired training process**: Splam was trained on combined donor and acceptor pairs, emulating the behavior of the spliceosome, with a specific emphasis on a narrow window of 400 base pairs surrounding each splice site. This approach is inspired by the understanding that the splicing process predominantly relies on signals within this specific region.
-* **Generalization to non-human species**: Splam was trained exclusively using human splice junctions; however, we have demonstrated that it performs well on chimpanzee, mouse, and even the flowering plant *Arabidopsis thaliana*!
-* **Python + C++ integration**: We have taken care of all the engineering work for you! Splam is easy to install and runs efficiently due to its underlying C++ implementation. You can install and run Splam with just one simple command!
+* **Generalization to non-human species**: Splam was trained exclusively using human splice junctions; however, we have demonstrated that it performs well on chimpanzee, mouse, and even the flowering plant *Arabidopsis thaliana*.
+* **Python + C++ integration**: We have taken care of all the engineering work for you! Splam is easy to install and runs efficiently due to its underlying C++ implementation. You can install and run Splam with just one simple command.
 * **Run Splam in three steps**: With just three lines of code, you can obtain a new alignment file that is cleaned and sorted.
 * **Pytorch implementation**: Splam is implemented and trained using the popular and reliable PyTorch framework.
 
@@ -117,17 +117,15 @@ Main features
 What Splam **doesn't** do
 ==================================
 
-One feature that Splam does not have is the ability to scan through the genome and simply score every potential splice site. Some splice site prediction tools take a DNA sequence and predict the splice sites within it, such as `SpliceAI <https://github.com/Illumina/SpliceAI>`_. However, SpliceAI was only trained on a single, canonical transcript for each protein coding gene, while disregarding alternative isoforms. Splam takes a different approach, focusing on predicting at the "splice junction level" rather than the "transcript-level." Splam was trained on a large collection of human splices sites taken from both "canonical" and alternative isoforms.
-
+Splam does not have the feature to scan through the genome and score every potential splice site. Some splice site prediction tools take a DNA sequence and predict the splice sites within it, such as `SpliceAI <https://github.com/Illumina/SpliceAI>`_. However, SpliceAI was only trained on a single canonical transcript for each protein-coding gene, while disregarding alternative isoforms. Splam takes a different approach, focusing on predicting at the "splice junction level" rather than the "transcript level." Splam was trained on a large collection of human splices sites taken from both "canonical" and alternative isoforms.
 
 |
 
 User support
 ============
-Please go through the :ref:`Documentation` below first. If you have questions about using the package, a bug report, or a feature request, please use the GitHub issue tracker here:
+Please go through the :ref:`documentation <table-of-contents>` below first. If you have questions about using the package, a bug report, or a feature request, please use the GitHub issue tracker here:
 
 https://github.com/Kuanhao-Chao/splam/issues
-
 
 |
 
@@ -138,6 +136,7 @@ Splam deep residual convolutional neural network was trained using the PyTorch f
 
 |
 
+.. _table-of-contents:
 
 Table of contents
 ==================

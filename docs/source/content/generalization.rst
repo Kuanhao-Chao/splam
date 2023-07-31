@@ -9,7 +9,7 @@ In short, the answer is **Yes ✅**!
 
 You can perform the same analysis as described in the :ref:`alignment-detailed-section` and :ref:`annotation-detailed-section` pages. All you need to prepare are the **(1) genome**, and **(2) alignment files or annotation files** of the species you are interested in.
 
-Below is a simple example to show :ref:`Splam works on mouse <_example-of-running-splam-on-mouse>` and a detailed explanation on :ref:`how well Splam works on non-human species <_splam-generalization-performance>`. 
+Below is a simple example to show :ref:`Splam works on mouse <example-of-running-splam-on-mouse>` and a detailed explanation on :ref:`how well Splam works on non-human species <splam-generalization-performance>`. 
 
 |
 
@@ -19,9 +19,7 @@ Below is a simple example to show :ref:`Splam works on mouse <_example-of-runnin
 Example: Running Splam on house mouse (*Mus musculus*) 
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-The workflow to evaluate non-human species introns is basically the same as running with the human data. For brevity, we only summarize the main code here, and detailed explanation about the output and arguments of each step can be found :ref:`on this page <annotation-detailed-section>`.
-
-In this example, we will be scoring the GRCm39 full assembly of mouse chromosome 19. The steps are very similar to the :ref:`annotation-detailed-section` example, which you should check out first. The key difference is that we will be running Splam with an extra file argument (the assembly report) that is needed for non-human species. Also, in this genome, we are using RefSeq identifiers. 
+In this example, we will be scoring the GRCm39 full assembly of mouse chromosome 19. The steps are basically the same as the :ref:`human example <annotation-detailed-section>`, which you should check out first. The key difference is that we will be running Splam with an extra file argument (the assembly report) that is needed for non-human species. For brevity, we only summarize the main code here, and detailed explanations about the outputs and arguments of each step can be found in :ref:``
 
 |
 
@@ -30,7 +28,7 @@ In this example, we will be scoring the GRCm39 full assembly of mouse chromosome
 Step 1: Preparing your input files
 ------------------------------------
 
-For non-human species, you need four files for running Splam. It is very similar to the :ref:`human analysis workflow <mouse-prepare-input>`, with the only difference being that you need to prepare an additional file which tells Splam the length of each chromosome. This information helps Splam to handle introns that are at the ends of chromosome, and is built-in for humans, but not other species. The following four files are toy datasets that we are going to use in the tutorial:
+For non-human species, you need four files for running Splam. It is very similar to the :ref:`human analysis workflow <annotation-prepare-input>`, with the only difference being that you need to prepare an additional file which tells Splam the length of each chromosome. This information helps Splam to handle introns that are at the ends of chromosome, and is built-in for humans, but not other species. The following four files are toy datasets that we are going to use in the tutorial:
 
 .. admonition:: Input files
    :class: note
@@ -80,6 +78,7 @@ In this step, the goal is to score all the extracted splice junctions. To accomp
 
 Step 4: Evaluating isoforms by Splam scores
 ------------------------------------------------
+
 To summarize the quality of each isoform, users can count how many spurious splice junctions are present in each transcript and calculate the ratio of bad splice junctions among all introns within each transcript by running the following Splam command: 
 
 .. code-block:: bash
@@ -89,13 +88,14 @@ To summarize the quality of each isoform, users can count how many spurious spli
 |
 
 
-
 .. _splam-generalization-performance:
 
 Performance on non-human species
 ++++++++++++++++++++++++++++++++++++++++++++
 
 Although Splam was trained on human datasets, we have shown that the model is able to generalize to other eukaryotic genomes, including plants. In our investigation, we tested the performance of Splam on the Chimpanzee (*Pan troglodytes*), Mouse (*Mus musculus*), and Thale cress, a flowering plant (*Arabidopsis thaliana*), genomes. We report that Splam outperforms SpliceAI in recall, precision, and accuracy, on every score threshold for every species. 
+
+|
 
 .. _generalization-data-curation:
 
@@ -137,6 +137,8 @@ Combining this result with the negative data, we calculate summary statistics th
 |
 
 The results of this investigation demonstrate Splam's ability to generalize well on non-human species, including both animal and plant genomes. Additionally, we show Splam performing consistently and accurately on a wide range of score thresholds. 
+
+
 
 |
 |

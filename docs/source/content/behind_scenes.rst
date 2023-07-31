@@ -3,6 +3,7 @@
 Behind the scenes
 =================================================
 
+|
 
 .. _data-curation:
 
@@ -15,6 +16,7 @@ To understand how Splam works, you first need to understand how the training dat
 
 We extract a 400bp sequence centered around the splice sites, shifting the focus from learning the splicing pattern at the transcript level to the splice site level. This strategy enables localized prediction of splicing events, mitigating biases associated with canonical transcripts and eliminating the need for larger window sizes encompassing the entire intron and 10,000bp flanking sequences. In summary, each data point in our Splam model consists of a donor-acceptor pair with a 400bp window size for each, resulting in a total of 800bp.
 
+|
 
 Model input & output dimension
 --------------------------------
@@ -29,6 +31,7 @@ The input to the model is a 800bp one-hot-encoded DNA sequence in the dimension 
 
     Splam takes 400bp regions around a donor and acceptor site, resulting in a total of 800bp. The input sequences are one-hot encoded into vectors, where :math:`A` is :math:`[1, 0, 0, 0]`, :math:`C` is :math:`[0, 1, 0, 0]`, :math:`G` is :math:`[0, 0, 1, 0]`, :math:`T` is :math:`[0, 0, 0, 1]` and :math:`N` is :math:`[0, 0, 0, 0]`,. For the labels, a donor site is represented as :math:`[0, 0, 1]`, an acceptor site as :math:`[0, 1, 0]`, and an non-junction site as :math:`[1, 0, 0]`.
 
+|
 
 Positive data
 ---------------
@@ -39,6 +42,7 @@ The resulting splice sites were then categorized as **Positive-MANE** (blue in :
 
 This approach provides expression evidence to support splice junctions and thus eliminates transcription noise, increasing our confidence in the extracted donor and acceptor sites. Overall, we identified 180,195 splice sites in Positive MANE and 85,908 splice sites in Positive-ALT
 
+|
 
 Negative data
 ---------------
@@ -60,8 +64,6 @@ To further increase the difficulty of negative junctions, **(2)** only splice ju
 |
 
 
-
-
 .. _model-architecture:
 
 Model architecture
@@ -69,6 +71,7 @@ Model architecture
 
 Splam utilizes a deep dilated residual convolutional neural network (CNN) that incorporates grouped convolution layers within the residual units. 
 
+|
 
 Residual unit
 ---------------
@@ -80,6 +83,7 @@ Splam architecture consists of 20 residual units, each containing two convolutio
 
 Each convolutional layer in the residual unit follows a batch normalization and a rectified linear unit (ReLU) :numref:`splam-model` (b), and the input of the unit is residually connected to its output. He et al. :cite:p:`he2016deep` introduced residual units to address the issue of training accuracy degradation in deep learning. The inclusion of shortcut connections enables successful training of deeper models using simple stochastic gradient descent (SGD) with backpropagation, leading to improved accuracy as the depth increases.
 
+|
 
 Residual group
 ---------------
@@ -90,7 +94,7 @@ A group of four residual units forms a bigger residual group, and 20 RUs are clu
 
     S=\sum_{i=1}^{20}2F_{i}\times(W_{i}-1)
 
-.. _splam_model:
+.. _splam-model:
 .. figure::  ../_images/splam_model_architecture.png
     :align:   center
     :scale:   18 %
@@ -100,7 +104,6 @@ A group of four residual units forms a bigger residual group, and 20 RUs are clu
 |
 
 
-
 .. _splam_train_test:
 
 Splam training & testing
@@ -108,6 +111,7 @@ Splam training & testing
 
 After curating the gold standard dataset, we divided all splice junctions into two datasets: one for model training and the other for testing. For model training, we utilized all the splice sites on the main chromosomes, except chromosomes 1 and 9. For model testing, we used the splice sites on the held-out chromosomes 1 and 9, with the splice sites in paralogs removed.
 
+|
 
 Hyperparameters
 -----------------
@@ -121,6 +125,7 @@ To train Splam, we used a batch size of 100 and trained it for 15 epochs. We emp
 
     The learning rate for each Splam update during training
 
+|
 
 Loss function
 ---------------
@@ -140,7 +145,7 @@ We further improved Splam's performance by changing the loss function. Instead o
 
 Focal loss puts more emphasis on the challenging data points where Splam is more likely to make incorrect predictions and penalized these data points by an additional :math:`(1-P)^{\gamma}`` scale, where :math:`\gamma = 2` and :math:`P` is the probability of each class. This scale quantifies the degree of inaccuracy in predictions, instead of simply binary misclassifications that cross entropy applies.
 
-
+|
 
 .. Training precision
 .. --------------------

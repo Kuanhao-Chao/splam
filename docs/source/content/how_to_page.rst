@@ -174,7 +174,7 @@ Q & A ...
     :title: bg-light font-weight-bolder
     :body: bg-light text-left
 
-    Check out the :ref:`model architecture section <model_architecture>`.
+    Check out the :ref:`model architecture section <model-architecture>`.
 
 | 
 

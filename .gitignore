@@ -42,9 +42,9 @@ src/release/
 TODO
 
 # custom exemptions
+docs/source/content/conclusion.rst
 src/splam/helper.py 
 !src/CMakeLists.txt
-!docs/
 !test/chr9_subset.fa 
 !test/GRCm39_assembly_report.txt
 !test/MANE.GRCh38.v1.1.subset.gff

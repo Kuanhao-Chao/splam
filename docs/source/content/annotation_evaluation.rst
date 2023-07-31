@@ -39,9 +39,9 @@ The first step is to prepare three files for Splam analysis. The following three
 .. admonition:: Input files
     :class: note
 
-   1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: refseq_110_GRCh38_chr_fixed.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/refseq_110_GRCh38_chr_fixed.gff>`_].  
-   2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
-   3. The Splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
+    1. An annotation file in :code:`GFF` or :code:`GTF` format [`example file: refseq_110_GRCh38_chr_fixed.gff <https://github.com/Kuanhao-Chao/splam/blob/main/test/refseq_110_GRCh38_chr_fixed.gff>`_].  
+    2. A reference genome in :code:`FASTA` format [`example file: chr9_subset.fa <https://github.com/Kuanhao-Chao/splam/blob/main/test/chr9_subset.fa>`_].
+    3. The Splam model, which you can find it here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
 
 |
 
