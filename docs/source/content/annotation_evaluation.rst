@@ -17,13 +17,13 @@ It is important to acknowledge that annotation files can contain misannotations 
     **We provide a new approach to evaluate transcripts by counting how many bad splice junctions are in a transcript!**
 
 
-You can run Splam on **(1) annotation files** or **(2) assembled transcripts**. Splam outputs the scores of every donor and acceptor site. By using these scores, 
+You can run Splam on **(1) annotation files** or **(2) assembled transcripts**. Splam outputs the score of every donor and acceptor site. By using these scores, 
 
-1. You can get an overview of what is the quality of all the introns (splice junctions) inside your annotation file.
+1. You can get an overview of the quality of all introns (splice junctions) inside your annotation file.
 
-2. You **(I)** have an overview of what's the quality of the assembled transcripts. Furthermore, you can **(II)** assess each transcript by checking how many bad splice junctions a transcripts have, which can be a good filtering criteria for assembled transcripts.
+2. You can assess each transcript by checking how many bad splice junctions a transcript has, which can be a good filtering criteria for assembled transcripts.
 
-3. There are more potential usage to be explored!
+3. There are more potential usages to be explored!
 
 
 |
@@ -33,7 +33,7 @@ You can run Splam on **(1) annotation files** or **(2) assembled transcripts**. 
 Step 1: Preparing your input files
 +++++++++++++++++++++++++++++++++++
 
-The first step is to prepare three files for Splam analysis. The following three files are toy datasets that we are going to use in the tutorial:
+The first step is to prepare three files for Splam analysis. In this tutorial, we will be using a toy dataset.
 
 
 .. admonition:: Input files
@@ -55,7 +55,7 @@ In this step, you take :ref:`an annotation file (1) <annotation-prepare-input>` 
 
 .. code-block:: bash
 
-   splam extract refseq_110_GRCh38_chr_fixed.gff
+   splam extract refseq_40_GRCh38.p14_chr_fixed.gff -o tmp_out_annotation
 
 
 Splam uses :code:`gffutils` to extract introns from all transcripts. It starts by creating an sqlite3 database and then iterates through all exons in the :code:`GFF` file and writes intron coordinates into a :code:`BED` file. 
@@ -110,7 +110,7 @@ In this step, the goal is to score all the extracted splice junctions. To accomp
 
 .. code-block:: bash
 
-   splam score -G chr9_subset.fa -m splam_script.pt tmp_out/junction.bed
+   splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_annotation tmp_out_annotation/junction.bed
 
 
 In this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (P.S. They might be from unstranded transcripts assembled by StringTie).
@@ -151,7 +151,7 @@ In this step, a new :code:`BED` file is produced, featuring eight columns. Two e
         :body: bg-light text-left
 
         The path to an assembly report file in :code:`tsv` format which contains the chromosome identifiers and lengths. This information is built into Splam if running on a human genome (defaults to human GRCh38, patch 14). However, **this argument is required if running on non-human species**. See :ref:`our mouse example <example-of-running-splam-on-mouse>` for reference. 
-        
+
     .. dropdown:: :code:`-d / --device pytorch_DEV`
         :animate: fade-in-slide-down
         :title: bg-light font-weight-bolder
@@ -184,7 +184,7 @@ To summarize the quality of each isoform, users can run Splam to count how many 
 
 .. code-block:: bash
 
-   splam clean -o tmp_out_generalization -t 0.8
+   splam clean -o tmp_out_annotation -t 0.8
 
 
 **Output:** :code:`cleaned.gff`
@@ -227,7 +227,6 @@ Congratulations! You have finished this tutorial.
     
     * :ref:`behind-the-scenes-splam` to understand how Splam is designed and trained
     * :ref:`Q&A` to check out some common questions
-
 
 
 |

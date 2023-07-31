@@ -106,7 +106,7 @@ Main features
 
 * **Biologically inspired training process**: Splam was trained on combined donor and acceptor pairs, emulating the behavior of the spliceosome, with a specific emphasis on a narrow window of 400 base pairs surrounding each splice site. This approach is inspired by the understanding that the splicing process predominantly relies on signals within this specific region.
 * **Generalization to non-human species**: Splam was trained exclusively using human splice junctions; however, we have demonstrated that it performs well on chimpanzee, mouse, and even the flowering plant *Arabidopsis thaliana*.
-* **Python + C++ integration**: We have taken care of all the engineering work for you! Splam is easy to install and runs efficiently due to its underlying C++ implementation. You can install and run Splam with just one simple command.
+* **Python & C++ integration**: We have taken care of all the engineering work for you! Splam is easy to install and runs efficiently due to its underlying C++ implementation. You can install and run Splam with just one simple command.
 * **Run Splam in three steps**: With just three lines of code, you can obtain a new alignment file that is cleaned and sorted.
 * **Pytorch implementation**: Splam is implemented and trained using the popular and reliable PyTorch framework.
 
@@ -114,10 +114,10 @@ Main features
 
 |
 
-What Splam **doesn't** do
+What Splam doesn't do
 ==================================
 
-Splam does not have the feature to scan through the genome and score every potential splice site. Some splice site prediction tools take a DNA sequence and predict the splice sites within it, such as `SpliceAI <https://github.com/Illumina/SpliceAI>`_. However, SpliceAI was only trained on a single canonical transcript for each protein-coding gene, while disregarding alternative isoforms. Splam takes a different approach, focusing on predicting at the "splice junction level" rather than the "transcript level." Splam was trained on a large collection of human splices sites taken from both "canonical" and alternative isoforms.
+Splam does not have the feature to scan through the genome and score every potential splice site. Some splice site prediction tools take a DNA sequence and predict the splice sites within it, such as `SpliceAI <https://github.com/Illumina/SpliceAI>`_. However, SpliceAI was only trained on a single canonical transcript for each protein-coding gene while disregarding alternative isoforms. Splam takes a different approach, focusing on predicting at the "splice junction level" rather than the "transcript level." Splam was trained on a large collection of human splices sites taken from both "canonical" and alternative isoforms.
 
 |
 

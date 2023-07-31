@@ -26,7 +26,7 @@ This raises concerns regarding the accuracy of these splice alignments and the a
 
 The power of Splam lies in its ability to filter splice alignments without relying on complex statistical rules. Instead, it utilizes our trained deep learning model to evaluate the DNA sequences surrounding the donor and acceptor sites. Splam learns the splice junction patterns. It identifies and removes splice alignments that exhibit low confidence splice junctions.
 
-Splam offers solutions to several problems, addressing the following:
+Splam offers solutions to several problems by:
 
 1. Distinguishing high-quality spliced alignments from those with low confidence.
 2. Providing a systematic approach to assess all splice alignments within an alignment file. Additionally, it eliminates erroneous splice alignments, thereby enhancing downstream transcriptome assembly.
@@ -38,7 +38,7 @@ Splam offers solutions to several problems, addressing the following:
 Workflow overview
 +++++++++++++++++++++++++++++++++++
 
-Before diving into details of each step, this is the overview workflow. :numref:`alignment-cleanup-workflow` **(a)** is the workflow of running Splam in the standard RNA-Seq pipeline, and :numref:`alignment-cleanup-workflow` **(b)** is the workflow of spurious splice alignment removal.
+Before diving into details of each step, here is an overview of the workflow. :numref:`alignment-cleanup-workflow` **(a)** is the workflow of running Splam in the standard RNA-Seq pipeline, and :numref:`alignment-cleanup-workflow` **(b)** is the workflow of spurious splice alignment removal.
 
 Splam **takes a sorted alignment file**, extracts all splice junctions, and scores all of them. Furthermore, Splam cleans up the alignment file by removing spliced alignments with poor quality splice junctions, and **outputs a new sorted alignment file**. 
 
@@ -58,7 +58,7 @@ Splam **takes a sorted alignment file**, extracts all splice junctions, and scor
 Step 1: Preparing your input files
 +++++++++++++++++++++++++++++++++++
 
-The first step is to prepare 3 files for Splam analysis. The following three files are toy datasets that we are going to use in the tutorial:
+The first step is to prepare three files for Splam analysis. In this tutorial, we will be using a toy dataset.
 
 
 .. admonition:: Input files
@@ -79,7 +79,7 @@ In this step, you take :ref:`an alignment file (1) <alignment-prepare-input>` an
 
 .. code-block:: bash
 
-    splam extract -P SRR1352129_chr9_sub.bam
+    splam extract -P SRR1352129_chr9_sub.bam -o tmp_out_alignment
 
 The primary outputs for this step is a :code:`BED` file containing the coordinates of each junction and some temporary files. 
 
@@ -160,7 +160,7 @@ In this step, the goal is to score all the extracted splice junctions. To accomp
 
 .. code-block:: bash
 
-    splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out tmp_out/junction.bed
+    splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_alignment tmp_out_alignment/junction.bed
 
 
 After this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (P.S. They might be from unstranded transcripts assembled by StringTie).
@@ -234,10 +234,9 @@ Step 4: Cleaning up your alignment file
 
 After scoring every splice junction in your alignment file, the final step of this analysis is to remove alignments with low-quality splice junctions and update 'NH' tags and flags for multi-mapped reads. You can pass the directory path to Splam using the clean mode, which will output a new cleaned and sorted BAM file. The implementation of this step utilizes the core functions of :code:`samtools sort` and :code:`samtools merge`. If you want to run this step with multiple threads, you can set the :code:`-@ / --threads` argument accordingly.
 
-
 .. code-block:: bash
 
-    splam clean -P -o tmp_out -@ 5   
+    splam clean -P -o tmp_out_alignment -@ 5    
 
 
 **Output:** :code:`cleaned.bam`

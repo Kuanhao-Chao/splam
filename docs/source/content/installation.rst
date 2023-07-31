@@ -26,7 +26,7 @@ There are three ways that you can install Splam:
 Install through pip
 -------------------------
 
-Splam is on `PyPi 3.12 <https://pypi.org/project/splam/>`_ now. Check out all the release `here <https://pypi.org/manage/project/splam/releases/>`_. Pip automatically resolves and installs any dependencies required by Splam.
+Splam is on `PyPi 3.12 <https://pypi.org/project/splam/>`_ now. Check out all the releases `here <https://pypi.org/manage/project/splam/releases/>`_. Pip automatically resolves and installs any dependencies required by Splam.
 
 .. code-block:: bash
    
@@ -63,7 +63,7 @@ Installing Splam through conda is the easiest way to go:
    
    TBC
 
-   $ conda install -c bioconda liftoff
+   $ conda install -c bioconda splam
 
 |
 
