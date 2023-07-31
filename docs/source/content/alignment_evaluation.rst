@@ -86,7 +86,7 @@ The primary outputs for this step is a :code:`BED` file containing the coordinat
 
 Splam iterates through the :code:`BAM` file, extracts all splice junctions in alignments, and writes their coordinates into a :code:`BED` file. By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :code:`BED` file consists of six columns: :code:`CHROM`, :code:`START`, :code:`END`, :code:`JUNC_NAME`, :code:`INTRON_NUM`, and :code:`STRAND`. Here are a few entries from the :code:`BED` file:
 
-* **Output**
+**Output:** :code:`junction.bed`
 
 .. code-block:: text
     :linenos:
@@ -165,7 +165,7 @@ In this step, the goal is to score all the extracted splice junctions. To accomp
 
 After this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (P.S. They might be from unstranded transcripts assembled by StringTie).
 
-* **Output**
+**Output:** :code:`junction_score.bed`
 
 .. code-block:: text
     :linenos:
@@ -196,6 +196,13 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
 .. admonition::  Here are some **optional arguments**:
     :class: note
 
+    .. dropdown:: :code:`-A / --assembly-report REPORT`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The path to an assembly report file in :code:`tsv` format which contains the chromosome identifiers and lengths. This information is built into Splam if running on a human genome (defaults to human GRCh38, patch 14). However, **this argument is required if running on non-human species**. See :ref:`our mouse example <example-of-running-splam-on-mouse>` for reference. 
+
     .. dropdown:: :code:`-d / --device pytorch_DEV`
         :animate: fade-in-slide-down
         :title: bg-light font-weight-bolder
@@ -218,7 +225,6 @@ After this step, a new :code:`BED` file is produced, featuring eight columns. Tw
 
         The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <alignment-extract-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well. Otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
 
-
 |
 
 .. _alignment-cleanup-bam:
@@ -231,18 +237,17 @@ After scoring every splice junction in your alignment file, the final step of th
 
 .. code-block:: bash
 
-    splam clean -P -o tmp_out -@ 5
+    splam clean -P -o tmp_out -@ 5   
 
 
-.. admonition:: Splam score threshold suggestion.
-    :class: important
-
-    For cleaning up BAM alignment files, we advise using a more lenient **score threshold of 0.1**. Note that Splam is a decisive model and performs quite consistently across a wide range of thresholds, so a score threshold between 0.1 to 0.9 would work well.
-   
-
-* **Output**
+**Output:** :code:`cleaned.bam`
 
 The output file of this step is a sorted Splam-cleaned BAM file. You can replace the original BAM file with this cleaned BAM file to do the transcript assembly, quantification, and all other downstream analyses! 
+
+.. admonition:: Splam score threshold suggestion
+    :class: important
+
+    For cleaning up BAM alignment files, we advise using a more lenient **score threshold of 0.1**. That being said, Splam is a decisive model and performs quite consistently across a wide range of thresholds, so a score threshold between 0.1 to 0.9 would work well.
 
 .. admonition::  Here are some **optional arguments**:
     :class: note
@@ -259,14 +264,14 @@ The output file of this step is a sorted Splam-cleaned BAM file. You can replace
         :title: bg-light font-weight-bolder
         :body: bg-light text-left
 
-        This is the threshold for Splam to determine whether a given splice junction is spurious or not. If the score of either the donor or acceptor site falls below this value, then any spliced alignments containing this junction will be removed. The default threshold is set to 0.1.
+        This is the score cutoff threshold for Splam to determine whether a given splice junction is spurious (discarded) or not. It is a floating-point value between 0 and 1. If the score of either the donor or acceptor site falls below this value, then any spliced alignments containing this junction will be removed. The default threshold is set to 0.1.
 
     .. dropdown:: :code:`-@ / --threads threads`
         :animate: fade-in-slide-down
         :title: bg-light font-weight-bolder
         :body: bg-light text-left
 
-        Splam utilizes the sorting, compression, and merging scripts from `samtools <https://github.com/samtools/samtools>`_. You can enable multi-threading for the final stage of BAM file sorting and merging by setting this argument. By default, the operation is performed in single-thread.
+        Splam utilizes the sorting, compression, and merging scripts from `samtools <https://github.com/samtools/samtools>`_. You can enable multi-threading for the final stage of BAM file sorting and merging by setting this argument. The more threads, the more efficient the operation, but also the more resource overhead. By default, the operation is performed in single-thread.
 
     .. dropdown:: :code:`-o / --outdir DIR`
         :animate: fade-in-slide-down
@@ -274,7 +279,6 @@ The output file of this step is a sorted Splam-cleaned BAM file. You can replace
         :body: bg-light text-left
 
         The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <alignment-extract-introns>` and :ref:`Step 3 <alignment-score-extracted-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well, or otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
-
 
 |
 
@@ -308,7 +312,6 @@ In :numref:`figure-igv`, the first three tracks display the coverage, splice jun
     **Splam exclusively employs the strand information to extract the reverse complement of DNA sequences for splice junctions when necessary.** When it comes to scoring splice junctions, **Splam relies solely on the DNA sequence information**. 
     
     In the above example, Splam can distinguish that the majority of splice junctions aligned on the opposite strand of the EHMT1 gene locus are of poor quality. This final score is drawn by simply examining the DNA sequence!
-    
 
 |
 

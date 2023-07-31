@@ -57,7 +57,7 @@ Example 2: evaluate annotation files / assembled transcripts (:code:`GFF`)
     $ splam score -G chr9_subset.fa -m ../model/splam_script.pt -o tmp_out_annotation tmp_out_annotation/junction.bed
 
     #Step 3: output statistics of each transcript
-    $ splam clean -o tmp_out_annotation
+    $ splam clean -o tmp_out_annotation -t 0.8
 
 | 
 
@@ -79,7 +79,7 @@ Example of evaluating mouse annotation files (:code:`GFF`)
     splam score -A GRCm39_assembly_report.txt -G mouse_chr19.fa -m ../model/splam_script.pt -o tmp_out_generalization tmp_out_generalization/junction.bed
 
     #Step 3: output statistics of each transcript
-    splam clean -o tmp_out_generalization
+    splam clean -o tmp_out_generalization -t 0.8
 
 |
 

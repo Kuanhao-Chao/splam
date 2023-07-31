@@ -30,26 +30,26 @@ def parse_args(args):
     parser_extract.add_argument("INPUT", help="target alignment file in BAM format or annotation file in GFF format.")
     parser_extract.add_argument('-V', '--verbose',
                     action='store_true',
-                    help='running splam in verbose mode.')  # on/off flag
+                    help='running Splam in verbose mode.')  # on/off flag
     parser_extract.add_argument('-P', '--paired',
                     action='store_true',
                     help='bundling alignments in "paired-end" mode.')  # on/off flag
     parser_extract.add_argument(
         '-n', '--write-junctions-only',
         action='store_true',
-        help='writing out splice junction bed file only without other temporary files.'
+        help='writing out splice junction BED file only without other temporary files.'
     )
     parser_extract.add_argument(
         '-f', '--file-format', default=None,
-        help='the file type for SPLAM to process. It can only be "BAM", "GFF", or "GTF". The default value is "BAM".'
+        help='the file type for Splam to process. It can only be "BAM", "GFF", or "GTF". The default value is "BAM".'
     )
     parser_extract.add_argument(
         '-d', '--database', default=None,
-        help='the path to the annotation database built using gffutils. If thie argument is provided, splam loads the database instead of creating a new one.'
+        help='the path to the annotation database built using gffutils. If this argument is provided, Splam loads the database instead of creating a new one.'
     )
     parser_extract.add_argument(
         '-o', '--outdir', default="tmp_out", metavar='DIR',
-        help='the directory where the output file is written to. Default output filename is "junction_score.bed"',
+        help='the directory where the output file is written to. Default output filename is "junction.bed"',
     )
     parser_extract.add_argument(
         '-M', '--max-splice',  metavar='DIST',
@@ -82,7 +82,7 @@ def parse_args(args):
     )
     parser_score.add_argument(
         '-A', '--assembly-report', default=None, metavar='REPORT',
-        help='the path to an assembly report file containing the chromosome identifiers and sizes. If none provided, will default to human GRCh38.p14.'
+        help='the path to an assembly report file containing the chromosome identifiers and lengths. If none provided, will default to human GRCh38.p14.'
     )
     parser_score.add_argument(
         '-G', '--reference-genome',  metavar='REF.fasta',
@@ -90,7 +90,7 @@ def parse_args(args):
     )
     parser_score.add_argument(
         '-m', '--model', metavar='MODEL.pt',
-        required=True, help='the path to the SPLAM! model'
+        required=True, help='the path to the Splam model'
     )
 
 
@@ -100,11 +100,11 @@ def parse_args(args):
     parser_clean = subparsers.add_parser('clean', help='Cleaning up spurious splice alignment')
     parser_clean.add_argument(
         '-@', '--threads', default="1", metavar='threads',
-        help='set number of sorting, compression and merging threads. By default, operation is single-threaded.'
+        help='set number of sorting, compression and merging threads. This is intended for cleaning BAM alignment files. By default, operation is single-threaded.'
     )
     parser_clean.add_argument(
         '-t', '--threshold', default="0.1", metavar='threshold',
-        help='the cutoff threshold for identifying spurious splice junctions.'
+        help='the cutoff threshold for identifying spurious splice junctions. Default is 0.1.'
     )
     parser_clean.add_argument(
         '-n', '--bad-intron-num', default="8", metavar='bad intron num',

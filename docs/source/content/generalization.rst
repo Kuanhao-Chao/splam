@@ -28,7 +28,7 @@ In this example, we will be scoring the GRCm39 full assembly of mouse chromosome
 Step 1: Preparing your input files
 ------------------------------------
 
-For non-human species, you need four files for running Splam. It is very similar to the :ref:`human analysis workflow <annotation-prepare-input>`, with the only difference being that you need to prepare an additional file which tells Splam the length of each chromosome. This information helps Splam to handle introns that are at the ends of chromosome, and is built-in for humans, but not other species. The following four files are toy datasets that we are going to use in the tutorial:
+For non-human species, you need four files for running Splam. It is very similar to the :ref:`human analysis workflow <annotation-prepare-input>`, with the only difference being that you need to prepare an additional file which tells Splam the length of each chromosome. This information helps Splam to handle introns that are at the ends of chromosome, and is built-in for humans, but not other species. 
 
 .. admonition:: Input files
    :class: note
@@ -38,15 +38,13 @@ For non-human species, you need four files for running Splam. It is very similar
    3. The Splam model, which you can find here: `splam.pt <https://github.com/Kuanhao-Chao/splam/blob/main/model/splam_script.pt>`_
    4. An assembly report in :code:`tsv` format [`example file: GRCm39_assembly_report.txt <https://github.com/Kuanhao-Chao/splam/blob/main/test/GRCm39_assembly_report.txt>`_].
 
-|
 
 .. admonition:: Assembly report
    :class: important
 
-   For non-human species, remember to include an assembly report with your input files! You should download the assembly report from the same source as your :code:`GFF` or :code:`GTF` annotation file and :code:`FASTA` genome. 
+   For non-human species, remember to include an assembly report with your input files! It is advised to download the assembly report from the same source as your :code:`GFF` or :code:`GTF` annotation file and :code:`FASTA` genome. 
 
 |
-
 
 .. _mouse-extract-introns:
 
@@ -59,6 +57,9 @@ In this step, you take :ref:`an annotation file (1) <mouse-prepare-input>` and r
 
    splam extract mouse_chr19.gff -o tmp_out_generalization
 
+
+This gives you a :code:`BED` file with the extracted introns in :code:`tmp_out_generalization/junction.bed`.
+
 |
 
 .. _mouse-score-introns:
@@ -66,11 +67,20 @@ In this step, you take :ref:`an annotation file (1) <mouse-prepare-input>` and r
 Step 3: Scoring extracted introns
 -----------------------------------
 
-In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 4 essential files. **(1)** The BED file that was generated in :ref:`Step 2 <mouse-extract-introns>`, **(2)** :ref:`the reference genome (2) <mouse-prepare-input>` which shares coordinates with the junction BED file, **(3)** :ref:`the splam model (3) <mouse-prepare-input>`, and **(4)** :ref:`a tsv file (4)<mouse-prepare-input>` telling Splam the length of each chromosome. Once you have these files in place, you can run the following command:
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 4 essential files. **(1)** The BED file that was generated in :ref:`Step 2 <mouse-extract-introns>`, **(2)** :ref:`the reference genome (2) <mouse-prepare-input>` which shares coordinates with the junction BED file, **(3)** :ref:`the Splam model (3) <mouse-prepare-input>`, and **(4)** :ref:`a tsv file (4)<mouse-prepare-input>` telling Splam the length of each chromosome. Once you have these files in place, you can run the following command:
 
 .. code-block:: bash
 
    splam score -A GRCm39_assembly_report.txt -G mouse_chr19.fa -m ../model/splam_script.pt -o tmp_out_generalization tmp_out_generalization/junction.bed
+
+
+.. admonition:: -A flag
+   :class: note
+
+   Note that for non-human species, you need to run this step with the additional :code:`-A` flag to include the assembly report.
+
+
+This gives you a :code:`BED` file with the scored introns in :code:`tmp_out_generalization/junction_score.bed`.
 
 |
 
@@ -83,10 +93,13 @@ To summarize the quality of each isoform, users can count how many spurious spli
 
 .. code-block:: bash
 
-   splam clean -o tmp_out_generalization
+   splam clean -o tmp_out_generalization -t 0.8
+
+
+This gives you a cleaned :code:`GFF` file at :code:`tmp_out_generalization/cleaned.gff`.
 
 |
-
+|
 
 .. _splam-generalization-performance:
 

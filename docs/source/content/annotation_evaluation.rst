@@ -60,11 +60,11 @@ In this step, you take :ref:`an annotation file (1) <annotation-prepare-input>` 
 
 Splam uses :code:`gffutils` to extract introns from all transcripts. It starts by creating an sqlite3 database and then iterates through all exons in the :code:`GFF` file and writes intron coordinates into a :code:`BED` file. 
 
-
 By default, the :code:`BED` is written into :code:`tmp_out/junction.bed`. The :code:`BED` file consists of six columns: :code:`CHROM`, :code:`START`, :code:`END`, :code:`JUNC_NAME`, :code:`INTRON_NUM`, and :code:`STRAND`. Here are a few entries from the :code:`BED` file:
 
 
-**Output:**
+**Output:** :code:`junction.bed`
+
 .. code-block:: text
     :linenos:
 
@@ -106,15 +106,17 @@ Step 3: Scoring extracted introns
 +++++++++++++++++++++++++++++++++++
 
 
-In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. (1) The BED file that was generated in :ref:`Step 2 <annotation-extract-introns>`, (2) :ref:`the reference genome (2) <annotation-prepare-input>` which shares coordinates with the junction BED file, and (3) :ref:`the splam model (3) <annotation-prepare-input>`. Once you have these files in place, you can run the following command:
+In this step, the goal is to score all the extracted splice junctions. To accomplish this, you will need 3 essential files. (1) The BED file that was generated in :ref:`Step 2 <annotation-extract-introns>`, (2) :ref:`the reference genome (2) <annotation-prepare-input>` which shares coordinates with the junction BED file, and (3) :ref:`the Splam model (3) <annotation-prepare-input>`. Once you have these files in place, you can run the following command:
 
 .. code-block:: bash
 
    splam score -G chr9_subset.fa -m splam_script.pt tmp_out/junction.bed
 
+
 In this step, a new :code:`BED` file is produced, featuring eight columns. Two extra columns, namely :code:`DONOR_SCORE` and :code:`ACCEPTOR_SCORE`, are appended to the file. It is worth noting that any unstranded introns are excluded from the output. (P.S. They might be from unstranded transcripts assembled by StringTie).
 
-**Output:**
+**Output:** :code:`junction_score.bed`
+
 .. code-block:: text
     :linenos:
    
@@ -143,6 +145,13 @@ In this step, a new :code:`BED` file is produced, featuring eight columns. Two e
 .. admonition::  Here are some **optional arguments**:
     :class: note
 
+    .. dropdown:: :code:`-A / --assembly-report REPORT`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The path to an assembly report file in :code:`tsv` format which contains the chromosome identifiers and lengths. This information is built into Splam if running on a human genome (defaults to human GRCh38, patch 14). However, **this argument is required if running on non-human species**. See :ref:`our mouse example <example-of-running-splam-on-mouse>` for reference. 
+        
     .. dropdown:: :code:`-d / --device pytorch_DEV`
         :animate: fade-in-slide-down
         :title: bg-light font-weight-bolder
@@ -175,14 +184,35 @@ To summarize the quality of each isoform, users can run Splam to count how many 
 
 .. code-block:: bash
 
-   splam clean -o tmp_out_generalization
+   splam clean -o tmp_out_generalization -t 0.8
 
-|
+
+**Output:** :code:`cleaned.gff`
+
+The output file of this step is a sorted Splam-cleaned GFF file. You can replace the original GFF file with the cleaned GFF file. Also, reference the :code:`report.tsv` for a list of transcripts, and their ratio and number of spurious/removed junctions.
 
 .. admonition:: Splam score threshold suggestion
     :class: important
 
-    *  For evaluating the accuracy of GFF annotation files, we advise using a stricter **score threshold of 0.8**. 
+    For evaluating the accuracy of GFF annotation files, we advise using a stricter **score threshold of 0.8**. 
+
+
+.. admonition::  Here are some **optional arguments**:
+    :class: note
+
+    .. dropdown:: :code:`-t / --threshold threshold`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        This is the score cutoff threshold for Splam to determine whether a given splice junction is spurious (discarded) or not. It is a floating-point value between 0 and 1. If the score of either the donor or acceptor site falls below this value, then any spliced alignments containing this junction will be removed. The default threshold is set to 0.1.
+
+    .. dropdown:: :code:`-o / --outdir DIR`
+        :animate: fade-in-slide-down
+        :title: bg-light font-weight-bolder
+        :body: bg-light text-left
+
+        The directory where the output file is written to. The default output directory is :code:`tmp_out`. This argument is same as the one in :ref:`Step 2 <alignment-extract-introns>` and :ref:`Step 3 <alignment-score-extracted-introns>`. Note that if you set your own output directory, you have to set the same output directory for this step as well, or otherwise, Splam will not be able to find some essential temporary files. We recommend users not to set this argument and use the default value.
 
 |
 
