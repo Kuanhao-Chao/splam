@@ -42,7 +42,7 @@ For non-human species, you need four files for running Splam. It is very similar
 .. admonition:: Assembly report
    :class: important
 
-   For non-human species, remember to include an assembly report with your input files! It is advised to download the assembly report from the same source as your :code:`GFF` or :code:`GTF` annotation file and :code:`FASTA` genome. 
+   For non-human species, remember to include an assembly report with your input files! It is advised to download the assembly report from the `NCBI FTP site <https://ftp.ncbi.nlm.nih.gov/>`, along with your :code:`GFF` or :code:`GTF` annotation file and :code:`FASTA` genome. 
 
 |
 
