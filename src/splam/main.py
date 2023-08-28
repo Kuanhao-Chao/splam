@@ -80,10 +80,10 @@ def parse_args(args):
         '-d', '--device', default="NONE", metavar='pytorch_dev',
         help='the computing device that is used to perform computations on tensors and execute operations in the PyTorch framework. By default, this parameter is detectd automatically.'
     )
-    parser_score.add_argument(
-        '-A', '--assembly-report', default=None, metavar='REPORT',
-        help='the path to an assembly report file containing the chromosome identifiers and lengths. If none provided, will default to human GRCh38.p14.'
-    )
+    # parser_score.add_argument(
+    #     '-A', '--assembly-report', default=None, metavar='REPORT',
+    #     help='the path to an assembly report file containing the chromosome identifiers and lengths. If none provided, will default to human GRCh38.p14.'
+    # )
     parser_score.add_argument(
         '-G', '--reference-genome',  metavar='REF.fasta',
         required=True, help='the path to the reference genome.'
@@ -195,12 +195,12 @@ def main(argv=None):
         splam_model = args.model
         batch_size = args.batch_size
         device = args.device
-        assembly_report = args.assembly_report
+        # assembly_report = args.assembly_report
 
         #################################
         # Step 1: creating donor acceptor bed file.
         #################################
-        donor_bed, acceptor_bed = parse.create_donor_acceptor_bed(junction_bed, outdir, assembly_report)
+        donor_bed, acceptor_bed = parse.create_donor_acceptor_bed(junction_bed, outdir, reference_genome)
 
         #################################
         # Step 2: write donor acceptor fasta file.

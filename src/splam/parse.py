@@ -3,7 +3,7 @@ import pybedtools
 
 from splam import config, chr_size
 
-def create_donor_acceptor_bed(junction_bed, junction_dir, assembly_report):
+def create_donor_acceptor_bed(junction_bed, junction_dir, reference_genome):
     #################################
     # For 'd_a.bed': 0-based, 1-based
     # For 'donor.bed': 0-based, 0-based
@@ -22,21 +22,28 @@ def create_donor_acceptor_bed(junction_bed, junction_dir, assembly_report):
     with open(junction_bed, 'r') as f:
         lines = f.read().splitlines()
 
-        # get chromosome sizes
-        style = ""
-        if lines[0].split("\t")[0][:3] == "chr":
-            if assembly_report:
-                chrs = chr_size.get_chrom_size(assembly_report, 'chr')
-            else:
-                chrs = chr_size.chrs_chr
-            style = "'chr*' style"
-        else:
-            if assembly_report:
-                chrs = chr_size.get_chrom_size(assembly_report, 'refseq')
-            else:
-                chrs = chr_size.chrs_refseq
-            style = "'NCBI RefSeq' style"
-        print(f'[Info] Chromosomes in the annotation file is in {style}')
+        # # get chromosome sizes
+        # style = ""
+        # if lines[0].split("\t")[0][:3] == "chr":
+        #     if assembly_report:
+        #         chrs = chr_size.get_chrom_size(assembly_report, 'chr')
+        #     else:
+        #         chrs = chr_size.chrs_chr
+        #     style = "'chr*' style"
+        # else:
+        #     if assembly_report:
+        #         chrs = chr_size.get_chrom_size(assembly_report, 'refseq')
+        #     else:
+        #         chrs = chr_size.chrs_refseq
+        #     style = "'NCBI RefSeq' style"
+        # print(f'[Info] Chromosomes in the annotation file is in {style}')
+
+        chrs = get_chromosome_lengths(reference_genome)
+
+        # # Print the dictionary
+        # for chromosome, length in chrs.items():
+        #     print(f"Chromosome {chromosome}: Length = {length} bases")
+        # print("chrs: ", chrs)
 
         # write coordinates of Splam-formatted input sequences
         for line in lines:
@@ -101,6 +108,35 @@ def create_donor_acceptor_bed(junction_bed, junction_dir, assembly_report):
     fw_acceptor.close()
     fw_da.close()
     return donor_bed, acceptor_bed
+
+def get_chromosome_lengths(fasta_file):
+    chromosome_lengths = {}
+    current_chromosome = None
+    current_sequence = []
+    
+    # Read the FASTA file line by line
+    with open(fasta_file, "r") as file:
+        for line in file:
+            line = line.strip()
+            if line.startswith(">"):
+                # New chromosome encountered
+                if current_chromosome is not None:
+                    # Store the length of the previous chromosome
+                    chromosome_lengths[current_chromosome] = len("".join(current_sequence))
+                # Extract the chromosome name
+                current_chromosome = line[1:]
+                current_sequence = []
+            else:
+                # Append the sequence lines for the current chromosome
+                current_sequence.append(line)
+    
+    # Store the length of the last chromosome
+    if current_chromosome is not None:
+        chromosome_lengths[current_chromosome] = len("".join(current_sequence))
+    
+    return chromosome_lengths
+
+
 
 def write_donor_acceptor_fasta(bed_file, reference_genome):
 
