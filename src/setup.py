@@ -7,7 +7,7 @@ from pathlib import Path
 from setuptools import Extension, setup
 from setuptools.command.build_ext import build_ext
 
-VERSION = "1.0.3"
+VERSION = "1.0.7"
 
 # Convert distutils Windows platform specifiers to CMake -A arguments
 PLAT_TO_CMAKE = {
@@ -17,6 +17,8 @@ PLAT_TO_CMAKE = {
     "win-arm64": "ARM64",
 }
 
+this_directory = Path(__file__).resolve().parent
+long_description = (this_directory / "../README.md").read_text()
 
 # A CMakeExtension needs a sourcedir instead of a file list.
 # The name must be the _single_ output extension from the CMake build.
@@ -142,4 +144,6 @@ setup(
     cmdclass={"build_ext": CMakeBuild},
     extras_require={"test": "pytest"},
 	entry_points={'console_scripts': ['splam = splam.main:main'], },
+    long_description=long_description,
+    long_description_content_type='text/markdown'
 )

@@ -86,7 +86,8 @@ def create_donor_acceptor_bed(junction_bed, junction_dir, reference_genome):
                 acceptor_s = acceptor - config.QUARTER_SEQ_LEN
                 acceptor_e = acceptor + flanking_size
 
-
+            if chr not in chrs.keys():
+                continue
             if donor_e >= chrs[chr] or acceptor_e >= chrs[chr]:
                 continue
             if donor_s < 0 or acceptor_s < 0:

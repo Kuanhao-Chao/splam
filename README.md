@@ -1,6 +1,5 @@
-
 <p align="center">
-  <img src="./logo.png" alt="Italian Trulli" style="width:85%">
+  <img src="https://storage.googleapis.com/storage.khchao.com/figures/Splam/logo.png" alt="Italian Trulli" style="width:85%">
 </p>
 
 
