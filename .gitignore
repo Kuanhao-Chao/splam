@@ -52,3 +52,4 @@ src/splam/helper.py
 !test/mouse_chr19.fa
 !test/mouse_chr19_subset.gff
 !test/SRR1352129_chr9_sub.bam
+debug/

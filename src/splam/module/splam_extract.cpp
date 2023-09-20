@@ -134,6 +134,8 @@ int g_max_splice = 100000;
 int g_bundle_gap = 1000;
 bool write_bam = true;
 bool g_paired_removal = false;
+bool fr_strand = false;
+bool rf_strand = false;
 
 robin_hood::unordered_map<std::string, int>  CHRS;
 
@@ -274,8 +276,16 @@ PYBIND11_MODULE(splam_extract, m) {
 
 
 
+
+    // parser_extract.add_argument('-fr', '--fr_strand',
+    //                 action='store_true',
+    //                 help='assume stranded library fr-secondstrand')  # on/off flag
+    // parser_extract.add_argument('-rf', '--rf_strand',
+    //                 action='store_true',
+    //                 help='assume stranded library fr-firststrand')  # on/off flag
+
 void processOptions(int argc, char* argv[]) {
-    GArgs args(argc, argv, "help;cite;verbose;paired;write-junctions-only;output=;max-splice=;bundle-gap=;hcPVno:M:g:");
+    GArgs args(argc, argv, "help;cite;verbose;fr;rf;paired;write-junctions-only;output=;max-splice=;bundle-gap=;hcPVno:M:g:");
 
     if (args.getOpt('h') || args.getOpt("help")) {
         usage_extract();
@@ -291,6 +301,14 @@ void processOptions(int argc, char* argv[]) {
         g_paired_removal = true;
     }
     
+    if (args.getOpt("fr") ) {
+        fr_strand = true;
+    }
+    
+    if (args.getOpt("rf") ) {
+        rf_strand = true;
+    }
+
     verbose=(args.getOpt('V')!=NULL || args.getOpt("verbose")!=NULL);
     if (verbose) {
         // fprintf(stderr, "Running SPLAM " VERSION ". Command line:\n");
@@ -310,8 +328,13 @@ void processOptions(int argc, char* argv[]) {
     GMessage(">> g_max_splice      : %d\n", g_max_splice);
     GMessage(">> g_bundle_gap      : %d\n", g_bundle_gap);
     GMessage(">> verbose           : %d\n", verbose);
+    GMessage(">> fr_strand         : %d\n", fr_strand);
+    GMessage(">> rf_strand         : %d\n", rf_strand);
 #endif
 
+    if (fr_strand && rf_strand) {
+        GError("'--fr' and '--rf' cannot be set at the same time.\n");
+    }
     args.startNonOpt();
     if (args.getNonOptCount()==0) {
         usage_extract();

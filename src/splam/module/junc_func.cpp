@@ -6,6 +6,7 @@
 
 #include "junc.h"
 #include "junc_func.h"
+#include "common.h"
 #include <iostream>
 #include <cstdlib>
 #include <vector>
@@ -16,8 +17,33 @@
 
 GArray<CJunc> junctions;
 
+char get_junction_strand(GSamRecord* brec) {
+
+	char xstrand=0;
+	xstrand=brec->spliceStrand(); // tagged strand gets priority
+	if(xstrand=='.' && (fr_strand || rf_strand)) { // set strand if stranded library
+		if(brec->isPaired()) { // read is paired
+			if(brec->pairOrder()==1) { // first read in pair
+				if((rf_strand && brec->revStrand())||(fr_strand && !brec->revStrand())) xstrand='+';
+				else xstrand='-';
+			}
+			else {
+				if((rf_strand && brec->revStrand())||(fr_strand && !brec->revStrand())) xstrand='-';
+				else xstrand='+';
+			}
+		}
+		else {
+			if((rf_strand && brec->revStrand())||(fr_strand && !brec->revStrand())) xstrand='+';
+			else xstrand='-';
+		}
+	}
+	return xstrand;
+}
+
 void addJunction(GSamRecord& r, int dupcount, GStr ref) {
-	char strand = r.spliceStrand();    
+
+	char strand =  get_junction_strand(&r);
+	// char strand = r.spliceStrand();    
 	GSamRecord *r_copy = new GSamRecord(r);
 	for (int i=1; i<r.exons.Count(); i++) {
 		if (r.exons[i].start-1 - r.exons[i-1].end+1 + 1 <= g_max_splice) {

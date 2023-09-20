@@ -56,11 +56,9 @@ GStr splamJExtract() {
     int prev_pos = 0;
     int lastref_id = -1; //last seen gseq_id
 
-    bool fr_strand = false;
-    bool rf_strand = false;
     int currentstart = 0, currentend = 0;
     int bundle_counter = 0;
-
+    
     /****************************
     * Workflow to extract junctions
     *****************************/
@@ -69,7 +67,6 @@ GStr splamJExtract() {
             bool chr_changed=false;
             int pos=0;
             const char* refseqName=NULL;
-            char xstrand=0;
             int nh=1;
             int gseq_id=lastref_id;  //current chr id
             bool new_bundle=false;
@@ -85,24 +82,7 @@ GStr splamJExtract() {
                  * Setting the "chr" "strand" of the current alignment.
                 ************************************/
                 refseqName=brec->refName();
-                xstrand=brec->spliceStrand(); // tagged strand gets priority
-                if(xstrand=='.' && (fr_strand || rf_strand)) { // set strand if stranded library
-                    if(brec->isPaired()) { // read is paired
-                        if(brec->pairOrder()==1) { // first read in pair
-                            if((rf_strand && brec->revStrand())||(fr_strand && !brec->revStrand())) xstrand='+';
-                            else xstrand='-';
-                        }
-                        else {
-                            if((rf_strand && brec->revStrand())||(fr_strand && !brec->revStrand())) xstrand='-';
-                            else xstrand='+';
-                        }
-                    }
-                    else {
-                        if((rf_strand && brec->revStrand())||(fr_strand && !brec->revStrand())) xstrand='+';
-                        else xstrand='-';
-                    }
-                }
-
+                
                 /***********************************
                  * Setting the "chr_changed" and "new_bundle" parameters.
                 ************************************/

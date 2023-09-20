@@ -59,7 +59,12 @@ def parse_args(args):
         '-g', '--bundle-gap',  metavar='GAP',
         help='minimum gap between bundles'
     )
-
+    parser_extract.add_argument('--fr',
+                    action='store_true',
+                    help='assume stranded library fr-secondstrand')  # on/off flag
+    parser_extract.add_argument('--rf',
+                    action='store_true',
+                    help='assume stranded library rf-firststrand')  # on/off flag
 
     #############################
     # Mode 2: splam score subcommands

@@ -69,6 +69,8 @@ def create_donor_acceptor_bed(junction_bed, junction_dir, reference_genome):
                 acceptor = int(eles[1])
                 donor = int(eles[2])
                 splice_junc_len = donor - acceptor
+            else:
+                continue
 
             flanking_size = config.QUARTER_SEQ_LEN
             if splice_junc_len < config.QUARTER_SEQ_LEN:
