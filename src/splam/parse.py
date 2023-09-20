@@ -127,7 +127,7 @@ def get_chromosome_lengths(fasta_file):
                     # Store the length of the previous chromosome
                     chromosome_lengths[current_chromosome] = len("".join(current_sequence))
                 # Extract the chromosome name
-                current_chromosome = line[1:]
+                current_chromosome = line[1:].split(" ")[0]
                 current_sequence = []
             else:
                 # Append the sequence lines for the current chromosome
