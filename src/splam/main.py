@@ -31,6 +31,7 @@ def parse_args(args):
     parser_extract.add_argument('-V', '--verbose',
                     action='store_true',
                     help='running Splam in verbose mode.')  # on/off flag
+    parser_extract.add_argument('-F', '--features', metavar='TYPES', default=None, help='list of feature types to extract introns')
     parser_extract.add_argument('-P', '--paired',
                     action='store_true',
                     help='bundling alignments in "paired-end" mode.')  # on/off flag
@@ -59,7 +60,12 @@ def parse_args(args):
         '-g', '--bundle-gap',  metavar='GAP',
         help='minimum gap between bundles'
     )
-
+    parser_extract.add_argument('--fr',
+                    action='store_true',
+                    help='assume stranded library fr-secondstrand')  # on/off flag
+    parser_extract.add_argument('--rf',
+                    action='store_true',
+                    help='assume stranded library rf-firststrand')  # on/off flag
 
     #############################
     # Mode 2: splam score subcommands
@@ -173,7 +179,7 @@ def main(argv=None):
             
             if not os.path.exists(outdir):
                 os.makedirs(outdir, exist_ok=True)
-            extract_gff.extract_introns(input, gff_db, is_load_gff_db, junction_bed, trans_intron_num_txt)
+            extract_gff.extract_introns(input, gff_db, args.features,is_load_gff_db, junction_bed, trans_intron_num_txt)
         
         elif file_format == "BAM" or file_format == "bam":
             argv_extract = sys.argv

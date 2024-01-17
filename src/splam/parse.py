@@ -69,6 +69,8 @@ def create_donor_acceptor_bed(junction_bed, junction_dir, reference_genome):
                 acceptor = int(eles[1])
                 donor = int(eles[2])
                 splice_junc_len = donor - acceptor
+            else:
+                continue
 
             flanking_size = config.QUARTER_SEQ_LEN
             if splice_junc_len < config.QUARTER_SEQ_LEN:
@@ -125,7 +127,7 @@ def get_chromosome_lengths(fasta_file):
                     # Store the length of the previous chromosome
                     chromosome_lengths[current_chromosome] = len("".join(current_sequence))
                 # Extract the chromosome name
-                current_chromosome = line[1:]
+                current_chromosome = line[1:].split(" ")[0]
                 current_sequence = []
             else:
                 # Append the sequence lines for the current chromosome

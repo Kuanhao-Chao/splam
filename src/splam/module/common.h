@@ -136,6 +136,9 @@ extern int STEP_COUNTER;
 // j-extract parameters.
 extern int g_max_splice;
 extern int g_bundle_gap;
+extern bool fr_strand;
+extern bool rf_strand;
+
 extern GSamWriter* outfile_above_spliced;
 extern GSamWriter* outfile_below_spliced;
 extern FILE* joutf_above;

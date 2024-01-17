@@ -3,7 +3,7 @@
 </p>
 
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![version](https://img.shields.io/badge/version-v.1.0.10-blue) [![Downloads](https://static.pepy.tech/personalized-badge/splam?period=total&units=abbreviation&left_color=grey&right_color=blue&left_text=PyPi%20downloads)](https://pepy.tech/project/splam) [![GitHub Downloads](https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download)](https://github.com/Kuanhao-Chao/splam/releases) ![os](https://img.shields.io/badge/platform-macOS_/Linux-green.svg) [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) ![version](https://img.shields.io/badge/version-v.1.0.2-blue) [![Downloads](https://static.pepy.tech/personalized-badge/splam?period=total&units=abbreviation&left_color=grey&right_color=blue&left_text=PyPi%20downloads)](https://pepy.tech/project/splam) [![GitHub Downloads](https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download)](https://github.com/Kuanhao-Chao/splam/releases) ![os](https://img.shields.io/badge/platform-macOS_/Linux-green.svg) [![](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb)
 
 <!-- <a href="https://colab.research.google.com/github/Kuanhao-Chao/splam/blob/main/notebook/splam_example.ipynb" target="_parent"><img src="https://colab.research.google.com/assets/colab-badge.svg" alt="Open In Colab"/></a> -->
 
@@ -207,9 +207,3 @@ All the scripts for Splam training and data analysis are in [this GitHub reposit
 
 Kuan-Hao Chao*, Alan Mao, Steven L Salzberg, Mihaela Pertea*, "Splam: a deep-learning-based splice site predictor that improves spliced alignments ", <i>bioRxiv</i> <b>2023.07.27.550754</b>, doi: [https://doi.org/10.1101/2023.07.27.550754](https://doi.org/10.1101/2023.07.27.550754), 2023
 
-
-<br>
-<br>
-<br>
-
-<img alt="My Logo" class="logo header-image only-light align-center" src="jhu-logo-dark.png">
