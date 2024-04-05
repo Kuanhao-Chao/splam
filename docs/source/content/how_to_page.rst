@@ -79,6 +79,61 @@ Q & A ...
 
 | 
 
+.. .. dropdown:: Q: Why does Splam tak 800bp for training?
+..     :animate: fade-in-slide-down
+..     :container: + shadow
+..     :title: bg-light font-weight-bolder
+..     :body: bg-light text-left
+
+..     Splam's choice of 800bp (base pairs) for training input sequences is grounded in model albation experimentat aimed at optimizing the model's ability to accurately identify splice sites. In the development phase, we explored a range of input sequence lengths—from 40bp up to 800bp—to evaluate how the amount of information impacts the model's performance. Our tests included training different versions of the Splam model, each tailored to the specific sequence lengths (e.g., Splam-40, Splam-100, through to Splam-800).
+
+..     For the training and testing datasets, we incorporated 60,000 splice junctions, excluding data from chromosomes 1 and 9 for training purposes and including them for testing to ensure robust model evaluation. Each variant of the Splam model was trained across 15 epochs to meticulously monitor and analyze the precision, recall, and Area Under the Precision-Recall Curve (AUPRC) metrics.
+
+..     Our experiments showed that models trained with sequences of at least 200bp converge in performance after 15 epochs, suggesting this length is crucial for learning splice site patterns. In sum, Splam-800 was chosen for its ability to capture the most information, thereby maximizing predictive accuracy.
+
+
+..      .. figure::  ../_images/figure_seq_len_vary.png
+..           :align:   center
+..           :scale:   22%
+
+
+..     .. note::
+
+..         We acknowledge the necessity for ongoing research to refine our understanding of the minimal sequence length required for efficient and accurate splice site detection, aiming to improve Splam's efficiency without compromising its performance.
+
+.. |
+
+.. dropdown:: Q: What is the model architecture of Splam? 
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
+
+    Check out the :ref:`model architecture section <model-architecture>`.
+
+| 
+
+.. dropdown:: Q: For Splam  model design, why do we use five residual groups?
+    :animate: fade-in-slide-down
+    :container: + shadow
+    :title: bg-light font-weight-bolder
+    :body: bg-light text-left
+
+    In the design of the Splam model, the inclusion of five residual groups is a result of the experiment to determine the optimal structure for splice site identification. This architectural choice was informed by an ablation study that varied the number of residual groups within the model, aiming to balance complexity with performance efficacy. 
+    
+    Our experiment demonstrated that each additional residual group up to the fifth contributed to the best improvement in the model's performance metrics, including top-k accuracy and the Area Under the Precision-Recall Curve (AUPRC). 
+
+    Thus, the architecture featuring five residual groups was selected for the final Splam model design, providing the most accurate splice site predition.
+
+    .. figure::  ../_images/figure_d_a_negs_dist.png
+        :align:   center
+        :scale:   22%
+
+| 
+
+
+
+
 .. dropdown:: Q: What is the difference between two released model, :code:`splam.pt` and :code:`splam_script.pt`?
     :animate: fade-in-slide-down
     :container: + shadow
@@ -167,16 +222,6 @@ Q & A ...
 .. Q: What is the model architecture of Splam?
 .. -----------------------------------------
 
-
-.. dropdown:: Q: What is the model architecture of Splam?
-    :animate: fade-in-slide-down
-    :container: + shadow
-    :title: bg-light font-weight-bolder
-    :body: bg-light text-left
-
-    Check out the :ref:`model architecture section <model-architecture>`.
-
-| 
 
 .. Q: How is Splam trained?
 .. --------------------------------

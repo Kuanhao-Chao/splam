@@ -51,8 +51,8 @@ Splam's tutorial
 .. image:: https://img.shields.io/badge/License-MIT-yellow.svg
     :target: https://img.shields.io/badge/License-MIT-yellow.svg
 
-.. image:: https://img.shields.io/badge/version-v.1.0.2-blue
-    :target: https://img.shields.io/badge/version-v.1.0.2-blue
+.. image:: https://img.shields.io/badge/version-v.1.0.10-blue
+    :target: https://img.shields.io/badge/version-v.1.0.10-blue
 
 .. image:: https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download
     :target: https://img.shields.io/github/downloads/Kuanhao-Chao/splam/total.svg?style=social&logo=github&label=Download
@@ -68,7 +68,13 @@ Splam's tutorial
 .. What is Splam?
 .. ==================
 
-Splam is a splice junction recognition model based on a deep residual convolutional neural network that offers **fast and precise** assessment of splice junctions. 
+Splam is a splice site predictor utilizing a deep residual convolutional neural network for **fast and accurate** evaluation of splice junctions solely based on 400nt DNA sequences around donor and acceptor sites.
+
+
+.. figure::  ./_images/splam_gif.gif
+    :align:   center
+
+|
 
 Why Splam❓
 ==================
@@ -123,7 +129,7 @@ Splam does not have the feature to scan through the genome and score every poten
 
 User support
 ============
-Please go through the :ref:`documentation <table-of-contents>` below first. If you have questions about using the package, a bug report, or a feature request, please use the GitHub issue tracker here:
+Please go through the :ref:`documentation <table-of-contents>` below first. You can find common questions and answers in the :ref:`FAQ <Q&A>` section. If you have questions about using the package, a bug report, or a feature request, please use the GitHub issue tracker here:
 
 https://github.com/Kuanhao-Chao/splam/issues
 
@@ -132,7 +138,7 @@ https://github.com/Kuanhao-Chao/splam/issues
 Key contributors
 ================
 
-Splam deep residual convolutional neural network was trained using the PyTorch framework by Kuan-Hao Chao. Kuan-Hao Chao also implemented the package that applies Splam to evaluate annotation files and clean up alignment files. This documentation was written by Kuan-Hao Chao and Alan Mao.
+Splam deep residual convolutional neural network was trained using the PyTorch framework by Kuan-Hao Chao. Kuan-Hao Chao also implemented the package that applies Splam to evaluate annotation files and clean up alignment files. Alan Mao benchmarked Splam on non-human species. This documentation was written by Kuan-Hao Chao and Alan Mao.
 
 |
 
