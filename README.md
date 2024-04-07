@@ -16,13 +16,18 @@
 <!-- [![Travis build status](https://travis-ci.org/roblanf/sangeranalyseR.svg?branch=master)](https://travis-ci.org/roblanf/sangeranalyseR)  -->
 <!-- ![documentation build status](https://readthedocs.org/projects/pip/badge/) -->
 
+<br>
+
 
 <p>Splam is a splice site predictor utilizing a deep residual convolutional neural network for <strong>fast and accurate</strong> evaluation of splice junctions solely based on 400nt DNA sequences around donor and acceptor sites.</p>
 
+<br>
 
 <figure class="align-center">
 <img alt="https://ccb.jhu.edu/splam/_images/splam_gif.gif" src="https://ccb.jhu.edu/splam/_images/splam_gif.gif">
 </figure>
+
+<br>
 
 ##  <a name="whysplam"></a>Why Splam❓<a class="headerlink" href="#whysplam" title="Permalink to this heading">#</a>
 
