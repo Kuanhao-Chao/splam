@@ -177,16 +177,18 @@ def concatenate_donor_acceptor_fasta(donor_fasta, acceptor_fasta, verbose):
         # >chr1:10000-20000(+)
         strand = lines_d[idx][-2]
 
-        eles = lines_d[idx].split(":")
+        eles = lines_d[idx].split("::")
         d_name = eles[0]
-        chromosome = eles[2]
-        d_splits = eles[3].split("(")
+        sec_part = eles[1].split(":")
+        chromosome = sec_part[0]
+        d_splits = sec_part[1].split("(")
         d_start, d_end = d_splits[0].split("-")
 
-        eles = lines_a[idx].split(":")
+        eles = lines_a[idx].split("::")
         a_name = eles[0]
-        chromosome = eles[2]
-        a_splits = eles[3].split("(")
+        sec_part = eles[1].split(":")
+        chromosome = sec_part[0]
+        a_splits = sec_part[1].split("(")
         a_start, a_end = a_splits[0].split("-")
 
         if strand == "+":
