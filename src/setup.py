@@ -119,6 +119,10 @@ class CMakeBuild(build_ext):
         if not build_temp.exists():
             build_temp.mkdir(parents=True)
 
+        # Set OMP_NUM_THREADS=1 for the build process
+        env = os.environ.copy()
+        env["OMP_NUM_THREADS"] = "1"
+
         subprocess.run(
             ["cmake", ext.sourcedir, *cmake_args], cwd=build_temp, check=True
         )
