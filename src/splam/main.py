@@ -5,6 +5,7 @@ import sys
 from splam import prediction, config, parse, extract_gff, header, clean_gff
 import splam_extract
 import splam_clean
+from splam.splam import *
 
 VERSION = header.__version__
 

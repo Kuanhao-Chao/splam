@@ -3,6 +3,7 @@ from torch.nn import Module, BatchNorm1d, LeakyReLU, Conv1d, ModuleList, Softmax
 from torch.optim.lr_scheduler import LambdaLR
 from torch.optim import Optimizer
 from torch.utils.data import Dataset, DataLoader
+from splam.splam import SPLAM
 
 import math
 import random
@@ -11,6 +12,7 @@ import warnings
 import os
 import re
 from progress.bar import Bar
+import platform
 
 warnings.filterwarnings('ignore')
 
@@ -154,6 +156,66 @@ def get_dataloader(batch_size, n_workers, output_file, shuffle, repeat_idx):
     )
     return test_loader
 
+def load_model(device, model_path):
+    try:
+        #############################
+        # Load empty model first
+        #############################
+        L = 64
+        SEQ_LEN = 800
+        JUNC_THRESHOLD = 0.5
+        W = np.asarray([11, 11, 11, 11, 11, 11, 11, 11,
+                        11, 11, 11, 11, 21, 21, 21, 21,
+                        21, 21, 21, 21])
+        AR = np.asarray([1, 1, 1, 1, 5, 5, 5, 5,
+                         10, 10, 10, 10, 15, 15, 15, 15,
+                         20, 20, 20, 20])
+
+        #############################
+        # Model Initialization
+        #############################
+        model = SPLAM(L, W, AR).to(device)
+        print("Model initialized successfully")
+        
+        # Try different model loading strategies
+        model_paths = [model_path]  # Add other paths here if you have more model files to test
+        for path in model_paths:
+            print(f"Trying to load from {model_path}")
+            try:
+                # Approach 1: Loading state_dict
+                model.load_state_dict(torch.load(model_path))
+                print(">> Model loaded using state_dict")
+                break
+            except Exception as e:
+                print(f"Failed loading state_dict: {e}")
+            
+            try:
+                # Approach 2: Loading the entire model (if the whole model was saved)
+                model = torch.load(model_path)
+                print(">> Model loaded using torch.load")
+                break
+            except Exception as e:
+                print(f"Failed loading with torch.load: {e}")
+
+            try:
+                # Approach 3: Loading a TorchScript model (jit)
+                model = torch.jit.load(model_path)
+                print(">> Model loaded using torch.jit.load")
+                break
+            except Exception as e:
+                print(f"Failed loading with torch.jit.load: {e}")
+
+        try:
+            # Ensure the model is on the correct device
+            model = model.to(device)
+            print("Model moved to device successfully")
+        except Exception as e:
+            print(f"Failed moving model to device: {e}")
+        return model
+    except Exception as e:
+        print(f"Error during model initialization or loading: {e}")
+        return None
+
 def splam_prediction(junction_fasta, out_score_f, model_path, batch_size, device_str):
     BATCH_SIZE = int(batch_size)
     N_WORKERS = None
@@ -167,9 +229,7 @@ def splam_prediction(junction_fasta, out_score_f, model_path, batch_size, device
 
     print(f'[Info] Running model in "'+ device_str+'" mode')
     print(f'[Info] Loading model ... (' + model_path + ')', flush = True)
-    # model = torch.jit.load(model_path)
-    print("model = torch.load(model_path)!!")
-    model = torch.load(model_path)
+    model = load_model(device, model_path)
     model = model.to(device)
 
     print(f'[Info] Done loading model', flush = True)
