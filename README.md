@@ -21,11 +21,14 @@
 
 <p>Splam is a splice site predictor utilizing a deep residual convolutional neural network for <strong>fast and accurate</strong> evaluation of splice junctions solely based on 400nt DNA sequences around donor and acceptor sites.</p>
 
+📢 JHU has published a feature article about <a href='https://doi.org/10.1186/s13059-024-03379-4' target='_blank'>Splam</a> on the <b><a href='https://hub.jhu.edu/2024/12/11/splam-pinpoints-gene-splicing/' target='_blank'>HUB</a></b>, <b><a href='https://www.cs.jhu.edu/news/new-ai-tool-pinpoints-gene-splicing-with-unmatched-precision/' target='_blank'>Computer Science</a></b>, and <b><a href='https://engineering.jhu.edu/news/new-ai-tool-pinpoints-gene-splicing-with-unmatched-precision/' target='_blank'>Whiting School of Engineering</a></b> websites
+
 <br>
 
 <figure class="align-center">
 <img alt="https://ccb.jhu.edu/splam/_images/splam_gif.gif" src="https://ccb.jhu.edu/splam/_images/splam_gif.gif">
 </figure>
+
 
 <br>
 
