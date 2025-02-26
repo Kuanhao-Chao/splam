@@ -149,6 +149,18 @@ Splam does not have the feature to scan through the genome and score every poten
 
 |
 
+
+Cite us
+==================================
+
+
+.. raw:: html
+    
+    <p>Kuan-Hao Chao, Jakob M. Heinz, Celine Hoh, Alan Mao, Alaina Shumate, Mihaela Pertea, and Steven L. Salzberg. <i>"Splam: a deep-learning-based splice site predictor that improves spliced alignments."</i> <b>Genome Biology</b> 25, 243 (2024).
+    <a href="https://doi.org/10.1186/s13059-024-03379-4" target="_blank"> <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" x="0px" y="0px" viewBox="0 0 100 100" width="15" height="15" class="icon outbound"><path fill="currentColor" d="M18.8,85.1h56l0,0c2.2,0,4-1.8,4-4v-32h-8v28h-48v-48h28v-8h-32l0,0c-2.2,0-4,1.8-4,4v56C14.8,83.3,16.6,85.1,18.8,85.1z"></path> <polygon fill="currentColor" points="45.7,48.7 51.3,54.3 77.2,28.5 77.2,37.2 85.2,37.2 85.2,14.9 62.8,14.9 62.8,22.9 71.5,22.9"></polygon></svg> </a> </p>
+
+|
+
 User support
 ============
 Please go through the :ref:`documentation <table-of-contents>` below first. You can find common questions and answers in the :ref:`FAQ <Q&A>` section. If you have questions about using the package, a bug report, or a feature request, please use the GitHub issue tracker here:
