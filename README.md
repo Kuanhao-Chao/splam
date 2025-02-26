@@ -21,11 +21,14 @@
 
 <p>Splam is a splice site predictor utilizing a deep residual convolutional neural network for <strong>fast and accurate</strong> evaluation of splice junctions solely based on 400nt DNA sequences around donor and acceptor sites.</p>
 
+📢 JHU has published a feature article about <a href='https://doi.org/10.1186/s13059-024-03379-4' target='_blank'>Splam</a> on the <b><a href='https://hub.jhu.edu/2024/12/11/splam-pinpoints-gene-splicing/' target='_blank'>HUB</a></b>, <b><a href='https://www.cs.jhu.edu/news/new-ai-tool-pinpoints-gene-splicing-with-unmatched-precision/' target='_blank'>Computer Science</a></b>, and <b><a href='https://engineering.jhu.edu/news/new-ai-tool-pinpoints-gene-splicing-with-unmatched-precision/' target='_blank'>Whiting School of Engineering</a></b> websites
+
 <br>
 
 <figure class="align-center">
 <img alt="https://ccb.jhu.edu/splam/_images/splam_gif.gif" src="https://ccb.jhu.edu/splam/_images/splam_gif.gif">
 </figure>
+
 
 <br>
 
@@ -214,7 +217,7 @@ All the scripts for Splam training and data analysis are in [this GitHub reposit
 ## <a name="citation"></a>Citation<a class="headerlink" href="#citation" title="Permalink to this heading">#</a>
 
 
-Kuan-Hao Chao*, Alan Mao, Steven L Salzberg, Mihaela Pertea*, "Splam: a deep-learning-based splice site predictor that improves spliced alignments ", <i>bioRxiv</i> <b>2023.07.27.550754</b>, doi: [https://doi.org/10.1101/2023.07.27.550754](https://doi.org/10.1101/2023.07.27.550754), 2023
+Kuan-Hao Chao*, Alan Mao, Steven L Salzberg, Mihaela Pertea*, "Splam: a deep-learning-based splice site predictor that improves spliced alignments." Genome biology 25.1 (2024): 243. doi: [https://doi.org/10.1186/s13059-024-03379-4](https://doi.org/10.1186/s13059-024-03379-4)
 
 
 <br>
